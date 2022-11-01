@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="38px" height="20px" viewBox="0 0 38 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>图标/操作 2</title>
+    <g id="图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="临时图标库" transform="translate(-86.000000, -81.000000)">
+            <g id="编组" transform="translate(86.000000, 81.000000)">
+                <g id="编组-48">
+                    <path d="M10,0 L28,0 C33.523,0 38,4.477 38,10 C38,15.523 33.523,20 28,20 L10,20 C4.478,20 0,15.523 0,10 C0,4.477 4.478,0 10,0" id="Fill-125" fill="#EBEEF5"></path>
+                    <line x1="13.6709" y1="6" x2="24.4489" y2="6" id="Stroke-126" stroke="#606266" stroke-linecap="round"></line>
+                    <line x1="13.6709" y1="10.0215" x2="24.4489" y2="10.0215" id="Stroke-128" stroke="#606266" stroke-linecap="round"></line>
+                    <line x1="13.6709" y1="14.0429" x2="24.4489" y2="14.0429" id="Stroke-129" stroke="#606266" stroke-linecap="round"></line>
+                </g>
+                <circle id="椭圆形" fill="#61626B" cx="16.15" cy="5.95" r="1.15"></circle>
+                <circle id="椭圆形备份" fill="#61626B" cx="21.15" cy="9.95" r="1.15"></circle>
+                <circle id="椭圆形备份-2" fill="#61626B" cx="18.15" cy="13.95" r="1.15"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

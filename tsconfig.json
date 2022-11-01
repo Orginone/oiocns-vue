@@ -1,0 +1,84 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "useDefineForClassFields": true,
+    // 允许编译 JS 文件
+    "allowJs": true,
+    // 检查 JS 文件
+    "checkJs": true,
+    // 开启所有的严格检查配置
+    "strict": true,
+    // 不允许使用隐式的 any 类型
+    "noImplicitAny": true,
+    // 不允许 this 有隐式的 any 类型，即 this 必须有明确的指向
+    "noImplicitThis": false,
+    // 不允许把 null、undefined 赋值给其他类型变量
+    "strictNullChecks": false,
+    // 不生成文件，只做类型检查
+    "noEmit": true,
+    "jsx": "preserve",
+    //允许默认any
+    "sourceMap": true,
+    "declaration": true, // 是否自动创建类型声明文件
+    "declarationDir": "./lib", // 类型声明文件的输出目录
+    "resolveJsonModule": true,
+    "isolatedModules": false,
+    "esModuleInterop": true,
+    // 启用装饰器
+    "experimentalDecorators": false,
+    // 制定模块解析策略
+    "moduleResolution": "Node",
+    "types": [
+      "element-plus/global"
+    ],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "skipLibCheck": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@common/*": [
+        "src/common/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@views/*": [
+        "src/views/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ],
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/icons/index.js",
+  ],
+  "exclude": [
+    "node_modules",
+    "/node_modules",
+    "dist",
+    "typings",
+    "build",
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json",
+    }
+  ]
+}
