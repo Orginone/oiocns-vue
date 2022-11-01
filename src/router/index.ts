@@ -27,6 +27,15 @@ const constantRoutes: RouteRecordRaw[] = [
       keepAlive: false,
       title: '首页'
     }
+  },
+  {
+    component: () => import('@/views/Test/index.vue'),
+    name: 'test',
+    path: '/test',
+    meta: {
+      keepAlive: false,
+      title: '测试表格封装'
+    }
   }
   // {
   //   component: () => import('@/views/Test/index.vue'),

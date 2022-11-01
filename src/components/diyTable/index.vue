@@ -1,12 +1,11 @@
 <template>
   <div class="diy-table">
-    <div class="diy-table__header" v-if="hasTableHead">
+    <div class="diy-table__header">
       <div class="diy-table__header--left" style="width: 100%">
-        <div class="header-title" v-if="hasTitle">
+        <div class="header-title" >
           {{ tableName }}
-          <slot name="slot-title"></slot>
         </div>
-        <div class="header-tabs" v-if="hasTabs">
+        <div class="header-tabs" >
           <slot name="slot-tabs"></slot>
           <slot name="slot-tabsBtn"></slot>
         </div>
@@ -17,7 +16,10 @@
         </div>
       </div>
     </div>
+    <slot name="slot-title"></slot>
+
     <div class="diy-table__btn">
+      
       <div>
         <slot name="slot-select"></slot>
       </div>
@@ -547,8 +549,6 @@
   .table-row-sty tbody tr.el-table__row.not-read:hover {
     cursor: pointer;
     color: #2da1f8;
-  }
-  .el-icon-question {
   }
   .tableClass {
     background-color: #edf2fc;
