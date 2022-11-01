@@ -32,19 +32,14 @@
         ├── Work         # 工作台
 ```
 ## 文件命名规范
-路由文件夹 大驼峰
-页面文件本身 小驼峰
-页面级组件 写入 页面文件夹下 components下
-全局组件 写入 src/components 下
+1. 路由文件夹 大驼峰
+2. 页面文件本身 小驼峰
+3. 页面级组件 写入 页面文件夹下 components下
+4. 全局组件 写入 src/components 下
 ## git规范
-● add/feat：新功能
-● fix：bug修复
-● update：更新
-● del：移除文件
-● docs：文档改变
-● style：代码格式改变
-● perf：性能优化
-● test：添加测试代码
-● revert：撤销上一次的commit
-● refactor：某个已有功能重构
-● build：构建工具或构建过程的变动
+● common：调整通用组件、通用功能、通用数据接口、通用样式等  
+● feature：新功能  
+● fix：bug修复  
+● hotfix：线上紧急修复  
+● perf：性能优化  
+● other：配置信息调整等非上面5种的改动改动  
