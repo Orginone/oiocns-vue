@@ -1,5 +1,5 @@
 # ogocns-vue
-奥集能平台前端VUE版本
+奥集能平台前端VUE版本  
 框架使用Vue3 + TypeScript + Vite实现
 ## 目录介绍
 
