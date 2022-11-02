@@ -162,7 +162,7 @@
                   <el-dropdown-item v-if="flowActive == '4'" @click="showDetail(scope.row,4)">阅读</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
-              </el-dropdown>
+            </el-dropdown>
           </template>
         </DiyTable>
       </div>
