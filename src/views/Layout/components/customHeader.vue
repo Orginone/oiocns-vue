@@ -117,6 +117,7 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="toWork" icon="Setting">首页配置</el-dropdown-item>
+              <el-dropdown-item @click="toSetting" icon="Setting">设置中心</el-dropdown-item>
               <el-dropdown-item @click="toUserSetting" icon="Postcard">个人中心</el-dropdown-item>
               <el-dropdown-item v-if="isUnitWork" @click="toCompanySetting" icon="Postcard"
                 >单位中心</el-dropdown-item
@@ -362,6 +363,9 @@
   }
   const toUserSetting = () => {
     router.push('/user')
+  }
+  const toSetting = () => {
+    router.push('/setCenter')
   }
   const toCompanySetting = () => {
     router.push('/company')

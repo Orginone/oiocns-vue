@@ -158,6 +158,44 @@ const mainRouter: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/setCenter',
+    component: () => import('@/views/SetCenter/index.vue'),
+    meta: {
+      keepAlive: false,
+      title: '设置'
+    },
+    redirect: '/setCenter/unit',
+    children: [
+      {
+        path: '/setCenter/unit',
+        name: 'unit',
+        component: () => import('@/views/SetCenter/unit/index.vue'),
+        meta: {
+          title: '单位设置',
+          icon: 'OfficeBuilding'
+        }
+      },
+      {
+        path: '/setCenter/department',
+        name: 'department',
+        component: () => import('@/views/SetCenter/department/index.vue'),
+        meta: {
+          title: '部门设置',
+          icon: 'Postcard'
+        }
+      },
+      {
+        path: '/setCenter/group',
+        name: 'group',
+        component: () => import('@/views/SetCenter/group/index.vue'),
+        meta: {
+          title: '集团设置',
+          icon: 'Postcard'
+        }
+      },
+    ]
+  },
+  {
     component: () => import('@/views/Work/process.vue'),
     name: '/work/process',
     path: '/work/process',
