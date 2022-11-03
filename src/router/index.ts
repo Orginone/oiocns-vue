@@ -19,24 +19,6 @@ const constantRoutes: RouteRecordRaw[] = [
     name: '404',
     path: '/404'
   },
-  {
-    component: () => import('@/views/Test2/index.vue'),
-    name: 'test',
-    path: '/test',
-    meta: {
-      keepAlive: false,
-      title: '首页'
-    }
-  },
-  {
-    component: () => import('@/views/Test/index.vue'),
-    name: 'test',
-    path: '/test',
-    meta: {
-      keepAlive: false,
-      title: '测试表格封装'
-    }
-  }
   // {
   //   component: () => import('@/views/Test/index.vue'),
   //   name: 'test',
@@ -446,6 +428,15 @@ const mainRouter: RouteRecordRaw[] = [
       title: '云盘'
     }
   },
+  {
+    component: () => import('@/views/Store/index.vue'),
+    name: 'store',
+    path: '/store',
+    meta: {
+      keepAlive: false,
+      title: '仓库'
+    }
+  }
 ]
 
 // 整合路由

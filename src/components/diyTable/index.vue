@@ -1,11 +1,11 @@
 <template>
   <div class="diy-table">
-    <div class="diy-table__header">
+    <div class="diy-table__header" v-if="hasTableHead">
       <div class="diy-table__header--left" style="width: 100%">
-        <div class="header-title" >
+        <div class="header-title" v-if="hasTitle">
           {{ tableName }}
         </div>
-        <div class="header-tabs" >
+        <div class="header-tabs"  v-if="hasTabs">
           <slot name="slot-tabs"></slot>
         </div>
       </div>
@@ -24,7 +24,7 @@
         <slot name="slot-buttons"></slot>
       </div>
     </div>
-    <div class="diy-table__body">
+    <div class="diy-table__body" ref='bodyBox' >
       <div class="diy-table__body-box">
         <el-table
           v-if="showType == 1"
@@ -66,6 +66,7 @@
             width="70"
           ></el-table-column>
           <template v-for="(item, index) in tableHead" :key="'column' + index">
+            
             <el-table-column v-if="item.type === 'slot'" v-bind="item" :sortable="item.sortable">
               <template #default="scope">
                 <div v-if="scope.row.saleStatus === 3 && item.name == 'operate'"></div>
@@ -83,13 +84,15 @@
             <el-table-column v-else v-bind="item"></el-table-column>
           </template>
         </el-table>
-        <slot v-if="showType == 2" name="slot-card" style="height:100%"></slot>
+        <div class="card-wrap" :style="{'max-height':bodyHeight+'px'}">
+          <slot v-if="showType == 2" name="slot-card"></slot>
+        </div>
       </div>
     </div>
     <div class="diy-table-footer">
       <div class="footer-left">
-          <i :class="showType ==1?'switch-active':''"  class="type-list iconfont icon-liebiao2" @click="checkSwitchType(1)"></i>
-          <i :class="showType ==2?'switch-active':''"  class="type-card iconfont icon-suolvetuqiehuan"  @click="checkSwitchType(2)"></i>
+          <i :class="showType ==1?'switch-active':''"  class="type-list iconfonts icons-table-icon2" @click="checkSwitchType(1)"></i>
+          <i :class="showType ==2?'switch-active':''"  class="type-card iconfonts icons-suolvetuqiehuan"  @click="checkSwitchType(2)"></i>
       </div>
       <div class="footer-pagination" v-if="!options.noPage">
         <div class="pagination">
@@ -109,10 +112,12 @@
 
 <script setup lang="ts">
   import { stubFalse } from 'lodash'
-  import { ref, reactive, toRefs, computed, onMounted, watch } from 'vue'
+  import { ref, reactive, toRefs, computed, onMounted, watch,nextTick } from 'vue'
   import { useUserStore } from '@/store/user'
 
   const store = useUserStore()
+  const bodyBox = ref(null);
+  const bodyHeight = ref<number>(100);
   const showType = ref<number>(1) //显示类型 1 表格 2 卡片
   interface User {
     id: number
@@ -122,24 +127,24 @@
     children?: User[]
   }
   type Props = {
-    tableName?: string
-    hasTableHead?: boolean
-    hasTitle?: boolean
-    hasTabs?: boolean
-    tableHead: any[]
-    tableData?: any[]
-    checkList?: any[]
-    pageSizes?: any[]
-    total?: number
-    loading?: boolean
+    tableName?: string  //表格名称
+    hasTableHead?: boolean //是否显示表格头
+    hasTitle?: boolean //是否显示标题
+    hasTabs?: boolean //是否显示table切换
+    tableHead: any[] //表格头数据
+    tableData?: any[] //表格数据
+    checkList?: any[] //选中的项
+    pageSizes?: any[] //每个页数
+    total?: number //总数
+    loading?: boolean //是否在加载状态
     options?: {
-      expandAll?: boolean
-      checkBox?: any
-      order?: any
-      noPage?: boolean
+      expandAll?: boolean //是否全部展开
+      checkBox?: any //选中的
+      order?: any //是否显示序号
+      noPage?: boolean  //是否显示页码
       selectLimit?: number //限制选择个数，默认20
     }
-    batchOperate?: any[]
+    batchOperate?: any[] 
     queryParams?: any[]
     cell?: boolean
   }
@@ -322,6 +327,9 @@
     emit('handleUpdate', { pageSize: page.value.pageSize, current: page.value.current })
   }
   onMounted(() => {
+    nextTick(()=>{
+      bodyHeight.value = bodyBox.value.clientHeight
+    })
 
   })
   /**
@@ -472,7 +480,9 @@
         flex: auto;
       }
     }
-
+    .card-wrap{
+      overflow-y: auto;
+    }
     .diy-table-footer {
       display: flex;
       justify-content: space-between;

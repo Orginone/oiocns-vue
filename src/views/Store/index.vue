@@ -53,7 +53,7 @@
           <template #slot-tabs>
             <div class="table-tabs">
               <el-menu
-                :default-active="activeIndex"
+                :default-active="tableActiveIndex"
                 class="el-menu-demo"
                 mode="horizontal"
                 @select="handleSelect"
@@ -67,32 +67,31 @@
             </div>
           </template>
           <template #buttons>
-            <el-button type="primary">按钮</el-button>
-            <el-button type="primary">按钮</el-button>
-            <el-button type="primary">按钮</el-button>
+            <el-button class="btn-check" type="primary" link>按钮</el-button>
+            <el-button class="btn-check" type="primary" link>按钮</el-button>
+            <el-button class="btn-check" type="primary" link>按钮</el-button>
           </template>
-          <template #remark="scope">
-            <el-tooltip :content="scope.row.remark" placement="bottom" effect="light">
-              <template #content> 
-                <div class="tooltip-text" style="width:300px">{{scope.row.remark}}</div>
+          <template #operate="scope">
+            <el-dropdown>
+              <span class="el-dropdown-link">
+                ···
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item>查看</el-dropdown-item>
+                  <el-dropdown-item>测试</el-dropdown-item>
+                </el-dropdown-menu>
               </template>
-              <div class="remark-text">
-              {{scope.row.remark}}
-              </div>
-            </el-tooltip>
-          </template>
-          <template #option>
-            操作
+            </el-dropdown>
           </template>
           <template #slot-card>
             <div class="card-list">
-              <div class="card-item" v-for="(item,index) in 0" :key="index">
+              <div class="card-item" v-for="(item,index) in 8" :key="index">
                 <div class="item-head">
                   <div class="item-img">人</div>
                   <div class="item-head-content">
                       <p>
                         <span>应用名称 <el-tag class="ml-2" type="success">免费</el-tag></span>
-                       
                         <el-dropdown>
                           <span class="el-dropdown-link drop-list">
                             ···
@@ -146,7 +145,11 @@
     createTime:'2022-11-01 16:01',
   }])
   const activeName = ref<string>(); //table tab index
-  const handleClick = (key?:any)=>{
+  const tableActiveIndex = ref<string>(); //table nav index
+  const handleSelect = () => {
+    console.log('index')
+  }
+  const handleClick = (key?:any) => {
     console.log(key)
   }
 
@@ -327,6 +330,15 @@
         background: #fff;
         display: flex;
         flex: 1;
+        .btn-check{
+          padding: 8px 16px;
+          color: #154ad8;
+        }
+        .btn-check:hover{
+            background: #154ad8;
+            color: #fff;
+            padding: 8px  16px;
+        }
         .table-tabs{
           width: 500px;
           .el-menu--horizontal{
