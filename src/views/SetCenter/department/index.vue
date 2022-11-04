@@ -27,6 +27,19 @@
   const body = ref(null)
   const unitTree = ref(null)
 
+  const dataSource = ref<Tree[]>([
+  {
+    id: 1,
+    label: '浙江省财政厅',
+    children: [
+      {
+        id: 2,
+        label: '资产处',
+      }
+    ],
+  },
+])
+
   const nodeClick = (selectItem: any) => {
     info.value.selectItemChange(selectItem)
     body.value.selectItemChange(selectItem)

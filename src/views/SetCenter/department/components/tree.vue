@@ -235,7 +235,7 @@ const modifyOrgTree = () => {
 }
 //获取部门
 onMounted(() => {
-  loadOrgTree()
+  // loadOrgTree()
 })
 </script>
 

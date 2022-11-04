@@ -7,9 +7,9 @@
     <div class="content mid box">
       <BreadcrumbVue />
       <div class="info" ref="infoWrap">
-        <Info ref="info" />
+        <Body ref="body" :tabHeight="tabHeight" />
       </div>
-      <div class="body" ref="bodyWrap" :style="{ height: tabHeight + 'px' }">
+      <div class="body" ref="bodyWrap">
         <Body ref="body" :tabHeight="tabHeight" />
       </div>
     </div>
@@ -18,7 +18,6 @@
 <script lang="ts" setup>
   // @ts-nocheck
   import Tree from './components/tree.vue'
-  import Info from './components/info.vue'
   import Body from './components/body.vue'
   import { ref, onMounted } from 'vue'
   import BreadcrumbVue from '@/components/divBreadcrumb/index.vue';
@@ -27,50 +26,14 @@
   const body = ref(null)
   const unitTree = ref(null)
 
-  const dataSource = ref<Tree[]>([
-  {
-    id: 1,
-    label: '浙江省财产年报集团',
-    children: [
-      {
-        id: 5,
-        label: '集团子节点',
-      },
-      {
-        id: 6,
-        label: '集团子节点',
-      },
-    ],
-  },
-  {
-    id: 2,
-    label: '浙江省资产年报集团',
-    children: [
-      {
-        id: 5,
-        label: '集团子节点',
-      },
-      {
-        id: 6,
-        label: '集团子节点',
-      },
-    ],
-  },
-  {
-    id: 3,
-    label: '浙江省资产年报集团',
-    children: [
-      {
-        id: 5,
-        label: '集团子节点',
-      },
-      {
-        id: 6,
-        label: '集团子节点',
-      },
-    ],
-  },
-])
+  // 菜单数据
+  const menuDataList = ref([
+    { index: '/setCenter/unit', title: '单位房产管理员' },
+    { index: '/setCenter/department', title: '单位设备管理员' },
+    { index: '/setCenter/group', title: '部门财务管理员' },
+    { index: '/setCenter/post', title: '集团应用管理员' },
+    { index: '/setCenter/unit', title: '团队消息管理员' }
+  ]) 
 
   const nodeClick = (selectItem: any) => {
     info.value.selectItemChange(selectItem)
@@ -78,7 +41,7 @@
     unitTree.value.selectItemChange(selectItem)
     setTimeout(() => {
       if (container.value && infoWrap.value) {
-        tabHeight.value = containerHeight.value - 62 - infoWrap.value.clientHeight
+        tabHeight.value = (containerHeight.value - 62) / 2
       }
     }, 100)
   }
@@ -89,7 +52,8 @@
   onMounted(() => {
     if (container.value && infoWrap.value) {
       containerHeight.value = container.value.clientHeight
-      tabHeight.value = container.value.clientHeight - 65 - infoWrap.value.clientHeight
+      tabHeight.value = (containerHeight.value - 82) / 2
+      console.log('tabHeight.value : ', tabHeight.value );
     }
     dragControllerDiv()
   })
@@ -127,7 +91,7 @@
 
             // mid[0].style.width = (box[i].clientWidth - moveLen - 10) + 'px';
           }
-          tabHeight.value = containerHeight.value - 65 - infoWrap.value.clientHeight
+          tabHeight.value = (containerHeight.value - 62) / 2
         }
         // 鼠标松开事件
         document.onmouseup = function (evt) {
@@ -186,11 +150,12 @@
       box-sizing: border-box;
       overflow: hidden;
       .info {
+        height: calc(50% - 29.5px);
         padding: 0 0 3px 0;
         box-sizing: border-box;
       }
       .body {
-        height: 400px;
+        height: calc(50% - 29.5px);
       }
     }
   }

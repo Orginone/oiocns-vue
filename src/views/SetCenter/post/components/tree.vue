@@ -1,7 +1,7 @@
 <template>
   <el-card class="card">
     <li class="con tree-btns">
-      <div class="title">集团设置</div>
+      <div class="title">岗位设置</div>
       <el-dropdown>
         <el-icon color="#154ad8" :size="20">
           <CirclePlus />
@@ -97,6 +97,7 @@ import $services from '@/services'
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
 import authority from '@/utils/authority'
+
 const selectItem = ref<any>();
 // 获取单位树点击的信息
 const selectItemChange = (data: any) => {

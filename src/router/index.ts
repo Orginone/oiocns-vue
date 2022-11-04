@@ -193,6 +193,15 @@ const mainRouter: RouteRecordRaw[] = [
           icon: 'Postcard'
         }
       },
+      {
+        path: '/setCenter/post',
+        name: 'post',
+        component: () => import('@/views/SetCenter/post/index.vue'),
+        meta: {
+          title: '岗位设置',
+          icon: 'Postcard'
+        }
+      },
     ]
   },
   {
