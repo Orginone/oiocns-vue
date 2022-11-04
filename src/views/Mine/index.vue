@@ -14,10 +14,12 @@
         </div>
         <div class="userInfoBox">
           <img src="/src/assets/img/头像.png" alt="" class="avatar">
-          <div v-for="row in showDetail" class="showDetail">
-            <div v-for="item in row" class="showDetailRow">
-              <b class="userLabel">{{ item.label }}:</b>
-              <span class="userShowValue">{{ queryInfo[item.field] }}</span>
+          <div class="showDetail">
+            <div v-for="row in showDetail" class="showDetailRow">
+              <p v-for="item in row" class="detailItem" :style="{ width: item.width ? item.width : '300px' }">
+                <b class="userLabel">{{ item.label }}:</b>
+                <span class="userShowValue">{{ queryInfo[item.field] }}</span>
+              </p>
             </div>
           </div>
         </div>
@@ -36,8 +38,7 @@ const { queryInfo } = storeToRefs(store);
 const showDetail = reactive([
   [{ label: '姓名', field: 'name' }],
   [{ label: '姓名', field: 'name' }, { label: '姓名', field: 'name' }, { label: '姓名', field: 'name' }],
-  [{ label: '地址', field: 'name' }],
-
+  [{ label: '地址', field: 'name', width: '100%' }],
 ])
 
 const changePass = () => {
@@ -96,12 +97,12 @@ onMounted(() => {
     .showDetail {
       margin-left: 10px;
       font-size: 14px;
-      width: 700px;
-      line-height: 20px;
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
+      // width: 800px;
+
       .showDetailRow {
+        line-height: 20px;
+        display: flex;
+        padding: 10px 0;
 
       }
     }
