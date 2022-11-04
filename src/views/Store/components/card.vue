@@ -10,9 +10,13 @@
               <span class="el-dropdown-link drop-list"> ··· </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item>审核申请</el-dropdown-item>
-                  <el-dropdown-item>查看详情</el-dropdown-item>
-                  <el-dropdown-item>查看详情</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">打开</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">详情</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">管理</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">上架</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">共享</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">分配</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">暂存</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>

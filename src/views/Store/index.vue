@@ -37,9 +37,9 @@
             </div>
           </template>
           <template #buttons>
-            <el-button class="btn-check" type="primary" link>按钮</el-button>
-            <el-button class="btn-check" type="primary" link>按钮</el-button>
-            <el-button class="btn-check" type="primary" link>按钮</el-button>
+            <el-button class="btn-check" type="primary" link>购买</el-button>
+            <el-button class="btn-check" type="primary" link>创建</el-button>
+            <el-button class="btn-check" type="primary" link>暂存</el-button>
           </template>
           <template #operate="scope">
             <el-dropdown>
@@ -48,8 +48,13 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="showDiong">查看</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">测试</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">打开</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">详情</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">管理</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">上架</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">共享</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">分配</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">暂存</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -87,9 +92,6 @@
   const tableActiveIndex = ref<string>(); //table nav index
   const handleSelect = () => {
     console.log('index')
-  }
-  const handleClick = (key?:any) => {
-    console.log(key)
   }
 
   interface ListItem {
@@ -157,19 +159,17 @@
   const showDiong = () => {
     
   }
-  const commontActive = ()=>{
-
-  }
   
 </script>
 <style lang="scss">
-  .drop-link{
-    cursor: pointer;
+  .el-dropdown-link{
     padding: 2px 10px;
+    cursor: pointer;
     border-radius: 10px;
   }
-  .drop-link:hover{
-    background: var(--el-bg-color-overlay);
+  .el-dropdown-link:hover{
+    background:#1642cb;
+    color: #fff;
   }
 </style>
 <style lang="scss" scoped>
@@ -181,6 +181,7 @@
     .nav-list{
       width: 150px;
       height: 100%;
+      background: #fff;
       border-right: 1px solid #EBEEF5;
     }
     .content{
@@ -193,80 +194,6 @@
         width: 100%;
         background: #aab;
         margin-bottom: 6px;
-      }
-      .detail{
-        background: #fff;
-        margin-bottom: 6px;
-        overflow-x: auto;
-        display: flex;
-        flex-direction: column;
-        flex-wrap: nowrap;
-        max-height: 200px;
-        padding: 16px;
-        .detail-title{
-          font-size: 14px;
-          color: #303133;
-          margin-bottom: 10px;
-        }
-        .detail-list{
-          display: flex;
-          flex-wrap: nowrap;
-          height: 102px;
-          flex: 1;
-        }
-        .list-item{
-          width: 187px;
-          min-width: 187px;
-          height: 102px;
-          display: flex;
-          flex-wrap: nowrap;
-          border: 1px solid #eee;
-          border-radius: 10px;
-          box-sizing: border-box;
-          padding: 18px 12px;
-          margin-right: 10px;
-          .row{
-            img{
-              width: 52px;
-              height: 52px;
-              border-radius: 10px;
-            }
-            .version{
-              font-size: 12px;
-              color: #606266;
-              margin-top: 5px;
-            }
-            .title{
-              color: #303133;
-              font-size: 14px;
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              span:nth-child(2n){
-                display: flex;
-                align-items: center;
-              }
-            }
-            .describe{
-              color:#606266;
-              font-size: 12px;
-              -webkit-line-clamp: 2;
-              margin-top: 3px;
-
-              display: -webkit-box;
-              -webkit-box-orient: vertical;
-              overflow: hidden;
-              text-overflow: ellipsis;
-            }
-          }
-          .row-left{
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-right: 10px;
-
-          }
-        }
       }
       .table{
         background: #fff;
@@ -312,25 +239,5 @@
         }
       }
     }
-  }
-  .foot {
-    display: flex;
-    width: 100%;
-    margin-top: 30px;
-    justify-content: flex-end;
-  }
-  .remark-text{
-    white-space: nowrap;
-    cursor: pointer;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .tooltip-text{
-    width: 400px;
-    max-height: 300px;
-    overflow-y: auto;
-  }
-  .tabs-btn{
-    display: flex;
   }
 </style>
