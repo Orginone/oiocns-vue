@@ -17,7 +17,7 @@
           <div class="showDetail">
             <div v-for="row in showDetail" class="showDetailRow">
               <p v-for="item in row" class="detailItem" :style="{ width: item.width ? item.width : '300px' }">
-                <b class="userLabel">{{ item.label }}:</b>
+                <b class="userLabel">{{ item.label }}：</b>
                 <span class="userShowValue">{{ getDescendantProp(queryInfo, item.field) || '-' }}</span>
               </p>
             </div>
@@ -34,10 +34,13 @@ import Bucket from "@/module/cloud/bucket";
 import { useUserStore } from "@/store/user";
 import { storeToRefs } from "pinia";
 import { getDescendantProp } from "@/utils/tools";
+import { ShowDetailRow } from './type'
+
 const store = useUserStore();
 const { queryInfo } = storeToRefs(store);
 
-const showDetail = reactive([
+// 显示配置
+const showDetail = reactive<ShowDetailRow[][]>([
   [{ label: '姓名', field: 'team.name' }],
   [{ label: '性别', field: 'name' }, { label: '邮箱', field: 'name' }, { label: '联系方式', field: 'name' }],
   [{ label: '地址', field: 'name', width: '100%' }],
@@ -52,7 +55,6 @@ const resetPass = () => {
 
 onMounted(() => {
   store.getQueryInfo(store.userToken)
-  console.log(queryInfo);
 })
 
 </script>
@@ -106,7 +108,6 @@ onMounted(() => {
 
         .detailItem {
           display: flex;
-          
         }
       }
     }
