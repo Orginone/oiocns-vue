@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="header-left">
-      <img class="header-left-img" src="@/assets/img/头像.png" alt="" />
+      <img class="header-left-img" src="@/assets/img/头像.png" alt="" @click="toMine()"/>
       <!-- <div class="header-left__avater">俞</div> -->
       <div class="header-left-box">
         <div class="header-left-box__top">{{ getTimeState() }} {{ queryInfo.name }}!</div>
@@ -82,6 +82,10 @@ onMounted(() => {
 const router = useRouter()
 const jumpApproval = (type:string)=>{
  router.push({ path: '/cardDetail' ,query: {type:type,id: "0"}})
+}
+
+const toMine = ()=>{
+  router.push({ path: '/mine' })
 }
   
 </script>
