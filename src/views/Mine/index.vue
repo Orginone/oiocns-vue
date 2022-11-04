@@ -18,7 +18,7 @@
             <div v-for="row in showDetail" class="showDetailRow">
               <p v-for="item in row" class="detailItem" :style="{ width: item.width ? item.width : '300px' }">
                 <b class="userLabel">{{ item.label }}:</b>
-                <span class="userShowValue">{{ queryInfo[item.field] }}</span>
+                <span class="userShowValue">{{ getDescendantProp(queryInfo, item.field) || '-' }}</span>
               </p>
             </div>
           </div>
@@ -33,11 +33,13 @@ import { ref, onMounted, watch, reactive } from "vue";
 import Bucket from "@/module/cloud/bucket";
 import { useUserStore } from "@/store/user";
 import { storeToRefs } from "pinia";
+import { getDescendantProp } from "@/utils/tools";
 const store = useUserStore();
 const { queryInfo } = storeToRefs(store);
+
 const showDetail = reactive([
-  [{ label: '姓名', field: 'name' }],
-  [{ label: '姓名', field: 'name' }, { label: '姓名', field: 'name' }, { label: '姓名', field: 'name' }],
+  [{ label: '姓名', field: 'team.name' }],
+  [{ label: '性别', field: 'name' }, { label: '邮箱', field: 'name' }, { label: '联系方式', field: 'name' }],
   [{ label: '地址', field: 'name', width: '100%' }],
 ])
 
@@ -52,8 +54,6 @@ onMounted(() => {
   store.getQueryInfo(store.userToken)
   console.log(queryInfo);
 })
-
-
 
 </script>
 <style lang="scss" scoped>
@@ -104,6 +104,10 @@ onMounted(() => {
         display: flex;
         padding: 10px 0;
 
+        .detailItem {
+          display: flex;
+          
+        }
       }
     }
   }
