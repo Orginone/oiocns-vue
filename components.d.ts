@@ -21,6 +21,7 @@ declare module '@vue/runtime-core' {
     DelayNode: typeof import('./src/components/wflow/process/nodes/DelayNode.vue')['default']
     DelayNodeConfig: typeof import('./src/components/wflow/process/config/DelayNodeConfig.vue')['default']
     DiyButton: typeof import('./src/components/diyButton/index.vue')['default']
+    DiyDiong: typeof import('./src/components/diyDiong/index.vue')['default']
     DiySearch: typeof import('./src/components/diySearch/index.vue')['default']
     DiyTable: typeof import('./src/components/diyTable/index.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
