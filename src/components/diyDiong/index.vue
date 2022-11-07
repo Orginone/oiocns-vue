@@ -1,138 +1,148 @@
 <template>
-    <el-form
-      ref="form"
-      :inline="false"
-      class="demo-form-inline"
-      :model="formModel"
-      label-suffix="："
-      label-width="130px"
-      size="mini"
-    >
-      <el-row>
-        <!--不循环row，直接循环col，放不下会自动往下换行。-->
-        <el-col
-          v-for="(ctrId, index) in formColSort"
-          :key="'form_'+index"
-          :span="formColSpan[ctrId]"
-        >
-          <el-form-item :label="getCtrMeta(ctrId).label">
-            <!--表单item组件，采用动态组件的方式-->
-            <component
-              :is="ctlList[getCtrMeta(ctrId).controlType]"
-              v-model="formModel[getCtrMeta(ctrId).colName]"
-              :meta="getCtrMeta(ctrId)"
-              @myChange="mySubmit">
-            </component>
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-</template>
+    <div >
+      <el-form
+        :model="formModel"
+        :rules="rules"
+        ref="formControl"
+        :inline="false"
+        class="demo-form-inline"
+        label-suffix="："
+        label-width="130px"
+        size="mini"
+      >
+        <el-row>
+          <!--不循环row，直接循环col，放不下会自动往下换行。-->
+          <el-col
+            v-for="(ctrId, index) in formColSort"
+            :key="'form_'+index"
+            :span="formColSpan[ctrId]"
+          ><!--:prop="getCtrMeta(ctrId).colName"-->
+            <el-form-item
+              :label="getCtrMeta(ctrId).label"
+            >
+              <!--判断要不要加载插槽-->
+              <template v-if="getCtrMeta(ctrId).controlType === 1">
+                <slot :name="ctrId">父组件没有设置插槽</slot>
+              </template>
+              <!--表单item组件，采用动态组件的方式-->
+              <template v-else>
+                <component
+                  :is="ctlList[getCtrMeta(ctrId).controlType]"
+                  v-model="formModel[getCtrMeta(ctrId).colName]"
+                  v-bind="getCtrMeta(ctrId)"
+                  @myChange="mySubmit">
+                </component>
+              </template>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </div>
+  </template>
   
-  <script setup lang="ts">
-    import { ref, reactive } from 'vue'
-    import $services from '@/services'
-    import { ElMessage } from 'element-plus'
-    const formItemMeta =ref<Object>({})
-    const formModel = ref<Object>({})
-    const formColSort = ref<any>({}) //顺序数组
-    const formColSpan = ref<any>({}) //占位数组
-    const getCtrMeta = ref<any>({}) //获取组件id
-    const props = defineProps({
-      dialogShow: {
-        type: Object
+  <script lang="ts">
+  // @ts-nocheck
+  import { watch, ref, onMounted, defineAsyncComponent } from 'vue'
+  import { formItemListKey } from './nf-el-form-item/map-el-form-item.js'
+  import formManage from './js/formManage.ts'
+  /**
+   * @function div格式的表单控件
+   * @description 可以依据json动态生成表单，可以多行多列、排序、插槽、验证等
+   * @returns {*} Vue组件，表单控件
+   */
+  export default {
+    name: 'el-form-div',
+    props: {
+      modelValue: Object, // 完整的model
+      partModel: Object, // 根据选项过滤后的model
+      miniModel: Object, // 精简的model
+      /*
+      * 自定义子控件 key:value形式
+      * * key: 编号。1：插槽；100-200：保留编号
+      * * value：string：标签；函数：异步组件，类似路由的设置
+      */
+      customerControl: {
+        type: Object,
+        defaule: () => {}
       },
-      title: {
-        type: String,
-        default: ''
-      },
-      placeholder: {
-        type: String,
-        default: ''
+      meta: Object
+    },
+    setup (props, context) {
+
+      // 控件字典
+      const ctlList = formItemListKey
+      // console.log(formItemList)
+      // 可以添加调用者定义的自定义子控件
+      // 字符串，直接添加
+      // 函数，添加函数 defineAsyncComponent
+      for (const key in props.customerControl) {
+        // eslint-disable-next-line vue/no-setup-props-destructure
+        const ctrl = props.customerControl[key]
+        if (typeof ctrl === 'string') {
+          ctlList[key] = ctrl
+        } else if (typeof ctrl === 'function') {
+          ctlList[key] = defineAsyncComponent(ctrl)
+        }
       }
-    })
-    const state = reactive({
-      options: []
-    })
-    const value = ref('')
-    const loading = ref(false)
-    // 根据表单元素meta，创建 v-model
-    const createModel = () => {
-        // 依据meta，创建module
-        for (const key in formItemMeta) {
-        const m = formItemMeta[key]
-        // 根据控件类型设置属性值
-        switch (m.controlType) {
-            case 100: // 文本类
-            case 101:
-            case 102:
-            case 103:
-            case 104:
-            case 105:
-            case 106:
-            case 107:
-            case 130:
-            case 131:
-            formModel[m.colName] = ''
-            break
-            case 110: // 日期
-            case 111: // 日期时间
-            case 112: // 年月
-            case 114: // 年
-            case 113: // 年周
-            formModel[m.colName] = null
-            break
-            case 115: // 任意时间
-            formModel[m.colName] = '00:00:00'
-            break
-            case 116: // 选择时间
-            formModel[m.colName] = '00:00'
-            break
-            case 120: // 数字
-            case 121:
-            formModel[m.colName] = 0
-            break
-            case 150: // 勾选
-            case 151: // 开关
-            formModel[m.colName] = false
-            break
-            case 153: // 单选组
-            case 160: // 下拉单选
-            case 162: // 下拉联动
-            formModel[m.colName] = null
-            break
-            case 152: // 多选组
-            case 161: // 下拉多选
-            formModel[m.colName] = []
-            break
-        }
-        // 看看有没有设置默认值
-        if (typeof m.defaultValue !== 'undefined') {
-            switch (m.defaultValue) {
-            case '':
-                break
-            case '{}':
-                formModel[m.colName] = {}
-                break
-            case '[]':
-                formModel[m.colName] = []
-                break
-            case 'date':
-                formModel[m.colName] = new Date()
-                break
-            default:
-                formModel[m.colName] = m.defaultValue
-                break
-            }
-        }
-        }
-        // 同步父组件的v-model
-        context.emit('update:modelValue', formModel)
-        return formModel
-    }
-    // 依据用户选项，创建对应的 model
-    // const
-  </script>
+      // 表单管理类
+      const {
+        formModel, // 依据meta，创建 Model
+        // formMiniModel, // 精简的model
+        formColSpan, // 依据meta，创建 span
+        formColSort,
+        setFormColSpan,
+        setFormColSort, // 设置组件排序
+        mySubmit
+      } = formManage(props, context)
   
-  <style scoped></style>
+      // 监听列数的变化
+      watch(() => props.meta.baseMeta.formColCount, (v1, v2) => {
+        setFormColSpan()
+      })
+      // 监听reload
+      watch(() => props.meta.reload, (v1, v2) => {
+        Object.assign(formModel, props.modelValue)
+        // Object.assign(formModel, props.partModel)
+        // Object.assign(formModel, props.miniModel)
+        setFormColSpan()
+        setFormColSort()
+      })
+  
+      // 依据ID获取组件的meta，因为model不支持【】嵌套
+      const getCtrMeta = (id) => {
+        return props.meta.itemMeta[id] || {}
+      }
+  
+      // 表单验证的测试
+      const rules = {
+        colName: [
+          { required: true, message: '请输入活动名称', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ]
+      }
+      // 获取 $ref
+      const formControl = ref(null)
+      onMounted(() => {
+        // console.log('表单dom', formControl)
+      })
+  
+      const resetForm = () => {
+        // 清空表单
+        formControl.value.resetFields()
+      }
+  
+      return {
+        resetForm, // 重置表单
+        formControl, // 获取表单dom
+        formModel, // 实体类
+        rules, // 验证规则
+        formColSpan, // 一个子控件占几份
+        formColSort, // 排序依据
+        ctlList, // 子控件字典
+        getCtrMeta, // 返回子控件的meta
+        mySubmit
+      }
+    }
+  }
+  </script>
   

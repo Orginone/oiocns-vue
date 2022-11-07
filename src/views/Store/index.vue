@@ -156,8 +156,12 @@
       hasChildren: 'hasChildren'
     }
   })
-  const showDiong = () => {
-    
+  const showDiong = (type:number) => {
+    if(type ==1){
+
+    }else if(type ==2){
+      
+    }
   }
   
 </script>
