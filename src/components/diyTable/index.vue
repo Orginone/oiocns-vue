@@ -4,11 +4,9 @@
       <div class="diy-table__header--left" style="width: 100%">
         <div class="header-title" v-if="hasTitle">
           {{ tableName }}
-          <slot name="slot-title"></slot>
         </div>
-        <div class="header-tabs" v-if="hasTabs">
+        <div class="header-tabs"  v-if="hasTabs">
           <slot name="slot-tabs"></slot>
-          <slot name="slot-tabsBtn"></slot>
         </div>
       </div>
       <div class="diy-table__header--right">
@@ -17,6 +15,7 @@
         </div>
       </div>
     </div>
+    <slot name="slot-title"></slot>
     <div class="diy-table__btn">
       <div>
         <slot name="slot-select"></slot>
@@ -25,9 +24,10 @@
         <slot name="slot-buttons"></slot>
       </div>
     </div>
-    <div class="diy-table__body">
+    <div class="diy-table__body" ref='bodyBox' >
       <div class="diy-table__body-box">
         <el-table
+          v-if="showType == 1"
           ref="diyTable"
           :style="{ width: '100%', height: '100%' }"
           class="table-row-sty"
@@ -42,7 +42,6 @@
           v-bind="options"
           v-loading="loading"
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-          border
           stripe
           :default-expand-all="options.expandAll ? options.expandAll : false"
           @select="select"
@@ -67,6 +66,7 @@
             width="70"
           ></el-table-column>
           <template v-for="(item, index) in tableHead" :key="'column' + index">
+            
             <el-table-column v-if="item.type === 'slot'" v-bind="item" :sortable="item.sortable">
               <template #default="scope">
                 <div v-if="scope.row.saleStatus === 3 && item.name == 'operate'"></div>
@@ -84,34 +84,27 @@
             <el-table-column v-else v-bind="item"></el-table-column>
           </template>
         </el-table>
-      </div>
-    </div>
-    <div class="diy-table__footer">
-      <div class="footer-buttons">
-        <slot name="footer-left"></slot>
-        <div class="footer-operate" v-if="batchOperate.length">
-          <el-dropdown @command="handleCommand" trigger="click">
-            <span class="el-dropdown-link">
-              批量操作
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-for="item in batchOperate" :command="item.key" :key="item.key">{{
-                item.value
-              }}</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+        <div class="card-wrap" :style="{'max-height':bodyHeight+'px'}">
+          <slot v-if="showType == 2" name="slot-card"></slot>
         </div>
       </div>
+    </div>
+    <div class="diy-table-footer">
+      <div class="footer-left">
+          <i :class="showType ==1?'switch-active':''"  class="type-list iconfonts icons-table-icon2" @click="checkSwitchType(1)"></i>
+          <i :class="showType ==2?'switch-active':''"  class="type-card iconfonts icons-suolvetuqiehuan"  @click="checkSwitchType(2)"></i>
+      </div>
       <div class="footer-pagination" v-if="!options.noPage">
-        <el-pagination
-          background
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          v-bind="page"
-          :pager-count="5"
-          style="text-align: right; margin-top: 10px"
-        ></el-pagination>
+        <div class="pagination">
+          <el-pagination
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            v-bind="page"
+            :pager-count="5"
+            style="text-align: right"
+          ></el-pagination>
+        </div>
       </div>
     </div>
   </div>
@@ -119,11 +112,13 @@
 
 <script setup lang="ts">
   import { stubFalse } from 'lodash'
-  import { ref, reactive, toRefs, computed, onMounted, watch } from 'vue'
+  import { ref, reactive, toRefs, computed, onMounted, watch,nextTick } from 'vue'
   import { useUserStore } from '@/store/user'
 
   const store = useUserStore()
-
+  const bodyBox = ref(null);
+  const bodyHeight = ref<number>(100);
+  const showType = ref<number>(1) //显示类型 1 表格 2 卡片
   interface User {
     id: number
     date: string
@@ -132,24 +127,24 @@
     children?: User[]
   }
   type Props = {
-    tableName?: string
-    hasTableHead?: boolean
-    hasTitle?: boolean
-    hasTabs?: boolean
-    tableHead: any[]
-    tableData?: any[]
-    checkList?: any[]
-    pageSizes?: any[]
-    total?: number
-    loading?: boolean
+    tableName?: string  //表格名称
+    hasTableHead?: boolean //是否显示表格头
+    hasTitle?: boolean //是否显示标题
+    hasTabs?: boolean //是否显示table切换
+    tableHead: any[] //表格头数据
+    tableData?: any[] //表格数据
+    checkList?: any[] //选中的项
+    pageSizes?: any[] //每个页数
+    total?: number //总数
+    loading?: boolean //是否在加载状态
     options?: {
-      expandAll?: boolean
-      checkBox?: any
-      order?: any
-      noPage?: boolean
+      expandAll?: boolean //是否全部展开
+      checkBox?: any //选中的
+      order?: any //是否显示序号
+      noPage?: boolean  //是否显示页码
       selectLimit?: number //限制选择个数，默认20
     }
-    batchOperate?: any[]
+    batchOperate?: any[] 
     queryParams?: any[]
     cell?: boolean
   }
@@ -310,7 +305,9 @@
   const select = (selection: any, row: any) => {
     emit('select', selection, row)
   }
-
+  const checkSwitchType = (type:number) =>{
+    showType.value = type;
+  }
   /**
    * el-pagination 分页配置
    */
@@ -330,7 +327,10 @@
     emit('handleUpdate', { pageSize: page.value.pageSize, current: page.value.current })
   }
   onMounted(() => {
-    // console.log('props.options.selectLimit', props.options.selectLimit)
+    nextTick(()=>{
+      bodyHeight.value = bodyBox.value.clientHeight
+    })
+
   })
   /**
    * 鼠标进入表格是隐藏groupselect的drop
@@ -422,6 +422,7 @@
 </script>
 
 <style lang="scss" scoped>
+
   .diy-table__header {
     padding-bottom: 10px;
   }
@@ -430,21 +431,19 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding-bottom: 10px;
+    padding: 18px;
 
     &__header {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       align-items: flex-end;
-      padding-top: 10px;
 
       .header-title {
         font-size: 16px;
         font-weight: bold;
         color: rgba(48, 49, 51, 1);
-        padding: 0 0 10px;
-
+        padding: 0 0 8px;
         i {
           font-size: 20px;
           color: rgba(21, 74, 216, 1);
@@ -454,8 +453,9 @@
       .header-tabs {
         width: 100%;
         display: flex;
+        height: 35px;
+        align-items: center;
         justify-content: space-between;
-        margin-bottom: -5px;
       }
 
       .header-buttons {
@@ -480,48 +480,19 @@
         flex: auto;
       }
     }
-
-    &__footer {
+    .card-wrap{
+      overflow-y: auto;
+    }
+    .diy-table-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-
-      .footer-operate {
-        width: 110px;
-        height: 40px;
-        border: 1px solid rgba(209, 223, 245, 1);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-
-        .el-dropdown {
-          width: 100%;
-          height: 100%;
-        }
-        .el-dropdown-link {
-          width: 100%;
-          height: 100%;
-          display: block;
-          text-align: center;
-          height: 38px;
-          line-height: 38px;
-          font-size: 14px;
-          font-weight: 400;
-          color: rgba(51, 51, 51, 1);
-        }
+      padding-top: 10px;
+      .switch-active{
+        background: #154ad8;
+        color: #fff;
+        border-radius: 15px;
       }
-
-      .footer-buttons {
-        width: 350px;
-        display: flex;
-        justify-content: space-between;
-
-        .select-options {
-          width: 150px;
-        }
-      }
-
       .footer-pagination {
         & :deep(.btn-prev) {
           border-radius: 16px;
@@ -538,6 +509,13 @@
           border-color: transparent;
         }
       }
+      .footer-left{
+        .type-list,.type-card{
+          font-size: 16px;
+          color: #c0c4cc;
+          padding: 3px 15px;
+        }
+      }
     }
   }
   .el-dropdown-menu {
@@ -547,8 +525,6 @@
   .table-row-sty tbody tr.el-table__row.not-read:hover {
     cursor: pointer;
     color: #2da1f8;
-  }
-  .el-icon-question {
   }
   .tableClass {
     background-color: #edf2fc;
