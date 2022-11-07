@@ -77,7 +77,6 @@ declare module '@vue/runtime-core' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
-    ElTree: typeof import('element-plus/es')['ElTree']
     EmptyNode: typeof import('./src/components/wflow/process/nodes/EmptyNode.vue')['default']
     FormAuthorityConfig: typeof import('./src/components/wflow/process/config/FormAuthorityConfig.vue')['default']
     FormProcessDesign: typeof import('./src/components/wflow/layout/FormProcessDesign.vue')['default']
