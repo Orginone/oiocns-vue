@@ -23,6 +23,25 @@
             </div>
           </div>
         </div>
+        <!-- 更多信息 -->
+        <div class="expan">
+          <span @click="isExpan = !isExpan">
+            <b>{{ isExpan ? '收起' : '更多信息' }}</b>
+            <el-icon :class="{ isExpan }">
+              <ArrowDownBold />
+            </el-icon>
+          </span>
+        </div>
+        <div class="userInfoBox" v-show="isExpan">
+          <div class="showDetail">
+            <div v-for="row in expanDetail" class="showDetailRow">
+              <p v-for="item in row" class="detailItem" :style="{ width: item.width ? item.width : '300px' }">
+                <b class="userLabel">{{ item.label }}：</b>
+                <span class="userShowValue">{{ getDescendantProp(queryInfo, item.field) || '-' }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -38,12 +57,18 @@ import { ShowDetailRow } from './type'
 
 const store = useUserStore();
 const { queryInfo } = storeToRefs(store);
-
+// 是否展开更多信息
+const isExpan = ref(false)
 // 显示配置
 const showDetail = reactive<ShowDetailRow[][]>([
   [{ label: '姓名', field: 'team.name' }],
   [{ label: '性别', field: 'name' }, { label: '邮箱', field: 'name' }, { label: '联系方式', field: 'name' }],
   [{ label: '地址', field: 'name', width: '100%' }],
+])
+const expanDetail = reactive<ShowDetailRow[][]>([
+  [{ label: '职位', field: 'team.name' }, { label: '级别', field: 'team.name' }],
+  [{ label: '其他信息', field: 'name' }, { label: '其他信息', field: 'name' }],
+  [{ label: '其他信息', field: 'name' }, { label: '其他信息', field: 'name' }],
 ])
 
 const changePass = () => {
@@ -87,19 +112,20 @@ onMounted(() => {
 
   .userInfoBox {
     padding: 0 37px;
-    margin-top: 28px;
+    color: #606266;
 
     .avatar {
       width: 78px;
       height: 78px;
       border-radius: 50%;
       margin-bottom: 20px;
+      margin-top: 28px;
     }
 
     .showDetail {
       margin-left: 10px;
       font-size: 14px;
-      // width: 800px;
+      max-width: 1100px;
 
       .showDetailRow {
         line-height: 20px;
@@ -108,7 +134,30 @@ onMounted(() => {
 
         .detailItem {
           display: flex;
+          flex: 1;
         }
+      }
+    }
+  }
+
+  .expan {
+    font-size: 14px;
+    color: #154ad8;
+    text-align: right;
+
+    span {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .el-icon {
+      vertical-align: revert;
+      font-size: 10px;
+      margin-left: 8px;
+      transition: transform .3s;
+
+      &.isExpan {
+        transform: rotateX(180deg);
       }
     }
   }
