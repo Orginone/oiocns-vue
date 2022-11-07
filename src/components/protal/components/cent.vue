@@ -5,7 +5,19 @@
         <p class="lsolid"></p>
         <span class="csolid">快捷入口</span>
         <p class="rsolid"></p>
-        <el-icon class="eidtIcon"><Edit /></el-icon>
+        <el-popover
+          placement="right"
+          title="Title"
+          :width="200"
+          trigger="click"
+        >
+          <template #content>
+            <span>123</span>
+          </template>
+          <template #reference>
+            <el-icon class="eidtIcon"><Edit /></el-icon>
+          </template>
+        </el-popover>
       </div>
       <div class="L_bottom">
         <div class="lb_col">

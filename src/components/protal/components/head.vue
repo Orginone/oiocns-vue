@@ -32,6 +32,11 @@ const state = reactive({
 onMounted(() => {
 
 })
+
+const router = useRouter()
+const jumpApproval = (type:string)=>{
+ router.push({ path: '/cardDetail' ,query: {type:type,id: "0"}})
+}
   
 </script>
 

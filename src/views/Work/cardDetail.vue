@@ -2,25 +2,8 @@
   <div class="thing">
     <div class="thing-menu">
       <div class="menu-list">
-        <el-menu :default-active="activeIndex" @select="handleSelect" ref="elmenus" @close="handleClose" :default-openeds="['1','2']" class="el-menu-vertical-demo" >
-          <el-sub-menu index="1">
-            <template #title>
-                <span>平台待办</span>
-            </template>
-            <el-menu-item index="1-1">好友申请</el-menu-item>
-            <el-menu-item index="1-2">单位审核</el-menu-item>
-            <el-menu-item index="1-3">商店审核</el-menu-item>
-            <!-- <el-menu-item index="1-4">订单审核</el-menu-item> -->
-            <!-- <el-menu-item index="1-5">加群审核</el-menu-item>
-            <el-menu-item index="1-6">团队审核</el-menu-item> -->
-          </el-sub-menu>
-          <el-sub-menu index="2">
-              <template #title>
-                  <span>应用待办</span>
-              </template>
-              <el-menu-item index="2-1">待办列表</el-menu-item>
-          </el-sub-menu>
-        </el-menu>
+        <div class="title"><el-icon style="color:#154ad8"><Checked /></el-icon>&nbsp;&nbsp;办事</div>
+          <menuItem :default-active="activeIndex" @select="handleSelect" ref="elmenus" @close="handleClose" :default-openeds="['1','2']" :data="state.menuArr" @handleClose="test"/>
       </div>
     </div>
     <div class="content">
@@ -179,6 +162,7 @@
   import DiyTable from '@/components/diyTable/index.vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { TabsPaneContext } from 'element-plus'
+  import menuItem from '@/components/menuItem/index.vue'
   import { chat } from '@/module/chat/orgchat'
   
   import thingServices from '@/module/flow/thing'
@@ -206,6 +190,10 @@
     pageSize: 20,
     total: 0
   })
+
+  const test = (event) => {
+    console.log(event)
+  }
 
   const showDetail = async (row: any,type:number) => {
     if(type == 4){
@@ -255,7 +243,76 @@
 
   const state = reactive({
     approvalList: [],
-    tableHead: []
+    tableHead: [],
+    menuArr: [
+        {
+          name: "平台待办",
+          structure: false,
+          children: [
+            {
+              name: "好友申请",
+              type:4,
+              uid:'1-1',
+              // components:'Videoitem',
+              children: [{
+              name: "单位审核",
+              type:4,
+              uid:'1-1-1',
+              // components:'Videoitem',
+              children: [],
+            },],
+            },
+            {
+              name: "单位审核",
+              type:4,
+              uid:'1-2',
+              // components:'Videoitem',
+              children: [],
+            },
+            {
+              name: "商店审核",
+              type:4,
+              uid:'1-3',
+              // components:'Videoitem',
+              children: [],
+            },
+            {
+              name: "订单审核",
+              type:4,
+              uid:'1-4',
+              // components:'Videoitem',
+              children: [],
+            },
+          ],
+        },
+        {
+          name: "应用待办",
+          structure: true,
+          children: [
+            {
+              name: "公益仓",
+              type:4,
+              uid:'2-1',
+              components:'Material',
+              children: [],
+            },
+            {
+              name: "办公OA",
+              type:4,
+              uid:'2-2',
+              components:'Material',
+              children: [],
+            },
+            {
+              name: "资产管理",
+              type:4,
+              uid:'2-3',
+              components:'Material',
+              children: [],
+            },
+          ],
+        },
+      ],
   })
   const handleClose = (index:any) => {
     elmenus.value.open(index)
@@ -473,7 +530,6 @@
       }
     } else {
       getWflow();
-     
     }
   }
 
@@ -522,7 +578,7 @@
     top: 0;
     display: flex;
     .thing-menu{
-      width: 140px;
+      width: 200px;
       background: var(--el-bg-color-overlay);
       height: calc(100vh - 50px);
       overflow-y: auto;
@@ -530,6 +586,14 @@
       font-size: 14px;
       
       border-right: 1px solid #ddd;
+      .title{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        background: #f9fbfe;
+        font-size: 16px;
+      }
       .thing-title{
         color: #8d8d8d;
         padding-left: 10px;
