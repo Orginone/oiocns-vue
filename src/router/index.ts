@@ -56,6 +56,15 @@ const mainRouter: RouteRecordRaw[] = [
     }
   },
   {
+    component: () => import('@/views/Mine/index.vue'),
+    name: 'mine',
+    path: '/mine',
+    meta: {
+      keepAlive: false,
+      title: '我的'
+    }
+  },
+  {
     path: '/relation',
     component: () => import('@/views/Relation/index.vue'),
     meta: {
