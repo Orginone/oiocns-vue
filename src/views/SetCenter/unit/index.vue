@@ -1,7 +1,16 @@
 <template>
     <div class="main">
       <div class="container mainBox" ref="container">
-        <BreadcrumbVue />
+        <div-breadcrumb>
+          <template #default>
+            <el-button type="text">
+              <el-icon :size="18"><ChatLineSquare /></el-icon>
+            </el-button>
+            <el-button type="text">
+              <el-icon :size="18"><MoreFilled /></el-icon>
+            </el-button>
+          </template>
+        </div-breadcrumb>
         <div class="content">
           <div class="info" ref="infoWrap">
             <Info ref="info" />
@@ -13,11 +22,13 @@
   <script lang="ts" setup>
     import Info from './components/info.vue'
     import { ref } from 'vue'
-    import BreadcrumbVue from '@/components/divBreadcrumb/index.vue';
+    import divBreadcrumb from '@/components/divBreadcrumb/index.vue';
   
     const info = ref(null)
     const container = ref(null)
     const infoWrap = ref(null)
+
+    const show = ref(true);
   </script>
   <style lang="scss" scoped>
     /*拖拽区鼠标悬停样式*/

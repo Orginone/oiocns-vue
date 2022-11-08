@@ -170,7 +170,7 @@
       { name: '待办', icon: 'icon-message', path: '/chat' },
       { name: '待办', icon: 'icon-todo', path: '/cardDetail' },
       { name: '仓库', icon: 'icon-store', path: '/store' },
-      { name: '设置', icon: 'icon-setting', path: '/setting' },  
+      { name: '设置', icon: 'icon-setting', path: '/setCenter' },  
     ]
   })
 
