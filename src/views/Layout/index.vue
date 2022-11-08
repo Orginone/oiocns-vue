@@ -38,7 +38,7 @@
 
 <script lang="ts" setup>
   import CustomHeadr from './components/customHeader.vue'
-  import MainAsideVue from './components/mainAside.vue'
+  // import MainAsideVue from './components/mainAside.vue'
   // import Breadcrumb from './components/breadcrumb.vue'
   import LoadingVue from './components/loading.vue'
   import { useUserStore } from '@/store/user'
@@ -96,15 +96,15 @@
   .home-wrap {
     .page-header {
       // height: 60px;
-      box-shadow: 0px 2px 3px 1px var(--el-fill-color);
+      // box-shadow: 0px 2px 3px 1px var(--el-fill-color);
       background-color: var(--el-bg-color);
-      // border-bottom: 1px solid #d7d7d7;
+      border-bottom: 1px solid #fff0f4;
       z-index: calc(var(--el-index-normal) + 2);
     }
 
     .main-menu-content {
       width: max-content;
-      box-shadow: 0px 2px 1px 2px var(--el-fill-color);
+      // box-shadow: 0px 2px 1px 2px var(--el-fill-color);
       background-color: var(--el-bg-color);
       z-index: 1;
     }

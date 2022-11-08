@@ -1,16 +1,16 @@
 <template>
   <!-- 工作台首页 -->
   <div class="baseLayout">
-    <el-tabs
+    <!-- <el-tabs
       v-model="editableTabsValue"
       type="card"
       editable
       class="demo-tabs"
       @edit="handleTabsEdit"
     >
-      <el-tab-pane :closable="false" :label="'工作台'" :name="0">
+      <el-tab-pane :closable="false" :label="'工作台'" :name="0"> -->
         <TheHome />
-      </el-tab-pane>
+      <!-- </el-tab-pane>
       <el-tab-pane
         v-for="item in userOtherData.homeComplist"
         :key="item.name"
@@ -59,7 +59,7 @@
           </grid-layout>
         </div>
       </el-tab-pane>
-    </el-tabs>
+    </el-tabs> -->
   </div>
 </template>
 
