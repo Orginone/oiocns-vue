@@ -8,7 +8,7 @@
     </div>
     <div class="R_bottom">
       <div class="rb_col">
-          <div v-for="item in stage.data" :key='item.id' class='card' :class="{card1:stage.flag === item.id}" @mouseover='onHover(item.id)'>
+          <div v-for="item in state.data" :key='item.id' class='card' :class="{card1:state.flag === item.id}" @mouseover='onHover(item.id)' @mouseout="onOut">
             <span><oneBar v-if="item.id == 1 || item.id == 3" /><twoBar v-else-if="item.id == 2 || item.id == 4" /><threeBar v-else /></span>
             <span>{{item.title}}</span>
           </div>
@@ -27,7 +27,7 @@ import { onMounted, reactive } from 'vue'
 
 const store = useUserStore()
 const { queryInfo } = storeToRefs(store)
-const stage = reactive({
+const state = reactive({
   flag: '',
   data: [
     {id: 1, title: '资产监管平台'},
@@ -38,7 +38,11 @@ const stage = reactive({
   ]
 })
 const onHover = (id) => {
-  stage.flag = id
+  state.flag = id
+}
+
+const onOut = () => {
+  state.flag = ''
 }
 
 const editBtn = () => {

@@ -7,16 +7,16 @@
         <p class="rsolid"></p>
         <el-popover
           placement="right"
-          title="Title"
-          :width="200"
+          :width="150"
           trigger="click"
         >
-          <template #content>
-            <span>123</span>
-          </template>
           <template #reference>
             <el-icon class="eidtIcon"><Edit /></el-icon>
           </template>
+          <p v-for="item in state.btnData" :key='item.id' :style="{cursor: 'pointer', margin: '5px', color: state.flag === item.id ? 'red' : ''}" @mouseover='onHover(item.id)' @mouseout="onOut">
+            <el-icon><CirclePlus v-if="item.id === 1"/><Star v-else-if="item.id===2" /><Coffee v-else /></el-icon>&nbsp;
+            {{item.title}}
+          </p>
         </el-popover>
       </div>
       <div class="L_bottom">
@@ -91,14 +91,25 @@
 <script lang="ts" setup>
 import { useUserStore } from '@/store/user'
 import { storeToRefs } from 'pinia'
-import { computed,onMounted,ref } from 'vue'
+import { computed,onMounted,ref,reactive } from 'vue'
 
 const store = useUserStore()
 const { queryInfo } = storeToRefs(store)
-
-onMounted(() => {
-
+const state = reactive({
+  btnData: [
+    {id: 1, title: '添加入口'},
+    {id: 2, title: '新标签页打开'},
+    {id: 3, title: '删除入口'},
+  ],
+  flag: ''
 })
+
+const onHover = (id) => {
+  state.flag = id
+}
+const onOut = () => {
+  state.flag = ''
+}
   
 </script>
 

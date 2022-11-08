@@ -2,8 +2,24 @@
   <div class="thing">
     <div class="thing-menu">
       <div class="menu-list">
-        <div class="title"><el-icon style="color:#154ad8"><Checked /></el-icon>&nbsp;&nbsp;办事</div>
-          <menuItem :default-active="activeIndex" @select="handleSelect" ref="elmenus" @close="handleClose" :default-openeds="['1','2']" :data="state.menuArr" @handleClose="test"/>
+          <menuItem
+            :title="'办事'"
+            :default-active="activeIndex"
+            @select="handleSelect"
+            ref="elmenus"
+            @close="handleClose"
+            :default-openeds="['1','2']"
+            @node-click="handleNodeClick"
+            :data="state.menuArr"
+            :query="true"
+          >
+            <template #service>
+              asdasd
+            </template>
+            <template #more>
+              987987
+            </template>
+          </menuItem>
       </div>
     </div>
     <div class="content">
@@ -191,10 +207,6 @@
     total: 0
   })
 
-  const test = (event) => {
-    console.log(event)
-  }
-
   const showDetail = async (row: any,type:number) => {
     if(type == 4){
       $services.wflow.approvalTask({data:{id: row.id,status: 100,}}).then(async (res: ResultType) => {
@@ -254,13 +266,7 @@
               type:4,
               uid:'1-1',
               // components:'Videoitem',
-              children: [{
-              name: "单位审核",
-              type:4,
-              uid:'1-1-1',
-              // components:'Videoitem',
               children: [],
-            },],
             },
             {
               name: "单位审核",
@@ -286,28 +292,40 @@
           ],
         },
         {
-          name: "应用待办",
+          label: "应用待办",
           structure: true,
           children: [
             {
-              name: "公益仓",
-              type:4,
-              uid:'2-1',
-              components:'Material',
+              label: "公益仓",
+              children: [{
+              label: "公益仓2",
+              children: [],
+            },],
+            },
+            {
+              label: "办公OA",
               children: [],
             },
             {
-              name: "办公OA",
-              type:4,
-              uid:'2-2',
-              components:'Material',
+              label: "资产管理",
+              children: [],
+            },
+          ],
+        },
+        {
+          label: "应用待办111",
+          structure: true,
+          children: [
+            {
+              label: "公益仓",
               children: [],
             },
             {
-              name: "资产管理",
-              type:4,
-              uid:'2-3',
-              components:'Material',
+              label: "办公OA",
+              children: [],
+            },
+            {
+              label: "资产管理",
               children: [],
             },
           ],
@@ -399,6 +417,10 @@
       tableHead.value = ThingServices.flowHead;
       tableData.value = ThingServices.copyList
     }
+  }
+
+  const handleNodeClick = (data) => {
+    console.log(data)
   }
   
   //审核拒绝
@@ -586,14 +608,7 @@
       font-size: 14px;
       
       border-right: 1px solid #ddd;
-      .title{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 10px;
-        background: #f9fbfe;
-        font-size: 16px;
-      }
+      
       .thing-title{
         color: #8d8d8d;
         padding-left: 10px;

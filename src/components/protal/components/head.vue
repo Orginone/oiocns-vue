@@ -1,10 +1,11 @@
 <template>
   <div class="header">
-    <el-carousel indicator-position="none" height="330px">
+    <!-- <el-carousel indicator-position="none" height="330px">
       <el-carousel-item v-for="item in state.imgData" :key="item" >
         <img :src='item.img' alt="">
       </el-carousel-item>
-    </el-carousel>
+    </el-carousel> -->
+      <img src="@/assets/img/banner1.png" alt="">
   </div>
 </template>
 
@@ -43,7 +44,7 @@ const jumpApproval = (type:string)=>{
 <style lang='scss' scoped>
 .header {
   width: 100%;
-  height: 100%;
+  height: 330px;
   img{
     width: 100%;
     height: 100%;
