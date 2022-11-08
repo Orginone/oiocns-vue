@@ -14,37 +14,17 @@
             <el-icon class="eidtIcon"><Edit /></el-icon>
           </template>
           <p v-for="item in state.btnData" :key='item.id' :style="{cursor: 'pointer', margin: '5px', color: state.flag === item.id ? 'red' : ''}" @mouseover='onHover(item.id)' @mouseout="onOut">
-            <el-icon><CirclePlus v-if="item.id === 1"/><Star v-else-if="item.id===2" /><Coffee v-else /></el-icon>&nbsp;
+            <component :is="item.icon" style="width: 16px;height: 16px;"></component>&nbsp;
             {{item.title}}
           </p>
         </el-popover>
       </div>
       <div class="L_bottom">
         <div class="lb_col">
-            <el-card class="card" shadow="hover"> 
-              <el-icon>
-                <User />
-              </el-icon><span>Always</span> </el-card>
-              <el-card class="card" shadow="hover"> 
-              <el-icon>
-                <User />
-              </el-icon><span>Always</span> </el-card>
-              <el-card class="card" shadow="hover"> 
-              <el-icon>
-                <User />
-              </el-icon><span>Always</span> </el-card>
-              <el-card class="card" shadow="hover"> 
-              <el-icon>
-                <User />
-              </el-icon><span>Always</span> </el-card>
-              <el-card class="card" shadow="hover"> 
-              <el-icon>
-                <User />
-              </el-icon><span>Always</span> </el-card>
-              <el-card class="card" shadow="hover"> 
-              <el-icon>
-                <User />
-              </el-icon><span>Always</span> </el-card>
+            <el-card :style="{cursor: 'pointer'}" v-for="item in state.quickData" :key="item.id" class="card" :class="state.cardFlag === item.id ? 'card1' : ''" @mouseover='cardOnHover(item.id)' @mouseout="onOut" > 
+              <component :is="item.icon" style="width: 16px;height: 16px;"></component>
+              <span>{{item.title}}</span> 
+            </el-card>
         </div>
       </div>
     </div>
@@ -57,30 +37,10 @@
       </div>
       <div class="R_bottom">
         <div class="rb_col">
-            <div class="card">
+            <div class="card" v-for="item in state.commonData" :key="item.id">
               <span><img src="@/assets/img/app2.png" alt=""></span>
-              <span>资产监管平台</span>
-              <span>简单、高效、开放的监管工具</span>
-            </div>
-            <div class="card">
-              <span><img src="@/assets/img/app2.png" alt=""></span>
-              <span>资产监管平台</span>
-              <span>简单、高效、开放的监管工具</span>
-            </div>
-            <div class="card">
-              <span><img src="@/assets/img/app2.png" alt=""></span>
-              <span>资产监管平台</span>
-              <span>简单、高效、开放的监管工具</span>
-            </div>
-            <div class="card">
-              <span><img src="@/assets/img/app2.png" alt=""></span>
-              <span>资产监管平台</span>
-              <span>简单、高效、开放的监管工具</span>
-            </div>
-            <div class="card">
-              <span><img src="@/assets/img/app2.png" alt=""></span>
-              <span>资产监管平台</span>
-              <span>简单、高效、开放的监管工具</span>
+              <span>{{item.name}}</span>
+              <span>{{item.title}}</span>
             </div>
         </div>
       </div>
@@ -97,11 +57,28 @@ const store = useUserStore()
 const { queryInfo } = storeToRefs(store)
 const state = reactive({
   btnData: [
-    {id: 1, title: '添加入口'},
-    {id: 2, title: '新标签页打开'},
-    {id: 3, title: '删除入口'},
+    {id: 1, title: '添加入口', icon: 'CirclePlus'},
+    {id: 2, title: '新标签页打开', icon: 'Star'},
+    {id: 3, title: '删除入口', icon: 'Coffee'},
   ],
-  flag: ''
+  quickData: [
+    {id: 0, title: '加好友', icon: 'User'},
+    {id: 1, title: '创单位', icon: 'Files'},
+    {id: 2, title: '邀成员', icon: 'Position'},
+    {id: 3, title: '建应用', icon: 'Sell'},
+    {id: 4, title: '逛商城', icon: 'ShoppingCart'},
+    {id: 5, title: '添数据', icon: 'Expand'},
+  ],
+  commonData: [
+    {id: 0, title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: 1, title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: 2, title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: 3, title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: 4, title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: 5, title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+  ],
+  flag: '',
+  cardFlag: '',
 })
 
 const onHover = (id) => {
@@ -109,6 +86,10 @@ const onHover = (id) => {
 }
 const onOut = () => {
   state.flag = ''
+  state.cardFlag = ''
+}
+const cardOnHover = (id) => {
+  state.cardFlag = id
 }
   
 </script>
@@ -156,10 +137,23 @@ const onOut = () => {
       justify-content: center;
       align-items: flex-start;
       flex-wrap: wrap;
+      .card1{
+        margin: 5px 10px;
+        width: 25%;
+        display: flex;
+        background: #2b6ed9;
+        color: white;
+        border-radius: 8px;
+        justify-content: center;
+        span{
+          margin-left: 10px;
+        }
+      }
       .card{
         margin: 5px 10px;
         width: 25%;
         display: flex;
+        border-radius: 8px;
         justify-content: center;
         span{
           margin-left: 10px;

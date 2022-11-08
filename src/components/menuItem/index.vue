@@ -8,6 +8,7 @@
         :index="String(index + 1)"
       >
         <template #title>
+          <component :is="item.icon" style="width: 16px;height: 16px;"></component>&nbsp;
           <span>{{ item.name }}</span>
         </template>
         <el-menu-item
@@ -15,6 +16,7 @@
           :key="val.uid"
           :index="String(val.uid)"
         >
+          <component :is="val.icon" style="width: 16px;height: 16px;"></component>&nbsp;
           {{ val.name }}
         </el-menu-item>
       </el-sub-menu>
