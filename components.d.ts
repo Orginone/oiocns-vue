@@ -28,6 +28,7 @@ declare module '@vue/runtime-core' {
     DiySearch: typeof import('./src/components/diySearch/index.vue')['default']
     DiyTable: typeof import('./src/components/diyTable/index.vue')['default']
     DTime: typeof import('./src/components/diyDiong/nf-el-form-item/d-time.vue')['default']
+    ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
