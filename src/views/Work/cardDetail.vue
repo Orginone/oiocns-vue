@@ -297,17 +297,21 @@
           children: [
             {
               label: "公益仓",
+              id: 0,
               children: [{
               label: "公益仓2",
+              id: 3,
               children: [],
             },],
             },
             {
               label: "办公OA",
+              id: 1,
               children: [],
             },
             {
               label: "资产管理",
+              id: 2,
               children: [],
             },
           ],

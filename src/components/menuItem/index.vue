@@ -22,9 +22,9 @@
     <el-input v-model="filterText" placeholder="搜索" v-if="query" class="w-50 m-2" :prefix-icon="Search" />
     <el-tree ref="treeRef" v-bind="$attrs" :data="state.treeData" node-key="id" :expand-on-click-node="false" :filter-node-method="filterNode" >
       <template #default="{ node, data }">
-        <span class="custom-tree-node">
+        <div class="custom-tree-node" @mouseover='onHover(node.id)' @mouseout="onOut">
           <span>{{ node.label }}</span>
-          <span  class="sp_10">
+          <span class="sp_10" v-show="node.id === state.flag">
             <el-popover
               placement="right"
               :width="150"
@@ -46,7 +46,7 @@
               <slot name="more"></slot>
             </el-popover>
           </span>
-        </span>
+        </div>
       </template>
     </el-tree>
   </div>
@@ -73,8 +73,16 @@ const filterText = ref('')
 const treeRef = ref()
 const state = reactive({
   menuData: [],
-  treeData: []
+  treeData: [],
+  flag: ''
 })
+const onHover = (id) => {
+  state.flag = id
+}
+
+const onOut = () => {
+  state.flag = ''
+}
 const init = () => {
   state.treeData = props.data.filter(item => {
     return item.structure === true
@@ -114,7 +122,7 @@ const filterNode = (value, data) => {
     font-size: 16px;
   }
   .custom-tree-node {
-    // width: 100%;
+    width: 180px;
     flex: 1;
     display: flex;
     align-items: center;
