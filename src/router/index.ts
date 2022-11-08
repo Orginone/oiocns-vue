@@ -492,6 +492,15 @@ const mainRouter: RouteRecordRaw[] = [
       keepAlive: false,
       title: '仓库'
     }
+  },
+  {
+    component: () => import('@/views/Test/index.vue'),
+    name: 'test',
+    path: '/test',
+    meta: {
+      keepAlive: false,
+      title: '仓库'
+    }
   }
 ]
 
