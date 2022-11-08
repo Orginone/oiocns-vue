@@ -1,58 +1,45 @@
 <template>
-  <div class="zhanwei">
-    <div class="zhanweicebian">
-      <ul>
-        <li>个人信息</li>
-        <li>通行设置</li>
-        <li>好友设置</li>
-        <li>群组设置</li>
-        <li>卡包设置</li>
-        <li>首页设置</li>
-        <li>帮助设置</li>
-      </ul>
-    </div>
-    <div class="mine">
-      {{ dataSource.data }}
-      <div class="zhanweibr">面包屑占位</div>
-      <userInfoBox></userInfoBox>
-      <div class="tabBox">
-        <div class="titleBox">
-          <p class="title">证书管理</p>
-          <div class="btns">
-            <span class="titlebtn">删除</span>
-            <span class="titlebtn">查看申请记录</span>
-            <span class="titlebtn">加入平台</span>
-            <span class="titlebtn">创建地址</span>
-          </div>
+  <div class="mine">
+    {{ dataSource.data }}
+    <div class="zhanweibr">面包屑占位</div>
+    <userInfoBox></userInfoBox>
+    <div class="tabBox">
+      <div class="titleBox">
+        <p class="title">证书管理</p>
+        <div class="btns">
+          <span class="titlebtn">删除</span>
+          <span class="titlebtn">查看申请记录</span>
+          <span class="titlebtn">加入平台</span>
+          <span class="titlebtn">创建地址</span>
         </div>
-        <diytab
-          :style="{ height: 300 + 'px', width: '100%' }"
-          ref="diyTable"
-          :hasTableHead="true"
-          :tableData="tableData"
-          :options="options"
-          :tableHead="tableHead"
-          @handleUpdate="handleUpdate"
-          @selectionChange="selectionChange"
-        >
-          <template #remark="scope">
-            <el-tooltip
-              :content="scope.row.remark"
-              placement="bottom"
-              effect="light"
-            >
-              <template #content>
-                <div class="tooltip-text" style="width: 300px">
-                  {{ scope.row.remark }}
-                </div>
-              </template>
-              <div class="remark-text">
+      </div>
+      <diytab
+        :style="{ height: 300 + 'px', width: '100%' }"
+        ref="diyTable"
+        :hasTableHead="true"
+        :tableData="tableData"
+        :options="options"
+        :tableHead="tableHead"
+        @handleUpdate="handleUpdate"
+        @selectionChange="selectionChange"
+      >
+        <template #remark="scope">
+          <el-tooltip
+            :content="scope.row.remark"
+            placement="bottom"
+            effect="light"
+          >
+            <template #content>
+              <div class="tooltip-text" style="width: 300px">
                 {{ scope.row.remark }}
               </div>
-            </el-tooltip>
-          </template>
-        </diytab>
-      </div>
+            </template>
+            <div class="remark-text">
+              {{ scope.row.remark }}
+            </div>
+          </el-tooltip>
+        </template>
+      </diytab>
     </div>
   </div>
 </template>
@@ -128,30 +115,48 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
+:deep(.titleBox) {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: #fff;
+  .title {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+    color: #303133;
+  }
+  .titlebtn {
+    font-size: 14px;
+    line-height: 18px;
+    color: #154ad8;
+    cursor: pointer;
+    user-select: none;
+    margin: 0 16px;
+  }
+}
 .zhanweibr {
   height: 63px;
   margin-bottom: 5px;
   background: #fff;
 }
 
-// 占位
-.zhanwei {
-  height: 100%;
-  // background-color: #fff;
+.mine {
+  padding: 5px 8px;
   display: flex;
-
-  .zhanweicebian {
-    width: 220px;
-    height: 100%;
+  flex-direction: column;
+  height: 100%;
+  .tabBox {
     background: #fff;
-    li {
-      line-height: 3;
-    }
-  }
-
-  .mine {
-    padding: 5px 8px;
+    border-radius: 5px;
+    margin-top: 5px;
+    padding-top: 20px;
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    :deep(.diy-table) {
+      flex: 1;
+    }
   }
 }
 </style>

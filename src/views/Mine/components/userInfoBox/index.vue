@@ -106,27 +106,7 @@ onMounted(() => {
 .userBox {
   background: #fff;
   border-radius: 5px;
-  padding: 20px;
-  .titleBox {
-    display: flex;
-    justify-content: space-between;
-    background: #fff;
-    .title {
-      font-weight: 600;
-      font-size: 16px;
-      line-height: 22px;
-      color: #303133;
-    }
-    .titlebtn {
-      font-size: 14px;
-      line-height: 18px;
-      color: #154ad8;
-      cursor: pointer;
-      user-select: none;
-      margin: 0 16px;
-    }
-  }
-
+  padding: 20px 0;
   .userInfoBox {
     padding: 0 37px;
     color: #606266;
@@ -156,6 +136,7 @@ onMounted(() => {
     font-size: 14px;
     color: #154ad8;
     text-align: right;
+    padding-right: 20px;
     span {
       cursor: pointer;
       user-select: none;
