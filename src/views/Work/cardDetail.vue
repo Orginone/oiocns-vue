@@ -1,26 +1,26 @@
+
 <template>
   <div class="thing">
     <div class="thing-menu">
       <div class="menu-list">
-        <el-menu :default-active="activeIndex" @select="handleSelect" ref="elmenus" @close="handleClose" :default-openeds="['1','2']" class="el-menu-vertical-demo" >
-          <el-sub-menu index="1">
-            <template #title>
-                <span>平台待办</span>
+          <menuItem
+            :title="'办事'"
+            :default-active="activeIndex"
+            @select="handleSelect"
+            ref="elmenus"
+            @close="handleClose"
+            :default-openeds="['1','2']"
+            @node-click="handleNodeClick"
+            :data="state.menuArr"
+            :query="true"
+          >
+            <template #service>
+              asdasd
             </template>
-            <el-menu-item index="1-1">好友申请</el-menu-item>
-            <el-menu-item index="1-2">单位审核</el-menu-item>
-            <el-menu-item index="1-3">商店审核</el-menu-item>
-            <!-- <el-menu-item index="1-4">订单审核</el-menu-item> -->
-            <!-- <el-menu-item index="1-5">加群审核</el-menu-item>
-            <el-menu-item index="1-6">团队审核</el-menu-item> -->
-          </el-sub-menu>
-          <el-sub-menu index="2">
-              <template #title>
-                  <span>应用待办</span>
-              </template>
-              <el-menu-item index="2-1">待办列表</el-menu-item>
-          </el-sub-menu>
-        </el-menu>
+            <template #more>
+              987987
+            </template>
+          </menuItem>
       </div>
     </div>
     <div class="content">
@@ -179,6 +179,7 @@
   import DiyTable from '@/components/diyTable/index.vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { TabsPaneContext } from 'element-plus'
+  import menuItem from '@/components/menuItem/index.vue'
   import { chat } from '@/module/chat/orgchat'
   
   import thingServices from '@/module/flow/thing'
@@ -255,7 +256,86 @@
 
   const state = reactive({
     approvalList: [],
-    tableHead: []
+    tableHead: [],
+    menuArr: [
+        {
+          name: "平台待办",
+          structure: false,
+          children: [
+            {
+              name: "好友申请",
+              type:4,
+              uid:'1-1',
+              // components:'Videoitem',
+              children: [],
+            },
+            {
+              name: "单位审核",
+              type:4,
+              uid:'1-2',
+              // components:'Videoitem',
+              children: [],
+            },
+            {
+              name: "商店审核",
+              type:4,
+              uid:'1-3',
+              // components:'Videoitem',
+              children: [],
+            },
+            {
+              name: "订单审核",
+              type:4,
+              uid:'1-4',
+              // components:'Videoitem',
+              children: [],
+            },
+          ],
+        },
+        {
+          label: "应用待办",
+          structure: true,
+          children: [
+            {
+              label: "公益仓",
+              id: 0,
+              children: [{
+              label: "公益仓2",
+              id: 3,
+              children: [],
+            },],
+            },
+            {
+              label: "办公OA",
+              id: 1,
+              children: [],
+            },
+            {
+              label: "资产管理",
+              id: 2,
+              children: [],
+            },
+          ],
+        },
+        {
+          label: "应用待办111",
+          structure: true,
+          children: [
+            {
+              label: "公益仓",
+              children: [],
+            },
+            {
+              label: "办公OA",
+              children: [],
+            },
+            {
+              label: "资产管理",
+              children: [],
+            },
+          ],
+        },
+      ],
   })
   const handleClose = (index:any) => {
     elmenus.value.open(index)
@@ -342,6 +422,10 @@
       tableHead.value = ThingServices.flowHead;
       tableData.value = ThingServices.copyList
     }
+  }
+
+  const handleNodeClick = (data) => {
+    console.log(data)
   }
   
   //审核拒绝
@@ -491,25 +575,8 @@
     handleSelect(selectType, [])
   });
 </script>
-<style lang="scss">
-.thing{
-  .el-menu{
-    border-right: 0;
-    border-bottom: 0;
-  }
-  .el-sub-menu__icon-arrow{
-    display: none;
-  }
-  .el-dropdown-link{
-    padding: 2px 10px;
-    border-radius: 10px;
-  }
-  .el-dropdown-link:hover{
-    background: var(--el-bg-color-overlay);
-  }
-}
 
-</style>
+
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
   .thing {
@@ -522,7 +589,7 @@
     top: 0;
     display: flex;
     .thing-menu{
-      width: 140px;
+      width: 200px;
       background: var(--el-bg-color-overlay);
       height: calc(100vh - 50px);
       overflow-y: auto;
@@ -530,6 +597,7 @@
       font-size: 14px;
       
       border-right: 1px solid #ddd;
+      
       .thing-title{
         color: #8d8d8d;
         padding-left: 10px;
