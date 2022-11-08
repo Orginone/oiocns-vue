@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="title"><el-icon style="color:#154ad8"><Checked /></el-icon>&nbsp;&nbsp;{{title}}</div>
-    <el-menu v-bind="$attrs" @select="select">
+    <el-menu v-bind="$attrs">
       <el-sub-menu
         v-for="(item, index) in state.menuData"
         :key="item.uid"
@@ -78,7 +78,7 @@ const state = reactive({
   treeData: [],
   flag: ''
 })
-const onHover = (id) => {
+const onHover = (id: string) => {
   state.flag = id
 }
 
@@ -86,10 +86,10 @@ const onOut = () => {
   state.flag = ''
 }
 const init = () => {
-  state.treeData = props.data.filter(item => {
+  state.treeData = props.data.filter((item: any) => {
     return item.structure === true
   })
-  state.menuData = props.data.filter(item => {
+  state.menuData = props.data.filter((item: any) => {
     return item.structure === false
   })
 }
@@ -100,7 +100,7 @@ watch(filterText, (val) => {
   treeRef.value!.filter(val)
 })
 
-const filterNode = (value, data) => {
+const filterNode = (value: string, data: any) => {
   if (!value) return true
   return data.label.includes(value)
 }

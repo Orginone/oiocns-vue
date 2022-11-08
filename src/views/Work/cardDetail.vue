@@ -298,21 +298,21 @@
           children: [
             {
               label: "公益仓",
-              id: 0,
+              id: '0',
               children: [{
               label: "公益仓2",
-              id: 3,
+              id: '3',
               children: [],
             },],
             },
             {
               label: "办公OA",
-              id: 1,
+              id: '1',
               children: [],
             },
             {
               label: "资产管理",
-              id: 2,
+              id: '2',
               children: [],
             },
           ],
@@ -424,7 +424,7 @@
     }
   }
 
-  const handleNodeClick = (data) => {
+  const handleNodeClick = (data: Array<any>) => {
     console.log(data)
   }
   
