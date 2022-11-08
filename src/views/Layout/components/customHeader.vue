@@ -49,39 +49,17 @@
         </div>
       </div>
     </el-col>
-    <!-- 中间搜索 -->
-    <!-- <el-col :span="6" class="col-center" v-if="false">
-      <el-popover trigger="click" :visible="visible" placement="bottom" :width="100">
-        <template #reference>
-          <el-input
-            ref="searchRef"
-            class="right-con"
-            v-model="SearchInfo"
-            :style="{ width: '100%', height: '40px' }"
-            placeholder="请输⼊想搜索的功能"
-          >
-            <template #prepend>
-              <el-button :icon="Search" @click="showSearchInfo" />
-            </template>
-          </el-input>
-        </template>
-        <SearchDialog></SearchDialog>
-      </el-popover>
-    </el-col> -->
     <!-- 右侧 -->
     <el-col :span="20" class="flex col-right">
       <el-space class="right-navbar">
-        <li
-          v-for="(item, index) in state.mainMenus.filter((a) => !a?.bottom)"
-          @click="handleRouterChage(item)"
-          :key="index"
-          :title="item.name"
-        >
-          <el-icon class="aside-li-icon" :size="20">
-            <component :is="item.icon" />
-          </el-icon>
-        </li>
         <el-link
+          title="首页"
+          :underline="false"
+          @click="() => router.push('/home')"
+        >
+           <img class="logo" src="./../../../assets/img/logo.png" alt="">
+        </el-link>
+        <!-- <el-link
           title="消息"
           :underline="false"
           class="header-message-icon"
@@ -98,25 +76,23 @@
           <el-icon class="header-message-icon" :size="20" v-else>
             <ChatDotSquare />
           </el-icon>
-        </el-link>
-        <el-switch
-          title="模式"
-          v-model="isDark"
-          active-icon="Moon"
-          inactive-icon="Sunny"
-          inline-prompt
-        ></el-switch>
+        </el-link> -->
+        <li
+          v-for="(item, index) in state.mainMenus"
+          @click="handleRouterChage(item)"
+          :key="index"
+          :title="item.name"
+        >
+            <i class="icon-list iconfont" :class="item.icon" ></i>
+        </li>
         <el-dropdown trigger="hover" size="large" class="dropdown-menu">
           <span class="el-dropdown-link">
             <headImg :name="queryInfo.name" :limit="1" :imgWidth="24" :isSquare="false"></headImg>
-            <!-- <span>{{  queryInfo.name  }}</span> -->
-            <!-- <el-icon style="margin-left: 15px">
-              <CaretBottom />
-            </el-icon> -->
           </span>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="toWork" icon="Setting">首页配置</el-dropdown-item>
+              <el-dropdown-item @click="toSetting" icon="Setting">设置中心</el-dropdown-item>
               <el-dropdown-item @click="toUserSetting" icon="Postcard">个人中心</el-dropdown-item>
               <el-dropdown-item v-if="isUnitWork" @click="toCompanySetting" icon="Postcard"
                 >单位中心</el-dropdown-item
@@ -157,8 +133,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, watch, onMounted, reactive, computed } from 'vue'
-  import { Search } from '@element-plus/icons-vue'
+  import { ref,reactive, computed } from 'vue'
   import { storeToRefs } from 'pinia'
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/store/user'
@@ -166,15 +141,12 @@
   import { ElMessage } from 'element-plus'
   import CreateUnitDialog from './createUnitDialog.vue'
   import searchCompany from '@/components/searchs/index.vue'
-  import JoinUnitDialog from './joinUnitDialog.vue'
   import SearchDialog from './searchDialog.vue'
   import headImg from '@/components/headImg.vue'
-  import { useDark, useToggle } from '@vueuse/core'
+  import { useDark } from '@vueuse/core'
   import { chat } from '@/module/chat/orgchat'
 
   const isDark = useDark()
-  // const toggleDark = useToggle(isDark)
-
   const store = useUserStore()
   const SearchInfo = ref('')
   const router = useRouter()
@@ -195,12 +167,10 @@
 
   const state = reactive({
     mainMenus: [
-      { name: '工作台', icon: 'DataAnalysis', path: '/workHome' },
-      { name: '关系', icon: 'SetUp', path: '/relation' },
-      { name: '仓库', icon: 'Box', path: '/market' },
-      { name: '网盘', icon: 'Files', path: '/cloud' },
-      { name: '待办', icon: 'Notebook', path: '/cardDetail' },
-      { name: '应用', icon: 'Menu', path: '#', bottom: true }
+      { name: '待办', icon: 'icon-message', path: '/chat' },
+      { name: '待办', icon: 'icon-todo', path: '/cardDetail' },
+      { name: '仓库', icon: 'icon-store', path: '/store' },
+      { name: '设置', icon: 'icon-setting', path: '/setCenter' },  
     ]
   })
 
@@ -363,6 +333,9 @@
   const toUserSetting = () => {
     router.push('/user')
   }
+  const toSetting = () => {
+    router.push('/setCenter')
+  }
   const toCompanySetting = () => {
     router.push('/company')
   }
@@ -375,6 +348,9 @@
 </script>
 
 <style lang="scss" scoped>
+  .logo{
+    width: 18px;
+  }
   .select-box {
     overflow: auto;
     padding-left: 8px;
@@ -445,14 +421,6 @@
   .col-box {
     cursor: pointer;
     display: flex;
-
-    .el-icon {
-      margin-left: 10px;
-    }
-  }
-
-  :deep(.el-popover.el-popper) {
-    width: 100%;
   }
 
   .joinBox {
@@ -492,17 +460,15 @@
   }
 
   .page-custom-header {
-    // height: 60px;
-    // line-height: 60px;
-
+    height: 45px;
+    line-height: 45px;
+    display: flex;
+    align-items: center;
     .el-col {
       display: flex;
       align-items: center;
     }
 
-    .logo {
-      margin-right: 10px;
-    }
 
     .col-right {
       justify-content: flex-end;
@@ -513,6 +479,8 @@
 
       .right-navbar {
         height: 100%;
+        display: flex;
+        align-items: center;
       }
 
       :deep(.right-navbar .el-space__item) {
@@ -520,6 +488,15 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-right: 0;
+        li{
+          display: flex;
+         
+          .icon-list{
+            font-size: 22px;
+            color: #A6AEC7; 
+          }
+        }
       }
 
       :deep(.right-navbar .el-space__item .el-switch) {

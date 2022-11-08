@@ -19,15 +19,6 @@ const constantRoutes: RouteRecordRaw[] = [
     name: '404',
     path: '/404'
   },
-  {
-    component: () => import('@/views/Test2/index.vue'),
-    name: 'test',
-    path: '/test',
-    meta: {
-      keepAlive: false,
-      title: '首页'
-    }
-  }
   // {
   //   component: () => import('@/views/Test/index.vue'),
   //   name: 'test',
@@ -165,6 +156,53 @@ const mainRouter: RouteRecordRaw[] = [
       keepAlive: false,
       title: '待办详情'
     }
+  },
+  {
+    path: '/setCenter',
+    component: () => import('@/views/SetCenter/index.vue'),
+    meta: {
+      keepAlive: false,
+      title: '设置'
+    },
+    redirect: '/setCenter/unit',
+    children: [
+      {
+        path: '/setCenter/unit',
+        name: 'unit',
+        component: () => import('@/views/SetCenter/unit/index.vue'),
+        meta: {
+          title: '单位设置',
+          icon: 'OfficeBuilding'
+        }
+      },
+      {
+        path: '/setCenter/department',
+        name: 'department',
+        component: () => import('@/views/SetCenter/department/index.vue'),
+        meta: {
+          title: '部门设置',
+          icon: 'Postcard'
+        }
+      },
+      {
+        path: '/setCenter/group',
+        name: 'group',
+        component: () => import('@/views/SetCenter/group/index.vue'),
+        meta: {
+          title: '集团设置',
+          icon: 'Postcard'
+        }
+      },
+      {
+        path: '/setCenter/post',
+        name: 'post',
+        component: () => import('@/views/SetCenter/post/index.vue'),
+        meta: {
+          title: '岗位设置',
+          icon: 'Postcard'
+        }
+      },
+    ]
   },
   {
     component: () => import('@/views/Work/process.vue'),
@@ -446,6 +484,24 @@ const mainRouter: RouteRecordRaw[] = [
       title: '云盘'
     }
   },
+  {
+    component: () => import('@/views/Store/index.vue'),
+    name: 'store',
+    path: '/store',
+    meta: {
+      keepAlive: false,
+      title: '仓库'
+    }
+  },
+  {
+    component: () => import('@/views/Test/index.vue'),
+    name: 'test',
+    path: '/test',
+    meta: {
+      keepAlive: false,
+      title: '仓库'
+    }
+  }
 ]
 
 // 整合路由
