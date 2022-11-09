@@ -98,7 +98,8 @@ const cardOnHover = (id: string) => {
 
 .center {
   width: 100%;
-  height: 100%;
+  height: 230px;
+  padding: 10px 0px;
   display: flex;
   .left{
     width: 30%;
@@ -140,11 +141,13 @@ const cardOnHover = (id: string) => {
       .card1{
         margin: 5px 10px;
         width: 25%;
+        height: 57px;
         display: flex;
         background: #2b6ed9;
         color: white;
         border-radius: 8px;
         justify-content: center;
+        align-items: center;
         span{
           margin-left: 10px;
         }
@@ -152,9 +155,11 @@ const cardOnHover = (id: string) => {
       .card{
         margin: 5px 10px;
         width: 25%;
+        height: 57px;
         display: flex;
         border-radius: 8px;
         justify-content: center;
+        align-items: center;
         span{
           margin-left: 10px;
         }

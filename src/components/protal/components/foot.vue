@@ -59,11 +59,12 @@ onMounted(() => {
 
 .footer{
     width: 100%;
-    height: 100%;
+    height: auto;
     background: white;
     border-radius: 5px;
-    padding-top: 20px;
+    padding: 18px 0px 10px 0px;
     box-sizing: border-box;
+    margin-top: -10px;
     .eidtIcon{
       margin-left: 20px;
     }
@@ -99,7 +100,7 @@ onMounted(() => {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 30px 60px;
+        padding: 30px 60px 20px 50px;
         box-sizing: border-box;
         border-radius: 30px;
         box-shadow: 0 0 5px 0 rgba($color: #ccc, $alpha: 1.0);
@@ -118,7 +119,7 @@ onMounted(() => {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 30px 60px;
+        padding: 30px 60px 20px 50px;
         position: relative;
         box-sizing: border-box;
         span:nth-child(1) {

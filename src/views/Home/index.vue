@@ -79,15 +79,12 @@ const joinFriend = () => {
 
 .headers {
   width: 100%;
-  height: 39%;
 }
 .centers{
   width: 100%;
-  height: 25%;
 }
 .footers{
   width: 100%;
-  height: 34%;
   margin-top: 10px;
 }
 
