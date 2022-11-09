@@ -5,7 +5,7 @@
     </div>
     <div class="resize" title="收缩侧边栏"> ⋮ </div>
     <div class="content mid box">
-      <BreadcrumbVue />
+      <!-- <BreadcrumbVue /> -->
       <div class="info" ref="infoWrap">
         <Info ref="info" />
       </div>
@@ -21,7 +21,7 @@
   import Info from './components/info.vue'
   import Body from './components/body.vue'
   import { ref, onMounted } from 'vue'
-  import BreadcrumbVue from '@/components/divBreadcrumb/index.vue';
+  // import BreadcrumbVue from '@/components/divBreadcrumb/index.vue';
 
   const info = ref(null)
   const body = ref(null)
