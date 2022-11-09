@@ -1,20 +1,7 @@
 <template>
   <div class="mine">
-    <div class="zhanweibr">面包屑占位</div>
     <userInfoBox></userInfoBox>
     <div class="tabBox">
-      <div class="titleBox">
-        <p class="title">证书管理</p>
-        <div class="btns">
-          <span class="titlebtn">删除</span>
-          <div class="btnline"></div>
-          <span class="titlebtn">查看申请记录</span>
-          <div class="btnline"></div>
-          <span class="titlebtn">加入平台</span>
-          <div class="btnline"></div>
-          <span class="titlebtn">创建地址</span>
-        </div>
-      </div>
       <diytab
         :style="{ height: 300 + 'px', width: '100%' }"
         ref="diyTable"
@@ -23,8 +10,11 @@
         :tableData="dataSource.data"
         :options="options"
         :tableHead="tableHead"
+        :tabOption="tabOption"
+        :activeName="activeName"
         @handleUpdate="handleUpdate"
         @selectionChange="selectionChange"
+        @changeTab="changeTab"
       >
         <template #slot-card="scope">
           <div class="cardData">
@@ -45,12 +35,21 @@ import $services from "@/services";
 import diytab from "@components/diyTable/index.vue";
 import userInfoBox from "../components/userInfoBox/index.vue";
 import useSearch from "@/hooks/useSearch";
+import { TabPaneName } from "element-plus";
+import { TabType } from "@/components/titleBox/index.vue";
 
 const { dataSource, refresh, changeOffset, changeFilter } = useSearch(
   $services.market.searchAll
 );
 
 // #region 表格部分
+const tabOption = reactive<TabType[]>([
+  { label: "部门", name: 0 },
+  { label: "岗位", name: 1 },
+  { label: "应用", name: 2 },
+]);
+const activeName = ref(2);
+
 const diyTable = ref(null);
 const pageStore = reactive({
   currentPage: 1,
@@ -98,9 +97,16 @@ const handleUpdate = (page: any) => {
 
 const remoteMethod = () => {};
 
+const changeTab = (name: TabPaneName) => {
+  refresh({ name }).then((res) => {
+    console.log(res);
+  });
+};
+
 const selectionChange = (val: any) => {
   checkList.value = val;
 };
+
 // #endregion
 
 onMounted(() => {
@@ -109,41 +115,6 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
-:deep(.titleBox) {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 20px;
-  background: #fff;
-  .title {
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 22px;
-    color: #303133;
-  }
-  .btns {
-    display: flex;
-    align-items: center;
-    .titlebtn {
-      font-size: 14px;
-      line-height: 18px;
-      color: #154ad8;
-      cursor: pointer;
-      user-select: none;
-      margin: 0 16px;
-    }
-    .btnline {
-      height: 15px;
-      width: 1px;
-      background: #c0c4cc;
-    }
-  }
-}
-.zhanweibr {
-  height: 63px;
-  margin-bottom: 5px;
-  background: #fff;
-}
-
 .mine {
   padding: 5px 8px;
   display: flex;
@@ -153,7 +124,6 @@ onMounted(() => {
     background: #fff;
     border-radius: 5px;
     margin-top: 5px;
-    padding-top: 20px;
     flex: 1;
     display: flex;
     flex-direction: column;

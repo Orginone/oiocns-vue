@@ -1,24 +1,13 @@
 <template>
-  <div class="mine">
-    <div class="zhanweibr">面包屑占位</div>
+  <div class="certificate">
     <userInfoBox></userInfoBox>
     <div class="tabBox">
-      <div class="titleBox">
-        <p class="title">证书管理</p>
-        <div class="btns">
-          <span class="titlebtn">删除</span>
-          <div class="btnline"></div>
-          <span class="titlebtn">查看申请记录</span>
-          <div class="btnline"></div>
-          <span class="titlebtn">加入平台</span>
-          <div class="btnline"></div>
-          <span class="titlebtn">创建地址</span>
-        </div>
-      </div>
       <diytab
         :style="{ height: 300 + 'px', width: '100%' }"
         ref="diyTable"
         order
+        tableName="证书管理"
+        :titleBtns="titleBtns"
         :hasTableHead="true"
         :tableData="dataSource.data"
         :options="options"
@@ -26,8 +15,14 @@
         @handleUpdate="handleUpdate"
         @selectionChange="selectionChange"
       >
+        <!-- <template #titleSuffix>112332</template> -->
         <template #slot-card="scope">
-          <div class="cardData"></div>
+          <div class="cardData">
+            <div class="cardItem" v-for="item in dataSource.data">
+              <div class="colorBox"></div>
+              <p>证书名称证书</p>
+            </div>
+          </div>
         </template>
       </diytab>
     </div>
@@ -38,6 +33,7 @@
 import { ref, onMounted, watch, reactive } from "vue";
 import $services from "@/services";
 import diytab from "@components/diyTable/index.vue";
+import { BtnItem } from "@/components/titleBox/index.vue";
 import userInfoBox from "../components/userInfoBox/index.vue";
 import useSearch from "@/hooks/useSearch";
 
@@ -45,6 +41,12 @@ const { dataSource, refresh, changeOffset, changeFilter } = useSearch(
   $services.market.searchAll
 );
 
+const titleBtns = reactive<BtnItem[]>([
+  { name: "删除", event: () => {} },
+  { name: "查看申请记录", event: () => {} },
+  { name: "加入平台", event: () => {} },
+  { name: "创建地址", event: () => {} },
+]);
 // #region 表格部分
 const diyTable = ref(null);
 const pageStore = reactive({
@@ -65,7 +67,7 @@ const options = ref<any>({
 });
 const tableHead = ref([
   {
-    prop: "paymentType",
+    prop: "title",
     label: "卡包名称",
   },
   {
@@ -104,42 +106,7 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
-:deep(.titleBox) {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 20px;
-  background: #fff;
-  .title {
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 22px;
-    color: #303133;
-  }
-  .btns {
-    display: flex;
-    align-items: center;
-    .titlebtn {
-      font-size: 14px;
-      line-height: 18px;
-      color: #154ad8;
-      cursor: pointer;
-      user-select: none;
-      margin: 0 16px;
-    }
-    .btnline {
-      height: 15px;
-      width: 1px;
-      background: #c0c4cc;
-    }
-  }
-}
-.zhanweibr {
-  height: 63px;
-  margin-bottom: 5px;
-  background: #fff;
-}
-
-.mine {
+.certificate {
   padding: 5px 8px;
   display: flex;
   flex-direction: column;
@@ -148,12 +115,43 @@ onMounted(() => {
     background: #fff;
     border-radius: 5px;
     margin-top: 5px;
-    padding-top: 20px;
     flex: 1;
     display: flex;
     flex-direction: column;
     :deep(.diy-table) {
       flex: 1;
+    }
+  }
+  .cardData {
+    display: flex;
+    flex-wrap: wrap;
+    .cardItem {
+      width: 104px;
+      height: 106px;
+      text-align: center;
+      border-radius: 3px;
+      transition: background 0.3s;
+      padding: 12px;
+      &:hover {
+        background: #f5f6fc;
+      }
+      .colorBox {
+        width: 50px;
+        height: 50px;
+        background: #2f96f9;
+        border-radius: 3px;
+        margin: auto;
+        margin-bottom: 8px;
+      }
+      p {
+        font-size: 12px;
+        line-height: 16px;
+        width: 100%;
+        color: #303133;
+        white-space: pre;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
   }
 }
