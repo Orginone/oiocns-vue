@@ -2,14 +2,14 @@
   <!-- 主体 -->
   <div class="organization-layout-wrap" style="display: flex; height: 100%;">
     <!-- 侧边栏-->
-      <div class="menu-tab" v-if="currentRouter === '/setCenter/unit'">
+      <!-- <div class="menu-tab" v-if="currentRouter === '/setCenter/unit'">
         <el-menu router :default-active="currentRouter" class="orgnization-navbar" mode="vertical">
           <el-menu-item index="/setCenter/unit">单位设置</el-menu-item>
           <el-menu-item index="/setCenter/department">部门设置</el-menu-item>
           <el-menu-item index="/setCenter/group">集团设置</el-menu-item>
           <el-menu-item index="/setCenter/post">岗位设置</el-menu-item>
         </el-menu>
-      </div>
+      </div> -->
       <!-- 内容区域home -->
       <router-view />
   </div>
