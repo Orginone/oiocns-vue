@@ -7,7 +7,7 @@
     <el-container>
       <!-- 主导航 -->
       <div class="menu-list" v-if="router.currentRoute.value.path !='/workHome'">
-        <MenuNav  :data="menuArr"></MenuNav>
+        <MenuNav :data="menuArr" ></MenuNav>
       </div>
       <div class="layout-main">
           <!-- 面包屑 -->
@@ -60,28 +60,28 @@ console.log('router',);
           children: [
             {
               name: "好友申请",
-              type:4,
+              type:'1',
               uid:'1-1',
               // components:'Videoitem',
               children: [],
             },
             {
               name: "单位审核",
-              type:4,
+              type:'2',
               uid:'1-2',
               // components:'Videoitem',
               children: [],
             },
             {
               name: "商店审核",
-              type:4,
+              type:'3',
               uid:'1-3',
               // components:'Videoitem',
               children: [],
             },
             {
               name: "订单审核",
-              type:4,
+              type:'4',
               uid:'1-4',
               // components:'Videoitem',
               children: [],
