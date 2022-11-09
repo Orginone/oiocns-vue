@@ -91,9 +91,11 @@ console.log('router',);
         {
           label: "应用待办",
           structure: true,
+          isPenultimate: true,
           children: [
             {
               label: "公益仓",
+              isPenultimate: true,
               id: '0',
               children: [{
               label: "公益仓2",
@@ -116,6 +118,7 @@ console.log('router',);
         {
           label: "应用待办111",
           structure: true,
+          isPenultimate: true,
           children: [
             {
               label: "公益仓",
