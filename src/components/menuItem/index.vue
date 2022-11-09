@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="title"><el-icon style="color:#154ad8"><Checked /></el-icon>&nbsp;&nbsp;{{title}}</div>
+    <div class="title"><el-icon style="color:#154ad8"><Checked /></el-icon>&nbsp;&nbsp;<span style="font-size: 14px;">{{title}}</span></div>
     <el-menu v-bind="$attrs">
       <el-sub-menu
         v-for="(item, index) in state.menuData"
@@ -9,20 +9,28 @@
       >
         <template #title>
           <component :is="item.icon" style="width: 16px;height: 16px;"></component>&nbsp;
-          <span>{{ item.name }}</span>
+          <span style="font-size: 12px;color: #909399;">{{ item.name }}</span>
         </template>
         <el-menu-item
           v-for="val in item.children"
           :key="val.uid"
           :index="String(val.uid)"
+          @mouseover='onOver(val.type)' @mouseout="onOut"
         >
           <component :is="val.icon" style="width: 16px;height: 16px;"></component>&nbsp;
-          {{ val.name }}
+          <b style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }">{{ val.name }}</b>
         </el-menu-item>
       </el-sub-menu>
     </el-menu>
     <el-input v-model="filterText" placeholder="搜索" v-if="query" class="w-50 m-2" :prefix-icon="Search" />
-    <el-tree ref="treeRef" v-bind="$attrs" :data="state.treeData" node-key="id" :expand-on-click-node="false" :filter-node-method="filterNode" >
+    <el-tree ref="treeRef" 
+      v-bind="$attrs" 
+      :data="state.treeData" 
+      node-key="id" 
+      :expand-on-click-node="false" 
+      :filter-node-method="filterNode"
+      :props="{ class: customNodeClass }"
+    >
       <template #default="{ node, data }">
         <div class="custom-tree-node" @mouseover='onHover(node.id)' @mouseout="onOut">
           <span>{{ node.label }}</span>
@@ -76,14 +84,28 @@ const treeRef = ref()
 const state = reactive({
   menuData: [],
   treeData: [],
-  flag: ''
+  flag: '',
+  flag1: ''
 })
 const onHover = (id: string) => {
   state.flag = id
 }
 
+const onOver = (id: string) => {
+  state.flag1 = id
+}
+
+const customNodeClass = (data: any, node: Node) => {
+  if (data.isPenultimate) {
+    return 'is-penultimate'
+  } else {
+    return 'no-penultimate'
+  }
+}
+
 const onOut = () => {
   state.flag = ''
+  state.flag1 = ''
 }
 const init = () => {
   state.treeData = props.data.filter((item: any) => {
@@ -115,6 +137,7 @@ const filterNode = (value: string, data: any) => {
 </script>
 
 <style lang="scss" scoped>
+  
   .title{
     display: flex;
     justify-content: center;
@@ -129,12 +152,26 @@ const filterNode = (value: string, data: any) => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 14px;
     // position: relative;
     .sp_10{
       position: absolute;
       right: 8px;
     }
+  }
+
+  ::v-deep .el-menu-item{
+    height: 35px;
+    width: 180px;
+  }
+
+  ::v-deep .no-penultimate > .el-tree-node__content{
+    font-weight: 800;
+  }
+
+  ::v-deep .is-penultimate > .el-tree-node__content {
+    font-size: 10px;
+    color: #909399;
+    font-weight: normal;
   }
   ::v-deep .el-tree-node__content{
     height: 40px;
