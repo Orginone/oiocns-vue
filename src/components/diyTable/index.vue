@@ -1,6 +1,13 @@
 <template>
   <div class="diy-table">
-    <div class="diy-table__header" v-if="hasTableHead">
+    <div class="diy-table__header">
+      <titleBox :title="tableName" :btns="titleBtns" line>
+        <template #titleSuffix>
+          <slot name="titleSuffix"></slot>
+        </template>
+      </titleBox>
+    </div>
+    <!-- <div class="diy-table__header" v-if="hasTableHead">
       <div class="diy-table__header--left" style="width: 100%">
         <div class="header-title" v-if="hasTitle">
           {{ tableName }}
@@ -14,7 +21,7 @@
           <slot name="buttons"></slot>
         </div>
       </div>
-    </div>
+    </div> -->
     <slot name="slot-title"></slot>
     <div class="diy-table__btn">
       <div>
@@ -113,6 +120,7 @@
 <script setup lang="ts">
   import { stubFalse } from 'lodash'
   import { ref, reactive, toRefs, computed, onMounted, watch,nextTick } from 'vue'
+  import titleBox, { BtnItem } from "@/components/titleBox/index.vue";
   import { useUserStore } from '@/store/user'
 
   const store = useUserStore()
@@ -128,9 +136,10 @@
   }
   type Props = {
     tableName?: string  //表格名称
-    hasTableHead?: boolean //是否显示表格头
-    hasTitle?: boolean //是否显示标题
-    hasTabs?: boolean //是否显示table切换
+    titleBtns?: BtnItem[],
+    // hasTableHead?: boolean //是否显示表格头
+    // hasTitle?: boolean //是否显示标题
+    // hasTabs?: boolean //是否显示table切换
     tableHead: any[] //表格头数据
     tableData?: any[] //表格数据
     checkList?: any[] //选中的项
@@ -150,9 +159,10 @@
   }
   const props = withDefaults(defineProps<Props>(), {
     tableName: '',
-    hasTableHead: false,
-    hasTitle: true,
-    hasTabs: false,
+    titleBtns: () => [],
+    // hasTableHead: false,
+    // hasTitle: true,
+    // hasTabs: false,
     total: 0,
     loading: false,
     pageSizes: () => [20, 30, 50],
@@ -174,9 +184,9 @@
 
   const {
     tableName,
-    hasTableHead,
-    hasTitle,
-    hasTabs,
+    // hasTableHead,
+    // hasTitle,
+    // hasTabs,
     tableHead,
     tableData,
     options,
@@ -422,10 +432,6 @@
 </script>
 
 <style lang="scss" scoped>
-
-  .diy-table__header {
-    padding-bottom: 10px;
-  }
   .diy-table {
     width: 100%;
     height: 100%;
@@ -433,35 +439,35 @@
     flex-direction: column;
     padding: 18px;
 
-    &__header {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: flex-end;
+    // &__header {
+    //   display: flex;
+    //   flex-direction: row;
+    //   justify-content: space-between;
+    //   align-items: flex-end;
 
-      .header-title {
-        font-size: 16px;
-        font-weight: bold;
-        color: rgba(48, 49, 51, 1);
-        padding: 0 0 8px;
-        i {
-          font-size: 20px;
-          color: rgba(21, 74, 216, 1);
-        }
-      }
+    //   .header-title {
+    //     font-size: 16px;
+    //     font-weight: bold;
+    //     color: rgba(48, 49, 51, 1);
+    //     padding: 0 0 8px;
+    //     i {
+    //       font-size: 20px;
+    //       color: rgba(21, 74, 216, 1);
+    //     }
+    //   }
 
-      .header-tabs {
-        width: 100%;
-        display: flex;
-        height: 35px;
-        align-items: center;
-        justify-content: space-between;
-      }
+    //   .header-tabs {
+    //     width: 100%;
+    //     display: flex;
+    //     height: 35px;
+    //     align-items: center;
+    //     justify-content: space-between;
+    //   }
 
-      .header-buttons {
-        display: flex;
-      }
-    }
+    //   .header-buttons {
+    //     display: flex;
+    //   }
+    // }
 
     &__btn {
       display: flex;
@@ -530,13 +536,13 @@
     background-color: #edf2fc;
     cursor: no-drop;
   }
-  @media screen and (max-width: 1280px) {
-    .diy-table__header {
-      display: flex;
-      display: none;
-      flex-wrap: wrap;
-    }
-  }
+  // @media screen and (max-width: 1280px) {
+  //   .diy-table__header {
+  //     display: flex;
+  //     display: none;
+  //     flex-wrap: wrap;
+  //   }
+  // }
   :deep(.el-table__header-wrapper .el-checkbox) {
     display: none;
   }

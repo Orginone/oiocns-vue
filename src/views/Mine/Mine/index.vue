@@ -1,6 +1,5 @@
 <template>
   <div class="mine">
-    <div class="zhanweibr">面包屑占位</div>
     <userInfoBox></userInfoBox>
     <div class="tabBox">
       <div class="titleBox">
@@ -109,35 +108,6 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
-:deep(.titleBox) {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 20px;
-  background: #fff;
-  .title {
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 22px;
-    color: #303133;
-  }
-  .btns {
-    display: flex;
-    align-items: center;
-    .titlebtn {
-      font-size: 14px;
-      line-height: 18px;
-      color: #154ad8;
-      cursor: pointer;
-      user-select: none;
-      margin: 0 16px;
-    }
-    .btnline {
-      height: 15px;
-      width: 1px;
-      background: #c0c4cc;
-    }
-  }
-}
 .zhanweibr {
   height: 63px;
   margin-bottom: 5px;
