@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%; background: #fff">
     <div class="title"><component :is="propIcon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<span style="font-size: 14px;">{{title}}</span></div>
     <el-menu v-bind="$attrs">
       <el-sub-menu
