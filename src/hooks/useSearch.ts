@@ -32,6 +32,8 @@ const useSearch = (
     limit: 20,
   });
   let filter = ref<string>("");
+
+  // 获取列表
   const getList = () => {
     // 参数
     const data = {
@@ -42,7 +44,7 @@ const useSearch = (
     http({ data }).then((res: ResultType) => {
       console.log(res);
       if (res.success) {
-        dataSource.data = res.data.data;
+        dataSource.data = [{ title: "模拟请求到的数据" }];
       }
     });
   };
