@@ -1,28 +1,7 @@
 
 <template>
   <div class="thing">
-    <div class="thing-menu">
-      <div class="menu-list">
-          <menuItem
-            :title="'办事'"
-            :default-active="activeIndex"
-            @select="handleSelect"
-            ref="elmenus"
-            @close="handleClose"
-            :default-openeds="['1','2']"
-            @node-click="handleNodeClick"
-            :data="state.menuArr"
-            :query="true"
-          >
-            <template #service>
-              asdasd
-            </template>
-            <template #more>
-              987987
-            </template>
-          </menuItem>
-      </div>
-    </div>
+
     <div class="content">
       <el-menu
         v-if="!whiteList.includes(activeIndex)"
