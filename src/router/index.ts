@@ -1,6 +1,7 @@
 import { App } from 'vue'
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import Layout from '@/views/Layout/index.vue'
+import mine from './modules/mine'
 
 let resultRouter: RouteRecordRaw[] = []
 
@@ -55,15 +56,8 @@ const mainRouter: RouteRecordRaw[] = [
       title: '消息'
     }
   },
-  {
-    component: () => import('@/views/Mine/Mine/index.vue'),
-    name: 'mine',
-    path: '/mine',
-    meta: {
-      keepAlive: false,
-      title: '我的'
-    }
-  },
+  // 我的
+  ...mine,
   {
     path: '/relation',
     component: () => import('@/views/Relation/index.vue'),

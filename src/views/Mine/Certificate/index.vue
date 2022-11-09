@@ -27,12 +27,7 @@
         @selectionChange="selectionChange"
       >
         <template #slot-card="scope">
-          <div class="cardData">
-            <div class="cardItem" v-for="item in dataSource.data">
-              <div class="colorBox"></div>
-              <p>证书名称证书</p>
-            </div>
-          </div>
+          <div class="cardData"></div>
         </template>
       </diytab>
     </div>
@@ -70,7 +65,7 @@ const options = ref<any>({
 });
 const tableHead = ref([
   {
-    prop: "title",
+    prop: "paymentType",
     label: "卡包名称",
   },
   {
@@ -159,38 +154,6 @@ onMounted(() => {
     flex-direction: column;
     :deep(.diy-table) {
       flex: 1;
-    }
-  }
-  .cardData {
-    display: flex;
-    flex-wrap: wrap;
-    .cardItem {
-      width: 104px;
-      height: 106px;
-      text-align: center;
-      border-radius: 3px;
-      transition: background 0.3s;
-      padding: 12px;
-      &:hover {
-        background: #f5f6fc;
-      }
-      .colorBox {
-        width: 50px;
-        height: 50px;
-        background: #2f96f9;
-        border-radius: 3px;
-        margin: auto;
-        margin-bottom: 8px;
-      }
-      p {
-        font-size: 12px;
-        line-height: 16px;
-        width: 100%;
-        color: #303133;
-        white-space: pre;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
     }
   }
 }
