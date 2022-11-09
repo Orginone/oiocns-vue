@@ -14,7 +14,7 @@ export const  getDescendantProp = (obj: object | any[], desc: string): any => {
   let res = obj;
   for (let i = 0; i < arr.length; i ++) {
     if (!res) return
-    res = res[arr[i]];
+    res = (res as any)[arr[i]];
   }
   return res;
 }
