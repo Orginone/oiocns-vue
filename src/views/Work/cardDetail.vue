@@ -1,8 +1,8 @@
 
 <template>
   <div class="thing">
-    <div class="thing-menu">
-      <div class="menu-list">
+    <!-- <div class="thing-menu"> -->
+      <!-- <div class="menu-list">
           <menuItem
             :title="'办事'"
             :default-active="activeIndex"
@@ -21,8 +21,8 @@
               987987
             </template>
           </menuItem>
-      </div>
-    </div>
+      </div> -->
+    <!-- </div> -->
     <div class="content">
       <el-menu
         v-if="!whiteList.includes(activeIndex)"

@@ -147,6 +147,9 @@ console.log('router',);
 </script>
 
 <style lang="scss" scoped>
+  .menu-list{
+    width: 200px;
+  }
   .el-header {
     --el-header-padding: 0 0 0 16px;
   }
