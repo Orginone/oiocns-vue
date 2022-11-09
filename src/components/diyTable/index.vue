@@ -1,7 +1,14 @@
 <template>
   <div class="diy-table">
     <div class="diy-table__header">
-      <titleBox :title="tableName" :btns="titleBtns" line>
+      <titleBox
+       :title="tableName"
+       :btns="titleBtns"
+       :tabOption="tabOption"
+       :activeName="activeName"
+       @changeTab="changeTab"
+       line
+      >
         <template #titleSuffix>
           <slot name="titleSuffix"></slot>
         </template>
@@ -120,8 +127,9 @@
 <script setup lang="ts">
   import { stubFalse } from 'lodash'
   import { ref, reactive, toRefs, computed, onMounted, watch,nextTick } from 'vue'
-  import titleBox, { BtnItem } from "@/components/titleBox/index.vue";
+  import titleBox, { BtnItem, TabType } from "@/components/titleBox/index.vue";
   import { useUserStore } from '@/store/user'
+import { TabPaneName } from 'element-plus';
 
   const store = useUserStore()
   const bodyBox = ref(null);
@@ -136,7 +144,9 @@
   }
   type Props = {
     tableName?: string  //表格名称
-    titleBtns?: BtnItem[],
+    titleBtns?: BtnItem[], // 按钮列表
+    tabOption?: TabType[], // tab列表
+    activeName?: string | number, // tab列表
     // hasTableHead?: boolean //是否显示表格头
     // hasTitle?: boolean //是否显示标题
     // hasTabs?: boolean //是否显示table切换
@@ -160,6 +170,8 @@
   const props = withDefaults(defineProps<Props>(), {
     tableName: '',
     titleBtns: () => [],
+    tabOption: () => [],
+    activeName: '',
     // hasTableHead: false,
     // hasTitle: true,
     // hasTabs: false,
@@ -223,6 +235,7 @@
   const diyTable = ref(null)
 
   const emit = defineEmits([
+    'changeTab',
     'handleLazyTree',
     'handleCommand',
     'hideDrop',
@@ -267,6 +280,11 @@
       return { padding: '0px' }
     }
   }
+
+  const changeTab = (name: TabPaneName) => {
+    emit('changeTab', name)
+  }
+
   const loadNode = (row: User, treeNode: unknown, resolve: (date: User[]) => void) => {
     emit('handleLazyTree', row, (res: any) => {
       res.forEach((el: any) => {

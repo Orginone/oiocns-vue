@@ -106,12 +106,6 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
-.zhanweibr {
-  height: 63px;
-  margin-bottom: 5px;
-  background: #fff;
-}
-
 .certificate {
   padding: 5px 8px;
   display: flex;

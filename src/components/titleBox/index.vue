@@ -1,5 +1,15 @@
 <template>
   <div>
+    <!--  -->
+    <div v-show="tabOption.length">
+      <el-tabs v-model="activeName" @tab-change="changeTab">
+        <el-tab-pane
+          v-for="item in tabOption"
+          :label="item.label"
+          :name="item.name"
+        ></el-tab-pane>
+      </el-tabs>
+    </div>
     <div class="titleBox">
       <div class="title" v-show="title">
         <p>{{ title }}</p>
@@ -12,26 +22,42 @@
         </template>
       </div>
     </div>
-    <div></div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { TabPaneName } from "element-plus";
+
 export interface BtnItem {
   name: string; // 按钮名字
   event: Function; // 按钮事件
 }
+export interface TabType {
+  label: string; // 选项卡标题
+  name: string | number; // 对应标识
+}
 type Props = {
+  // 第一层tab切换
+  tabOption?: TabType[]; // tab数据
+  activeName?: string | number; // 选中值
+  // 第二层标题 + 右侧按钮
   title?: string; // 标题
   btns?: BtnItem[]; // 按钮
-  line?: boolean; // 是否中间有线
+  line?: boolean; // 按钮是否中间有线
 };
 const props = withDefaults(defineProps<Props>(), {
+  tabOption: () => [],
+  activeName: "",
   title: "",
   btns: () => [],
   line: false,
 });
-console.log(props);
+
+const changeTab = (name: TabPaneName) => {
+  emit("changeTab", name);
+};
+
+const emit = defineEmits(["changeTab"]);
 </script>
 
 <style lang="scss" scoped>
@@ -67,5 +93,12 @@ console.log(props);
       }
     }
   }
+}
+:deep(.el-tabs__item) {
+  padding: 0 10px;
+}
+:deep(.el-tabs__nav-wrap::after),
+:deep(.el-tabs__active-bar) {
+  height: 4px;
 }
 </style>
