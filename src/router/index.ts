@@ -485,13 +485,46 @@ const mainRouter: RouteRecordRaw[] = [
     }
   },
   {
-    component: () => import('@/views/Store/index.vue'),
     name: 'store',
     path: '/store',
     meta: {
       keepAlive: false,
       title: '仓库'
-    }
+    },
+    children: [
+      {
+        path: '/store',
+        name: 'store',
+        component: () => import('@/views/Store/index.vue'),
+        meta: {
+          title: '应用详情'
+        }
+      },
+      {
+        path: '/store/appDetails',
+        name: 'storeAppDetails',
+        component: () => import('@/views/Store/appDetails/index.vue'),
+        meta: {
+          title: '应用详情'
+        }
+      },
+      {
+        path: '/store/appManagement',
+        name: 'storeAppManagement',
+        component: () => import('@/views/Store/appManagement/index.vue'),
+        meta: {
+          title: '应用设置'
+        }
+      },
+      {
+        path: '/store/shop',
+        name: 'storeShop',
+        component: () => import('@/views/Store/shop/index.vue'),
+        meta: {
+          title: '应用设置'
+        }
+      }
+    ]
   },
   {
     component: () => import('@/views/Test/index.vue'),

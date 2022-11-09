@@ -1,6 +1,7 @@
 <template>
   <div class="main">
     <div class="content">
+      store
       <!-- <opened></opened> -->
       <detail></detail>
       <div class="table">
