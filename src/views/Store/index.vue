@@ -1,12 +1,8 @@
 <template>
   <div class="main">
-    <div class="nav-list">
-
-    </div>
     <div class="content">
-      <div class="menu"></div>
-      <opened></opened>
-      <!-- <detail></detail> -->
+      <!-- <opened></opened> -->
+      <detail></detail>
       <div class="table">
         <diytab
           :style="{width:'100%'}"
@@ -73,7 +69,7 @@
 <script setup lang="ts">
   import diytab from '@/components/diyTable/index.vue'
   import opened from './components/opened.vue'
-  import detail from './components/detail.vue'
+  import detail from './components/editDetail.vue'
   import card from './components/card.vue'
   import { ref, reactive, onMounted, nextTick } from 'vue'
   const dialogVisible = ref<boolean>(true)
