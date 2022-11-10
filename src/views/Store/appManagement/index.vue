@@ -1,10 +1,9 @@
 <template>
-    <div class="main">
-        <detail></detail>
-        <management></management>
-    </div>
-    
-  </template>
+  <div class="main">
+      <detail></detail>
+      <management></management>
+  </div>
+</template>
   
   <script setup lang="ts">
     import detail from './components/detail.vue'

@@ -497,7 +497,7 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'store',
         component: () => import('@/views/Store/index.vue'),
         meta: {
-          title: '应用详情'
+          title: '仓库'
         }
       },
       {
@@ -521,7 +521,55 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'storeShop',
         component: () => import('@/views/Store/shop/index.vue'),
         meta: {
-          title: '应用设置'
+          title: '应用商店'
+        }
+      },
+      {
+        path: '/store/appApply',
+        name: 'storeAppApply',
+        component: () => import('@/views/Store/appApply/index.vue'),
+        meta: {
+          title: '上架申请'
+        }
+      },
+      {
+        path: '/store/payOrder',
+        name: 'storePayOrder',
+        component: () => import('@/views/Store/payOrder/index.vue'),
+        meta: {
+          title: '采购订单'
+        }
+      },
+      {
+        path: '/store/sellOrder',
+        name: 'storeSellOrder',
+        component: () => import('@/views/Store/sellOrder/index.vue'),
+        meta: {
+          title: '售卖订单'
+        }
+      },
+      {
+        path: '/store/shoppingCar',
+        name: 'storeShoppingCar',
+        component: () => import('@/views/Store/shoppingCar/index.vue'),
+        meta: {
+          title: '购物车'
+        }
+      },
+      {
+        path: '/store/appList',
+        name: 'storeAppList',
+        component: () => import('@/views/Store/appList/index.vue'),
+        meta: {
+          title: '应用列表'
+        }
+      },
+      {
+        path: '/store/appApproval',
+        name: 'storeAppApproval',
+        component: () => import('@/views/Store/appApproval/index.vue'),
+        meta: {
+          title: '应用上架审批'
         }
       }
     ]

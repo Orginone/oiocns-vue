@@ -1,8 +1,8 @@
 <template>
   <div class="main">
     <div class="content">
-      store
-      <!-- <opened></opened> -->
+      <createShop></createShop>
+      <search></search>
       <detail></detail>
       <div class="table">
         <diytab
@@ -69,7 +69,7 @@
 
 <script setup lang="ts">
   import diytab from '@/components/diyTable/index.vue'
-  import opened from './components/opened.vue'
+  import search from './components/search.vue'
   import detail from './components/editDetail.vue'
   import card from './components/card.vue'
   import { ref, reactive, onMounted, nextTick } from 'vue'

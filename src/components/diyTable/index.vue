@@ -89,7 +89,7 @@
         </div>
       </div>
     </div>
-    <div class="diy-table-footer">
+    <div class="diy-table-footer" v-if="options.switch">
       <div class="footer-left">
           <i :class="showType ==1?'switch-active':''"  class="type-list iconfonts icons-table-icon2" @click="checkSwitchType(1)"></i>
           <i :class="showType ==2?'switch-active':''"  class="type-card iconfonts icons-suolvetuqiehuan"  @click="checkSwitchType(2)"></i>
@@ -139,6 +139,7 @@
     loading?: boolean //是否在加载状态
     options?: {
       expandAll?: boolean //是否全部展开
+      switch?:boolean //是否显示(表格/列表)切换按钮
       checkBox?: any //选中的
       order?: any //是否显示序号
       noPage?: boolean  //是否显示页码
@@ -162,6 +163,7 @@
       return {
         expandAll: false,
         checkBox: false,
+        switch:true,
         order: true,
         noPage: false,
         selectLimit: 0
@@ -453,7 +455,6 @@
       .header-tabs {
         width: 100%;
         display: flex;
-        height: 35px;
         align-items: center;
         justify-content: space-between;
       }
