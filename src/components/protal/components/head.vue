@@ -34,17 +34,17 @@ onMounted(() => {
 
 })
 
-const router = useRouter()
-const jumpApproval = (type:string)=>{
- router.push({ path: '/cardDetail' ,query: {type:type,id: "0"}})
-}
+// const router = useRouter()
+// const jumpApproval = (type:string)=>{
+//  router.push({ path: '/cardDetail' ,query: {type:type,id: "0"}})
+// }
   
 </script>
 
 <style lang='scss' scoped>
 .header {
   width: 100%;
-  height: 330px;
+  height: 360px;
   img{
     width: 100%;
     height: 100%;

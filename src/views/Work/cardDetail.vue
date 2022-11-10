@@ -1,8 +1,8 @@
 
 <template>
   <div class="thing">
-    <div class="thing-menu">
-      <div class="menu-list">
+    <!-- <div class="thing-menu"> -->
+      <!-- <div class="menu-list">
           <menuItem
             :title="'办事'"
             :default-active="activeIndex"
@@ -21,8 +21,8 @@
               987987
             </template>
           </menuItem>
-      </div>
-    </div>
+      </div> -->
+    <!-- </div> -->
     <div class="content">
       <el-menu
         v-if="!whiteList.includes(activeIndex)"
@@ -264,28 +264,28 @@
           children: [
             {
               name: "好友申请",
-              type:4,
+              type:'4',
               uid:'1-1',
               // components:'Videoitem',
               children: [],
             },
             {
               name: "单位审核",
-              type:4,
+              type:'3',
               uid:'1-2',
               // components:'Videoitem',
               children: [],
             },
             {
               name: "商店审核",
-              type:4,
+              type:'2',
               uid:'1-3',
               // components:'Videoitem',
               children: [],
             },
             {
               name: "订单审核",
-              type:4,
+              type:'1',
               uid:'1-4',
               // components:'Videoitem',
               children: [],
@@ -295,24 +295,25 @@
         {
           label: "应用待办",
           structure: true,
+          isPenultimate: true,
           children: [
             {
               label: "公益仓",
-              id: 0,
+              id: '0',
               children: [{
               label: "公益仓2",
-              id: 3,
+              id: '3',
               children: [],
             },],
             },
             {
               label: "办公OA",
-              id: 1,
+              id: '1',
               children: [],
             },
             {
               label: "资产管理",
-              id: 2,
+              id: '2',
               children: [],
             },
           ],
@@ -320,6 +321,7 @@
         {
           label: "应用待办111",
           structure: true,
+          isPenultimate: true,
           children: [
             {
               label: "公益仓",
@@ -424,7 +426,7 @@
     }
   }
 
-  const handleNodeClick = (data) => {
+  const handleNodeClick = (data: Array<any>) => {
     console.log(data)
   }
   
@@ -595,9 +597,7 @@
       overflow-y: auto;
       overflow-x: hidden;
       font-size: 14px;
-      
       border-right: 1px solid #ddd;
-      
       .thing-title{
         color: #8d8d8d;
         padding-left: 10px;
@@ -608,22 +608,22 @@
       }
     }
   }
-  .thing-head {
-    padding: 30px;
-    // background: #fff;
-    .thing-type {
-      font-size: 16px;
-      color: #8d8d8d;
-      margin-bottom: 15px;
-    }
-    .thing-mian {
-      font-size: 24px;
-      font-weight: bold;
-      color: #333;
-      display: flex;
-      justify-content: space-between;
-    }
-  }
+  // .thing-head {
+  //   // padding: 30px;
+  //   // background: #fff;
+  //   .thing-type {
+  //     font-size: 16px;
+  //     color: #8d8d8d;
+  //     margin-bottom: 15px;
+  //   }
+  //   .thing-mian {
+  //     font-size: 24px;
+  //     font-weight: bold;
+  //     color: #333;
+  //     display: flex;
+  //     justify-content: space-between;
+  //   }
+  // }
   .content {
     flex: 1;
     height: 100%;

@@ -23,7 +23,7 @@
         <div class="lb_col">
             <el-card :style="{cursor: 'pointer'}" v-for="item in state.quickData" :key="item.id" class="card" :class="state.cardFlag === item.id ? 'card1' : ''" @mouseover='cardOnHover(item.id)' @mouseout="onOut" > 
               <component :is="item.icon" style="width: 16px;height: 16px;"></component>
-              <span>{{item.title}}</span> 
+              <span>{{item.title}}</span>
             </el-card>
         </div>
       </div>
@@ -57,38 +57,38 @@ const store = useUserStore()
 const { queryInfo } = storeToRefs(store)
 const state = reactive({
   btnData: [
-    {id: 1, title: '添加入口', icon: 'CirclePlus'},
-    {id: 2, title: '新标签页打开', icon: 'Star'},
-    {id: 3, title: '删除入口', icon: 'Coffee'},
+    {id: '1', title: '添加入口', icon: 'CirclePlus'},
+    {id: '2', title: '新标签页打开', icon: 'Star'},
+    {id: '3', title: '删除入口', icon: 'Coffee'},
   ],
   quickData: [
-    {id: 0, title: '加好友', icon: 'User'},
-    {id: 1, title: '创单位', icon: 'Files'},
-    {id: 2, title: '邀成员', icon: 'Position'},
-    {id: 3, title: '建应用', icon: 'Sell'},
-    {id: 4, title: '逛商城', icon: 'ShoppingCart'},
-    {id: 5, title: '添数据', icon: 'Expand'},
+    {id: '0', title: '加好友', icon: 'User'},
+    {id: '1', title: '创单位', icon: 'Files'},
+    {id: '2', title: '邀成员', icon: 'Position'},
+    {id: '3', title: '建应用', icon: 'Sell'},
+    {id: '4', title: '逛商城', icon: 'ShoppingCart'},
+    {id: '5', title: '添数据', icon: 'Expand'},
   ],
   commonData: [
-    {id: 0, title: '简单、高效、开放的监管工具', name: '资产监管平台'},
-    {id: 1, title: '简单、高效、开放的监管工具', name: '资产监管平台'},
-    {id: 2, title: '简单、高效、开放的监管工具', name: '资产监管平台'},
-    {id: 3, title: '简单、高效、开放的监管工具', name: '资产监管平台'},
-    {id: 4, title: '简单、高效、开放的监管工具', name: '资产监管平台'},
-    {id: 5, title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: '0', title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: '1', title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: '2', title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: '3', title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: '4', title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: '5', title: '简单、高效、开放的监管工具', name: '资产监管平台'},
   ],
   flag: '',
   cardFlag: '',
 })
 
-const onHover = (id) => {
+const onHover = (id: string) => {
   state.flag = id
 }
 const onOut = () => {
   state.flag = ''
   state.cardFlag = ''
 }
-const cardOnHover = (id) => {
+const cardOnHover = (id: string) => {
   state.cardFlag = id
 }
   
@@ -98,7 +98,8 @@ const cardOnHover = (id) => {
 
 .center {
   width: 100%;
-  height: 100%;
+  height: 230px;
+  padding: 10px 0px;
   display: flex;
   .left{
     width: 30%;
@@ -140,11 +141,13 @@ const cardOnHover = (id) => {
       .card1{
         margin: 5px 10px;
         width: 25%;
+        height: 57px;
         display: flex;
         background: #2b6ed9;
         color: white;
         border-radius: 8px;
         justify-content: center;
+        align-items: center;
         span{
           margin-left: 10px;
         }
@@ -152,9 +155,11 @@ const cardOnHover = (id) => {
       .card{
         margin: 5px 10px;
         width: 25%;
+        height: 57px;
         display: flex;
         border-radius: 8px;
         justify-content: center;
+        align-items: center;
         span{
           margin-left: 10px;
         }
