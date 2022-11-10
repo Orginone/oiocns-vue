@@ -163,7 +163,7 @@ const toIdentity = () => {
 }
 
 .tab-list {
-  padding: 10px 20px;
+  padding: 30px 20px;
   padding-top: 2px;
   box-sizing: border-box;
 }

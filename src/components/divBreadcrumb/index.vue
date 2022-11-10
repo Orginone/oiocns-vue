@@ -275,7 +275,6 @@ watch(
 .example-container {
   height: 56px;
   background: #f0f2f5;
-  padding-bottom: 3px;
   box-sizing: border-box;
 
   .content {
