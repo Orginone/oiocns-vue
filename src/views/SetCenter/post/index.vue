@@ -2,22 +2,19 @@
   <div class="container mainBox" ref="container">
     <div class="content mid box">
       <div class="info" ref="infoWrap">
-        <Body ref="body" :tabHeight="tabHeight" />
+        <admin-table />
       </div>
       <div class="body" ref="bodyWrap">
-        <Body ref="body" :tabHeight="tabHeight" />
+        <post-table />
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
   // @ts-nocheck
-  import Body from './components/body.vue'
-  import { ref, onMounted } from 'vue'
-
-  const info = ref(null)
-  const body = ref(null)
-  const unitTree = ref(null)
+  import adminTable from './components/adminTable.vue'
+  import postTable from './components/postTable.vue'
+  import { ref } from 'vue'
 
   // 菜单数据
   const menuDataList = ref([
@@ -30,6 +27,15 @@
  
 </script>
 <style lang="scss" scoped>
+  .el-dropdown-link{
+    padding: 2px 10px;
+    cursor: pointer;
+    border-radius: 10px;
+  }
+  .el-dropdown-link:hover{
+    background:#1642cb;
+    color: #fff;
+  }
   .container {
     width: 100%;
     height: 100%;
