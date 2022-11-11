@@ -106,7 +106,7 @@
   }
   
   </script>
-  <style lang="scss">
+  <style lang="scss" scoped>
     .el-dropdown-link{
       padding: 2px 10px;
       cursor: pointer;
@@ -116,9 +116,7 @@
       background:#1642cb;
       color: #fff;
     }
-  </style>
-  <style lang="scss" scoped>
-    .content {
+  .content {
       width: 100%;
       height: 100%;
       display: flex;

@@ -27,15 +27,6 @@
  
 </script>
 <style lang="scss" scoped>
-  .el-dropdown-link{
-    padding: 2px 10px;
-    cursor: pointer;
-    border-radius: 10px;
-  }
-  .el-dropdown-link:hover{
-    background:#1642cb;
-    color: #fff;
-  }
   .container {
     width: 100%;
     height: 100%;
