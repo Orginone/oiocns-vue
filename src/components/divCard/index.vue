@@ -23,9 +23,15 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, nextTick } from "vue";
 
+type Props = {
+  title?: string; // 卡片组标题
+  version?: string; // 版本
+  describe?: string; // 描述
+}
+
 const props = withDefaults(
   defineProps<{
-    cardList?: Array<any>; // 渲染表单项数据
+    cardList?: Array<Props>; // 渲染表单项数据
   }>(),
   {
     cardList: () => [

@@ -49,13 +49,26 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, watch, computed } from "vue";
+import { ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
 const emit = defineEmits(["submitForm"]);
 
+type Props = {
+  type?: string; // 表单项类型：1、默认是input-输入框 2、select-多选 3、date-picker-日期选择
+  label?: string; // 标题
+  propName?: string; // 绑定点的数据
+  placeholder?: string; // 提示信息
+  pickerType?: string; // 日期选择格式
+  options?: any[]; // 多选的数据
+  format?: string; // 设置格式
+  valueFormat?: string; // 绑定值的格式
+  required?: boolean; // 是否必填
+  clearable?: boolean; // 是否可清除
+}
+
 const props = withDefaults(
   defineProps<{
-    list?: Array<any>; // 渲染表单项数据
+    list?: Array<Props>; // 渲染表单项数据
     inline?: boolean;
     labelWidth?: string;
     rules?: Object;
@@ -73,10 +86,7 @@ const ruleFormRef = ref()
 // 搜索关键词
 const searchData = ref()
 
-const ruleForm: any = ref({
-  // applyNumber: '',
-  startTime: undefined
-});
+const ruleForm: any = ref({});
 
 // 筛选
 const submitForm = () => {
