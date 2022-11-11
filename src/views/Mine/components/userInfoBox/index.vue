@@ -1,12 +1,6 @@
 <template>
   <div class="userBox">
-    <div class="titleBox">
-      <p class="title">当前用户</p>
-      <div class="btns">
-        <span class="titlebtn" @click="changePass">修改密码</span>
-        <span class="titlebtn" @click="resetPass">重置密码</span>
-      </div>
-    </div>
+    <titleBox title="当前用户" :btns="btns" />
     <div class="userInfoBox">
       <img src="/src/assets/img/头像.png" alt="" class="avatar" />
       <div class="showDetail">
@@ -58,10 +52,15 @@ import { useUserStore } from "@/store/user";
 import { getDescendantProp } from "@/utils/tools";
 import { storeToRefs } from "pinia";
 import { ShowDetailRow } from "../../type";
+import titleBox, { BtnItem } from "@/components/titleBox/index.vue";
 const store = useUserStore();
 const { queryInfo } = storeToRefs(store);
 
 // #region 展示信息
+const btns = reactive<BtnItem[]>([
+  { name: "修改密码", event: changePass },
+  { name: "重置密码", event: resetPass },
+]);
 const isExpan = ref<boolean>(false);
 // 显示配置
 const showDetail = reactive<ShowDetailRow[][]>([
@@ -90,12 +89,12 @@ const expanDetail = reactive<ShowDetailRow[][]>([
 
 // #endregion
 
-const changePass = () => {
+function changePass() {
   console.log("changePass");
-};
-const resetPass = () => {
+}
+function resetPass() {
   console.log("resetPass");
-};
+}
 
 onMounted(() => {
   store.getQueryInfo(store.userToken);
@@ -106,7 +105,7 @@ onMounted(() => {
 .userBox {
   background: #fff;
   border-radius: 5px;
-  padding: 20px 0;
+  padding: 20px;
   .userInfoBox {
     padding: 0 37px;
     color: #606266;
@@ -115,7 +114,7 @@ onMounted(() => {
       height: 78px;
       border-radius: 50%;
       margin-bottom: 20px;
-      margin-top: 28px;
+      margin-top: 14px;
     }
     .showDetail {
       margin-left: 10px;

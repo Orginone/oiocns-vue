@@ -1,21 +1,21 @@
 <template>
-  <div class="mine">
+  <div class="certificate">
     <userInfoBox></userInfoBox>
     <div class="tabBox">
       <diytab
         :style="{ height: 300 + 'px', width: '100%' }"
         ref="diyTable"
         order
+        tableName="证书管理"
+        :titleBtns="titleBtns"
         :hasTableHead="true"
         :tableData="dataSource.data"
         :options="options"
         :tableHead="tableHead"
-        :tabOption="tabOption"
-        :activeName="activeName"
         @handleUpdate="handleUpdate"
         @selectionChange="selectionChange"
-        @changeTab="changeTab"
       >
+        <!-- <template #titleSuffix>112332</template> -->
         <template #slot-card="scope">
           <div class="cardData">
             <div class="cardItem" v-for="item in dataSource.data">
@@ -33,23 +33,21 @@
 import { ref, onMounted, watch, reactive } from "vue";
 import $services from "@/services";
 import diytab from "@components/diyTable/index.vue";
+import { BtnItem } from "@/components/titleBox/index.vue";
 import userInfoBox from "../components/userInfoBox/index.vue";
 import useSearch from "@/hooks/useSearch";
-import { TabPaneName } from "element-plus";
-import { TabType } from "@/components/titleBox/index.vue";
 
 const { dataSource, refresh, changeOffset, changeFilter } = useSearch(
   $services.market.searchAll
 );
 
-// #region 表格部分
-const tabOption = reactive<TabType[]>([
-  { label: "部门", name: 0 },
-  { label: "岗位", name: 1 },
-  { label: "应用", name: 2 },
+const titleBtns = reactive<BtnItem[]>([
+  { name: "删除", event: () => {} },
+  { name: "查看申请记录", event: () => {} },
+  { name: "加入平台", event: () => {} },
+  { name: "创建地址", event: () => {} },
 ]);
-const activeName = ref(2);
-
+// #region 表格部分
 const diyTable = ref(null);
 const pageStore = reactive({
   currentPage: 1,
@@ -97,16 +95,9 @@ const handleUpdate = (page: any) => {
 
 const remoteMethod = () => {};
 
-const changeTab = (name: TabPaneName) => {
-  refresh({ name }).then((res) => {
-    console.log(res);
-  });
-};
-
 const selectionChange = (val: any) => {
   checkList.value = val;
 };
-
 // #endregion
 
 onMounted(() => {
@@ -115,7 +106,7 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
-.mine {
+.certificate {
   padding: 5px 8px;
   display: flex;
   flex-direction: column;

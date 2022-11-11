@@ -7,7 +7,7 @@ interface PageOption {
 /**
  * 请求列表
  * @param http 请求函数
- * @param otherParams 其他需要带的参数
+ * @param otherParams 其他需要默认带的参数，如果调用 refresh 方法，会被同名字段覆盖 如: 初始化传 {a: 1, b: 2} refresh 传 {a: 3}, 则a会被3覆盖, b不变
  * @param initSearch 是否进入页面自动请求一次
  */
 const useSearch = (
@@ -18,7 +18,7 @@ const useSearch = (
   // 数据
   dataSource: any;
   // 刷新
-  refresh: () => Promise<any>;
+  refresh: (newParam?: object) => Promise<any>;
   // 跳转页数
   changeOffset: Function;
   // 设置每页多少条
@@ -32,24 +32,34 @@ const useSearch = (
     limit: 20,
   });
   let filter = ref<string>("");
-  const getList = () => {
+  let oldParam = {};
+
+  /**
+   * 请求列表
+   * @param param 参数
+   * @returns Promise
+   */
+  const getList = (param: object = {}) => {
+    oldParam = param;
     // 参数
     const data = {
       ...pageOption,
       ...otherParams,
       filter: filter.value,
+      ...oldParam,
     };
-    http({ data }).then((res: ResultType) => {
+    return http({ data }).then((res: ResultType) => {
       console.log(res);
       if (res.success) {
-        dataSource.data = res.data.data;
+        dataSource.data = [{ title: "模拟请求到的数据" }];
       }
+      return res;
     });
   };
 
   // 刷新
-  const refresh = async () => {
-    return await getList();
+  const refresh = async (param: object = {}) => {
+    return await getList(param);
   };
 
   // 切换页码
