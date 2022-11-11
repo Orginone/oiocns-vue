@@ -23,7 +23,9 @@
       </el-sub-menu>
     </el-menu>
     <el-input v-model="filterText" placeholder="搜索" v-if="query" class="w-50 m-2" :prefix-icon="Search" />
-    <el-tree ref="treeRef" 
+    <el-tree ref="treeRef"
+      :highlight-current="highlightCurrent"
+      :draggable="draggable"
       v-bind="$attrs" 
       :data="state.treeData" 
       node-key="id" 
@@ -80,6 +82,12 @@ const props = defineProps({
   propIcon: {
     type: String
   }, // 标题icon
+  draggable: {
+    type: Boolean
+  }, // 是否实现节点拖拽
+  highlightCurrent: {
+    type: Boolean
+  }, // 选中节点是否高亮
 })
 
 const filterText = ref('')
@@ -162,25 +170,25 @@ const filterNode = (value: string, data: any) => {
     }
   }
 
-  ::v-deep .el-menu-item{
+  :deep .el-menu-item{
     height: 35px;
     width: 180px;
   }
 
-  ::v-deep .no-penultimate > .el-tree-node__content{
+  :deep .no-penultimate > .el-tree-node__content{
     font-weight: 800;
   }
 
-  ::v-deep .is-penultimate > .el-tree-node__content {
+  :deep .is-penultimate > .el-tree-node__content {
     font-size: 10px;
     color: #909399;
     font-weight: normal;
   }
-  ::v-deep .el-tree-node__content{
+  :deep .el-tree-node__content{
     height: 40px;
   }
   // 去掉el-input自带边框
-  ::v-deep .el-input__wrapper {
+  :deep .el-input__wrapper {
     margin: 15px;
     padding-left: 15px !important;
     box-sizing: border-box;
