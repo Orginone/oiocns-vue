@@ -14,21 +14,6 @@
         </template>
       </titleBox>
     </div>
-    <!-- <div class="diy-table__header" v-if="hasTableHead">
-      <div class="diy-table__header--left" style="width: 100%">
-        <div class="header-title" v-if="hasTitle">
-          {{ tableName }}
-        </div>
-        <div class="header-tabs"  v-if="hasTabs">
-          <slot name="slot-tabs"></slot>
-        </div>
-      </div>
-      <div class="diy-table__header--right">
-        <div class="header-buttons">
-          <slot name="buttons"></slot>
-        </div>
-      </div>
-    </div> -->
     <slot name="slot-title"></slot>
     <div class="diy-table__btn">
       <div>

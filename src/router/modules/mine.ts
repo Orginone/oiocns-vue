@@ -18,11 +18,20 @@ const Mine: RouteRecordRaw[] = [
       },
       {
         component: () => import("@/views/Mine/Certificate/index.vue"),
-        path: "/mine/Certificate",
+        path: "/mine/certificate",
         name: "certificate",
         meta: {
           keepAlive: false,
           title: "证书管理",
+        },
+      },
+      {
+        component: () => import("@/views/Mine/Test/index.vue"),
+        path: "/mine/test",
+        name: "sdk",
+        meta: {
+          keepAlive: false,
+          title: "sdk测试",
         },
       },
     ],

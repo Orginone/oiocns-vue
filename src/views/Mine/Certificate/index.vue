@@ -15,12 +15,11 @@
         @handleUpdate="handleUpdate"
         @selectionChange="selectionChange"
       >
-        <!-- <template #titleSuffix>112332</template> -->
         <template #slot-card="scope">
           <div class="cardData">
             <div class="cardItem" v-for="item in dataSource.data">
               <div class="colorBox"></div>
-              <p>证书名称证书</p>
+              <p>{{ item.title }}</p>
             </div>
           </div>
         </template>
@@ -132,6 +131,7 @@ onMounted(() => {
       border-radius: 3px;
       transition: background 0.3s;
       padding: 12px;
+      user-select: none;
       &:hover {
         background: #f5f6fc;
       }
