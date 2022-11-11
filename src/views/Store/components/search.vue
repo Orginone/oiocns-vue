@@ -30,7 +30,14 @@
   <script setup lang="ts">
   import { ref, reactive, onMounted, nextTick } from "vue";
   import { Search } from '@element-plus/icons-vue'
-
+  const props = defineProps({
+    dialogShow: {
+      type: Object
+    }
+  })
+  const closeDialog = () => {
+    emit('closeDialog', props.dialogShow)
+  }
   const createDialog = ref(false) // 创建商店
   interface fromType {
     name:string,

@@ -17,8 +17,8 @@
                     </div>
                 </div>
                 <div class="content-foot">
-                    <div class="foot-row">创建人:xxx</div>
-                    <div class="foot-row">创建时间:2022-11-08</div>
+                    <div class="foot-row">创建人:熊桂英</div>
+                    <div class="foot-row">创建时间: 2022-11-08</div>
                 </div>
             </div>
             <div class="operation">
@@ -61,20 +61,20 @@ import { ref, reactive, onMounted, nextTick } from "vue";
                 flex-direction: column;
                 .title-tips{
                     font-weight: bold;
-                    margin-bottom: 20px;
+                    margin-bottom: 24px;
                     font-size: 16px;
-                    
                 }
                 .logo-title{
-                    margin-bottom: 20px;
+                    margin-bottom: 24px;
                     color: #909399;
-                    font-size: 12px;
+                    font-size: 14px;
                 }
             }
             .app-logo{
                 width: 55px;
                 height: 55px;
                 border-radius: 5px;
+                margin-bottom: 10px;
             }
             .content{
                 display: flex;
@@ -88,6 +88,9 @@ import { ref, reactive, onMounted, nextTick } from "vue";
                         color: #909399;
                         font-size: 12px;
                     }
+                }
+                .row:nth-child(1n){
+                    margin-right: 60px;
                 }
                 .app-name{
                     margin-top: 10px;

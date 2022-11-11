@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="nav-list">
-      <div class="nav-title">全部分类</div>
+      <div class="nav-title">选择分类</div>
       <el-select v-model="valuee" placeholder="Select">
         <el-option-group
           v-for="group in optionsList"
@@ -23,7 +23,7 @@
           :style="{width:'100%'}"
           ref="diyTable"
           :hasTabs="true"
-          :tableName="'测试表格名称'"
+          :tableName="'商城'"
           :hasTitle="true"
           :hasTableHead="true"
           :tableData="tableData"
@@ -183,6 +183,16 @@
     background:#1642cb;
     color: #fff;
   }
+  .main{
+    .el-input__wrapper{
+      box-shadow: 0 0 0 0;
+      border-radius: 30px;
+      background: #F2F4F9;
+    }
+    .el-select .el-input.is-focus,.el-select .el-input .el-input__wrapper{
+      box-shadow: 0 0 0 0;
+    }
+  }
 </style>
 <style lang="scss" scoped>
   .main{
@@ -191,6 +201,7 @@
     display: flex;
     flex: 1;
     color: #303133;
+  
     .nav-list{
       width: 240px;
       height: 100%;

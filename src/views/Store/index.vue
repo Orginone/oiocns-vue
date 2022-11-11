@@ -1,9 +1,8 @@
 <template>
   <div class="main">
     <div class="content">
-      <createShop></createShop>
-      <search></search>
-      <detail></detail>
+      <createShop :createDialog="createDialog" @closeDialog="closeDialog"></createShop>
+      <opened></opened>
       <div class="table">
         <diytab
           :style="{width:'100%'}"
@@ -36,7 +35,7 @@
           </template>
           <template #buttons>
             <el-button class="btn-check" type="primary" link>购买</el-button>
-            <el-button class="btn-check" type="primary" link>创建</el-button>
+            <el-button class="btn-check" @click="showCreate()" type="primary" link>创建</el-button>
             <el-button class="btn-check" type="primary" link>暂存</el-button>
           </template>
           <template #operate="scope">
@@ -69,18 +68,25 @@
 
 <script setup lang="ts">
   import diytab from '@/components/diyTable/index.vue'
+  import opened from './components/opened.vue'
+  import createShop from './components/createShop.vue'
   import search from './components/search.vue'
   import detail from './components/editDetail.vue'
   import card from './components/card.vue'
   import { ref, reactive, onMounted, nextTick } from 'vue'
   const dialogVisible = ref<boolean>(true)
   const diyTable = ref(null)
+  const createDialog = ref<boolean>(false)
   // 表格展示数据
   const pageStore = reactive({
     currentPage: 1,
     pageSize: 20,
     total: 0
   })
+  const showCreate = ()=>{
+    createDialog.value = true;
+    console.log('createDialog',createDialog)
+  }
   const tableData = ref([{
     paymentType:'线上',
     price:'100',
@@ -155,6 +161,10 @@
       hasChildren: 'hasChildren'
     }
   })
+  const closeDialog = (key:boolean) => {
+    console.log('key',key)
+    createDialog.value = key
+  }
   const showDiong = (type:number) => {
     if(type ==1){
 
@@ -202,6 +212,7 @@
         background: #fff;
         display: flex;
         flex: 1;
+        margin-top: 3px;
         .btn-check{
           padding: 8px 16px;
           color: #154ad8;

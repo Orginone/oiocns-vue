@@ -1,5 +1,5 @@
 <template>
-    <el-dialog class="create-shop-box" :show-close="false" append-to-body v-model="createDialog" title="新建商店" width="45%"  @close="closeCreateDialog">
+    <el-dialog class="create-shop-box" :show-close="false" append-to-body v-model="props.createDialog" title="新建商店" width="550px"  @close="closeDialog(false)">
       <el-form ref="formRef"  label-position="top" class="from-box" :model="form">
         <div class="from-content">
             <div class="from-left">
@@ -21,9 +21,9 @@
                     ]">
                     <el-input v-model.number="form.code" type="text" autocomplete="off" />
                 </el-form-item>
-                <el-form-item label="商店是否公开" prop="public">
+                <!-- <el-form-item label="商店是否公开" prop="public">
                     <el-switch v-model="form.public" active-text="是" inactive-text="否" inline-prompt></el-switch>
-                </el-form-item>
+                </el-form-item> -->
             </div>
             <div class="from-right">
                 <div class="head-img">头像</div>
@@ -40,7 +40,7 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button link @click="createDialog = false" style="color:#1549D8">取消</el-button>
+          <el-button link @click="closeDialog(false)" style="color:#1549D8">取消</el-button>
           <el-button type="primary" @click="createShop()">确认</el-button>
         </span>
       </template>
@@ -49,7 +49,11 @@
   
   <script setup lang="ts">
   import { ref, reactive, onMounted, nextTick } from "vue";
-  const createDialog = ref(false) // 创建商店
+  const props = defineProps({
+    createDialog: {
+      type:Boolean
+    }
+  })
   interface fromType {
     name:string,
     code:string,
@@ -62,9 +66,13 @@
     remark:'',
     public:'',
   });
+  const emit = defineEmits([
+    'closeDialog'
+  ])
 
-  const closeCreateDialog = ()=>{
-
+  const closeDialog = (type:boolean)=>{
+    console.log('aaa')
+    emit('closeDialog', type)
   }
   const createShop = () =>{
 
@@ -117,11 +125,11 @@
                 justify-content: center;
                 flex-direction: column;
                 .head-img{
-                    width: 142px;
-                    height: 142px;
+                    width: 122px;
+                    height: 122px;
                     border-radius: 50%;
                     text-align: center;
-                    line-height: 142px;
+                    line-height: 122px;
                     color: #fff;
                     background: #1549D8;
                 }

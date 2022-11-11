@@ -152,7 +152,7 @@ console.log('router',);
 <style lang="scss" scoped>
   .menu-list{
     width: 200px;
-    padding-right: 10px;
+    padding-right: 3px;
     background: #eff4f9;
   }
   .el-header {
