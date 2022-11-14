@@ -1,3 +1,6 @@
+//必须放在入口第一行，用于引入polyfill
+import "core-js";
+
 import { createApp } from 'vue'
 import App from './App.vue'
 import router, { setupRouter } from '@/router'

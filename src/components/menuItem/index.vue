@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%; background: #fff">
-    <div class="title"><component :is="propIcon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<span style="font-size: 14px;">{{title}}</span></div>
+    <div class="title"><component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<span style="font-size: 14px;">{{titleData.title}}</span></div>
     <el-menu v-bind="$attrs">
       <el-sub-menu
         v-for="(item, index) in state.menuData"
@@ -18,12 +18,12 @@
           @mouseover='onOver(val.type)' @mouseout="onOut"
           @click="jump(val)"
         >
-          <component :is="val.icon" style="width: 16px;height: 16px;"></component>&nbsp;
+          <component :is="val.icon" style="width: 16px;height: 16px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }" ></component>&nbsp;
           <b style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }" >{{ val.name }}</b>
         </el-menu-item>
       </el-sub-menu>
     </el-menu>
-    <el-input v-model="filterText" placeholder="搜索" v-if="query" class="w-50 m-2" :prefix-icon="Search" />
+    <el-input v-model="filterText" placeholder="搜索" v-if="state.query" class="w-50 m-2" :prefix-icon="Search" />
     <el-tree ref="treeRef" 
       v-bind="$attrs" 
       :data="state.treeData" 
@@ -73,15 +73,9 @@ const props = defineProps({
   data: {
     type: Array,
   },
-  query: {
-    type: Boolean
-  }, //是否显示查询
-  title: {
-    type: String
+  titleData: {
+    type: Object
   }, // 标题
-  propIcon: {
-    type: String
-  }, // 标题icon
 })
 
 const filterText = ref('')
@@ -89,8 +83,9 @@ const treeRef = ref()
 const state = reactive({
   menuData: [],
   treeData: [],
-  flag: '',
-  flag1: ''
+  query: false, // 是否显示搜索框
+  flag: '', // 是否高亮标记
+  flag1: ''// 是否高亮标记
 })
 const onHover = (id: string) => {
   state.flag = id
@@ -119,6 +114,7 @@ const init = () => {
   state.menuData = props.data.filter((item: any) => {
     return item.structure === false
   })
+  state.query = state.treeData[0].query
 }
 init()
 
