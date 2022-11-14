@@ -50,51 +50,51 @@
         "children": [
             {
                 "name": "单位首页",
-                "type": "1",
+                "type": "6",
                 "uid": "1-1",
-                "url": "/store",
+                "url": "",
                 "children": []
             },
             {
                 "name": "数据设置",
-                "type": "2",
+                "type": "7",
                 "uid": "1-1",
-                "url": "/user",
+                "url": "",
                 "children": []
             },
             {
                 "name": "资源设置",
-                "type": "3",
+                "type": "8",
                 "uid": "1-1",
-                "url": "/#/store",
+                "url": "",
                 "children": []
             },
             {
                 "name": "应用设置",
-                "type": "4",
+                "type": "9",
                 "uid": "1-1",
-                "url": "/#/store",
+                "url": "",
                 "children": []
             },
             {
                 "name": "流程设置",
-                "type": "5",
+                "type": "10",
                 "uid": "1-1",
-                "url": "/#/store",
+                "url": "",
                 "children": []
             },
             {
                 "name": "标准设置",
-                "type": "6",
+                "type": "11",
                 "uid": "1-1",
-                "url": "/#/store",
+                "url": "",
                 "children": []
             },
             {
                 "name": "权限设置",
-                "type": "7",
+                "type": "12",
                 "uid": "1-1",
-                "url": "/#/store",
+                "url": "",
                 "children": []
             }
         ]
