@@ -1,0 +1,95 @@
+[
+    {
+        "icon": "User",
+        "title": "设置"
+    },
+    {
+        "name": "组织设置",
+        "structure": false,
+        "children": [
+            {
+                "name": "单位设置",
+                "type": "1",
+                "uid": "1-1",
+                "url": "/store",
+                "children": []
+            },
+            {
+                "name": "部门设置",
+                "type": "2",
+                "uid": "1-1",
+                "url": "/user",
+                "children": []
+            },
+            {
+                "name": "集团设置",
+                "type": "3",
+                "uid": "1-1",
+                "url": "/#/store",
+                "children": []
+            },
+            {
+                "name": "帮助中心",
+                "type": "4",
+                "uid": "1-1",
+                "url": "/#/store",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "配置中心",
+        "structure": false,
+        "children": [
+            {
+                "name": "单位首页",
+                "type": "1",
+                "uid": "1-1",
+                "url": "/store",
+                "children": []
+            },
+            {
+                "name": "数据设置",
+                "type": "2",
+                "uid": "1-1",
+                "url": "/user",
+                "children": []
+            },
+            {
+                "name": "资源设置",
+                "type": "3",
+                "uid": "1-1",
+                "url": "/#/store",
+                "children": []
+            },
+            {
+                "name": "应用设置",
+                "type": "4",
+                "uid": "1-1",
+                "url": "/#/store",
+                "children": []
+            },
+            {
+                "name": "流程设置",
+                "type": "5",
+                "uid": "1-1",
+                "url": "/#/store",
+                "children": []
+            },
+            {
+                "name": "标准设置",
+                "type": "6",
+                "uid": "1-1",
+                "url": "/#/store",
+                "children": []
+            },
+            {
+                "name": "权限设置",
+                "type": "7",
+                "uid": "1-1",
+                "url": "/#/store",
+                "children": []
+            }
+        ]
+    }
+]

@@ -44,6 +44,19 @@
       </el-breadcrumb>
 
       <el-row style="padding: 0 15px">
+        <el-row style="margin-right: 5px">
+          <transition name="el-zoom-in-center">
+            <el-input
+              v-show="showSearch"
+              placeholder="搜索"
+              :prefix-icon="Search"
+              size="small"
+            />
+          </transition>
+        </el-row>
+        <el-button type="text" @click="showSearch = !showSearch">
+          <el-icon :size="18"><Search /></el-icon>
+        </el-button>
         <el-button type="text" @click="showSearchDrawer = true">
           <el-icon :size="18"><Search /></el-icon>
         </el-button>
@@ -74,9 +87,10 @@ import searchDrawer from './components/searchDrawer.vue'
 
 // 打开分享抽屉
 const showShareDrawer = ref(false)
-
 // 打开搜索抽屉
 const showSearchDrawer = ref(false);
+// 打开搜索框
+const showSearch = ref(false);
 
 const router = useRouter();
 // 全部路由信息
@@ -128,5 +142,15 @@ watch(
 }
 ::v-deep .el-drawer__body {
   overflow: hidden !important;
+}
+::v-deep .el-input__wrapper {
+  margin: 2px;
+  padding-left: 15px !important;
+  box-sizing: border-box; 
+  border: none !important; 
+  box-shadow: none !important; 
+  padding: 0px; //前边边距去掉 
+  border-radius: 15px; 
+  background: #f2f4f9;
 }
 </style>

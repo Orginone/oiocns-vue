@@ -1,0 +1,19 @@
+[
+  {
+    "icon": "User",
+    "title": "集团设置"
+  },
+  {
+      "label": "浙江省财政厅",
+      "structure": true,
+      "isPenultimate": true,
+      "children": [
+        {
+          "label": "资产处",
+          "isPenultimate": true,
+          "id": "",
+          "children": []
+        }
+      ]
+  }
+]
