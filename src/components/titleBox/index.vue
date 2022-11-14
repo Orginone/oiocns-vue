@@ -2,13 +2,13 @@
   <div>
     <!--  -->
     <div v-show="tabOption.length">
-      <el-tabs v-model="activeName" @tab-change="changeTab">
+      <!-- <el-tabs v-model="activeName" @tab-change="changeTab">
         <el-tab-pane
           v-for="item in tabOption"
           :label="item.label"
           :name="item.name"
         ></el-tab-pane>
-      </el-tabs>
+      </el-tabs> -->
     </div>
     <div class="titleBox">
       <div class="title" v-show="title">

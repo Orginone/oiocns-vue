@@ -1,5 +1,5 @@
 <template>
-<el-drawer v-model="showSearchDrawer" @close="emit('update:showSearchDrawer', false)" direction="rtl" size="22%">
+<!-- <el-drawer v-model="showSearchDrawer" @close="emit('update:showSearchDrawer', false)" direction="rtl" size="22%">
     <template #header>
         <h4 style="color: #505050">筛选</h4>
     </template>
@@ -16,7 +16,7 @@
         <el-button color="#0f39d1" @click="handleFilter">筛选</el-button>
         </div>
     </template>
-</el-drawer>
+</el-drawer> -->
 </template>
 
 <script setup lang="ts">
