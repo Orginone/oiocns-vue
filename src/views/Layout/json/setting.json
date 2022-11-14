@@ -11,26 +11,33 @@
                 "name": "单位设置",
                 "type": "1",
                 "uid": "1-1",
-                "url": "/store",
+                "url": "/setCenter/unit",
                 "children": []
             },
             {
                 "name": "部门设置",
                 "type": "2",
                 "uid": "1-1",
-                "url": "/user",
+                "url": "/setCenter/department",
                 "children": []
             },
             {
                 "name": "集团设置",
                 "type": "3",
                 "uid": "1-1",
-                "url": "/#/store",
+                "url": "/setCenter/group",
+                "children": []
+            },
+            {
+                "name": "岗位设置",
+                "type": "4",
+                "uid": "1-1",
+                "url": "/setCenter/post",
                 "children": []
             },
             {
                 "name": "帮助中心",
-                "type": "4",
+                "type": "5",
                 "uid": "1-1",
                 "url": "/#/store",
                 "children": []
