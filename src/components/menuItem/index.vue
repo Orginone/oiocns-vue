@@ -23,7 +23,7 @@
         </el-menu-item>
       </el-sub-menu>
     </el-menu>
-    <el-input v-model="filterText" placeholder="搜索" v-if="query" class="w-50 m-2" :prefix-icon="Search" />
+    <el-input v-model="filterText" placeholder="搜索" v-if="state.query" class="w-50 m-2" :prefix-icon="Search" />
     <el-tree ref="treeRef" 
       v-bind="$attrs" 
       :data="state.treeData" 
@@ -73,9 +73,6 @@ const props = defineProps({
   data: {
     type: Array,
   },
-  query: {
-    type: Boolean
-  }, //是否显示查询
   titleData: {
     type: Object
   }, // 标题
@@ -86,8 +83,9 @@ const treeRef = ref()
 const state = reactive({
   menuData: [],
   treeData: [],
-  flag: '',
-  flag1: ''
+  query: false, // 是否显示搜索框
+  flag: '', // 是否高亮标记
+  flag1: ''// 是否高亮标记
 })
 const onHover = (id: string) => {
   state.flag = id
@@ -116,6 +114,7 @@ const init = () => {
   state.menuData = props.data.filter((item: any) => {
     return item.structure === false
   })
+  state.query = state.treeData[0].query
 }
 init()
 

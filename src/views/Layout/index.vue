@@ -51,7 +51,8 @@
   import storeJosn from './json/store.json';
   import { chat } from '@/module/chat/orgchat'
   let router = useRouter()
-
+  console.log(storeJosn);
+  
   const titleArr = reactive(storeJosn[0])
   const menuArr = reactive(storeJosn)
   onBeforeMount(async () => {
@@ -70,7 +71,7 @@
 
 <style lang="scss" scoped>
   .menu-list{
-    width: 200px;
+    width: auto;
     padding-right: 3px;
     background: #eff4f9;
   }
