@@ -1,6 +1,5 @@
 <template>
   <div style="height: 100%; background: #fff">
-    {{state.menuData[0]}}
     <div class="title"><component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<span style="font-size: 14px;">{{titleData.title}}</span></div>
     <el-menu v-bind="$attrs">
       <el-sub-menu
@@ -108,15 +107,19 @@ const onOut = () => {
   state.flag = ''
   state.flag1 = ''
 }
-const init = () => {
-  state.treeData = props.data.filter((item: any) => {
-    return item.structure === true
-  })
-  state.menuData = props.data.filter((item: any) => {
-    return item.structure === false
+const init =  () => {
+  nextTick(() => {
+    state.treeData = props.data.filter((item: any) => {
+      return item.structure === true
+    })
+    state.menuData = props.data.filter((item: any) => {
+      return item.structure === false
+    })
   })
   state.query = state.treeData[0]?.query
+  
 }
+init();
 let router = useRouter()
 watch(() => router.currentRoute.value.path, (newValue:any) => {
   nextTick(() => {
