@@ -16,9 +16,10 @@
           :key="val.uid"
           :index="String(val.uid)"
           @mouseover='onOver(val.type)' @mouseout="onOut"
+          @click="jump(val)"
         >
           <component :is="val.icon" style="width: 16px;height: 16px;"></component>&nbsp;
-          <b style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }">{{ val.name }}</b>
+          <b style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }" >{{ val.name }}</b>
         </el-menu-item>
       </el-sub-menu>
     </el-menu>
@@ -64,6 +65,7 @@
 
 <script lang="ts" setup>
 import { ref, watch, reactive } from 'vue'
+import router from '@/router'
 import { Search } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['handleClose'])
@@ -130,6 +132,11 @@ const filterNode = (value: string, data: any) => {
   return data.label.includes(value)
 }
 
+// 路由跳转
+const jump  = (val:Object)=>{
+  console.log('val',val)
+  router.push(val.url)
+}
 // const handleClose = () => {
 //   emit('handleClose', 'menu')
 // }

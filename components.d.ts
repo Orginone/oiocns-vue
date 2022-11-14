@@ -127,6 +127,7 @@ declare module '@vue/runtime-core' {
     SvgIcon: typeof import('./src/components/global/SvgIcon/index.vue')['default']
     TArea: typeof import('./src/components/diyDiong/nf-el-form-item/t-area.vue')['default']
     ThreeBar: typeof import('./src/components/protal/components/modules/threeBar.vue')['default']
+    TitleBox: typeof import('./src/components/titleBox/index.vue')['default']
     TPassword: typeof import('./src/components/diyDiong/nf-el-form-item/t-password.vue')['default']
     TriggerNode: typeof import('./src/components/wflow/process/nodes/TriggerNode.vue')['default']
     TriggerNodeConfig: typeof import('./src/components/wflow/process/config/TriggerNodeConfig.vue')['default']

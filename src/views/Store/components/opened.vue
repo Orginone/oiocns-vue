@@ -138,7 +138,6 @@ const commontActive = () => {};
 <style lang="scss" scoped>
 .detail {
   background: #fff;
-  margin-bottom: 6px;
   overflow-x: auto;
   display: flex;
   flex-direction: column;
@@ -165,7 +164,7 @@ const commontActive = () => {};
     border: 1px solid #eee;
     border-radius: 10px;
     box-sizing: border-box;
-    padding: 18px 12px;
+    padding: 12px 12px;
     margin-right: 10px;
     .row {
       img {

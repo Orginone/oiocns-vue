@@ -1,6 +1,6 @@
 <template>
   <div class="tac">
-    <el-menu
+    <!-- <el-menu
       router
       style="width: 200px; height: calc(100vh - 60px);padding-top: 20px;"
       :default-active="state.activeMenu"
@@ -10,7 +10,7 @@
       <el-menu-item :index="item.label" v-for="(item, index) in menu" :key="index">
         {{ item.value }}
       </el-menu-item>
-    </el-menu>
+    </el-menu> -->
   </div>
 </template>
 

@@ -1,14 +1,29 @@
 <template>
   <div class="main">
+    <div class="nav-list">
+      <div class="nav-title">选择分类</div>
+      <el-select v-model="valuee" placeholder="Select">
+        <el-option-group
+          v-for="group in optionsList"
+          :key="group.label"
+          :label="group.label"
+        >
+          <el-option
+            v-for="item in group.options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-option-group>
+      </el-select>
+    </div>
     <div class="content">
-      <createShop :createDialog="createDialog" @closeDialog="closeDialog"></createShop>
-      <opened></opened>
       <div class="table">
         <diytab
           :style="{width:'100%'}"
           ref="diyTable"
           :hasTabs="true"
-          :tableName="'测试表格名称'"
+          :tableName="'商城'"
           :hasTitle="true"
           :hasTableHead="true"
           :tableData="tableData"
@@ -17,27 +32,6 @@
           @selectionChange="selectionChange"
           :tableHead="tableHead"
         >
-          <template #slot-tabs>
-            <div class="table-tabs">
-              <el-menu
-                :default-active="tableActiveIndex"
-                class="el-menu-demo"
-                mode="horizontal"
-                @select="handleSelect"
-              >
-                <el-menu-item index="1">全部</el-menu-item>
-                <el-menu-item index="2">创建的</el-menu-item>
-                <el-menu-item index="3">购买的</el-menu-item>
-                <el-menu-item index="4">共享的</el-menu-item>
-                <el-menu-item index="5">分配的</el-menu-item>
-              </el-menu>
-            </div>
-          </template>
-          <template #buttons>
-            <el-button class="btn-check" type="primary" link>购买</el-button>
-            <el-button class="btn-check" @click="showCreate()" type="primary" link>创建</el-button>
-            <el-button class="btn-check" type="primary" link>暂存</el-button>
-          </template>
           <template #operate="scope">
             <el-dropdown>
               <span class="el-dropdown-link">
@@ -68,25 +62,32 @@
 
 <script setup lang="ts">
   import diytab from '@/components/diyTable/index.vue'
-  import opened from './components/opened.vue'
-  import createShop from './components/createShop.vue'
-  import search from './components/search.vue'
-  import detail from './components/editDetail.vue'
-  import card from './components/card.vue'
+  import card from '../components/card.vue'
   import { ref, reactive, onMounted, nextTick } from 'vue'
   const dialogVisible = ref<boolean>(true)
   const diyTable = ref(null)
-  const createDialog = ref<boolean>(false)
+  const valuee = ref<any>('');
+  const optionsList = [
+    {
+      label: '功能分类',
+      options: [
+        {
+          value: 'caiwu',
+          label: '财务',
+        },
+        {
+          value: 'zichan',
+          label: '资产',
+        },
+      ],
+    },
+  ]
   // 表格展示数据
   const pageStore = reactive({
     currentPage: 1,
     pageSize: 20,
     total: 0
   })
-  const showCreate = ()=>{
-    createDialog.value = true;
-    console.log('createDialog',createDialog)
-  }
   const tableData = ref([{
     paymentType:'线上',
     price:'100',
@@ -123,7 +124,9 @@
     checkList.value = val
   }
 
-  const tableHead = ref([{
+
+  const tableHead = ref([
+    {
       prop: 'paymentType',
       label: '付款方式',
     },
@@ -161,10 +164,6 @@
       hasChildren: 'hasChildren'
     }
   })
-  const closeDialog = (key:boolean) => {
-    console.log('key',key)
-    createDialog.value = key
-  }
   const showDiong = (type:number) => {
     if(type ==1){
 
@@ -184,6 +183,16 @@
     background:#1642cb;
     color: #fff;
   }
+  .main{
+    .el-input__wrapper{
+      box-shadow: 0 0 0 0;
+      border-radius: 30px;
+      background: #F2F4F9;
+    }
+    .el-select .el-input.is-focus,.el-select .el-input .el-input__wrapper{
+      box-shadow: 0 0 0 0;
+    }
+  }
 </style>
 <style lang="scss" scoped>
   .main{
@@ -191,14 +200,24 @@
     height: 100%;
     display: flex;
     flex: 1;
+    color: #303133;
+  
     .nav-list{
-      width: 150px;
+      width: 240px;
       height: 100%;
       background: #fff;
       border-right: 1px solid #EBEEF5;
+      margin-right: 3px;
+      box-sizing: border-box;
+      padding: 10px 15px;
+      font-size: 14px;
+      font-weight: bold;
+      .nav-title{
+        margin-bottom: 10px;
+      }
     }
     .content{
-      width:calc(100vw - 150px);
+      width:calc(100%);
       display: flex;
       flex-direction: column;
       background: #f0f4f8;
@@ -212,7 +231,6 @@
         background: #fff;
         display: flex;
         flex: 1;
-        margin-top: 3px;
         .btn-check{
           padding: 8px 16px;
           color: #154ad8;
