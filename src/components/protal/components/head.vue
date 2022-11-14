@@ -44,7 +44,7 @@ onMounted(() => {
 <style lang='scss' scoped>
 .header {
   width: 100%;
-  height: 330px;
+  height: 360px;
   img{
     width: 100%;
     height: 100%;
