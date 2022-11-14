@@ -33,8 +33,8 @@
       :props="{ class: customNodeClass }"
     >
       <template #default="{ node, data }">
-        <div class="custom-tree-node" @mouseover='onHover(node.id)' @mouseout="onOut">
-          <span>{{ node.label }}</span>
+        <div class="custom-tree-node" @mouseover='onHover(node.id)' @mouseout="onOut" @click="jump(node)">
+          <span>{{ node.label }} </span>
           <span class="sp_10" v-show="node.id === state.flag">
             <el-popover
               placement="right"
@@ -133,9 +133,12 @@ const filterNode = (value: string, data: any) => {
 }
 
 // 路由跳转
-const jump  = (val:Object)=>{
-  console.log('val',val)
-  router.push(val.url)
+const jump = (val:any)=>{
+    if(val.url){
+      router.push(val.url)
+    }else if (val.data.url){
+      router.push(val.data.url)
+    }
 }
 // const handleClose = () => {
 //   emit('handleClose', 'menu')
