@@ -6,6 +6,7 @@
   {
     "label": "创建集团",
     "structure": true,
+    "query": true,
     "isPenultimate": true,
     "children": [
       {
@@ -73,18 +74,18 @@
     "isPenultimate": true,
     "children": [
       {
-        "label": "浙江省资产年报集团",
+        "label": "浙江省资产年报集团1",
         "isPenultimate": true,
         "id": "",
         "children": [
           {
-            "label": "集团子节点",
+            "label": "集团子节点1",
             "isPenultimate": true,
             "id": "",
             "children": []
           },
           {
-            "label": "集团子节点",
+            "label": "集团子节点1",
             "isPenultimate": true,
             "id": "",
             "children": []
@@ -92,18 +93,18 @@
         ]
       },
       {
-        "label": "浙江省资产年报集团",
+        "label": "浙江省资产年报集团2",
         "isPenultimate": true,
         "id": "",
         "children": [
           {
-            "label": "集团子节点",
+            "label": "集团子节点2",
             "isPenultimate": true,
             "id": "",
             "children": []
           },
           {
-            "label": "集团子节点",
+            "label": "集团子节点2",
             "isPenultimate": true,
             "id": "",
             "children": []

@@ -54,7 +54,7 @@
             />
           </transition>
         </el-row>
-        <el-button type="text" @click="showSearch = !showSearch">
+        <el-button type="text" v-if="false" @click="showSearch = !showSearch">
           <el-icon :size="18"><Search /></el-icon>
         </el-button>
         <el-button type="text" @click="showSearchDrawer = true">

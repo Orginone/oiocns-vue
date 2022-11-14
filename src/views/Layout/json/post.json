@@ -4,33 +4,33 @@
     "title": "岗位设置"
   },
   {
-    "label": "单位房产管理员",
-    "label2": "单位设备管理员",
-    "label3": "单位财务管理员",
-    "label4": "单位应用管理员",
-    "label5": "团队消息管理员"
+      "label": "单位房产管理员",
+      "structure": true,
+      "query": true,
+      "children": []
   },
   {
-      "label": "应用待办",
+      "label": "单位设备管理员",
       "structure": true,
-      "isPenultimate": true,
-      "children": [
-        {
-          "label": "公益仓",
-          "isPenultimate": true,
-          "id": "",
-          "children": []
-        },
-        {
-          "label": "办公OA",
-          "id": "1",
-          "children": []
-        },
-        {
-          "label": "资产管理",
-          "id": "2",
-          "children": []
-        }
-      ]
+      "query": true,
+      "children": []
+  },
+  {
+      "label": "单位财务管理员",
+      "structure": true,
+      "query": true,
+      "children": []
+  },
+  {
+      "label": "单位应用管理员",
+      "structure": true,
+      "query": true,
+      "children": []
+  },
+  {
+      "label": "团队消息管理员",
+      "structure": true,
+      "query": true,
+      "children": []
   }
 ]
