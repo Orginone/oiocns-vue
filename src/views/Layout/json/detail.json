@@ -1,5 +1,9 @@
 [
   {
+    "icon": "User",
+    "title": "待办"
+  },
+  {
       "name": "平台待办",
       "structure": false,
       "children": [
