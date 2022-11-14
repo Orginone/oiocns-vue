@@ -1,5 +1,6 @@
 <template>
   <div style="height: 100%; background: #fff">
+    {{state.menuData[0]}}
     <div class="title"><component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<span style="font-size: 14px;">{{titleData.title}}</span></div>
     <el-menu v-bind="$attrs">
       <el-sub-menu
@@ -64,8 +65,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, reactive } from 'vue'
-import router from '@/router'
+import { ref, watch, reactive ,nextTick} from 'vue'
+import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['handleClose'])
@@ -116,10 +117,14 @@ const init = () => {
   })
   state.query = state.treeData[0]?.query
 }
-init()
-
+let router = useRouter()
+watch(() => router.currentRoute.value.path, (newValue:any) => {
+  nextTick(() => {
+    init();
+  })
+})
 watch(filterText, (val) => {
-  console.log(val);
+  console.log('a',val);
   treeRef.value!.filter(val)
 })
 

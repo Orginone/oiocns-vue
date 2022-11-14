@@ -7,7 +7,7 @@
     <el-container>
       <!-- 主导航 -->
       <div class="menu-list" v-if="router.currentRoute.value.path !='/workHome'">
-        <MenuNav :data="menuArr" :titleData="titleArr"></MenuNav>
+        <MenuNav :data="menuArr.state" :titleData="titleArr.state"></MenuNav>
       </div>
       <div class="layout-main">
           <!-- 面包屑 -->
@@ -46,15 +46,45 @@
   import LoadingVue from './components/loading.vue'
   import { useUserStore } from '@/store/user'
   import authority from '@/utils/authority'
-  import { onBeforeMount, onBeforeUnmount,reactive } from 'vue'
+  import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick} from 'vue'
   import { useRouter } from 'vue-router';
   import storeJosn from './json/store.json';
+  import settingJosn from './json/setting.json';
+  import detailJosn from './json/detail.json';
   import { chat } from '@/module/chat/orgchat'
+
   let router = useRouter()
-  console.log(storeJosn);
-  
-  const titleArr = reactive(storeJosn[0])
-  const menuArr = reactive(storeJosn)
+  console.log(router.currentRoute.value.path);
+
+  let titleArr = reactive({state:{}});
+  let menuArr = reactive({
+    state:[]
+  });
+  const getNav = ()=>{
+    if(router.currentRoute.value.path.indexOf('store') != -1){    
+        console.log(1);
+        
+        titleArr.state = storeJosn[0]
+        menuArr.state = storeJosn
+        console.log('menuArr',menuArr,storeJosn)
+      }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){    
+        console.log(2);
+        
+        titleArr.state= settingJosn[0]
+        menuArr.state = settingJosn
+        console.log('menuArr',menuArr,settingJosn)
+      }else{
+        titleArr.state = detailJosn[0]
+        menuArr.state = detailJosn
+      } 
+  }
+  getNav();
+  watch(() => router.currentRoute.value.path, (newValue:any) => {
+    nextTick(() => {
+      getNav();
+    })
+  })
+
   onBeforeMount(async () => {
     await authority.Load()
     chat.start(useUserStore().userToken)

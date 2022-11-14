@@ -1,4 +1,7 @@
-[
+[   {
+        "icon": "User",
+        "title": "仓库"
+    },
     {
         "name": "常用分类",
         "structure": false,
