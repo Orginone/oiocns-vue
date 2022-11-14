@@ -7,7 +7,7 @@
     <el-container>
       <!-- 主导航 -->
       <div class="menu-list" v-if="router.currentRoute.value.path !='/workHome'">
-        <MenuNav :data="menuArr" ></MenuNav>
+        <MenuNav :data="menuArr" :titleData="titleArr"></MenuNav>
       </div>
       <div class="layout-main">
           <!-- 面包屑 -->
@@ -51,7 +51,8 @@
   import storeJosn from './json/store.json';
   import { chat } from '@/module/chat/orgchat'
   let router = useRouter()
-  console.log('storeJosn',storeJosn)
+
+  const titleArr = reactive(storeJosn[0])
   const menuArr = reactive(storeJosn)
   onBeforeMount(async () => {
     await authority.Load()

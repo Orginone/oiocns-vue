@@ -12,21 +12,21 @@
             },
             {
                 "name": "文档",
-                "type":"1",
+                "type":"2",
                 "uid":"1-1",
                 "url":"/user",
                 "children": []
             },
             {
                 "name": "数据",
-                "type":"1",
+                "type":"3",
                 "uid":"1-1",
                 "url":"/#/store",
                 "children": []
             },
             {
                 "name": "资源",
-                "type":"1",
+                "type":"4",
                 "uid":"1-1",
                 "url":"/#/store",
                 "children": []

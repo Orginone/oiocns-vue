@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%; background: #fff">
-    <div class="title"><component :is="propIcon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<span style="font-size: 14px;">{{title}}</span></div>
+    <div class="title"><component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<span style="font-size: 14px;">{{titleData.title}}</span></div>
     <el-menu v-bind="$attrs">
       <el-sub-menu
         v-for="(item, index) in state.menuData"
@@ -18,7 +18,7 @@
           @mouseover='onOver(val.type)' @mouseout="onOut"
           @click="jump(val)"
         >
-          <component :is="val.icon" style="width: 16px;height: 16px;"></component>&nbsp;
+          <component :is="val.icon" style="width: 16px;height: 16px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }" ></component>&nbsp;
           <b style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }" >{{ val.name }}</b>
         </el-menu-item>
       </el-sub-menu>
@@ -76,12 +76,9 @@ const props = defineProps({
   query: {
     type: Boolean
   }, //是否显示查询
-  title: {
-    type: String
+  titleData: {
+    type: Object
   }, // 标题
-  propIcon: {
-    type: String
-  }, // 标题icon
 })
 
 const filterText = ref('')
