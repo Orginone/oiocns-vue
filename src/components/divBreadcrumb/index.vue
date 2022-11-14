@@ -54,10 +54,10 @@
             />
           </transition>
         </el-row>
-        <el-button type="text" v-if="false" @click="showSearch = !showSearch">
+        <el-button type="text" v-if="searchType === '2'" @click="showSearch = !showSearch">
           <el-icon :size="18"><Search /></el-icon>
         </el-button>
-        <el-button type="text" @click="showSearchDrawer = true">
+        <el-button type="text" v-if="searchType === '1'" @click="showSearchDrawer = true">
           <el-icon :size="18"><Search /></el-icon>
         </el-button>
         <el-button type="text" @click="showShareDrawer = true">
@@ -91,6 +91,8 @@ const showShareDrawer = ref(false)
 const showSearchDrawer = ref(false);
 // 打开搜索框
 const showSearch = ref(false);
+// 当前页面搜索类型 默认：1: 抽屉  2：input
+const searchType = ref('1');
 
 const router = useRouter();
 // 全部路由信息
@@ -105,8 +107,9 @@ const currentRoute = computed(() => router.currentRoute.value.fullPath);
 
 watch(
   () => router.currentRoute.value,
-  (newValue, oldValue) => {
+  (newValue, _) => {
     breadList.value = newValue?.matched;
+    searchType.value = <string>newValue?.meta?.searchType ?? '1';
   },
   { immediate: true }
 );

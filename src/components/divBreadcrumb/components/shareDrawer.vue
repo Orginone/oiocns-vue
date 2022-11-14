@@ -1,5 +1,5 @@
 <template>
-  <!-- <el-drawer v-model="showShareDrawer" @close="emit('update:showShareDrawer', false)" direction="rtl" size="22%">
+  <el-drawer :model-value="showShareDrawer" @close="emit('update:showShareDrawer', false)" direction="rtl" size="22%">
     <template #header>
       <h4 style="color: #505050">分享</h4>
     </template>
@@ -34,7 +34,7 @@
         </el-row>
       </div>
     </template>
-  </el-drawer> -->
+  </el-drawer>
 </template>
 
 <script setup lang="ts">

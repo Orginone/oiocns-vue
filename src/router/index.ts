@@ -166,7 +166,8 @@ const mainRouter: RouteRecordRaw[] = [
         component: () => import('@/views/SetCenter/unit/index.vue'),
         meta: {
           title: '单位设置',
-          icon: 'OfficeBuilding'
+          icon: 'OfficeBuilding',
+          searchType: '1'
         }
       },
       {
@@ -175,7 +176,8 @@ const mainRouter: RouteRecordRaw[] = [
         component: () => import('@/views/SetCenter/department/index.vue'),
         meta: {
           title: '部门设置',
-          icon: 'Postcard'
+          icon: 'Postcard',
+          searchType: '2'
         }
       },
       {
@@ -184,7 +186,8 @@ const mainRouter: RouteRecordRaw[] = [
         component: () => import('@/views/SetCenter/group/index.vue'),
         meta: {
           title: '集团设置',
-          icon: 'Postcard'
+          icon: 'Postcard',
+          searchType: '1'
         }
       },
       {
@@ -193,7 +196,8 @@ const mainRouter: RouteRecordRaw[] = [
         component: () => import('@/views/SetCenter/post/index.vue'),
         meta: {
           title: '岗位设置',
-          icon: 'Postcard'
+          icon: 'Postcard',
+          searchType: '2'
         }
       },
     ]

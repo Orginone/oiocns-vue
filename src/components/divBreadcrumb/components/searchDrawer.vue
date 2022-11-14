@@ -1,22 +1,22 @@
 <template>
-<!-- <el-drawer v-model="showSearchDrawer" @close="emit('update:showSearchDrawer', false)" direction="rtl" size="22%">
-    <template #header>
-        <h4 style="color: #505050">筛选</h4>
-    </template>
-    <template #default>
-        <my-form 
-            ref="myFormRef"
-            :list="formList"
-            @submitForm="searchPage"
-        />
-    </template>
-    <template #footer>
-        <div style="flex: auto">
-        <el-button @click="handleReset">重置</el-button>
-        <el-button color="#0f39d1" @click="handleFilter">筛选</el-button>
-        </div>
-    </template>
-</el-drawer> -->
+  <el-drawer :model-value="showSearchDrawer" @close="emit('update:showSearchDrawer', false)" direction="rtl" size="22%">
+      <template #header>
+          <h4 style="color: #505050">筛选</h4>
+      </template>
+      <template #default>
+          <my-form 
+              ref="myFormRef"
+              :list="formList"
+              @submitForm="searchPage"
+          />
+      </template>
+      <template #footer>
+          <div style="flex: auto">
+          <el-button @click="handleReset">重置</el-button>
+          <el-button color="#0f39d1" @click="handleFilter">筛选</el-button>
+          </div>
+      </template>
+  </el-drawer>
 </template>
 
 <script setup lang="ts">
