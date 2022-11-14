@@ -14,48 +14,51 @@
                 "name": "文档",
                 "type":"2",
                 "uid":"1-1",
-                "url":"/user",
+                "url":"/cloud",
                 "children": []
             },
             {
                 "name": "数据",
                 "type":"3",
                 "uid":"1-1",
-                "url":"/#/store",
+                "url":"/store",
                 "children": []
             },
             {
                 "name": "资源",
                 "type":"4",
                 "uid":"1-1",
-                "url":"/#/store",
+                "url":"/store",
                 "children": []
             }
         ]
     },
     {
-        "label": "应用待办",
+        "label": "分类",
         "structure": true,
         "isPenultimate": true,
         "children": [
           {
-            "label": "公益仓",
+            "label": "应用名",
             "isPenultimate": true,
             "id": "",
             "children": [{
-                "label": "公益仓2",
+                "label": "应用分类",
                 "id": "3",
+                "url":"/store?id=1",
                 "children": []
             }]
           },
           {
-            "label": "办公OA",
+            "label": "应用名",
             "id": "1",
+            "url":"/store?id=1",
             "children": []
           },
           {
-            "label": "资产管理",
+            "label": "应用名",
             "id": "2",
+            "url":"/store?id=1",
             "children": []
           }
         ]
