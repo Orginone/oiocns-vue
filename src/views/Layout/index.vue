@@ -71,7 +71,7 @@
 
 <style lang="scss" scoped>
   .menu-list{
-    width: auto;
+    width: 200px;
     padding-right: 3px;
     background: #eff4f9;
   }

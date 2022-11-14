@@ -114,7 +114,7 @@ const init = () => {
   state.menuData = props.data.filter((item: any) => {
     return item.structure === false
   })
-  state.query = state.treeData[0].query
+  state.query = state.treeData[0]?.query
 }
 init()
 
