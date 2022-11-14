@@ -1,0 +1,63 @@
+[
+    {
+        "name": "常用分类",
+        "structure": false,
+        "children": [
+            {
+                "name": "应用",
+                "type":"1",
+                "uid":"1-1",
+                "url":"/store",
+                "children": []
+            },
+            {
+                "name": "文档",
+                "type":"1",
+                "uid":"1-1",
+                "url":"/user",
+                "children": []
+            },
+            {
+                "name": "数据",
+                "type":"1",
+                "uid":"1-1",
+                "url":"/#/store",
+                "children": []
+            },
+            {
+                "name": "资源",
+                "type":"1",
+                "uid":"1-1",
+                "url":"/#/store",
+                "children": []
+            }
+        ]
+    },
+    {
+        "label": "应用待办",
+        "structure": true,
+        "isPenultimate": true,
+        "children": [
+          {
+            "label": "公益仓",
+            "isPenultimate": true,
+            "id": "",
+            "children": [{
+                "label": "公益仓2",
+                "id": "3",
+                "children": []
+            }]
+          },
+          {
+            "label": "办公OA",
+            "id": "1",
+            "children": []
+          },
+          {
+            "label": "资产管理",
+            "id": "2",
+            "children": []
+          }
+        ]
+    }
+]
