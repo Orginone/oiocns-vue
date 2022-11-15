@@ -43,6 +43,8 @@
         </div>
       </div>
     </div>
+
+    <ChangePasswordDialog v-model="passwordVisible" />
   </div>
 </template>
 
@@ -53,6 +55,7 @@ import { getDescendantProp } from "@/utils/tools";
 import { storeToRefs } from "pinia";
 import { ShowDetailRow } from "../type";
 import titleBox, { BtnItem } from "@/components/titleBox/index.vue";
+import ChangePasswordDialog from "./ChangePasswordDialog.vue";
 const store = useUserStore();
 const { queryInfo } = storeToRefs(store);
 
@@ -89,16 +92,17 @@ const expanDetail = reactive<ShowDetailRow[][]>([
 
 // #endregion
 
+
+const passwordVisible = ref(false);
 function changePass() {
-  console.log("changePass");
+  passwordVisible.value = true;
 }
 function resetPass() {
   console.log("resetPass");
 }
 
-onMounted(async () => {
-  await store.getQueryInfo(store.userToken);
-  console.log(queryInfo.value)
+onMounted(() => {
+  store.getQueryInfo(store.userToken);
 });
 </script>
 
