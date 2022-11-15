@@ -1,3 +1,5 @@
+<img width="1060" alt="image" src="https://user-images.githubusercontent.com/8328012/201800690-9f5e989e-4ed3-4817-85b9-b594ac89fd31.png">  
+
 # ogocns-vue
 奥集能平台前端VUE版本  
 框架使用Vue3 + TypeScript + Vite实现
