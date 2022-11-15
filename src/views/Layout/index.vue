@@ -7,7 +7,7 @@
     <el-container>
       <!-- 主导航 -->
       <div class="menu-list" v-if="router.currentRoute.value.path !='/workHome'">
-        <MenuNav :data="menuArr" ></MenuNav>
+        <MenuNav :data="menuArr.state" :titleData="titleArr.state"></MenuNav>
       </div>
       <div class="layout-main">
           <!-- 面包屑 -->
@@ -46,95 +46,45 @@
   import LoadingVue from './components/loading.vue'
   import { useUserStore } from '@/store/user'
   import authority from '@/utils/authority'
-  import { onBeforeMount, onBeforeUnmount,reactive } from 'vue'
+  import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick} from 'vue'
   import { useRouter } from 'vue-router';
+  import storeJosn from './json/store.json';
+  import settingJosn from './json/setting.json';
+  import detailJosn from './json/detail.json';
   import { chat } from '@/module/chat/orgchat'
+
   let router = useRouter()
+  console.log(router.currentRoute.value.path);
 
-console.log('router',);
+  let titleArr = reactive({state:{}});
+  let menuArr = reactive({
+    state:[]
+  });
+  const getNav = ()=>{
+    if(router.currentRoute.value.path.indexOf('store') != -1){    
+        console.log(1);
+        
+        titleArr.state = storeJosn[0]
+        menuArr.state = storeJosn
+        console.log('menuArr',menuArr,storeJosn)
+      }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){    
+        console.log(2);
+        
+        titleArr.state= settingJosn[0]
+        menuArr.state = settingJosn
+        console.log('menuArr',menuArr,settingJosn)
+      }else{
+        titleArr.state = detailJosn[0]
+        menuArr.state = detailJosn
+      } 
+  }
+  getNav();
+  watch(() => router.currentRoute.value.path, (newValue:any) => {
+    nextTick(() => {
+      getNav();
+    })
+  })
 
-  const menuArr = reactive( [
-        {
-          name: "平台待办",
-          structure: false,
-          children: [
-            {
-              name: "好友申请",
-              type:'1',
-              uid:'1-1',
-              // components:'Videoitem',
-              children: [],
-            },
-            {
-              name: "单位审核",
-              type:'2',
-              uid:'1-2',
-              // components:'Videoitem',
-              children: [],
-            },
-            {
-              name: "商店审核",
-              type:'3',
-              uid:'1-3',
-              // components:'Videoitem',
-              children: [],
-            },
-            {
-              name: "订单审核",
-              type:'4',
-              uid:'1-4',
-              // components:'Videoitem',
-              children: [],
-            },
-          ],
-        },
-        {
-          label: "应用待办",
-          structure: true,
-          isPenultimate: true,
-          children: [
-            {
-              label: "公益仓",
-              isPenultimate: true,
-              id: '0',
-              children: [{
-              label: "公益仓2",
-              id: '3',
-              children: [],
-            },],
-            },
-            {
-              label: "办公OA",
-              id: '1',
-              children: [],
-            },
-            {
-              label: "资产管理",
-              id: '2',
-              children: [],
-            },
-          ],
-        },
-        {
-          label: "应用待办111",
-          structure: true,
-          isPenultimate: true,
-          children: [
-            {
-              label: "公益仓",
-              children: [],
-            },
-            {
-              label: "办公OA",
-              children: [],
-            },
-            {
-              label: "资产管理",
-              children: [],
-            },
-          ],
-        },
-    ])
   onBeforeMount(async () => {
     await authority.Load()
     chat.start(useUserStore().userToken)
@@ -152,7 +102,7 @@ console.log('router',);
 <style lang="scss" scoped>
   .menu-list{
     width: 200px;
-    padding-right: 10px;
+    padding-right: 3px;
     background: #eff4f9;
   }
   .el-header {

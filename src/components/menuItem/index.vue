@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%; background: #fff">
-    <div class="title"><component :is="propIcon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<span style="font-size: 14px;">{{title}}</span></div>
+    <div class="title"><component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<span style="font-size: 14px;">{{titleData.title}}</span></div>
     <el-menu v-bind="$attrs">
       <el-sub-menu
         v-for="(item, index) in state.menuData"
@@ -16,16 +16,15 @@
           :key="val.uid"
           :index="String(val.uid)"
           @mouseover='onOver(val.type)' @mouseout="onOut"
+          @click="jump(val)"
         >
-          <component :is="val.icon" style="width: 16px;height: 16px;"></component>&nbsp;
-          <b style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }">{{ val.name }}</b>
+          <component :is="val.icon" style="width: 16px;height: 16px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }" ></component>&nbsp;
+          <b style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }" >{{ val.name }}</b>
         </el-menu-item>
       </el-sub-menu>
     </el-menu>
-    <el-input v-model="filterText" placeholder="搜索" v-if="query" class="w-50 m-2" :prefix-icon="Search" />
-    <el-tree ref="treeRef"
-      :highlight-current="highlightCurrent"
-      :draggable="draggable"
+    <el-input v-model="filterText" placeholder="搜索" v-if="state.query" class="w-50 m-2" :prefix-icon="Search" />
+    <el-tree ref="treeRef" 
       v-bind="$attrs" 
       :data="state.treeData" 
       node-key="id" 
@@ -34,8 +33,8 @@
       :props="{ class: customNodeClass }"
     >
       <template #default="{ node, data }">
-        <div class="custom-tree-node" @mouseover='onHover(node.id)' @mouseout="onOut">
-          <span>{{ node.label }}</span>
+        <div class="custom-tree-node" @mouseover='onHover(node.id)' @mouseout="onOut" @click="jump(node)">
+          <span>{{ node.label }} </span>
           <span class="sp_10" v-show="node.id === state.flag">
             <el-popover
               placement="right"
@@ -65,7 +64,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, reactive } from 'vue'
+import { ref, watch, reactive ,nextTick} from 'vue'
+import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['handleClose'])
@@ -73,21 +73,9 @@ const props = defineProps({
   data: {
     type: Array,
   },
-  query: {
-    type: Boolean
-  }, //是否显示查询
-  title: {
-    type: String
+  titleData: {
+    type: Object
   }, // 标题
-  propIcon: {
-    type: String
-  }, // 标题icon
-  draggable: {
-    type: Boolean
-  }, // 是否实现节点拖拽
-  highlightCurrent: {
-    type: Boolean
-  }, // 选中节点是否高亮
 })
 
 const filterText = ref('')
@@ -95,8 +83,9 @@ const treeRef = ref()
 const state = reactive({
   menuData: [],
   treeData: [],
-  flag: '',
-  flag1: ''
+  query: false, // 是否显示搜索框
+  flag: '', // 是否高亮标记
+  flag1: ''// 是否高亮标记
 })
 const onHover = (id: string) => {
   state.flag = id
@@ -118,18 +107,27 @@ const onOut = () => {
   state.flag = ''
   state.flag1 = ''
 }
-const init = () => {
-  state.treeData = props.data.filter((item: any) => {
-    return item.structure === true
+const init =  () => {
+  nextTick(() => {
+    state.treeData = props.data.filter((item: any) => {
+      return item.structure === true
+    })
+    state.menuData = props.data.filter((item: any) => {
+      return item.structure === false
+    })
   })
-  state.menuData = props.data.filter((item: any) => {
-    return item.structure === false
-  })
+  state.query = state.treeData[0]?.query
+  
 }
-init()
-
+init();
+let router = useRouter()
+watch(() => router.currentRoute.value.path, (newValue:any) => {
+  nextTick(() => {
+    init();
+  })
+})
 watch(filterText, (val) => {
-  console.log(val);
+  console.log('a',val);
   treeRef.value!.filter(val)
 })
 
@@ -138,6 +136,14 @@ const filterNode = (value: string, data: any) => {
   return data.label.includes(value)
 }
 
+// 路由跳转
+const jump = (val:any)=>{
+    if(val.url){
+      router.push(val.url)
+    }else if (val.data.url){
+      router.push(val.data.url)
+    }
+}
 // const handleClose = () => {
 //   emit('handleClose', 'menu')
 // }

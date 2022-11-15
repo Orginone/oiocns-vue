@@ -1,6 +1,7 @@
 import { App } from 'vue'
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import Layout from '@/views/Layout/index.vue'
+import mine from './modules/mine'
 
 let resultRouter: RouteRecordRaw[] = []
 
@@ -55,15 +56,8 @@ const mainRouter: RouteRecordRaw[] = [
       title: '消息'
     }
   },
-  {
-    component: () => import('@/views/Mine/Mine/index.vue'),
-    name: 'mine',
-    path: '/mine',
-    meta: {
-      keepAlive: false,
-      title: '我的'
-    }
-  },
+  // 我的
+  ...mine,
   {
     path: '/relation',
     component: () => import('@/views/Relation/index.vue'),
@@ -172,7 +166,8 @@ const mainRouter: RouteRecordRaw[] = [
         component: () => import('@/views/SetCenter/unit/index.vue'),
         meta: {
           title: '单位设置',
-          icon: 'OfficeBuilding'
+          icon: 'OfficeBuilding',
+          searchType: '1'
         }
       },
       {
@@ -181,7 +176,8 @@ const mainRouter: RouteRecordRaw[] = [
         component: () => import('@/views/SetCenter/department/index.vue'),
         meta: {
           title: '部门设置',
-          icon: 'Postcard'
+          icon: 'Postcard',
+          searchType: '2'
         }
       },
       {
@@ -190,7 +186,8 @@ const mainRouter: RouteRecordRaw[] = [
         component: () => import('@/views/SetCenter/group/index.vue'),
         meta: {
           title: '集团设置',
-          icon: 'Postcard'
+          icon: 'Postcard',
+          searchType: '1'
         }
       },
       {
@@ -199,7 +196,8 @@ const mainRouter: RouteRecordRaw[] = [
         component: () => import('@/views/SetCenter/post/index.vue'),
         meta: {
           title: '岗位设置',
-          icon: 'Postcard'
+          icon: 'Postcard',
+          searchType: '2'
         }
       },
     ]
@@ -485,13 +483,94 @@ const mainRouter: RouteRecordRaw[] = [
     }
   },
   {
-    component: () => import('@/views/Store/index.vue'),
     name: 'store',
     path: '/store',
     meta: {
       keepAlive: false,
       title: '仓库'
-    }
+    },
+    children: [
+      {
+        path: '/store',
+        name: 'store',
+        component: () => import('@/views/Store/index.vue'),
+        meta: {
+          title: '仓库'
+        }
+      },
+      {
+        path: '/store/appDetails',
+        name: 'storeAppDetails',
+        component: () => import('@/views/Store/appDetails/index.vue'),
+        meta: {
+          title: '应用详情'
+        }
+      },
+      {
+        path: '/store/appManagement',
+        name: 'storeAppManagement',
+        component: () => import('@/views/Store/appManagement/index.vue'),
+        meta: {
+          title: '应用设置'
+        }
+      },
+      {
+        path: '/store/shop',
+        name: 'storeShop',
+        component: () => import('@/views/Store/shop/index.vue'),
+        meta: {
+          title: '应用商店'
+        }
+      },
+      {
+        path: '/store/appApply',
+        name: 'storeAppApply',
+        component: () => import('@/views/Store/appApply/index.vue'),
+        meta: {
+          title: '上架申请'
+        }
+      },
+      {
+        path: '/store/payOrder',
+        name: 'storePayOrder',
+        component: () => import('@/views/Store/payOrder/index.vue'),
+        meta: {
+          title: '采购订单'
+        }
+      },
+      {
+        path: '/store/sellOrder',
+        name: 'storeSellOrder',
+        component: () => import('@/views/Store/sellOrder/index.vue'),
+        meta: {
+          title: '售卖订单'
+        }
+      },
+      {
+        path: '/store/shoppingCar',
+        name: 'storeShoppingCar',
+        component: () => import('@/views/Store/shoppingCar/index.vue'),
+        meta: {
+          title: '购物车'
+        }
+      },
+      {
+        path: '/store/appList',
+        name: 'storeAppList',
+        component: () => import('@/views/Store/appList/index.vue'),
+        meta: {
+          title: '应用列表'
+        }
+      },
+      {
+        path: '/store/appApproval',
+        name: 'storeAppApproval',
+        component: () => import('@/views/Store/appApproval/index.vue'),
+        meta: {
+          title: '应用上架审批'
+        }
+      }
+    ]
   },
   {
     component: () => import('@/views/Test/index.vue'),
