@@ -331,7 +331,7 @@
     router.push('/workHome')
   }
   const toUserSetting = () => {
-    router.push('/user')
+    router.push('/mine')
   }
   const toSetting = () => {
     router.push('/setCenter')

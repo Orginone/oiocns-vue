@@ -1,6 +1,6 @@
 <template>
   <div class="certificate">
-    <userInfoBox></userInfoBox>
+    <!-- <userInfoBox></userInfoBox> -->
     <div class="tabBox">
       <diytab
         :style="{ height: 300 + 'px', width: '100%' }"
@@ -34,7 +34,6 @@ import { ref, onMounted, watch, reactive } from "vue";
 import $services from "@/services";
 import diytab from "@components/diyTable/index.vue";
 import { BtnItem } from "@/components/titleBox/index.vue";
-import userInfoBox from "../components/userInfoBox/index.vue";
 import useSearch from "@/hooks/useSearch";
 
 const { dataSource, refresh, changeOffset, changeFilter } = useSearch(
@@ -107,7 +106,7 @@ onMounted(() => {
 </script>
 <style lang="scss" scoped>
 .certificate {
-  padding: 5px 8px;
+  // padding: 5px 8px;
   display: flex;
   flex-direction: column;
   height: 100%;

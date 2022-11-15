@@ -51,7 +51,7 @@ import { ref, onMounted, watch, reactive } from "vue";
 import { useUserStore } from "@/store/user";
 import { getDescendantProp } from "@/utils/tools";
 import { storeToRefs } from "pinia";
-import { ShowDetailRow } from "../../type";
+import { ShowDetailRow } from "../type";
 import titleBox, { BtnItem } from "@/components/titleBox/index.vue";
 const store = useUserStore();
 const { queryInfo } = storeToRefs(store);
@@ -96,8 +96,9 @@ function resetPass() {
   console.log("resetPass");
 }
 
-onMounted(() => {
-  store.getQueryInfo(store.userToken);
+onMounted(async () => {
+  await store.getQueryInfo(store.userToken);
+  console.log(queryInfo.value)
 });
 </script>
 
