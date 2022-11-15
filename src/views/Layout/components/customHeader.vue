@@ -507,7 +507,7 @@
         cursor: pointer;
         background: rgba(0, 0, 0, 0.03);
         height: 100%;
-        color: #409eff;
+        color: #154AD8;
       }
 
       // .dropdown-menu {
