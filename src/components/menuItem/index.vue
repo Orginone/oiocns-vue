@@ -44,7 +44,9 @@
               <template #reference>
                 <el-icon><Plus /></el-icon>
               </template>
-              <slot name="service"></slot>
+              <div class="btn-bus" @click="clickBus">
+                <div class="row-btn" v-for="(item,index) in state.treeData[0].btns" :key="item" :data-index="item.id">{{item.name}}</div>
+              </div>
             </el-popover>&nbsp;
             <el-popover
               placement="right"
@@ -64,7 +66,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, reactive ,nextTick} from 'vue'
+import { ref, watch, reactive ,nextTick ,getCurrentInstance} from 'vue'
 import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
 
@@ -76,6 +78,9 @@ const props = defineProps({
   titleData: {
     type: Object
   }, // 标题
+  btnList:{
+    type:Object
+  }
 })
 
 const filterText = ref('')
@@ -130,7 +135,10 @@ watch(filterText, (val) => {
   console.log('a',val);
   treeRef.value!.filter(val)
 })
-
+const instance = getCurrentInstance();
+const clickBus = (e:any)=>{
+  instance?.proxy?.$Bus.emit('clickBus', e.target.dataset.index)
+}
 const filterNode = (value: string, data: any) => {
   if (!value) return true
   return data.label.includes(value)

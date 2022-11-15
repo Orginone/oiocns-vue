@@ -144,6 +144,7 @@ const commontActive = () => {};
   flex-wrap: nowrap;
   max-height: 200px;
   padding: 16px;
+  margin-top:3px;
   .detail-title {
     font-size: 14px;
     color: #303133;
