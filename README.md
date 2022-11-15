@@ -1,4 +1,4 @@
-<img width="1060" alt="image" src="https://user-images.githubusercontent.com/8328012/201800690-9f5e989e-4ed3-4817-85b9-b594ac89fd31.png">  
+![image](https://user-images.githubusercontent.com/8328012/201842952-d3605678-728c-4bde-8340-5a69fb004567.png)  
 
 # ogocns-vue
 奥集能平台前端VUE版本  
