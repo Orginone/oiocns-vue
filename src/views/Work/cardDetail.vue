@@ -172,7 +172,7 @@
 
 <script lang="ts" setup>
   import $services from '@/services'
-  import { ref, onMounted, reactive } from 'vue'
+  import { ref, onMounted, reactive, getCurrentInstance } from 'vue'
   import { storeToRefs } from 'pinia'
   import { useUserStore } from '@/store/user'
   import { useRoute,useRouter } from 'vue-router'
@@ -185,6 +185,7 @@
   import thingServices from '@/module/flow/thing'
 
   const ThingServices  = new thingServices()
+  const instance = getCurrentInstance()
   const route = useRoute()
   const router = useRouter()
   const dialogVisible = ref<boolean>(false)
@@ -576,6 +577,16 @@
     }
     handleSelect(selectType, [])
   });
+
+  instance?.proxy?.$Bus.on('clickBus', (num) => {
+    if(num === '301') {
+      console.log('发起业务')
+    }else if(num === '302') {
+      console.log('重命名')
+    }else if(num === '303') {
+      console.log('删除应用')
+    }
+  })
 </script>
 
 

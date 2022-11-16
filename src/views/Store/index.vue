@@ -174,7 +174,7 @@
     }
   }
   instance?.proxy?.$Bus.on('clickBus', (num) => {
-      console.log(num)
+    console.log(num)
   })
 </script>
 <style lang="scss">

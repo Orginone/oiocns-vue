@@ -44,7 +44,7 @@
               <template #reference>
                 <el-icon><Plus /></el-icon>
               </template>
-              <div class="btn-bus" @click="clickBus">
+              <div class="btn-bus" @click="clickBus" :style="{cursor: 'pointer'}" >
                 <div class="row-btn" v-for="(item,index) in state.treeData[0].btns" :key="item" :data-index="item.id">{{item.name}}</div>
               </div>
             </el-popover>&nbsp;
@@ -120,9 +120,8 @@ const init =  () => {
     state.menuData = props.data.filter((item: any) => {
       return item.structure === false
     })
+    state.query = state.treeData[0]?.query
   })
-  state.query = state.treeData[0]?.query
-  
 }
 init();
 let router = useRouter()
@@ -170,6 +169,10 @@ const jump = (val:any)=>{
     padding: 10px;
     background: #f9fbfe;
     font-size: 16px;
+  }
+
+  .row-btn{
+    margin: 10px 0px;
   }
   .custom-tree-node {
     width: 180px;
