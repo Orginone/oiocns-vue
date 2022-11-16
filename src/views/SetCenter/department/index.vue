@@ -153,7 +153,7 @@ const selectionChange = (val: any) => {
 }
 //获取部门信息
 onMounted(() => {
-  loadOrgTree()
+  // loadOrgTree()
 })
 </script>
 <style lang="scss" scoped>

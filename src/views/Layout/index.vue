@@ -68,11 +68,10 @@
         menuArr.state = storeJosn
         console.log('menuArr',menuArr,storeJosn)
       }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){    
-        console.log(2);
-        
-        titleArr.state= settingJosn[0]
-        menuArr.state = settingJosn
-        console.log('menuArr',menuArr,settingJosn)
+          let currentRouteName: any = router.currentRoute.value.name
+          const jsonData: any = settingJosn
+          titleArr.state= jsonData[currentRouteName][0]
+          menuArr.state = jsonData[currentRouteName]
       }else{
         titleArr.state = detailJosn[0]
         menuArr.state = detailJosn

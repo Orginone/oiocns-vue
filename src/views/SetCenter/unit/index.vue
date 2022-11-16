@@ -28,7 +28,7 @@
     }
     //获取部门信息
     onMounted(() => {
-      loadOrgTree()
+      // loadOrgTree()
     })
 
 
