@@ -10,22 +10,25 @@ interface PageOption {
  * @param otherParams 其他需要默认带的参数，如果调用 refresh 方法，会被同名字段覆盖 如: 初始化传 {a: 1, b: 2} refresh 传 {a: 3}, 则a会被3覆盖, b不变
  * @param initSearch 是否进入页面自动请求一次
  */
-const useSearch = (
-  http: Function,
-  otherParams: object = {},
+function useSearch<T = any>(
+  http: (...args: any[]) => Promise<ResultType<any>>,
+  otherParams: Record<string, any> = {},
   initSearch: boolean = true
 ): {
   // 数据
-  dataSource: any;
+  dataSource: {
+    data: T[];
+    [key: string]: any;
+  };
   // 刷新
-  refresh: (newParam?: object) => Promise<any>;
+  refresh: (newParam?: Record<string, any>) => Promise<any>;
   // 跳转页数
   changeOffset: Function;
   // 设置每页多少条
   changeLimit: Function;
   // 设置每页多少条
   changeFilter: Function;
-} => {
+} {
   let dataSource = reactive<any>({ data: [] });
   let pageOption = reactive<PageOption>({
     offset: 1,
@@ -48,7 +51,7 @@ const useSearch = (
       filter: filter.value,
       ...oldParam,
     };
-    return http({ data }).then((res: ResultType) => {
+    return http({ data }).then(res => {
       console.log(res);
       if (res.success) {
         dataSource.data = [{ title: "模拟请求到的数据" }];
@@ -58,7 +61,7 @@ const useSearch = (
   };
 
   // 刷新
-  const refresh = async (param: object = {}) => {
+  const refresh = async (param: Record<string, any> = {}) => {
     return await getList(param);
   };
 

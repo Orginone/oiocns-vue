@@ -131,50 +131,6 @@ const selectionChange = (val: any) => {
   checkList.value = val
 }
 
-const dataSource = ref<Tree[]>([
-  {
-    id: 1,
-    label: '浙江省财产年报集团',
-    children: [
-      {
-        id: 5,
-        label: '集团子节点',
-      },
-      {
-        id: 6,
-        label: '集团子节点',
-      },
-    ],
-  },
-  {
-    id: 2,
-    label: '浙江省资产年报集团',
-    children: [
-      {
-        id: 5,
-        label: '集团子节点',
-      },
-      {
-        id: 6,
-        label: '集团子节点',
-      },
-    ],
-  },
-  {
-    id: 3,
-    label: '浙江省资产年报集团',
-    children: [
-      {
-        id: 5,
-        label: '集团子节点',
-      },
-      {
-        id: 6,
-        label: '集团子节点',
-      },
-    ],
-  },
-])
 </script>
 <style lang="scss" scoped>
   .el-dropdown-link{
