@@ -56,7 +56,7 @@
   let router = useRouter()
   console.log(router.currentRoute.value.path);
 
-  let titleArr = reactive({state:{}});
+  let titleArr = reactive<any>({state:{btnList:[]}});
   let menuArr = reactive({
     state:[]
   });
