@@ -77,7 +77,7 @@ let dialogVisible = ref<boolean>(false)
 let formData: any = ref({})
 const service  = new DepartmentServices()
 
-// 获取单位树点击的信息
+// 获取单位
 const selectItemChange = (data: any) => {
   selectItem.value = data;
   const obj = data.data;

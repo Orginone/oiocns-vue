@@ -1,36 +1,49 @@
 <template>
     <div class="main">
-      <div class="container mainBox" ref="container">
+      <div class="container mainBox">
         <div class="content">
-          <div class="info" ref="infoWrap">
+          <div class="info">
             <Info ref="info" />
           </div>
-          <!-- 卡片组件测试 -->
-          <!-- <divcard>
-            <template #dropdown>
-              <el-dropdown placement="bottom-start">
-                <span class="el-dropdown-link"> ··· </span>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item>详情</el-dropdown-item>
-                    <el-dropdown-item>管理</el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </template>
-          </divcard> -->
         </div>
       </div>
     </div>
   </template>
   <script lang="ts" setup>
     import Info from './components/info.vue'
-    import { ref } from 'vue'
-    import divcard from "@/components/divCard/index.vue";
+    import $services from '@/services'
+    import { ref, onMounted } from 'vue'
+    import { useUserStore } from '@/store/user'
+    import { storeToRefs } from 'pinia'
+    import { ElMessage } from 'element-plus'
+
+    const store = useUserStore()
+    const { workspaceData } = storeToRefs(store)
   
     const info = ref(null)
-    const container = ref(null)
-    const infoWrap = ref(null)
+    // 加载单位
+    const loadOrgTree = () => {
+      $services.company.getCompanyTree({}).then((res: any) => {
+        console.log('res: ', res);
+        nodeClick(res.data)
+      })
+    }
+    // 给相应组件传值
+    const nodeClick = (selectItem: any) => {
+      info.value.selectItemChange(selectItem)
+    }
+    //获取部门信息
+    onMounted(() => {
+      if(store?.workspaceData?.name != '个人空间') {
+        loadOrgTree()
+      } else {
+        ElMessage({
+          message: '当前处于个人空间',
+          type: 'warning'
+        })
+      }
+    })
+
 
   </script>
   <style lang="scss" scoped>

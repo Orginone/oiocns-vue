@@ -122,6 +122,7 @@ const init =  () => {
     })
     state.query = state.treeData[0]?.query
   })
+  
 }
 init();
 let router = useRouter()
