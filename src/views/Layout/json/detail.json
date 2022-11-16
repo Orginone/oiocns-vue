@@ -1,7 +1,7 @@
 [
   {
-    "icon": "User",
-    "title": "待办"
+    "icon": "List",
+    "title": "办事"
   },
   {
       "name": "平台待办",
@@ -11,28 +11,28 @@
               "name": "好友申请",
               "type":"1",
               "uid":"1-1",
-              "url":"/store",
+              "url":"/cardDetail?id=1",
               "children": []
           },
           {
               "name": "单位审核",
               "type":"2",
               "uid":"1-1",
-              "url":"/user",
+              "url":"/cardDetail?id=2",
               "children": []
           },
           {
               "name": "商店审核",
               "type":"3",
               "uid":"1-1",
-              "url":"/#/store",
+              "url":"/cardDetail?id=3",
               "children": []
           },
           {
               "name": "订单审核",
               "type":"4",
               "uid":"1-1",
-              "url":"/#/store",
+              "url":"/cardDetail?id=4",
               "children": []
           }
       ]
