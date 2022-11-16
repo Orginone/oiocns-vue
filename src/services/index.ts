@@ -2,10 +2,20 @@ import { App } from 'vue'
 import request from './request'
 import urls from './RESTFULURL'
 import { useUserStore } from '@/store/user'
-const FUNS: { [key: string]: any } = {}
-const APPFUNS: { [key: string]: any } = {}
 
-const InitRequests = (req: any, urls: any, loadToken: boolean, ignores: string[]) => {
+
+type ApiUrlMap = typeof urls;
+
+export type RequestMethodMap = {
+  [C in keyof ApiUrlMap]: {
+    [U in keyof ApiUrlMap[C]]: (option: any, ...args: any[]) => Promise<ResultType<any>> 
+  };
+}
+
+const FUNS: RequestMethodMap = {} as any;
+const APPFUNS: RequestMethodMap = {} as any;
+
+const InitRequests = (req: any, urls: Record<string, any>, loadToken: boolean, ignores: string[]) => {
   Object.keys(urls).forEach((key) => {
     let sub = urls[key]
     switch (typeof sub) {
@@ -55,6 +65,6 @@ InitRequests(APPFUNS, urls, false, [])
 export function setGlobalProperties(app: App<Element>) {
   app.config.globalProperties.$API = FUNS
 }
-
+console.warn(FUNS)
 export default FUNS
 export { APPFUNS }
