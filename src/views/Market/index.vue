@@ -319,15 +319,11 @@
   </div>
 </template>
 <script setup lang="ts">
-  import API from '@/services'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { onMounted, reactive, ref, watch, nextTick } from 'vue'
   import ShopCard from './components/shopCard.vue'
   import PutawayComp from './components/putawayComp.vue'
   import { actionOptionsOfOwn } from './config'
-  import Cohort from './components/cohortBox.vue'
-  import ShareCohort from './components/shareCohortBox.vue'
-  import SharePersonBox from './components/sharePersonBox.vue'
   import ShareComponent from './components/shareComponents.vue'
   import { useRouter } from 'vue-router'
   import type { FormInstance } from 'element-plus'
@@ -335,11 +331,7 @@
   import MarketCard from '@/components/marketCard/index.vue'
   import { useUserStore } from '@/store/user'
   import DiyTable from '@/components/diyTable/index.vue'
-  import appImg from '@/assets/img/app_icon.png'
   import $services from '@/services'
-  import Unit from '../Market/AppShare/unit.vue'
-  import Group from '../Market/AppShare/group.vue'
-  import Person from '../Market/AppShare/person.vue'
   import Pagination from '@/components/pagination/index.vue'
   import {chat} from '@/module/chat/orgchat'
   import authority from '@/utils/authority'
@@ -352,40 +344,15 @@
   import ProcessDesign from '@/components/wflow/ProcessDesign.vue';
   const processDesignRef = ref();
   const add: string = '从 ⌈开放市场⌋ 添加'
-  const groupShareVisible = ref<boolean>(false)
-  const unitShareVisible = ref<boolean>(false)
-  const personCohortShareVisible = ref<boolean>(false)
-
   const isCard = ref(true)
   const mode = ref('card')
   // 注册页面实例
-  const registerFormRef = ref<FormInstance>()
   const router = useRouter()
   const store = useUserStore()
-  const cohort = ref(null)
   const bindedFlow = reactive({
     flow: null,
     bindShow: false
   })
-
-  // const clickSetting = async (product:any)=>{
-  //   const result = await appstore.getResource(product.id)
-  //   // resources.resources = result
-  //   let flowArr:any = []
-  //   result.forEach((element:any) => {
-  //     console.log(element,'aaaaa')
-  //     let arr = JSON.parse(element.flows);
-  //     let itemArr:any = []
-  //     arr.forEach((el:any) => {
-  //       el.appId = selectProductItem.value.id;
-  //       el.appName = selectProductItem.value.name
-  //       el.sourceId = element.id;
-  //       itemArr.push(el)
-  //     });
-  //     flowArr.push(...itemArr)
-  //   });
-  //   resourcesList.value = flowArr
-  // }
 
   const flowsList = ref([])
   const flowsValue = ref(null)
@@ -427,77 +394,6 @@
   const processClick = (e:any)=>{
     console.log('processClick',e)
   }
-  // const formChange = (e:any)=>{
-  //   //根据formId查找流程
-  //    let obj:any = resourcesList.value[e]
-     
-  //    bindedFlow.flow = flowsList.value.filter(item=>item.formIds && item.formIds.includes(obj.formId))[0]
-  //    //如果没有给出流程对应的关系，则自己根据formId查找
-  //    if(!bindedFlow.flow){
-  //       $services.wflow.queryDefine({
-	// 				data:{
-	// 					id: 0,
-  //           productId: obj.appId,
-	// 					functionCode: obj.formId,
-	// 					status: 1
-	// 				}
-	// 			})
-	// 			.then((res: ResultType) => {
-	// 				if(!res){
-	// 					ElMessage({
-	// 						message: '接口请求异常',
-	// 						type: 'warning'
-	// 					})
-	// 				}else if ( res.code == 200) {
-						
-	// 					let openId = ""
-	// 					if(res && res.data && res.data.result){
-	// 						res.data.result = res.data.result.map((item:any)=>{item.resource = JSON.parse( item.content )['resource']; item.resource = DefaultNodeProps.getResource(item.resource,true) ;delete item.content ; delete item.flowNodes ;return item})
-  //             bindedFlow.flow = res.data.result[0]
-  //           }
-							
-	// 				} else {
-	// 					ElMessage({
-	// 						message: res.msg,
-	// 						type: 'warning'
-	// 					})
-	// 				}
-	// 			})
-  //    }
-
-
-  // }
-
-    //绑定流程
-  // const  bindFlow = (e:any)=>{
-  //   //调用接口保存流程和formId的关系
-  //   let flow:any = flowsList.value[e]
-  //   let oldFlow:any = bindedFlow.flow
-  //   let resource:any = resourcesList.value[resourcesValue.value]
-  //   $services.wflow.createRelation({
-	// 				data:{
-	// 					defineId: flow.id,
-  //           productId: resource.appId,
-	// 					functionCode: resource.formId,
-	// 				}
-	// 			})
-	// 			.then((res: ResultType) => {
-	// 				if(!res){
-	// 					ElMessage({
-	// 						message: '接口请求异常',
-	// 						type: 'warning'
-	// 					})
-	// 				}else if ( res.code == 200) {
-	// 					bindedFlow.flow = flow
-  //           bindedFlow.bindShow = false
-	// 				} else {
-	// 					ElMessage({
-	// 						message: res.msg,
-	// 						type: 'warning'
-	// 					})
-	// 				}
-	// 			})
-  // }
 
   const { queryInfo } = storeToRefs(store)
 
@@ -613,10 +509,6 @@
         getProductList()
       }
     })
-    // 监听所选市场变化
-    // if (activeMVal!==activeMValOld) {
-    //   getData()
-    // }
   })
 
   const shopcarNum = ref(0)
@@ -680,8 +572,6 @@
       })
       .catch(() => {})
   }
-
-
 
   // 记录当前操作的 应用信息
   const selectProductItem = ref<any>()
@@ -795,7 +685,7 @@
   //   processDesignRef.value.startDesign(obj);
   //   processType.value = false;
   // }
- </script>
+</script>
 
 <style>
   .group-dialog > .el-dialog__body {
