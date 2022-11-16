@@ -20,6 +20,7 @@
     "core-js": "^3.26.1",
     "echarts": "^5.4.0",
     "element-china-area-data": "^5.0.2",
+    "mitt": "^3.0.0",
     "moment": "^2.29.4",
     "nprogress": "^0.2.0",
     "pako": "^2.0.4",

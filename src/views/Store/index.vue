@@ -73,7 +73,8 @@
   import search from './components/search.vue'
   import detail from './components/editDetail.vue'
   import card from './components/card.vue'
-  import { ref, reactive, onMounted, nextTick } from 'vue'
+  import { ref, reactive, onMounted, nextTick,getCurrentInstance } from 'vue'
+  const instance = getCurrentInstance()
   const dialogVisible = ref<boolean>(true)
   const diyTable = ref(null)
   const createDialog = ref<boolean>(false)
@@ -172,7 +173,9 @@
       
     }
   }
-  
+  instance?.proxy?.$Bus.on('clickBus', (num) => {
+    console.log(num)
+  })
 </script>
 <style lang="scss">
   .el-dropdown-link{
