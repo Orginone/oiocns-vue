@@ -40,7 +40,7 @@
     height: 160px;
     margin-bottom: 10px;
     margin-right: 10px;
-    border: 2px dashed #409eff;
+    border: 2px dashed #154AD8;
     text-align: center;
     line-height: 120px;
     border-radius: 2px;
