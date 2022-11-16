@@ -72,9 +72,22 @@
 // @ts-nocheck
 import Info from "./components/info.vue";
 import diytab from "@/components/diyTable/index.vue";
-import { ref } from "vue";
+import $services from '@/services'
+import { ref, onMounted } from "vue";
 
 const info = ref(null);
+
+// 加载单位
+const loadOrgTree = () => {
+  $services.company.getCompanyTree({}).then((res: any) => {
+    console.log('res: ', res);
+    nodeClick(res.data)
+  })
+}
+// 给相应组件传值
+const nodeClick = (selectItem: any) => {
+  info.value.selectItemChange(selectItem)
+}
 
 // 表格展示数据
 const pageStore = reactive({
@@ -138,19 +151,10 @@ const checkList = reactive<any>([])
 const selectionChange = (val: any) => {
   checkList.value = val
 }
-
-const dataSource = ref<Tree[]>([
-  {
-    id: 1,
-    label: "浙江省财政厅",
-    children: [
-      {
-        id: 2,
-        label: "资产处",
-      },
-    ],
-  },
-]);
+//获取部门信息
+onMounted(() => {
+  loadOrgTree()
+})
 </script>
 <style lang="scss" scoped>
   .el-dropdown-link{
