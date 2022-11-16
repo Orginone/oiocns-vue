@@ -27,9 +27,9 @@ type PaginationProps= {
   layout: string;
 }
 
-interface ResultType {
+interface ResultType<T = any> {
   code: number
-  data: any
+  data: T
   msg: string
   success: boolean
 }
