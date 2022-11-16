@@ -531,6 +531,14 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
+        path: '/store/putShelves',
+        name: 'storePutShelves',
+        component: () => import('@/views/Store/putShelves/index.vue'),
+        meta: {
+          title: '应用上架'
+        }
+      },
+      {
         path: '/store/payOrder',
         name: 'storePayOrder',
         component: () => import('@/views/Store/payOrder/index.vue'),

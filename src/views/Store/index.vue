@@ -10,8 +10,10 @@
           :hasTabs="true"
           :tableName="'应用'"
           :hasTitle="true"
+          :titleBtns="titleBtns"
           :hasTableHead="true"
           :tableData="state.ownProductList"
+          :tabOption="tabOption"
           :options="options"
           @handleUpdate="handleUpdate"
           @selectionChange="selectionChange"
@@ -61,7 +63,7 @@
             <el-tag style="margin-left: 10px">{{ scope.row.source }}</el-tag>
           </template>
           <template #operate="scope">
-            <el-dropdown>
+            <el-dropdown >
               <span class="el-dropdown-link">
                 ···
               </span>
@@ -77,7 +79,7 @@
                       link
                       type="primary"
                       v-if="scope.row.belongId == store.workspaceData.id"
-                      @click="openShareDialog"
+                      @click="handleCommand('own', 'share', scope.row)"
                     >
                       共享</el-dropdown-item>
                     <el-dropdown-item
@@ -102,26 +104,6 @@
         </DiyTable>
       </div>
     </div>
-    <el-dialog
-      v-model="publishVisible"
-      title="应用上架"
-      width="600px"
-      draggable
-      :close-on-click-modal="false"
-    >
-      <putaway-comp
-        :info="selectProductItem"
-        ref="putawayRef"
-        @closeDialog="publishVisible = false"
-      >
-        <template #btns>
-          <div class="putaway-footer" style="text-align: right">
-            <el-button @click="publishVisible = false">取消</el-button>
-            <el-button type="primary" @click="putawaySubmit()"> 确认</el-button>
-          </div>
-        </template>
-      </putaway-comp>
-    </el-dialog>
     <el-dialog
       v-if="cohortVisible"
       v-model="cohortVisible"
@@ -160,7 +142,7 @@
 <script setup lang="ts">
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { onMounted, reactive, ref, watch, nextTick,getCurrentInstance } from 'vue'
-
+  import titleBox, { BtnItem, TabType } from "@/components/titleBox/index.vue";
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/store/user'
   import DiyTable from '@/components/diyTable/index.vue'
@@ -185,7 +167,22 @@
   const showCreate = () =>{
     createDialog.value = true;
   }
-
+  // 表格按钮事件
+  const titleBtns = reactive<BtnItem[]>([
+    { name: "购买", event: () => {
+      console.log('a')
+    } },
+    { name: "创建", event: () => {} },
+    { name: "暂存", event: () => {} }
+  ]);
+  // 表格table
+  const tabOption = reactive<TabType[]>([
+    { label: "全部", name: 0 },
+    { label: "创建的", name: 1 },
+    { label: "购买的", name: 2 },
+    { label: "共享的", name: 3 },
+    { label: "分配的", name: 4 },
+  ]);
   // 关闭弹窗
   const closeDialog = (key:boolean) => {
     console.log('key',key)
@@ -413,7 +410,6 @@
         const result = await appstore.getResource(product.id)
         let flowArr:any = []
         result.filter((element:any)=>element.flows && element.flows.length>0).forEach((element:any) => {
-          console.log(element,'aaaaa')
           let arr = JSON.parse(element.flows);
           let itemArr:any = []
           arr.forEach((el:any) => {
@@ -462,14 +458,12 @@
     item: any
   ) => {
     selectProductItem.value = item
-    console.log('command',command)
     switch (command) {
       case 'share':
         openShareDialog()
         break
       case 'putaway':
-        console.log('222')
-        publishVisible.value = true
+        router.push({path: '/store/putShelves', query:{name:item.name,id:item.id,typeName:item.typeName}})
         break
       case 'unsubscribe':
         break
@@ -504,7 +498,6 @@
   }
 
   // 上架应用功能
-  const publishVisible = ref<boolean>(false)
   const putawayRef = ref<any>()
   // 提交上架
   const putawaySubmit = () => {
