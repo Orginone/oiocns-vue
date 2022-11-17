@@ -24,7 +24,6 @@
     // 加载单位
     const loadOrgTree = () => {
       $services.company.getCompanyTree({}).then((res: any) => {
-        console.log('res: ', res);
         nodeClick(res.data)
       })
     }
