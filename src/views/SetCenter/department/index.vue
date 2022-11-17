@@ -18,11 +18,12 @@
         :style="{ width: '100%' }"
         ref="diyTable"
         :hasTabs="true"
-        :tableName="'浙江省财政厅'"
+        :tableName="store?.currentSelectItme?.label ?? ''"
         :hasTitle="true"
         :hasTableHead="true"
         :tableData="tableData"
         :options="options"
+        :total="pageStore.total"
         @handleUpdate="handleUpdate"
         @selectionChange="selectionChange"
         :tableHead="tableHead"
@@ -73,27 +74,51 @@
 import Info from "./components/info.vue";
 import diytab from "@/components/diyTable/index.vue";
 import $services from '@/services'
-import { ref, onMounted, getCurrentInstance } from "vue";
+import { ref, onMounted, getCurrentInstance, onBeforeMount } from "vue";
+import { setCenterStore } from '@/store/setting'
+const store = setCenterStore()
+import DepartmentServices from '@/module/relation/department'
+const departmentServices = new DepartmentServices()
+
+const subscribe = store.$subscribe(
+  (mutation, state) => {
+    /*
+      * mutation主要包含三个属性值：
+      *   events：当前state改变的具体数据，包括改变前的值和改变后的值等等数据
+      *   storeId：是当前store的id
+      *   type：用于记录这次数据变化是通过什么途径，主要有三个分别是
+      *         “direct” ：通过 action 变化的
+                ”patch object“ ：通过 $patch 传递对象的方式改变的
+                “patch function” ：通过 $patch 传递函数的方式改变的
+      *
+      * */
+    // 在此处监听store中值的变化，当变化为某个值的时候，做一些业务操作
+    getUsers(state.currentSelectItme?.data)
+  },
+  { detached: false }
+    // detached:布尔值，默认是 false，正常情况下，当订阅所在的组件被卸载时，订阅将被停止删除，
+    // 如果设置detached值为 true 时，即使所在组件被卸载，订阅依然在生效
+)
+
+// 加载用户
+const getUsers = async (currentData?) => {
+  if(currentData){
+    const backData =  await departmentServices.getUser(currentData)
+    if(backData.result){
+      tableData.value =backData.result;
+      pageStore.total = backData.total
+    }else{
+      tableData.value =[];
+      pageStore.total = 0
+    }
+  }
+}
 
 const { proxy } = getCurrentInstance()
 
 proxy?.$Bus.on('clickBus', (id) => {
   console.log(id);
 })
-
-const info = ref(null);
-
-// 加载单位
-const loadOrgTree = () => {
-  $services.company.getCompanyTree({}).then((res: any) => {
-    console.log('res: ', res);
-    nodeClick(res.data)
-  })
-}
-// 给相应组件传值
-const nodeClick = (selectItem: any) => {
-  info.value.selectItemChange(selectItem)
-}
 
 // 表格展示数据
 const pageStore = reactive({
@@ -103,12 +128,7 @@ const pageStore = reactive({
 })
 const tableActiveIndex = ref<string>('1'); //table nav index
 const tableActiveIndex2 = ref<string>('1');
-const tableData = ref([{
-  account:'admin',
-  nickname:'测试人员',
-  name:'张叁',
-  phone:'18092941459',
-}])
+const tableData = ref([])
 const options = ref<any>({
   checkBox: true,
   order: true,
@@ -121,23 +141,23 @@ const options = ref<any>({
 })
 const tableHead = ref([
   {
-    prop: 'account',
+    prop: 'code',
     label: '账号',
   },
   {
-    prop: 'nickname',
-    label: '昵称',
-    name: 'nickname'
-  },
-  {
     prop: 'name',
-    label: '姓名',
+    label: '昵称',
     name: 'name'
   },
   {
-    prop: 'phone',
+    prop: 'team.name',
+    label: '姓名',
+    name: 'teamName'
+  },
+  {
+    prop: 'team.code',
     label: '手机号',
-    name: 'createTime'
+    name: 'teamCode'
   },
   {
     type: 'slot',
@@ -157,9 +177,12 @@ const checkList = reactive<any>([])
 const selectionChange = (val: any) => {
   checkList.value = val
 }
-//获取部门信息
+//获取单位信息
 onMounted(() => {
-  // loadOrgTree()
+})
+// 获取单位信息
+onBeforeMount(()=> {
+  store.GetDepartmentInfo()
 })
 </script>
 <style lang="scss" scoped>

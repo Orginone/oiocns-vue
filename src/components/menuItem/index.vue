@@ -31,6 +31,7 @@
       :expand-on-click-node="false" 
       :filter-node-method="filterNode"
       :props="{ class: customNodeClass }"
+      @node-click="nodeClick"
     >
       <template #default="{ node, data }">
         <div class="custom-tree-node" @mouseover='onHover(node.id)' @mouseout="onOut" @click="jump(node)">
@@ -44,7 +45,7 @@
               <template #reference>
                 <el-icon><Plus /></el-icon>
               </template>
-              <div class="btn-bus" @click="clickBus">
+              <div class="btn-bus" @click="clickBus" :style="{cursor: 'pointer'}" >
                 <div class="row-btn" v-for="(item,index) in state.treeData[0].btns" :key="item" :data-index="item.id">{{item.name}}</div>
               </div>
             </el-popover>&nbsp;
@@ -69,6 +70,7 @@
 import { ref, watch, reactive ,nextTick ,getCurrentInstance} from 'vue'
 import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
+import { setCenterStore } from '@/store/setting'
 
 const emit = defineEmits(['handleClose'])
 const props = defineProps({
@@ -152,6 +154,10 @@ const jump = (val:any)=>{
       router.push(val.data.url)
     }
 }
+// 树点击事件
+const nodeClick = (val: any) => {
+  setCenterStore().currentSelectItme = val
+}
 // const handleClose = () => {
 //   emit('handleClose', 'menu')
 // }
@@ -171,6 +177,10 @@ const jump = (val:any)=>{
     background: #f9fbfe;
     font-size: 16px;
   }
+
+  .row-btn{
+    margin: 10px 0px;
+  }
   .custom-tree-node {
     width: 180px;
     flex: 1;
@@ -184,25 +194,25 @@ const jump = (val:any)=>{
     }
   }
 
-  ::v-deep .el-menu-item{
+  :deep .el-menu-item{
     height: 35px;
     width: 180px;
   }
 
-  ::v-deep .no-penultimate > .el-tree-node__content{
+  :deep .no-penultimate > .el-tree-node__content{
     font-weight: 800;
   }
 
-  ::v-deep .is-penultimate > .el-tree-node__content {
+  :deep .is-penultimate > .el-tree-node__content {
     font-size: 10px;
     color: #909399;
     font-weight: normal;
   }
-  ::v-deep .el-tree-node__content{
+  :deep .el-tree-node__content{
     height: 40px;
   }
   // 去掉el-input自带边框
-  ::v-deep .el-input__wrapper {
+  :deep .el-input__wrapper {
     margin: 15px;
     padding-left: 15px !important;
     box-sizing: border-box;

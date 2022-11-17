@@ -45,6 +45,7 @@
   import Breadcrumb from '@/components/divBreadcrumb/index.vue'
   import LoadingVue from './components/loading.vue'
   import { useUserStore } from '@/store/user'
+  import { setCenterStore } from '@/store/setting'
   import authority from '@/utils/authority'
   import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick} from 'vue'
   import { useRouter } from 'vue-router';
@@ -67,11 +68,16 @@
         titleArr.state = storeJosn[0]
         menuArr.state = storeJosn
         console.log('menuArr',menuArr,storeJosn)
-      }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){    
+      }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){
+        if (router.currentRoute.value.name === 'department') {
+            titleArr.state= {icon: 'User',title: '部门设置'}
+            menuArr.state = setCenterStore().departmentInfo
+        } else {
           let currentRouteName: any = router.currentRoute.value.name
           const jsonData: any = settingJosn
           titleArr.state= jsonData[currentRouteName][0]
           menuArr.state = jsonData[currentRouteName]
+        }
       }else{
         titleArr.state = detailJosn[0]
         menuArr.state = detailJosn

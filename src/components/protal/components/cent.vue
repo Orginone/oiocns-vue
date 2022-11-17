@@ -13,7 +13,13 @@
           <template #reference>
             <el-icon class="eidtIcon"><Edit /></el-icon>
           </template>
-          <p v-for="item in state.btnData" :key='item.id' :style="{cursor: 'pointer', margin: '5px', color: state.flag === item.id ? 'red' : ''}" @mouseover='onHover(item.id)' @mouseout="onOut">
+          <p 
+          v-for="item in state.btnData" 
+          :key='item.id' 
+          :style="{cursor: 'pointer', margin: '5px', 
+          color: state.flag === item.id ? 'red' : ''}" 
+          @mouseover='onHover(item.id)' 
+          @mouseout="onOut" >
             <component :is="item.icon" style="width: 16px;height: 16px;"></component>&nbsp;
             {{item.title}}
           </p>
@@ -21,9 +27,16 @@
       </div>
       <div class="L_bottom">
         <div class="lb_col">
-            <el-card :style="{cursor: 'pointer'}" v-for="item in state.quickData" :key="item.id" class="card" :class="state.cardFlag === item.id ? 'card1' : ''" @mouseover='cardOnHover(item.id)' @mouseout="onOut" > 
-              <component :is="item.icon" style="width: 16px;height: 16px;"></component>
-              <span>{{item.title}}</span>
+            <el-card 
+              :style="{cursor: 'pointer'}" 
+              v-for="item in state.quickData" 
+              :key="item.id" class="card" 
+              :class="state.cardFlag === item.id ? 'card1' : ''" 
+              @mouseover='cardOnHover(item.id)' 
+              @mouseout="onOut" 
+              @click="handleRouterChage(item.path)" > 
+                <component :is="item.icon" style="width: 16px;height: 16px;"></component>
+                <span>{{item.title}}</span>
             </el-card>
         </div>
       </div>
@@ -51,9 +64,11 @@
 <script lang="ts" setup>
 import { useUserStore } from '@/store/user'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 import { computed,onMounted,ref,reactive } from 'vue'
 
 const store = useUserStore()
+const router = useRouter()
 const { queryInfo } = storeToRefs(store)
 const state = reactive({
   btnData: [
@@ -62,12 +77,12 @@ const state = reactive({
     {id: '3', title: '删除入口', icon: 'Coffee'},
   ],
   quickData: [
-    {id: '0', title: '加好友', icon: 'User'},
-    {id: '1', title: '创单位', icon: 'Files'},
-    {id: '2', title: '邀成员', icon: 'Position'},
-    {id: '3', title: '建应用', icon: 'Sell'},
-    {id: '4', title: '逛商城', icon: 'ShoppingCart'},
-    {id: '5', title: '添数据', icon: 'Expand'},
+    {id: '0', title: '加好友', icon: 'User', path: '/store'},
+    {id: '1', title: '创单位', icon: 'Files', path: '/store'},
+    {id: '2', title: '邀成员', icon: 'Position', path: '/store'},
+    {id: '3', title: '建应用', icon: 'Sell', path: '/store'},
+    {id: '4', title: '逛商城', icon: 'ShoppingCart', path: '/store'},
+    {id: '5', title: '添数据', icon: 'Expand', path: '/store'},
   ],
   commonData: [
     {id: '0', title: '简单、高效、开放的监管工具', name: '资产监管平台'},
@@ -80,6 +95,11 @@ const state = reactive({
   flag: '',
   cardFlag: '',
 })
+
+// 页面跳转
+const handleRouterChage = (path: string) => {
+  router.push({path})
+}
 
 const onHover = (id: string) => {
   state.flag = id
