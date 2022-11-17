@@ -1,28 +1,6 @@
 
 <template>
   <div class="thing">
-    <!-- <div class="thing-menu"> -->
-      <!-- <div class="menu-list">
-          <menuItem
-            :title="'办事'"
-            :default-active="activeIndex"
-            @select="handleSelect"
-            ref="elmenus"
-            @close="handleClose"
-            :default-openeds="['1','2']"
-            @node-click="handleNodeClick"
-            :data="state.menuArr"
-            :query="true"
-          >
-            <template #service>
-              asdasd
-            </template>
-            <template #more>
-              987987
-            </template>
-          </menuItem>
-      </div> -->
-    <!-- </div> -->
     <div class="content">
       <el-menu
         v-if="!whiteList.includes(activeIndex)"
@@ -172,7 +150,7 @@
 
 <script lang="ts" setup>
   import $services from '@/services'
-  import { ref, onMounted, reactive } from 'vue'
+  import { ref, onMounted, reactive, getCurrentInstance } from 'vue'
   import { storeToRefs } from 'pinia'
   import { useUserStore } from '@/store/user'
   import { useRoute,useRouter } from 'vue-router'
@@ -185,6 +163,7 @@
   import thingServices from '@/module/flow/thing'
 
   const ThingServices  = new thingServices()
+  const instance = getCurrentInstance()
   const route = useRoute()
   const router = useRouter()
   const dialogVisible = ref<boolean>(false)
@@ -257,87 +236,6 @@
   const state = reactive({
     approvalList: [],
     tableHead: [],
-    menuArr: [
-        {
-          name: "平台待办",
-          structure: false,
-          children: [
-            {
-              name: "好友申请",
-              type:'4',
-              uid:'1-1',
-              // components:'Videoitem',
-              children: [],
-            },
-            {
-              name: "单位审核",
-              type:'3',
-              uid:'1-2',
-              // components:'Videoitem',
-              children: [],
-            },
-            {
-              name: "商店审核",
-              type:'2',
-              uid:'1-3',
-              // components:'Videoitem',
-              children: [],
-            },
-            {
-              name: "订单审核",
-              type:'1',
-              uid:'1-4',
-              // components:'Videoitem',
-              children: [],
-            },
-          ],
-        },
-        {
-          label: "应用待办",
-          structure: true,
-          isPenultimate: true,
-          children: [
-            {
-              label: "公益仓",
-              id: '0',
-              children: [{
-              label: "公益仓2",
-              id: '3',
-              children: [],
-            },],
-            },
-            {
-              label: "办公OA",
-              id: '1',
-              children: [],
-            },
-            {
-              label: "资产管理",
-              id: '2',
-              children: [],
-            },
-          ],
-        },
-        {
-          label: "应用待办111",
-          structure: true,
-          isPenultimate: true,
-          children: [
-            {
-              label: "公益仓",
-              children: [],
-            },
-            {
-              label: "办公OA",
-              children: [],
-            },
-            {
-              label: "资产管理",
-              children: [],
-            },
-          ],
-        },
-      ],
   })
   const handleClose = (index:any) => {
     elmenus.value.open(index)
@@ -576,6 +474,16 @@
     }
     handleSelect(selectType, [])
   });
+
+  instance?.proxy?.$Bus.on('clickBus', (num) => {
+    if(num === '301') {
+      console.log('发起业务')
+    }else if(num === '302') {
+      console.log('重命名')
+    }else if(num === '303') {
+      console.log('删除应用')
+    }
+  })
 </script>
 
 

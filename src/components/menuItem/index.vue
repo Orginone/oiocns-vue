@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%; background: #fff">
-    <div class="title"><component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<span style="font-size: 14px;">{{titleData.title}}</span></div>
-    <el-menu v-bind="$attrs">
+    <div class="title"><component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<b style="font-size: 14px;">{{titleData.title}}</b></div>
+    <el-menu v-bind="$attrs" :default-openeds="state.openeds">
       <el-sub-menu
         v-for="(item, index) in state.menuData"
         :key="item.uid"
@@ -9,7 +9,7 @@
       >
         <template #title>
           <component :is="item.icon" style="width: 16px;height: 16px;"></component>&nbsp;
-          <span style="font-size: 12px;color: #909399;">{{ item.name }}</span>
+          <span style="font-size: 13px;color: #909399;">{{ item.name }}</span>
         </template>
         <el-menu-item
           v-for="val in item.children"
@@ -18,8 +18,8 @@
           @mouseover='onOver(val.type)' @mouseout="onOut"
           @click="jump(val)"
         >
-          <component :is="val.icon" style="width: 16px;height: 16px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }" ></component>&nbsp;
-          <b style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }" >{{ val.name }}</b>
+          <component :is="val.icon" style="width: 16px;height: 16px;" :style="{color: state.flag1 === val.type ? '#1642cb' : '#c7ccdc' }" ></component>&nbsp;
+          <span style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#a5a8ba' }" >{{ val.name }}</span>
         </el-menu-item>
       </el-sub-menu>
     </el-menu>
@@ -44,7 +44,7 @@
               <template #reference>
                 <el-icon><Plus /></el-icon>
               </template>
-              <div class="btn-bus" @click="clickBus">
+              <div class="btn-bus" @click="clickBus" :style="{cursor: 'pointer'}" >
                 <div class="row-btn" v-for="(item,index) in state.treeData[0].btns" :key="item" :data-index="item.id">{{item.name}}</div>
               </div>
             </el-popover>&nbsp;
@@ -87,6 +87,7 @@ const filterText = ref('')
 const treeRef = ref()
 const state = reactive({
   menuData: [],
+  openeds: ['1'],
   treeData: [],
   query: false, // 是否显示搜索框
   flag: '', // 是否高亮标记
@@ -162,7 +163,7 @@ const jump = (val:any)=>{
 </script>
 
 <style lang="scss" scoped>
-  
+  *{font-family: '微软雅黑';}
   .title{
     display: flex;
     justify-content: center;
@@ -170,6 +171,10 @@ const jump = (val:any)=>{
     padding: 10px;
     background: #f9fbfe;
     font-size: 16px;
+  }
+
+  .row-btn{
+    margin: 10px 0px;
   }
   .custom-tree-node {
     width: 180px;
@@ -184,25 +189,27 @@ const jump = (val:any)=>{
     }
   }
 
-  ::v-deep .el-menu-item{
-    height: 35px;
+  :deep .el-sub-menu__icon-arrow{
+    display: none;
+  }
+  :deep .el-menu-item{
+    height: 45px;
     width: 180px;
   }
 
-  ::v-deep .no-penultimate > .el-tree-node__content{
-    font-weight: 800;
-  }
+  // :deep .no-penultimate > .el-tree-node__content{
+    // font-weight: 800;
+  // }
 
-  ::v-deep .is-penultimate > .el-tree-node__content {
+  :deep .is-penultimate > .el-tree-node__content {
     font-size: 10px;
     color: #909399;
-    font-weight: normal;
   }
-  ::v-deep .el-tree-node__content{
+  :deep .el-tree-node__content{
     height: 40px;
   }
   // 去掉el-input自带边框
-  ::v-deep .el-input__wrapper {
+  :deep .el-input__wrapper {
     margin: 15px;
     padding-left: 15px !important;
     box-sizing: border-box;
