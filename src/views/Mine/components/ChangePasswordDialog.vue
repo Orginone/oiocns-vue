@@ -1,15 +1,16 @@
 <template>
   <el-dialog v-model="dialogVisible" title="修改密码" class="change-password-dialog">
     <div class="form-wrapper">
-      <el-form label-position="top" :model="form">
-        <el-form-item label="旧密码">
+      <el-form label-position="top" :model="form"
+        ref="$form" :rules="rules">
+        <el-form-item label="请输入密码" prop="password">
           <el-input type="password" v-model="form.password" />
         </el-form-item>
-        <el-form-item label="新密码">
+        <el-form-item label="请再次输入密码" prop="password2">
           <el-input type="password" v-model="form.password2" />
         </el-form-item>
-        <el-form-item label="确认密码">
-          <el-input type="password" v-model="form.confirmPass" />
+        <el-form-item label="请输入助记词" prop="privateKey">
+          <el-input type="password" v-model="form.privateKey" />
         </el-form-item>
       </el-form>
     </div>
@@ -20,7 +21,11 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import { defineProps, ref, computed } from "vue";
+import { defineProps, ref, computed, reactive } from "vue";
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import $services from '@/services';
+import { useUserStore } from '@/store/user'
+const store = useUserStore();
 
 const props = defineProps({
   modelValue: {
@@ -38,14 +43,62 @@ let dialogVisible = computed({
   }
 });
 
-const form = ref({
+const form = reactive({
   password: "",
   password2: "",
-  confirmPass: "",
+  privateKey: "",
 });
+const $form = ref<FormInstance>(null);
+const rules = reactive<FormRules>({
+  password: [
+    {
+      required: true,
+      message: "请输入密码"
+    },
+    { 
+      min: 6,
+      max: 15,
+      trigger: 'blur',
+      message: "密码长度不正确"
+    }
+  ],
+  password2: [
+    {
+      required: true,
+      message: "请再次输入密码"
+    },
+    { 
+      validator(rule, value, callback) {
+        if (form.password2 == form.password) {
+          callback()
+        } else {
+          callback(new Error('与原密码不一致'))
+        }
+      },
+    }
+  ],
+  privateKey: [
+    {
+      required: true,
+      message: "请输入助记词"
+    },
+  ],
+})
 
-function submit() {
+async function submit() {
+  await $form.value.validate();
 
+  const res = await $services.person.reset({
+    data: {
+      account: store.userInfo.account,
+      password: form.password,
+      privateKey: form.privateKey
+    }
+  });
+  if (res.success) {
+    ElMessage.success("更新成功");
+    dialogVisible.value = false;    
+  }    
 }
 
 </script>
