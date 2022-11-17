@@ -57,7 +57,7 @@
   let router = useRouter()
   console.log(router.currentRoute.value.path);
 
-  let titleArr = reactive({state:{}});
+  let titleArr = reactive<any>({state:{btnList:[]}});
   let menuArr = reactive({
     state:[]
   });
@@ -68,12 +68,16 @@
         titleArr.state = storeJosn[0]
         menuArr.state = storeJosn
         console.log('menuArr',menuArr,storeJosn)
-      }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){    
-        console.log(2);
-        
-        titleArr.state= settingJosn[0]
-        menuArr.state = settingJosn
-        console.log('menuArr',menuArr,settingJosn)
+      }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){
+        if (router.currentRoute.value.name === 'department') {
+            titleArr.state= {icon: 'User',title: '部门设置'}
+            menuArr.state = setCenterStore().departmentInfo
+        } else {
+          let currentRouteName: any = router.currentRoute.value.name
+          const jsonData: any = settingJosn
+          titleArr.state= jsonData[currentRouteName][0]
+          menuArr.state = jsonData[currentRouteName]
+        }
       } else if (router.currentRoute.value.path.indexOf('mine') != -1) {
         titleArr.state = userJosn[0]
         menuArr.state = userJosn

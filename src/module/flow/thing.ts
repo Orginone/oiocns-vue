@@ -324,7 +324,7 @@ class thingServices {
         data: {
             offset: 0,
             limit: 1000,
-            filter: "string"
+            typeName: "string"
         }
     })
     if (success) {

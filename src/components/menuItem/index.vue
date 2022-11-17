@@ -44,7 +44,9 @@
               <template #reference>
                 <el-icon><Plus /></el-icon>
               </template>
-              <slot name="service"></slot>
+              <div class="btn-bus" @click="clickBus" :style="{cursor: 'pointer'}" >
+                <div class="row-btn" v-for="(item,index) in state.treeData[0].btns" :key="item" :data-index="item.id">{{item.name}}</div>
+              </div>
             </el-popover>&nbsp;
             <el-popover
               placement="right"
@@ -64,7 +66,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, reactive ,nextTick} from 'vue'
+import { ref, watch, reactive ,nextTick ,getCurrentInstance} from 'vue'
 import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
 
@@ -76,6 +78,9 @@ const props = defineProps({
   titleData: {
     type: Object
   }, // 标题
+  btnList:{
+    type:Object
+  }
 })
 
 const filterText = ref('')
@@ -115,8 +120,8 @@ const init =  () => {
     state.menuData = props.data.filter((item: any) => {
       return item.structure === false
     })
+    state.query = state.treeData[0]?.query
   })
-  state.query = state.treeData[0]?.query
   
 }
 init();
@@ -130,7 +135,10 @@ watch(filterText, (val) => {
   console.log('a',val);
   treeRef.value!.filter(val)
 })
-
+const instance = getCurrentInstance();
+const clickBus = (e:any)=>{
+  instance?.proxy?.$Bus.emit('clickBus', e.target.dataset.index)
+}
 const filterNode = (value: string, data: any) => {
   if (!value) return true
   return data.label.includes(value)
@@ -163,6 +171,10 @@ const jump = (val:any)=>{
     background: #f9fbfe;
     font-size: 16px;
   }
+
+  .row-btn{
+    margin: 10px 0px;
+  }
   .custom-tree-node {
     width: 180px;
     flex: 1;
@@ -176,25 +188,25 @@ const jump = (val:any)=>{
     }
   }
 
-  ::v-deep .el-menu-item{
+  :deep .el-menu-item{
     height: 35px;
     width: 180px;
   }
 
-  ::v-deep .no-penultimate > .el-tree-node__content{
+  :deep .no-penultimate > .el-tree-node__content{
     font-weight: 800;
   }
 
-  ::v-deep .is-penultimate > .el-tree-node__content {
+  :deep .is-penultimate > .el-tree-node__content {
     font-size: 10px;
     color: #909399;
     font-weight: normal;
   }
-  ::v-deep .el-tree-node__content{
+  :deep .el-tree-node__content{
     height: 40px;
   }
   // 去掉el-input自带边框
-  ::v-deep .el-input__wrapper {
+  :deep .el-input__wrapper {
     margin: 15px;
     padding-left: 15px !important;
     box-sizing: border-box;

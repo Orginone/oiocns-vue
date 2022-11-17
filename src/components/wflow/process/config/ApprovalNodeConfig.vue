@@ -37,7 +37,7 @@
             <el-input-number :min="1" :max="20" :step="1" size="default"
                              v-model="nodeProps.leader.level"></el-input-number>
             <span> 级主管</span>
-            <div style="color: #409EFF; font-size: small;">👉 直接主管为 第 1 级主管</div>
+            <div style="color: #154AD8; font-size: small;">👉 直接主管为 第 1 级主管</div>
           </el-form-item>
         </div>
         <div v-else-if="nodeProps.assignedType === 'JOB'">

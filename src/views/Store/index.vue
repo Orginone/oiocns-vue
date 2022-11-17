@@ -4,18 +4,18 @@
       <createShop :createDialog="createDialog" @closeDialog="closeDialog"></createShop>
       <opened></opened>
       <div class="table">
-        <diytab
+        <DiyTable
           :style="{width:'100%'}"
           ref="diyTable"
           :hasTabs="true"
-          :tableName="'测试表格名称'"
+          :tableName="'应用'"
           :hasTitle="true"
           :hasTableHead="true"
-          :tableData="tableData"
+          :tableData="state.ownProductList"
           :options="options"
           @handleUpdate="handleUpdate"
           @selectionChange="selectionChange"
-          :tableHead="tableHead"
+          :tableHead="state.tableHead"
         >
           <template #slot-tabs>
             <div class="table-tabs">
@@ -38,6 +38,28 @@
             <el-button class="btn-check" @click="showCreate()" type="primary" link>创建</el-button>
             <el-button class="btn-check" type="primary" link>暂存</el-button>
           </template>
+          <template #name="scope">
+            {{ scope.row.name }}
+          </template>
+          <template #tag="scope">
+            <el-tag
+              v-if="
+                scope.row.endTime == undefined ||
+                new Date().getTime() < formartDateTime(scope.row?.endTime)
+              "
+              style="margin-left: 10px"
+              :type="authority.IsApplicationAdmin(scope.row.belongId) ? '' : 'success'"
+            >
+              {{ authority.IsApplicationAdmin(scope.row.belongId) ? '可管理' : '可使用' }}</el-tag
+            >
+            <el-tag
+              v-if="new Date().getTime() > formartDateTime(scope.row?.endTime)"
+              style="margin-left: 10px"
+              :type="'danger'"
+              >失效</el-tag
+            >
+            <el-tag style="margin-left: 10px">{{ scope.row.source }}</el-tag>
+          </template>
           <template #operate="scope">
             <el-dropdown>
               <span class="el-dropdown-link">
@@ -45,13 +67,31 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="showDiong">打开</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">详情</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">管理</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">上架</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">共享</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">分配</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">暂存</el-dropdown-item>
+                    <el-dropdown-item
+                      v-if="scope.row.authority == '所属权' && scope.row.belongId == store.workspaceData.id"
+                      link
+                      type="primary"
+                      @click="handleCommand('own', 'putaway', scope.row)"
+                      >上架</el-dropdown-item>
+                    <el-dropdown-item
+                      link
+                      type="primary"
+                      v-if="scope.row.belongId == store.workspaceData.id"
+                      @click="openShareDialog"
+                    >
+                      共享</el-dropdown-item>
+                    <el-dropdown-item
+                      link
+                      type="primary"
+                      v-if="authority.IsCompanySpace()"
+                      @click="cohortVisible = true"
+                      >分配
+                    </el-dropdown-item>
+                    <el-dropdown-item link type="primary" @click="GoPage(`/market/detail/${scope.row.id}`)">
+                      查看详情
+                    </el-dropdown-item>
+
+                    <el-dropdown-item link type="primary" @click="deleteApp(scope.row)">移除应用</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -59,98 +99,213 @@
           <template #slot-card>
             <card></card>
           </template>
-        </diytab>
+        </DiyTable>
       </div>
     </div>
+    <el-dialog
+      v-model="publishVisible"
+      title="应用上架"
+      width="600px"
+      draggable
+      :close-on-click-modal="false"
+    >
+      <putaway-comp
+        :info="selectProductItem"
+        ref="putawayRef"
+        @closeDialog="publishVisible = false"
+      >
+        <template #btns>
+          <div class="putaway-footer" style="text-align: right">
+            <el-button @click="publishVisible = false">取消</el-button>
+            <el-button type="primary" @click="putawaySubmit()"> 确认</el-button>
+          </div>
+        </template>
+      </putaway-comp>
+    </el-dialog>
+    <el-dialog
+      v-if="cohortVisible"
+      v-model="cohortVisible"
+      custom-class="share-dialog"
+      title="应用分配"
+      width="1000px"
+      draggable
+      :close-on-click-modal="false"
+    >
+      <ShareComponent
+        dialogType="1"
+        @closeDialog="cohortVisible = false"
+        :info="selectProductItem"
+      ></ShareComponent>
+    </el-dialog>
+    <el-dialog
+      v-if="shareVisible"
+      v-model="shareVisible"
+      custom-class="share-dialog"
+      title="应用共享"
+      width="1000px"
+      draggable
+      :close-on-click-modal="false"
+    >
+      <ShareComponent
+        dialogType="2"
+        :type="store.workspaceData.type"
+        @closeDialog="shareVisible = false"
+        :info="selectProductItem"
+      ></ShareComponent>
+    </el-dialog>
   </div>
   
 </template>
 
 <script setup lang="ts">
-  import diytab from '@/components/diyTable/index.vue'
+  import { ElMessage, ElMessageBox } from 'element-plus'
+  import { onMounted, reactive, ref, watch, nextTick,getCurrentInstance } from 'vue'
+
+  import { useRouter } from 'vue-router'
+  import { useUserStore } from '@/store/user'
+  import DiyTable from '@/components/diyTable/index.vue'
+  import $services from '@/services'
+  import authority from '@/utils/authority'
+  import { storeToRefs } from 'pinia'
+  import { appstore } from '@/module/store/app'
+  import DefaultNodeProps from '@/components/wflow/process/DefaultNodeProps'
+  import PutawayComp from './components/putawayComp.vue'
   import opened from './components/opened.vue'
   import createShop from './components/createShop.vue'
-  import search from './components/search.vue'
-  import detail from './components/editDetail.vue'
   import card from './components/card.vue'
-  import { ref, reactive, onMounted, nextTick } from 'vue'
-  const dialogVisible = ref<boolean>(true)
+  import ShareComponent from './components/shareComponents.vue'
+
+  // import MarketServices from './market.services'
+  // hoverItem--鼠标移入item的id 用于展示按钮区域
+  // console.log('MarketServices',MarketServices);
+  import ProcessDesign from '@/components/wflow/ProcessDesign.vue';
+
+  // 创建商店弹窗状态
+  const createDialog = ref<boolean>(false);
+  const showCreate = () =>{
+    createDialog.value = true;
+  }
+
+  // 关闭弹窗
+  const closeDialog = (key:boolean) => {
+    console.log('key',key)
+    createDialog.value = key
+  }
+
+  // 按钮事件
+  const showDiong = ()=>{
+    console.log('aaaa')
+  }
+
+  const processDesignRef = ref();
+  const add: string = '从 ⌈开放市场⌋ 添加'
+  const isCard = ref(true)
+  const mode = ref('card')
+  const instance = getCurrentInstance()
+
+  // 注册页面实例
+  const router = useRouter()
+  const store = useUserStore()
+  const bindedFlow = reactive({
+    flow: null,
+    bindShow: false
+  })
+  
+  const flowsList = ref([])
+  const flowsValue = ref(null)
+  const getFlowList = (productId?:string)=>{
+    $services.wflow.queryDefine({
+					data:{
+						id: 0,
+            // productId: productId?productId:0,
+						status: 1
+					}
+				})
+				.then((res: ResultType) => {
+					if(!res){
+						ElMessage({
+							message: '接口请求异常',
+							type: 'warning'
+						})
+					}else if ( res.code == 200) {
+						
+						let openId = ""
+						if(res && res.data && res.data.result){
+							res.data.result = res.data.result.map((item:any)=>{item.resource = JSON.parse( item.content )['resource']; item.resource = DefaultNodeProps.getResource(item.resource,true) ;delete item.content ; delete item.flowNodes ;return item})
+							flowsList.value = res.data.result
+            }
+							
+					} else {
+						ElMessage({
+							message: res.msg,
+							type: 'warning'
+						})
+					}
+				})
+  }
+  const gotoBind = ()=>{
+    flowsValue.value = null;
+    bindedFlow.bindShow=true
+  }
+  const processClick = (e:any)=>{
+    console.log('processClick',e)
+  }
+
+  const { queryInfo } = storeToRefs(store)
+
+  // 当前用户的集团
+  let groups = reactive([])
+
+  // 当前选中的集团
+  let selectedValue = ref<string>('')
+
+  // 集团共享
+  const groupVisible = ref<boolean>(false)
+
+  // 共享功能
+  const cohortVisible = ref<boolean>(false)
+
+  const shareVisible = ref<boolean>(false)
+  
+  // 路由跳转
+  const searchText = ref<string>('')
+  const pageContent = ref(null)
   const diyTable = ref(null)
-  const createDialog = ref<boolean>(false)
+
   // 表格展示数据
   const pageStore = reactive({
+    tableData: [],
     currentPage: 1,
     pageSize: 20,
     total: 0
   })
-  const showCreate = ()=>{
-    createDialog.value = true;
-    console.log('createDialog',createDialog)
-  }
-  const tableData = ref([{
-    paymentType:'线上',
-    price:'100',
-    status:'200',
-    createTime:'2022-11-01 16:01',
-  }])
-  const activeName = ref<string>(); //table tab index
-  const tableActiveIndex = ref<string>(); //table nav index
-  const handleSelect = () => {
-    console.log('index')
-  }
 
-  interface ListItem {
-    code: string
-    name: string
-    trueName: string
-    teamCode: string
-    remark: string
+  // 表格变更
+  const selectionChange = () => {
+    console.log('aaa')
   }
-
-  onMounted(() => {
-    remoteMethod()
-  })
-  const remoteMethod = () => {
+  // tableNav变更
+  const tableActiveIndex = ref<string>();
+  const handleSelect =(key:string)=>{
+    tableActiveIndex.value = key
   }
-
-  const handleUpdate = (page: any) => {
-    pageStore.currentPage = page.currentPage
-    pageStore.pageSize = page.pageSize
-    remoteMethod()
+  const GoPageWithQuery = (path: string, query: any) => {
+    router.push({ path, query })
   }
-  const checkList = reactive<any>([])
-  const selectionChange = (val: any) => {
-    checkList.value = val
+  //应用搜索
+  const GoPage = (path: string) => {
+    router.push(path)
   }
-
-  const tableHead = ref([{
-      prop: 'paymentType',
-      label: '付款方式',
-    },
-    {
-      prop: 'price',
-      label: '价格',
-      name: 'price'
-    },
-    {
-      prop: 'status',
-      label: '状态',
-      name: 'status'
-    },
-    {
-      prop: 'createTime',
-      label: '创建时间',
-      name: 'createTime'
-    },
-    {
-      type: 'slot',
-      label: '操作',
-      fixed: 'right',
-      align: 'center',
-      width: '150',
-      name: 'operate'
-    }
-  ])
+  type StateType = {
+    ownProductList: any[] //我的应用
+    ownTotal: number
+    shareTotal: number
+    marketOptions: any[] //所有市场列表
+    options: any[] //集团列表
+    selectLabel: selectType // 选中的集团名称
+    tableHead: any[]
+    dropDwonActiveId: string // 当前dropdwon打开时选中的id
+  }
   const options = ref<any>({
     checkBox: false,
     order: true,
@@ -161,18 +316,234 @@
       hasChildren: 'hasChildren'
     }
   })
-  const closeDialog = (key:boolean) => {
-    console.log('key',key)
-    createDialog.value = key
-  }
-  const showDiong = (type:number) => {
-    if(type ==1){
+  const state: StateType = reactive({
+    ownProductList: [],
+    ownTotal: 0,
+    shareTotal: 0,
+    marketOptions: [],
+    options: [],
+    dropDwonActiveId: '',
+    selectLabel: {
+      label: '',
+      id: ''
+    },
+    tableHead: [
+      {
+        type: 'slot',
+        prop: 'name',
+        name: 'name',
+        label: '应用名称',
+        width:'200'
+      },
+      {
+        type: 'slot',
+        prop: 'tag',
+        name: 'tag',
+        label: '应用状态',
+        width:'200'
+      },
+      {
+        prop: 'code',
+        label: '应用编码',
+        width:'150'
+      },
+      {
+        prop: 'source',
+        label: '应用来源'
+      },
+      {
+        prop: 'typeName',
+        label: '应用类型',
+        width:'150'
+      },
+      {
+        prop: 'authority',
+        label: '持有权限'
+      },
+      {
+        prop: 'createTime',
+        label: '创建时间',
+        width: '200'
+      },
+      {
+        type: 'slot',
+        label: '操作',
+        fixed: 'right',
+        align: 'center',
+        width: '100',
+        name: 'operate'
+      }
+    ]
+  })
+  const title = ref<string>('')
+  onMounted(() => {
+    // 获取列表
+    getProductList()
+    getShopcarNum()
+  })
 
-    }else if(type ==2){
-      
+  //列表
+  watch([isCard], ([val], [valOld]) => {
+    // 监听 展示方式变化
+    nextTick(() => {
+      if (val) {
+        getProductList()
+      } else {
+        getProductList()
+      }
+    })
+  })
+
+  const shopcarNum = ref(0)
+  const getShopcarNum = async () => {
+    const total = await appstore.getShopcarNum()
+    shopcarNum.value = total
+  }
+
+  const handleUpdate = (page: any) => {
+    pageStore.currentPage = page.currentPage
+    pageStore.pageSize = page.pageSize
+    getProductList()
+  }
+  // 获取我的应用列表
+  const getProductList = async () => {
+    const res = await appstore.getProductList(pageStore, searchText.value)
+    state[`ownProductList`] = [...res.result]
+    for(let product of state[`ownProductList`]){      
+        const result = await appstore.getResource(product.id)
+        let flowArr:any = []
+        result.filter((element:any)=>element.flows && element.flows.length>0).forEach((element:any) => {
+          console.log(element,'aaaaa')
+          let arr = JSON.parse(element.flows);
+          let itemArr:any = []
+          arr.forEach((el:any) => {
+            el.appId = product.id;
+            el.appName = product.name
+            el.sourceId = element.id;
+            itemArr.push(el)
+          });
+          flowArr.push(...itemArr)
+        });
+        
+        product.resourcesList = flowArr
+    }
+    state[`ownTotal`] = res.total
+    pageStore.total = res.total
+    // diyTable.value.state.page.total = res.total
+    // pageContent.value.state.page.total = res.total
+  }
+
+  // 移除app
+  const deleteApp = (item: any) => {
+    ElMessageBox.confirm(`确认删除  ${item.name}?`, '警告', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+      .then(async () => {
+        const success = await appstore.deleteApp(item.id)
+        if (success) {
+          getProductList()
+          ElMessage({
+            type: 'success',
+            message: '操作成功'
+          })
+        }
+      })
+      .catch(() => {})
+  }
+
+  // 记录当前操作的 应用信息
+  const selectProductItem = ref<any>()
+  // 处理 设置 菜单选择事件
+  const handleCommand = (
+    type: 'own' | 'other',
+    command: string | number | object,
+    item: any
+  ) => {
+    selectProductItem.value = item
+    console.log('command',command)
+    switch (command) {
+      case 'share':
+        openShareDialog()
+        break
+      case 'putaway':
+        console.log('222')
+        publishVisible.value = true
+        break
+      case 'unsubscribe':
+        break
+      case 'distribution':
+        cohortVisible.value = true
+        break
+      case 'detail':
+        GoPage(`/market/detail/${item.id}`)
+        break
+      // case '流程':
+      //   startProcess(selectProductItem.value);
+      //   break
+      default:
+        break
     }
   }
-  
+
+  // 下拉框显示隐藏时触发
+  // value 是否显示，activeId 当前显示 的卡片内容id
+  const optionDropdownChange = (value: boolean, activeId: string) => {
+    if (value) {
+      //显示
+      state.dropDwonActiveId = activeId
+    } else {
+      state.dropDwonActiveId = ''
+    }
+  }
+
+  //  打开集团选择弹窗
+  const openShareDialog = () => {
+    shareVisible.value = true
+  }
+
+  // 上架应用功能
+  const publishVisible = ref<boolean>(false)
+  const putawayRef = ref<any>()
+  // 提交上架
+  const putawaySubmit = () => {
+    putawayRef.value.onPutawaySubmit()
+  }
+  //搜索应用
+  const searchList = () => {
+    pageStore.currentPage = 1
+    getProductList()
+  }
+  const formartDateTime = (dateStr: any) => {
+    if (dateStr) {
+      var timestamp = new Date(dateStr).getTime()
+      return timestamp
+    } else {
+      return new Date().getTime() + 1000
+    }
+  }
+  const processType = ref<boolean>(false)
+ 
+  type  resourcesType = {
+    value:string,
+    key:string,
+    name:string,
+    id:string,
+    label:string,
+    business:string
+  }
+
+  const resourcesList = ref< Array<resourcesType>>([])
+
+  const resourcesValue = ref<number>()
+  const enterProcess = (resource:any)=>{
+    processDesignRef.value.startDesign(resource);
+  }
+
+  instance?.proxy?.$Bus.on('clickBus', (num) => {
+    console.log(num)
+  })
 </script>
 <style lang="scss">
   .el-dropdown-link{

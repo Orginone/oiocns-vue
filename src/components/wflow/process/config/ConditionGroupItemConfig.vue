@@ -5,7 +5,7 @@
         <span class="group-name">条件组 {{ groupNames[index] }}</span>
         <div class="group-cp">
           <span>组内条件关系：</span>
-          <el-switch v-model="group.groupType" active-color="#409EFF"
+          <el-switch v-model="group.groupType" active-color="#154AD8"
                      inactive-color="#c1c1c1" active-value="AND" inactive-value="OR"
                      active-text="且" inactive-text="或"/>
         </div>
