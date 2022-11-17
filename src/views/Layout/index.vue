@@ -52,6 +52,7 @@
   import storeJosn from './json/store.json';
   import settingJosn from './json/setting.json';
   import detailJosn from './json/detail.json';
+  import userJosn from './json/user.json';
   import { chat } from '@/module/chat/orgchat'
 
   let router = useRouter()
@@ -78,7 +79,10 @@
           titleArr.state= jsonData[currentRouteName][0]
           menuArr.state = jsonData[currentRouteName]
         }
-      }else{
+      } else if (router.currentRoute.value.path.indexOf('mine') != -1) {
+        titleArr.state = userJosn[0]
+        menuArr.state = userJosn
+      } else{
         titleArr.state = detailJosn[0]
         menuArr.state = detailJosn
       } 

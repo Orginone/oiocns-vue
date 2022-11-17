@@ -1,0 +1,61 @@
+[
+    {
+        "icon": "User",
+        "title": "我的"
+    },
+    {
+        "name": "信息中心",
+        "structure": false,
+        "children": [
+            {
+                "name": "个人信息",
+                "type": "0",
+                "uid": "1-1",
+                "url": "/mine",
+                "children": []
+            },
+            {
+                "name": "人员设置",
+                "type": "1",
+                "uid": "1-1",
+                "url": "/mine/relation",
+                "children": []
+            },
+            {
+                "name": "我的单位",
+                "type": "2",
+                "uid": "1-1",
+                "url": "/mine/dfs",
+                "children": []
+            },
+            {
+                "name": "好友设置",
+                "type": "3",
+                "uid": "1-1",
+                "url": "/setCenter/department",
+                "children": []
+            },
+            {
+                "name": "群组设置",
+                "type": "4",
+                "uid": "1-1",
+                "url": "/setCenter/group",
+                "children": []
+            },
+            {
+                "name": "首页设置",
+                "type": "5",
+                "uid": "1-1",
+                "url": "/setCenter/post",
+                "children": []
+            },
+            {
+                "name": "帮助中心",
+                "type": "6",
+                "uid": "1-1",
+                "url": "/#/store",
+                "children": []
+            }
+        ]
+    }
+]
