@@ -4,10 +4,10 @@
         <div class="body">
           <div class="created">
             <div class="body-head">
-              <el-tabs v-model="activeName" @tab-click="handleClick">
+              <el-tabs v-model="activeName">
                 <el-tab-pane label="全部" name="1"> </el-tab-pane>
-                <!-- <el-tab-pane label="已加入" name="2"></el-tab-pane>
-                  <el-tab-pane label="拒绝" name="3"> </el-tab-pane> -->
+                <el-tab-pane label="创建的" name="2"></el-tab-pane>
+                  <el-tab-pane label="加入的" name="3"> </el-tab-pane>
               </el-tabs>
             </div>
             <div class="contet">
@@ -27,7 +27,7 @@
                   ref="diyTable"
                   :hasTableHead="false"
                   @handleUpdate="handleUpdate"
-                  :tableData="dataList.list"
+                  :tableData="currentData"
                   :tableHead="tableHead"
                 >
                   <template #option="scope">
@@ -54,7 +54,7 @@
   </template>
   
   <script lang="ts" setup>
-    import { onMounted, reactive, ref } from 'vue'
+    import { computed, onMounted, reactive, ref } from 'vue'
     import $services from '@/services'
     import { useUserStore } from '@/store/user'
     import type { TabsPaneContext } from 'element-plus'
@@ -130,10 +130,7 @@
         name: 'option'
       }
     ])
-    //tab切换
-    const handleClick = (tab: TabsPaneContext, event: Event) => {
-      console.log(tab, event)
-    }
+
     const handleExit = (id: string) => {
       ElMessageBox.confirm('确定退出吗？', '提示', {
         confirmButtonText: '确定',
@@ -184,10 +181,18 @@
       id: string
       code: string
     }
-    type listType = {
-      list: Array<listItem>
-    }
-    const dataList = reactive<listType>({ list: [] })
+
+    const dataList = ref<any[]>([]);
+    const currentData = computed(() => {
+      // 创建单位就是归属是自己的单位
+      if (activeName.value == "2") {
+        return dataList.value.filter(d => d.belongId == store.queryInfo.id);
+      } else if (activeName.value == "3") {
+        return dataList.value.filter(d => d.belongId != store.queryInfo.id);
+      } else {
+        return dataList.value;
+      }
+    });
     onMounted(() => {
       getList()
     })
@@ -209,7 +214,7 @@
               }
               item.identitys = authority.GetTargetIdentitys(item.id)
             })
-            dataList.list = res.data.result
+            dataList.value = res.data.result
             diyTable.value.state.page.total = res.data.total
           }
         })
@@ -274,23 +279,14 @@
     .userUnit {
       height: 100%;
       .title {
+        height: 100%;
         .body-head {
+          padding: 16px 16px 0 16px;
           background: var(--el-bg-color);
-          
-          :deep(.el-tabs__item) {
-            // font-size: 20px !important;
-            // font-weight: 600;
-            margin-left: 30px;
-            // border-color: #1a5773;
-          }
-          // :deep(.el-tabs__header) {
-          //   padding-top: 20px;
-          //   margin: 0;
-          // }
         }
   
         .body {
-          height: calc(100% - 100px);
+          height: 100%;
           width: 100%;
           overflow: hidden;
           display: flex;
@@ -302,10 +298,13 @@
       box-sizing: border-box;
       height: 100%;
       box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
       .contet {
         // padding: 20px;
         box-sizing: border-box;
-        height: calc(100vh - 140px);
+        height: 1px;
+        flex: auto;
         display: flex;
         flex-direction: column;
       }
