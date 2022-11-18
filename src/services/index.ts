@@ -2,13 +2,14 @@ import { App } from 'vue'
 import request from './request'
 import urls from './RESTFULURL'
 import { useUserStore } from '@/store/user'
+import { AxiosRequestConfig } from 'axios';
 
 
 type ApiUrlMap = typeof urls;
 
 export type RequestMethodMap = {
   [C in keyof ApiUrlMap]: {
-    [U in keyof ApiUrlMap[C]]: (option: any, ...args: any[]) => Promise<ResultType<any>> 
+    [U in keyof ApiUrlMap[C]]: (option: AxiosRequestConfig, ...args: any[]) => Promise<ResultType<any>> 
   };
 }
 

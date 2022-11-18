@@ -45,6 +45,7 @@
   import Breadcrumb from '@/components/divBreadcrumb/index.vue'
   import LoadingVue from './components/loading.vue'
   import { useUserStore } from '@/store/user'
+  import { setCenterStore } from '@/store/setting'
   import authority from '@/utils/authority'
   import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick} from 'vue'
   import { useRouter } from 'vue-router';

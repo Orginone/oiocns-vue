@@ -15,31 +15,31 @@
                 "children": []
             },
             {
-                "name": "人员设置",
+                "name": "证书管理",
                 "type": "1",
                 "uid": "1-1",
-                "url": "/mine/relation",
+                "url": "/mine/certificate",
                 "children": []
             },
             {
                 "name": "我的单位",
                 "type": "2",
                 "uid": "1-1",
-                "url": "/mine/dfs",
+                "url": "/mine/unit",
                 "children": []
             },
             {
                 "name": "好友设置",
                 "type": "3",
                 "uid": "1-1",
-                "url": "/setCenter/department",
+                "url": "/relation/friend",
                 "children": []
             },
             {
                 "name": "群组设置",
                 "type": "4",
                 "uid": "1-1",
-                "url": "/setCenter/group",
+                "url": "/relation/cohort",
                 "children": []
             },
             {
