@@ -14,7 +14,13 @@
   // @ts-nocheck
   import adminTable from './components/adminTable.vue'
   import postTable from './components/postTable.vue'
-  import { ref } from 'vue'
+  import { getCurrentInstance } from "vue";
+
+  const { proxy } = getCurrentInstance()
+
+  proxy?.$Bus.on('clickBus', (id) => {
+    console.log(id);
+  })
 
 </script>
 <style lang="scss" scoped>

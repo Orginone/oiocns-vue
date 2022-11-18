@@ -12,11 +12,13 @@
                     "name": "单位设置",
                     "type": "1",
                     "uid": "1-1",
+                    "icon": "User",
                     "url": "/setCenter/unit",
                     "children": []
                 },
                 {
                     "name": "部门设置",
+                    "icon": "User",
                     "type": "2",
                     "uid": "1-1",
                     "url": "/setCenter/department",
@@ -25,6 +27,7 @@
                 {
                     "name": "集团设置",
                     "type": "3",
+                    
                     "uid": "1-1",
                     "url": "/setCenter/group",
                     "children": []
