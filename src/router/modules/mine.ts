@@ -24,6 +24,15 @@ const Mine: RouteRecordRaw[] = [
           title: "人员设置",
         },
       },
+      {
+        component: () => import("@/views/Mine/unit.vue"),
+        path: "/mine/unit",
+        name: "my-unit",
+        meta: {
+          keepAlive: false,
+          title: "我的单位",
+        },
+      },
     ],
   },
 ];
