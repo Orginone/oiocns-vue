@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%; background: #fff">
-    <div class="title"><component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<span style="font-size: 14px;">{{titleData.title}}</span></div>
-    <el-menu v-bind="$attrs">
+    <div class="title"><component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<b style="font-size: 14px;">{{titleData.title}}</b></div>
+    <el-menu v-bind="$attrs" :default-openeds="state.openeds">
       <el-sub-menu
         v-for="(item, index) in state.menuData"
         :key="item.uid"
@@ -9,7 +9,7 @@
       >
         <template #title>
           <component :is="item.icon" style="width: 16px;height: 16px;"></component>&nbsp;
-          <span style="font-size: 12px;color: #909399;">{{ item.name }}</span>
+          <span style="font-size: 13px;color: #909399;">{{ item.name }}</span>
         </template>
         <el-menu-item
           v-for="val in item.children"
@@ -18,8 +18,8 @@
           @mouseover='onOver(val.type)' @mouseout="onOut"
           @click="jump(val)"
         >
-          <component :is="val.icon" style="width: 16px;height: 16px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }" ></component>&nbsp;
-          <b style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }" >{{ val.name }}</b>
+          <component :is="val.icon" style="width: 16px;height: 16px;" :style="{color: state.flag1 === val.type ? '#1642cb' : '#c7ccdc' }" ></component>&nbsp;
+          <span style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#a5a8ba' }" >{{ val.name }}</span>
         </el-menu-item>
       </el-sub-menu>
     </el-menu>
@@ -89,6 +89,7 @@ const filterText = ref('')
 const treeRef = ref()
 const state = reactive({
   menuData: [],
+  openeds: ['1'],
   treeData: [],
   query: false, // 是否显示搜索框
   flag: '', // 是否高亮标记
@@ -168,7 +169,7 @@ const nodeClick = (val: any) => {
 </script>
 
 <style lang="scss" scoped>
-  
+  *{font-family: '微软雅黑';}
   .title{
     display: flex;
     justify-content: center;
@@ -194,19 +195,21 @@ const nodeClick = (val: any) => {
     }
   }
 
+  :deep .el-sub-menu__icon-arrow{
+    display: none;
+  }
   :deep .el-menu-item{
-    height: 35px;
+    height: 45px;
     width: 180px;
   }
 
-  :deep .no-penultimate > .el-tree-node__content{
-    font-weight: 800;
-  }
+  // :deep .no-penultimate > .el-tree-node__content{
+    // font-weight: 800;
+  // }
 
   :deep .is-penultimate > .el-tree-node__content {
     font-size: 10px;
     color: #909399;
-    font-weight: normal;
   }
   :deep .el-tree-node__content{
     height: 40px;
