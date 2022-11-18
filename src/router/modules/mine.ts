@@ -12,16 +12,16 @@ const Mine: RouteRecordRaw[] = [
         name: "mine",
         meta: {
           keepAlive: false,
-          title: "我的",
+          title: "个人信息",
         },
       },
       {
-        component: () => import("@/views/Mine/Certificate/index.vue"),
-        path: "/mine/Certificate",
-        name: "certificate",
+        component: () => import("@/views/Mine/Relation/index.vue"),
+        path: "/mine/relation",
+        name: "my-relation",
         meta: {
           keepAlive: false,
-          title: "证书管理",
+          title: "人员设置",
         },
       },
     ],

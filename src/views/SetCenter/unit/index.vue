@@ -13,12 +13,17 @@
     import Info from './components/info.vue'
     import $services from '@/services'
     import { ref, onMounted } from 'vue'
+    import { useUserStore } from '@/store/user'
+    import { storeToRefs } from 'pinia'
+    import { ElMessage } from 'element-plus'
+
+    const store = useUserStore()
+    const { workspaceData } = storeToRefs(store)
   
     const info = ref(null)
     // 加载单位
     const loadOrgTree = () => {
       $services.company.getCompanyTree({}).then((res: any) => {
-        console.log('res: ', res);
         nodeClick(res.data)
       })
     }
@@ -28,7 +33,14 @@
     }
     //获取部门信息
     onMounted(() => {
-      // loadOrgTree()
+      if(store?.workspaceData?.name != '个人空间') {
+        loadOrgTree()
+      } else {
+        ElMessage({
+          message: '当前处于个人空间',
+          type: 'warning'
+        })
+      }
     })
 
 

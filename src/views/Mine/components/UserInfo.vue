@@ -56,6 +56,7 @@ import { storeToRefs } from "pinia";
 import { ShowDetailRow } from "../type";
 import titleBox, { BtnItem } from "@/components/titleBox/index.vue";
 import ChangePasswordDialog from "./ChangePasswordDialog.vue";
+import { ElMessage } from "element-plus";
 const store = useUserStore();
 const { queryInfo } = storeToRefs(store);
 
@@ -98,7 +99,7 @@ function changePass() {
   passwordVisible.value = true;
 }
 function resetPass() {
-  console.log("resetPass");
+  ElMessage.warning("不支持该功能");
 }
 
 onMounted(() => {

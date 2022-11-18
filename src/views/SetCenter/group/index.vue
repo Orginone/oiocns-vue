@@ -59,7 +59,13 @@
 // @ts-nocheck
 import Info from "./components/info.vue";
 import diytab from "@/components/diyTable/index.vue";
-import { ref } from "vue";
+import { ref, getCurrentInstance } from "vue";
+
+const { proxy } = getCurrentInstance()
+
+proxy?.$Bus.on('clickBus', (id) => {
+  console.log(id);
+})
 
 const info = ref(null);
 

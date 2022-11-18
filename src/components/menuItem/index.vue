@@ -31,6 +31,7 @@
       :expand-on-click-node="false" 
       :filter-node-method="filterNode"
       :props="{ class: customNodeClass }"
+      @node-click="nodeClick"
     >
       <template #default="{ node, data }">
         <div class="custom-tree-node" @mouseover='onHover(node.id)' @mouseout="onOut" @click="jump(node)">
@@ -69,6 +70,7 @@
 import { ref, watch, reactive ,nextTick ,getCurrentInstance} from 'vue'
 import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
+import { setCenterStore } from '@/store/setting'
 
 const emit = defineEmits(['handleClose'])
 const props = defineProps({
@@ -152,6 +154,10 @@ const jump = (val:any)=>{
     }else if (val.data.url){
       router.push(val.data.url)
     }
+}
+// 树点击事件
+const nodeClick = (val: any) => {
+  setCenterStore().currentSelectItme = val
 }
 // const handleClose = () => {
 //   emit('handleClose', 'menu')
