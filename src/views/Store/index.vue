@@ -1,7 +1,8 @@
 <template>
   <div class="main">
     <div class="content">
-      <createShop :createDialog="createDialog" @closeDialog="closeDialog"></createShop>
+      <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog',false)"></createShop>
+      <appDetail :detailDialog="dialogType.detailDialog" @closeDialog="closeDialog('detailDialog',false)"></appDetail>
       <opened></opened>
       <div class="table">
         <DiyTable
@@ -10,8 +11,10 @@
           :hasTabs="true"
           :tableName="'应用'"
           :hasTitle="true"
+          :titleBtns="titleBtns"
           :hasTableHead="true"
           :tableData="state.ownProductList"
+          :tabOption="tabOption"
           :options="options"
           @handleUpdate="handleUpdate"
           @selectionChange="selectionChange"
@@ -34,7 +37,7 @@
             </div>
           </template>
           <template #buttons>
-            <el-button class="btn-check" type="primary" link>购买</el-button>
+            <el-button class="btn-check" type="primary" @click="goBuy()" link>购买</el-button>
             <el-button class="btn-check" @click="showCreate()" type="primary" link>创建</el-button>
             <el-button class="btn-check" type="primary" link>暂存</el-button>
           </template>
@@ -61,7 +64,7 @@
             <el-tag style="margin-left: 10px">{{ scope.row.source }}</el-tag>
           </template>
           <template #operate="scope">
-            <el-dropdown>
+            <el-dropdown >
               <span class="el-dropdown-link">
                 ···
               </span>
@@ -77,17 +80,17 @@
                       link
                       type="primary"
                       v-if="scope.row.belongId == store.workspaceData.id"
-                      @click="openShareDialog"
+                      @click="handleCommand('own', 'share', scope.row)"
                     >
                       共享</el-dropdown-item>
                     <el-dropdown-item
                       link
                       type="primary"
                       v-if="authority.IsCompanySpace()"
-                      @click="cohortVisible = true"
+                      @click="dialogType.cohortVisible = true"
                       >分配
                     </el-dropdown-item>
-                    <el-dropdown-item link type="primary" @click="GoPage(`/market/detail/${scope.row.id}`)">
+                    <el-dropdown-item link type="primary" @click="dialogType.detailDialog = true">
                       查看详情
                     </el-dropdown-item>
 
@@ -103,28 +106,8 @@
       </div>
     </div>
     <el-dialog
-      v-model="publishVisible"
-      title="应用上架"
-      width="600px"
-      draggable
-      :close-on-click-modal="false"
-    >
-      <putaway-comp
-        :info="selectProductItem"
-        ref="putawayRef"
-        @closeDialog="publishVisible = false"
-      >
-        <template #btns>
-          <div class="putaway-footer" style="text-align: right">
-            <el-button @click="publishVisible = false">取消</el-button>
-            <el-button type="primary" @click="putawaySubmit()"> 确认</el-button>
-          </div>
-        </template>
-      </putaway-comp>
-    </el-dialog>
-    <el-dialog
-      v-if="cohortVisible"
-      v-model="cohortVisible"
+      v-if="dialogType.cohortVisible"
+      v-model="dialogType.cohortVisible"
       custom-class="share-dialog"
       title="应用分配"
       width="1000px"
@@ -133,13 +116,13 @@
     >
       <ShareComponent
         dialogType="1"
-        @closeDialog="cohortVisible = false"
+        @closeDialog="closeDialog('cohortVisible',false)"
         :info="selectProductItem"
       ></ShareComponent>
     </el-dialog>
     <el-dialog
-      v-if="shareVisible"
-      v-model="shareVisible"
+      v-if="dialogType.shareVisible"
+      v-model="dialogType.shareVisible"
       custom-class="share-dialog"
       title="应用共享"
       width="1000px"
@@ -149,7 +132,7 @@
       <ShareComponent
         dialogType="2"
         :type="store.workspaceData.type"
-        @closeDialog="shareVisible = false"
+        @closeDialog="closeDialog('shareVisible',false)"
         :info="selectProductItem"
       ></ShareComponent>
     </el-dialog>
@@ -160,7 +143,7 @@
 <script setup lang="ts">
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { onMounted, reactive, ref, watch, nextTick,getCurrentInstance } from 'vue'
-
+  import { BtnItem, TabType } from "@/components/titleBox/index.vue";
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/store/user'
   import DiyTable from '@/components/diyTable/index.vue'
@@ -169,9 +152,9 @@
   import { storeToRefs } from 'pinia'
   import { appstore } from '@/module/store/app'
   import DefaultNodeProps from '@/components/wflow/process/DefaultNodeProps'
-  import PutawayComp from './components/putawayComp.vue'
   import opened from './components/opened.vue'
   import createShop from './components/createShop.vue'
+  import appDetail from './components/appDetail.vue'
   import card from './components/card.vue'
   import ShareComponent from './components/shareComponents.vue'
 
@@ -180,21 +163,37 @@
   // console.log('MarketServices',MarketServices);
   import ProcessDesign from '@/components/wflow/ProcessDesign.vue';
 
-  // 创建商店弹窗状态
-  const createDialog = ref<boolean>(false);
   const showCreate = () =>{
-    createDialog.value = true;
+    dialogType.createDialog = true;
   }
-
+  const dialogType:any = reactive({
+    createDialog:false,  // 创建商店弹窗状态
+    detailDialog:false,  //应用详情弹窗
+    cohortVisible:false, //共享弹窗
+    shareVisible:false , //分享
+    groupVisible:false //集团
+  })
+  // 表格按钮事件
+  const titleBtns = reactive<BtnItem[]>([
+    { name: "购买", event: () => {
+      router.push('/store/shop')
+    } },
+    { name: "创建", event: () => {
+      router.push('/store/appRegister')
+    } },
+    { name: "暂存", event: () => {} }
+  ]);
+  // 表格table
+  const tabOption = reactive<TabType[]>([
+    { label: "全部", name: 0 },
+    { label: "创建的", name: 1 },
+    { label: "购买的", name: 2 },
+    { label: "共享的", name: 3 },
+    { label: "分配的", name: 4 },
+  ]);
   // 关闭弹窗
-  const closeDialog = (key:boolean) => {
-    console.log('key',key)
-    createDialog.value = key
-  }
-
-  // 按钮事件
-  const showDiong = ()=>{
-    console.log('aaaa')
+  const closeDialog = (type:string,key:boolean) => {
+    dialogType[type] = key
   }
 
   const processDesignRef = ref();
@@ -258,14 +257,6 @@
 
   // 当前选中的集团
   let selectedValue = ref<string>('')
-
-  // 集团共享
-  const groupVisible = ref<boolean>(false)
-
-  // 共享功能
-  const cohortVisible = ref<boolean>(false)
-
-  const shareVisible = ref<boolean>(false)
   
   // 路由跳转
   const searchText = ref<string>('')
@@ -292,9 +283,9 @@
   const GoPageWithQuery = (path: string, query: any) => {
     router.push({ path, query })
   }
-  //应用搜索
-  const GoPage = (path: string) => {
-    router.push(path)
+  //去应用商店
+  const goBuy = ()=>{
+    router.push('/store/shop')
   }
   type StateType = {
     ownProductList: any[] //我的应用
@@ -413,7 +404,6 @@
         const result = await appstore.getResource(product.id)
         let flowArr:any = []
         result.filter((element:any)=>element.flows && element.flows.length>0).forEach((element:any) => {
-          console.log(element,'aaaaa')
           let arr = JSON.parse(element.flows);
           let itemArr:any = []
           arr.forEach((el:any) => {
@@ -462,22 +452,19 @@
     item: any
   ) => {
     selectProductItem.value = item
-    console.log('command',command)
     switch (command) {
       case 'share':
         openShareDialog()
         break
       case 'putaway':
-        console.log('222')
-        publishVisible.value = true
+        router.push({path: '/store/putShelves', query:{name:item.name,id:item.id,typeName:item.typeName}})
         break
       case 'unsubscribe':
         break
       case 'distribution':
-        cohortVisible.value = true
+        dialogType.cohortVisible.value = true
         break
       case 'detail':
-        GoPage(`/market/detail/${item.id}`)
         break
       // case '流程':
       //   startProcess(selectProductItem.value);
@@ -500,11 +487,10 @@
 
   //  打开集团选择弹窗
   const openShareDialog = () => {
-    shareVisible.value = true
+    dialogType.shareVisible = true
   }
 
   // 上架应用功能
-  const publishVisible = ref<boolean>(false)
   const putawayRef = ref<any>()
   // 提交上架
   const putawaySubmit = () => {
