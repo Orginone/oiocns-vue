@@ -26,12 +26,16 @@
           :tableName="'商城'"
           :hasTitle="true"
           :hasTableHead="true"
-          :tableData="tableData"
+          :tableData="state.myAppList"
           :options="options"
           @handleUpdate="handleUpdate"
           @selectionChange="selectionChange"
           :tableHead="tableHead"
         >
+          <template #price="scope">
+          
+            
+          </template>
           <template #operate="scope">
             <el-dropdown>
               <span class="el-dropdown-link">
@@ -39,13 +43,9 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="showDiong">打开</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">详情</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">管理</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">上架</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">共享</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">分配</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">暂存</el-dropdown-item>
+                  <el-dropdown-item @click="requireItem">查看详情</el-dropdown-item>
+                  <el-dropdown-item @click="joinShopCar(scope.row.id)">加入购物车</el-dropdown-item>
+                  <el-dropdown-item @click="requireItem">购买</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -63,8 +63,9 @@
 <script setup lang="ts">
   import diytab from '@/components/diyTable/index.vue'
   import card from '../components/card.vue'
-  import { ref, reactive, onMounted, nextTick } from 'vue'
-  const dialogVisible = ref<boolean>(true)
+  import { reactive, onMounted, ref, watch, nextTick } from 'vue'
+  import { useRouter } from 'vue-router'
+  import { appstore } from '@/module/store/app'
   const diyTable = ref(null)
   const valuee = ref<any>('');
   const optionsList = [
@@ -82,23 +83,6 @@
       ],
     },
   ]
-  // 表格展示数据
-  const pageStore = reactive({
-    currentPage: 1,
-    pageSize: 20,
-    total: 0
-  })
-  const tableData = ref([{
-    paymentType:'线上',
-    price:'100',
-    status:'200',
-    createTime:'2022-11-01 16:01',
-  }])
-  const activeName = ref<string>(); //table tab index
-  const tableActiveIndex = ref<string>(); //table nav index
-  const handleSelect = () => {
-    console.log('index')
-  }
 
   interface ListItem {
     code: string
@@ -113,47 +97,10 @@
   })
   const remoteMethod = () => {
   }
-
-  const handleUpdate = (page: any) => {
-    pageStore.currentPage = page.currentPage
-    pageStore.pageSize = page.pageSize
-    remoteMethod()
-  }
   const checkList = reactive<any>([])
   const selectionChange = (val: any) => {
     checkList.value = val
   }
-
-
-  const tableHead = ref([
-    {
-      prop: 'paymentType',
-      label: '付款方式',
-    },
-    {
-      prop: 'price',
-      label: '价格',
-      name: 'price'
-    },
-    {
-      prop: 'status',
-      label: '状态',
-      name: 'status'
-    },
-    {
-      prop: 'createTime',
-      label: '创建时间',
-      name: 'createTime'
-    },
-    {
-      type: 'slot',
-      label: '操作',
-      fixed: 'right',
-      align: 'center',
-      width: '150',
-      name: 'operate'
-    }
-  ])
   const options = ref<any>({
     checkBox: false,
     order: true,
@@ -171,7 +118,110 @@
       
     }
   }
-  
+  const modeType = ref<'card' | 'list'>('card')
+  const router = useRouter()
+  const shopcarNum = ref(0)
+  const GoPageWithQuery = (path: string, query: any) => {
+    router.push({ path, query })
+  }
+  // 表格展示数据
+  const pageStore = reactive({
+    tableData: [],
+    currentPage: 1,
+    pageSize: 20,
+    total: 0
+  })
+  // 软件开放市场信息
+  const softShareInfo = ref<MarketType>({} as MarketType)
+
+  const state = reactive({
+    myAppList: []
+  })
+  // 表格展示信息
+  const tableHead = [
+    {
+      prop: 'caption',
+      label: '应用名称'
+    },
+    {
+      prop: 'sellAuth',
+      label: '应用权限'
+    },
+    {
+      prop: 'price',
+      type:'slot',
+      label: '价格'
+    },
+    {
+      prop: 'days',
+      label: '使用期限'
+    },
+    {
+      prop: 'createTime',
+      label: '创建时间'
+    },
+    {
+      type: 'slot',
+      label: '操作',
+      fixed: 'right',
+      align: 'center',
+      width: '300',
+      name: 'operate'
+    }
+  ]
+  const handleUpdate = (page: any) => {
+    pageStore.currentPage = page.currentPage
+    pageStore.pageSize = page.pageSize
+    getAppList()
+  }
+  const searchList = () => {
+    pageStore.currentPage = 1
+    getAppList()
+  }
+  onMounted(() => {
+    getMarketInfo()
+    getShopcarNum()
+  })
+  //加入购物车
+  const joinShopCar = async (id: any) => {
+    await appstore.staging(id)
+    getAppList()
+  }
+  const requireItem = () => {}
+  // 获取购物车数量
+  const getShopcarNum = async () => {
+    shopcarNum.value = await appstore.getShopcarNum()
+  }
+
+  // 搜索功能-关键词
+  const searchVal = ref<string>('') // 搜索关键词
+
+  // 获取应用列表
+  const getAppList: (goFirst?: boolean) => void = async (goFirst = true) => {
+    const { result = [], total = 0 } = await appstore.merchandise(
+      softShareInfo.value.id,
+      pageStore,
+      searchVal.value
+    )
+    state.myAppList = result || []
+  }
+
+  // 获取共享仓库信息
+  const getMarketInfo = async () => {
+    softShareInfo.value = await appstore.getMarketInfo()
+    getAppList()
+  }
+
+  const GoPage = (path: string) => {
+    router.push(path)
+  }
+
+  watch(modeType, (val, valOld) => {
+    // 监听 展示方式变化
+    nextTick(() => {
+      getAppList()
+    })
+  })
 </script>
 <style lang="scss">
   .el-dropdown-link{

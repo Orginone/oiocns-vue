@@ -577,6 +577,15 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '应用上架审批'
         }
+      },
+      {
+        path: '/store/appRegister',
+        name: 'storeAppRegister',
+        component: () => import('@/views/Store/appRegister/index.vue'),
+        meta: {
+          isHidden: true,
+          title: '应用创建'
+        }
       }
     ]
   },

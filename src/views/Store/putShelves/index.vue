@@ -1,6 +1,6 @@
 <template>
-    <div class="content">
-        <el-form
+  <div class="content">
+    <el-form
       ref="formRef"
       :model="formLabelAlign"
       :rules="rules"
@@ -58,11 +58,11 @@
       <el-form-item label="应用信息:" prop="information">
         <el-input :rows="3" type="textarea" v-model="formLabelAlign.information" />
       </el-form-item>
-        </el-form>
-        <div class="putaway-footer" style="text-align: left">
-            <el-button type="primary" @click="onPutawaySubmit()"> 确认</el-button>
-        </div>
+    </el-form>
+    <div class="putaway-footer" style="text-align: left">
+        <el-button type="primary" @click="onPutawaySubmit()"> 确认</el-button>
     </div>
+  </div>
 </template>
   <script lang="ts" setup>
     import API from '@/services'

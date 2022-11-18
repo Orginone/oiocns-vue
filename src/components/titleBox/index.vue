@@ -72,7 +72,6 @@ const emit = defineEmits(["changeTab"]);
     font-size: 16px;
     line-height: 22px;
     color: #303133;
-    margin-bottom: 14px;
   }
   .content{
     display: flex;
