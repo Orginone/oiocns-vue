@@ -3,6 +3,7 @@ import $services from '@/services'
 import { ElMessage } from 'element-plus'
 
 type SettingStoreType = {
+    unitInfo: any,
     departmentInfo: any
     currentSelectItme: object
     [key: string]: any
@@ -13,6 +14,7 @@ export const setCenterStore = defineStore({
     id: 'setting',
     state: ():SettingStoreType => {
         return {
+            unitInfo: [], // 单位信息
             departmentInfo: [], // 部门树节点信息
             currentSelectItme: {}, // 当前选中的节点信息
         }
@@ -36,7 +38,22 @@ export const setCenterStore = defineStore({
           },
           filter(nodes: any[]) {
             nodes = nodes.map(node => {
-                return Object.assign({}, node, {structure: true, query: true})
+                const btns = node.data.typeName === '工作组' ?  [
+                    {
+                        name: "新增工作组",
+                        id: "106"
+                    }
+                ] : [
+                    {
+                        name: "新增部门",
+                        id: "105"
+                    },
+                    {
+                        name: "新增工作组",
+                        id: "106"
+                    }
+                ]
+                return Object.assign({}, node, {structure: true, query: true, btns})
             })
             for (const node of nodes) {
                 node.children = this.filter(node.children)
