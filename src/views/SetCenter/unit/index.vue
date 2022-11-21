@@ -16,6 +16,8 @@
     import { useUserStore } from '@/store/user'
     import { storeToRefs } from 'pinia'
     import { ElMessage } from 'element-plus'
+    import { setCenterStore } from '@/store/setting'
+    const settingStore = setCenterStore()
 
     const store = useUserStore()
     const { workspaceData } = storeToRefs(store)
@@ -29,6 +31,7 @@
     }
     // 给相应组件传值
     const nodeClick = (selectItem: any) => {
+      settingStore.unitInfo = selectItem
       info.value.selectItemChange(selectItem)
     }
     //获取部门信息

@@ -1,7 +1,7 @@
 <template>
   <div class="diy-table">
     <div class="diy-table__header">
-      <titleBox
+      <!-- <titleBox
        :title="tableName"
        :btns="titleBtns"
        :tabOption="tabOption"
@@ -12,9 +12,9 @@
         <template #titleSuffix>
           <slot name="titleSuffix"></slot>
         </template>
-      </titleBox>
+      </titleBox> -->
     </div>
-    <!-- <div class="diy-table__header" v-if="hasTableHead">
+    <div class="diy-table__header" v-if="hasTableHead">
       <div class="diy-table__header--left" style="width: 100%">
         <div class="header-title" v-if="hasTitle">
           {{ tableName }}
@@ -28,7 +28,7 @@
           <slot name="buttons"></slot>
         </div>
       </div>
-    </div> -->
+    </div>
     <slot name="slot-title"></slot>
     <div class="diy-table__btn">
       <div>
@@ -147,9 +147,9 @@ import { TabPaneName } from 'element-plus';
     titleBtns?: BtnItem[], // 按钮列表
     tabOption?: TabType[], // tab列表
     activeName?: string | number, // tab列表
-    // hasTableHead?: boolean //是否显示表格头
-    // hasTitle?: boolean //是否显示标题
-    // hasTabs?: boolean //是否显示table切换
+    hasTableHead?: boolean //是否显示表格头
+    hasTitle?: boolean //是否显示标题
+    hasTabs?: boolean //是否显示table切换
     tableHead: any[] //表格头数据
     tableData?: any[] //表格数据
     checkList?: any[] //选中的项
@@ -457,35 +457,35 @@ import { TabPaneName } from 'element-plus';
     flex-direction: column;
     padding: 18px;
 
-    // &__header {
-    //   display: flex;
-    //   flex-direction: row;
-    //   justify-content: space-between;
-    //   align-items: flex-end;
+    &__header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
 
-    //   .header-title {
-    //     font-size: 16px;
-    //     font-weight: bold;
-    //     color: rgba(48, 49, 51, 1);
-    //     padding: 0 0 8px;
-    //     i {
-    //       font-size: 20px;
-    //       color: rgba(21, 74, 216, 1);
-    //     }
-    //   }
+      .header-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: rgba(48, 49, 51, 1);
+        padding: 0 0 8px;
+        i {
+          font-size: 20px;
+          color: rgba(21, 74, 216, 1);
+        }
+      }
 
-    //   .header-tabs {
-    //     width: 100%;
-    //     display: flex;
-    //     height: 35px;
-    //     align-items: center;
-    //     justify-content: space-between;
-    //   }
+      .header-tabs {
+        width: 100%;
+        display: flex;
+        height: 35px;
+        align-items: center;
+        justify-content: space-between;
+      }
 
-    //   .header-buttons {
-    //     display: flex;
-    //   }
-    // }
+      .header-buttons {
+        display: flex;
+      }
+    }
 
     &__btn {
       display: flex;
