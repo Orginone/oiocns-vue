@@ -83,22 +83,6 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/relation/cohort',
-        name: 'cohort1',
-        component: () => import('@/views/Relation/cohort/index.vue'),
-        meta: {
-          title: '单位群组'
-        }
-      },
-      {
-        path: '/relation/friend',
-        name: 'friend1',
-        component: () => import('@/views/Relation/friend/index.vue'),
-        meta: {
-          title: '我的好友'
-        }
-      },
-      {
         path: '/relation/org',
         name: 'org',
         component: () => import('@/views/Relation/org/index.vue'),
