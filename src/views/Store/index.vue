@@ -64,12 +64,12 @@
             <el-tag style="margin-left: 10px">{{ scope.row.source }}</el-tag>
           </template>
           <template #operate="scope">
-            <el-dropdown >
+            <el-dropdown trigger="click">
               <span class="el-dropdown-link">
                 ···
               </span>
               <template #dropdown>
-                <el-dropdown-menu>
+                <el-dropdown-menu >
                     <el-dropdown-item
                       v-if="scope.row.authority == '所属权' && scope.row.belongId == store.workspaceData.id"
                       link
@@ -93,8 +93,20 @@
                     <el-dropdown-item link type="primary" @click="dialogType.detailDialog = true">
                       查看详情
                     </el-dropdown-item>
-
                     <el-dropdown-item link type="primary" @click="deleteApp(scope.row)">移除应用</el-dropdown-item>
+                    <el-dropdown-item v-if="scope.row.resourcesList && scope.row.resourcesList.length>0">
+                      <el-dropdown
+                          trigger="hover"
+                          placement="top-end"
+                        >
+                        流程业务
+                        <template #dropdown>
+                        <el-dropdown-menu style="padding-left:10px;min-width:100px">
+                          <el-dropdown-item v-for="resource in scope.row.resourcesList" :key="resource.formId"  @click="enterProcess(resource)">{{resource.business}}</el-dropdown-item>
+                        </el-dropdown-menu>
+                        </template>
+                      </el-dropdown>
+                    </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -136,6 +148,7 @@
         :info="selectProductItem"
       ></ShareComponent>
     </el-dialog>
+    <ProcessDesign ref="processDesignRef" />
   </div>
   
 </template>
@@ -524,6 +537,7 @@
 
   const resourcesValue = ref<number>()
   const enterProcess = (resource:any)=>{
+    console.log('resource',resource)
     processDesignRef.value.startDesign(resource);
   }
 

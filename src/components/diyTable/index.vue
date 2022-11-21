@@ -1,20 +1,6 @@
 <template>
   <div class="diy-table">
-    <div class="diy-table__header">
-      <titleBox
-       :title="tableName"
-       :btns="titleBtns"
-       :tabOption="tabOption"
-       :activeName="activeName"
-       @changeTab="changeTab"
-       line
-      >
-        <template #titleSuffix>
-          <slot name="titleSuffix"></slot>
-        </template>
-      </titleBox>
-    </div>
-    <!-- <div class="diy-table__header" v-if="hasTableHead">
+    <div class="diy-table__header" v-if="hasTableHead">
       <div class="diy-table__header--left" style="width: 100%">
         <div class="header-title" v-if="hasTitle">
           {{ tableName }}
@@ -28,7 +14,7 @@
           <slot name="buttons"></slot>
         </div>
       </div>
-    </div> -->
+    </div>
     <slot name="slot-title"></slot>
     <div class="diy-table__btn">
       <div>
@@ -129,7 +115,7 @@
   import { ref, reactive, toRefs, computed, onMounted, watch,nextTick } from 'vue'
   import titleBox, { BtnItem, TabType } from "@/components/titleBox/index.vue";
   import { useUserStore } from '@/store/user'
-import { TabPaneName } from 'element-plus';
+  import { TabPaneName } from 'element-plus';
 
   const store = useUserStore()
   const bodyBox = ref(null);

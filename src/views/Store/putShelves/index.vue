@@ -1,5 +1,6 @@
 <template>
   <div class="content">
+    <detailBox></detailBox>
     <el-form
       ref="formRef"
       :model="formLabelAlign"
@@ -68,6 +69,7 @@
     import API from '@/services'
     import { ElMessage, FormInstance, FormRules } from 'element-plus'
     import { onMounted, reactive, ref } from 'vue'
+    import detailBox from './../components/detailBox.vue'
     import { appstore } from '@/module/store/app'
     import { useRoute } from 'vue-router'
     const route = useRoute()
@@ -154,9 +156,10 @@
   <style lang="scss" scoped>
     .content{
         background: #fff;
-        height: calc(100% - 3px);
+        height: calc(100vh - 100px);
         padding: 20px 0;
         margin-top: 3px;
+        overflow-y: auto;
     }
     .putaway-footer{
         padding-left: 40px;

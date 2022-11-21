@@ -1,11 +1,11 @@
 <template>
-    <div class="store-detail">
-        <i class="icon iconfont icon-jiantou-left"></i>
+    <div class="store-detail" @click="goback">
+        <i class="icon iconfont icon-jiantou-left" @click="goback()"></i>
         <div class="detail-main">
             <div class="main-wrap">
                 <img class="app-logo" src="@/assets/img/whatsapp.png" alt="" />
                 <div class="content">
-                    <div class="title">应用名称</div>
+                    <div class="title">应用名称1</div>
                     <div class="describe">描述描述描述描述描述描述描述描述描述描述</div>
                     <div class="content-foot">
                         <div class="vision">版本号 2.6.6</div>
@@ -33,8 +33,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, nextTick } from "vue";
+  import { useRouter } from 'vue-router'
+  import { onMounted, reactive, ref } from 'vue'
 
+  const router = useRouter()
+  const goback = () => {
+    router.go(-1)
+  }
 </script>
 
 <style lang="scss" scoped>

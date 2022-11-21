@@ -1,7 +1,7 @@
 <template>
     <div class="main">
       <div class="content">
-        <detail></detail>
+        <detailBox></detailBox>
         <div class="table">
           <diytab
             :style="{width:'100%'}"
@@ -67,7 +67,7 @@
   
   <script setup lang="ts">
     import diytab from '@/components/diyTable/index.vue'
-    import detail from '../components/Detail.vue'
+    import detailBox from '../components/detailBox.vue'
     import card from '../components/card.vue'
     import { ref, reactive, onMounted, nextTick } from 'vue'
     const dialogVisible = ref<boolean>(true)
