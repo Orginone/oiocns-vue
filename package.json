@@ -6,7 +6,7 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vite build",
     "build:zip": "vue-tsc --noEmit && vite build --mode zip",
     "lint:prettier": "check-prettier lint"
   },
