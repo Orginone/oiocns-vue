@@ -33,6 +33,22 @@ const Mine: RouteRecordRaw[] = [
           title: "我的单位",
         },
       },
+      {
+        path: '/mine/cohort',
+        name: 'cohort1',
+        component: () => import('@/views/Relation/cohort/index.vue'),
+        meta: {
+          title: '单位群组'
+        }
+      },
+      {
+        path: '/mine/friend',
+        name: 'friend1',
+        component: () => import('@/views/Relation/friend/index.vue'),
+        meta: {
+          title: '我的好友'
+        }
+      },
     ],
   },
 ];

@@ -67,7 +67,7 @@
   
   <script setup lang="ts">
     import diytab from '@/components/diyTable/index.vue'
-    import detail from '../components/Detail.vue'
+    import detail from '../components/detail.vue'
     import card from '../components/card.vue'
     import { ref, reactive, onMounted, nextTick } from 'vue'
     const dialogVisible = ref<boolean>(true)
