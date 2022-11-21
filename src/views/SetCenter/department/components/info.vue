@@ -13,23 +13,23 @@
     </div>
     <div class="tab-list">
       <el-descriptions :column="2" border>
-        <el-descriptions-item :label="'单位名称'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.team.name}}</el-descriptions-item>
-        <el-descriptions-item :label="'单位编码'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.code}}</el-descriptions-item>
+        <el-descriptions-item :label="'部门名称'" label-align="center" align="center" width="150px"
+          label-class-name="my-label" class-name="my-content">{{currentData?.data?.team.name}}</el-descriptions-item>
+        <el-descriptions-item :label="'部门编码'" label-align="center" align="center" width="150px"
+          label-class-name="my-label" class-name="my-content">{{currentData?.data?.code}}</el-descriptions-item>
         <el-descriptions-item :label="'我的岗位'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{authority.GetTargetIdentitys(selectItem?.data?.id)}}
+          label-class-name="my-label" class-name="my-content">{{authority.GetTargetIdentitys(currentData?.data?.id)}}
         </el-descriptions-item>
         <el-descriptions-item :label="'团队编码'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.team.code}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{currentData?.data?.team.code}}</el-descriptions-item>
         <el-descriptions-item :label="'创建人'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{chat.getName(selectItem?.data?.createUser)}}
+          label-class-name="my-label" class-name="my-content">{{chat.getName(currentData?.data?.createUser)}}
         </el-descriptions-item>
         <el-descriptions-item :label="'创建时间'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.createTime}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{currentData?.data?.createTime}}</el-descriptions-item>
         <el-descriptions-item label="描述" width="150px" :span="2" label-align="center" align="center">
           <div class="text-remark">
-            {{selectItem?.data?.team.remark}}
+            {{currentData?.data?.team.remark}}
           </div>
         </el-descriptions-item>
       </el-descriptions>
@@ -58,12 +58,14 @@
 </template>
 <script lang="ts" setup>
 import $services from '@/services'
-import { ref, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router';
 import {chat} from '@/module/chat/orgchat'
 import authority from '@/utils/authority'
 import DepartmentServices from '@/module/relation/department'
+import { setCenterStore } from '@/store/setting'
+const store: any = setCenterStore()
 const allowEdit = () => {
   return selectItem.value.id &&
     authority.IsRelationAdmin([
@@ -77,15 +79,11 @@ let dialogVisible = ref<boolean>(false)
 let formData: any = ref({})
 const service  = new DepartmentServices()
 
-// 获取单位树点击的信息
+const currentData = computed(() => store.currentSelectItme)
+
+// 获取单位
 const selectItemChange = (data: any) => {
   selectItem.value = data;
-  const obj = data.data;
-  if (obj.typeName == '单位') {
-    title.value = '单位'
-  } else {
-    title.value = obj.typeName
-  }
 };
 defineExpose({ selectItemChange });
 

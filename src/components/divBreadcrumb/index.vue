@@ -21,7 +21,7 @@
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item
-                  v-for="(childrenitem, childrenindex) in item?.children"
+                  v-for="(childrenitem, childrenindex) in filterRoute(item?.children)"
                   :command="childrenitem.path"
                   :key="childrenindex"
                   :disabled="currentRoute === childrenitem.path"
@@ -105,6 +105,9 @@ const handleCommand = (command: string) => {
 // 获取当前路由
 const currentRoute = computed(() => router.currentRoute.value.fullPath);
 
+// 过滤掉不显示路由
+const filterRoute = computed(() => (dataList: any) => dataList.filter((item:any) => !item.meta?.isHidden))
+
 watch(
   () => router.currentRoute.value,
   (newValue, _) => {
@@ -135,12 +138,12 @@ watch(
     }
   }
 }
-::v-deep .el-drawer > .el-drawer__header {
+:deep .el-drawer > .el-drawer__header {
   background-color: #ffffff !important;
   height: 60px !important;
   border-bottom: 1px solid #f0f2f5;
 }
-::v-deep .el-drawer > .el-drawer__footer {
+:deep .el-drawer > .el-drawer__footer {
   border-top: 1px solid #f0f2f5;
 }
 ::v-deep .el-drawer__body {

@@ -138,6 +138,7 @@ export default {
     getGroupTree: company + '/get/group/tree', //查询集团组织树
     getAuthorityTree: company + '/get/authority/tree', //查询组织继承角色树
     getAssignedDepartments: company + '/get/assigned/departments', //获取单位空间分配的部门
+    getAssignedJobs: company + '/get/assigned/jobs', //获取单位空间分配的部门
     getTargetsByAuthority: company + '/get/targets/by/authority' //获取单位空间拥有角色的组织
   },
   market: {

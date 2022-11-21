@@ -1,12 +1,15 @@
 // @ts-nocheck
 import Qs from 'qs'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import autoMatchBaseUrl from './autoMatchBaseUrl'
 import { TIMEOUT } from '@/constant'
 import router from '@/router'
 import { ElMessage } from 'element-plus'
 
-export const requestInstance = axios.create({})
+export const requestInstance = axios.create({
+  // 设置有效的HTTP status范围
+  validateStatus: s => s >= 200 && s < 400,
+});
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -64,23 +67,32 @@ function responseLog(response) {
   }
 }
 
-function checkStatus(response) {
-  // 如果http状态码正常，则直接返回数据
+function checkStatus(response: AxiosResponse) {
+  // 此处http status一定是正常的
   if (response) {
-    const { status, statusText } = response
-    if ((status >= 200 && status < 300) || status === 304) {
-      // 如果不需要除了data之外的数据，可以直接 return response.data
-      return response.data
+    const { status, statusText, data } = response
+    // API接口
+    if (data && data.code && "success" in data) {
+      // 接口失败
+      if (!data.success) {
+        const msg = data.msg.replace(/[^\u4E00-\u9FA5]/g, '');
+        ElMessage({
+          message: msg,
+          type: 'warning'
+        });
+
+        // 抛出异常阻止后续代码执行
+        const error: any = new Error(msg);
+        error.data = data;
+        error.status = status;
+        error.statusText = statusText;
+        throw error;
+      } else {
+        return data;
+      }
+    } else {
+      return data;
     }
-    return {
-      status,
-      err: codeMessage[status] || statusText
-    }
-  }
-  // 异常状态下，把错误信息返回去
-  return {
-    status: -404,
-    err: '网络异常'
   }
 }
 
@@ -91,7 +103,7 @@ function checkStatus(response) {
  */
 const axiosResponse = {
   success: (response) => {
-    responseLog(response)
+    // responseLog(response)
     return checkStatus(response)
   },
   error: (error) => {
@@ -156,6 +168,7 @@ export default function request(
     dataType = 'json'
   }
 ) {
+  debugger
   const baseURL = autoMatchBaseUrl(prefix)
 
   const formatHeaders = {

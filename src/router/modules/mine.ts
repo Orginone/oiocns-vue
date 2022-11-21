@@ -5,24 +5,23 @@ const Mine: RouteRecordRaw[] = [
     // 我的
     component: () => import("@/views/Mine/index.vue"),
     path: "/mine",
-    redirect: "/mine/mine",
     children: [
       {
-        component: () => import("@/views/Mine/Mine/index.vue"),
-        path: "/mine/mine",
+        component: () => import("@/views/Mine/Certificate/index.vue"),
+        path: "",
         name: "mine",
         meta: {
           keepAlive: false,
-          title: "我的",
+          title: "个人信息",
         },
       },
       {
-        component: () => import("@/views/Mine/Certificate/index.vue"),
-        path: "/mine/Certificate",
-        name: "certificate",
+        component: () => import("@/views/Mine/Relation/index.vue"),
+        path: "/mine/relation",
+        name: "my-relation",
         meta: {
           keepAlive: false,
-          title: "证书管理",
+          title: "人员设置",
         },
       },
     ],

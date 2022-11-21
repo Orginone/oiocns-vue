@@ -43,6 +43,8 @@
         </div>
       </div>
     </div>
+
+    <ChangePasswordDialog v-model="passwordVisible" />
   </div>
 </template>
 
@@ -51,8 +53,10 @@ import { ref, onMounted, watch, reactive } from "vue";
 import { useUserStore } from "@/store/user";
 import { getDescendantProp } from "@/utils/tools";
 import { storeToRefs } from "pinia";
-import { ShowDetailRow } from "../../type";
+import { ShowDetailRow } from "../type";
 import titleBox, { BtnItem } from "@/components/titleBox/index.vue";
+import ChangePasswordDialog from "./ChangePasswordDialog.vue";
+import { ElMessage } from "element-plus";
 const store = useUserStore();
 const { queryInfo } = storeToRefs(store);
 
@@ -89,11 +93,13 @@ const expanDetail = reactive<ShowDetailRow[][]>([
 
 // #endregion
 
+
+const passwordVisible = ref(false);
 function changePass() {
-  console.log("changePass");
+  passwordVisible.value = true;
 }
 function resetPass() {
-  console.log("resetPass");
+  ElMessage.warning("不支持该功能");
 }
 
 onMounted(() => {
