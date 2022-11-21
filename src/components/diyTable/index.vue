@@ -49,7 +49,7 @@
           :header-cell-style="getRowClass"
           :row-style="{ height: '44px' }"
           :cell-style="cellStyle"
-          :data="tableData"
+          :data="[...tableData,...tableData]"
           row-key="id"
           lazy
           :load="loadNode"

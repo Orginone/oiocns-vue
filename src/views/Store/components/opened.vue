@@ -90,6 +90,7 @@ const commontActive = () => {};
   flex-direction: column;
   flex-wrap: nowrap;
   max-height: 200px;
+  min-height: 130px;
   padding: 12px;
   margin-top:3px;
   .detail-title {

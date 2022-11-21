@@ -9,7 +9,7 @@
           :style="{width:'100%'}"
           ref="diyTable"
           :hasTabs="true"
-          :tableName="'应用'"
+          :tableName="'我的应用'"
           :hasTitle="true"
           :titleBtns="titleBtns"
           :hasTableHead="true"
@@ -547,7 +547,6 @@
     width: 100%;
     height: 100%;
     display: flex;
-    flex: 1;
     .nav-list{
       width: 150px;
       height: 100%;
@@ -567,9 +566,8 @@
       }
       .table{
         background: #fff;
-        display: flex;
-        flex: 1;
         margin-top: 3px;
+        height:calc(100vh - 250px);
         .btn-check{
           padding: 8px 16px;
           color: #154ad8;

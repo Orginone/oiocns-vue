@@ -154,7 +154,9 @@
   <style lang="scss" scoped>
     .content{
         background: #fff;
-        padding-bottom: 20px;
+        height: calc(100% - 3px);
+        padding: 20px 0;
+        margin-top: 3px;
     }
     .putaway-footer{
         padding-left: 40px;
