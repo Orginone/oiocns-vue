@@ -18,12 +18,12 @@
           <!-- <el-menu-item index="5">公告</el-menu-item> -->
         </el-menu>
 
-        <div class="btnList">
+        <!-- <div class="btnList">
           <el-button type="primary" style="width: 80px;">新增</el-button>
           <el-button type="primary" style="width: 80px;">审核</el-button>
           <el-button type="primary" style="width: 80px;">退回</el-button>
           <el-button type="primary" style="width: 80px;">打印</el-button>
-        </div>
+        </div> -->
       </div>
       
       <div class="tab-list"  v-if="whiteList.includes(activeIndex)">
@@ -481,8 +481,14 @@
     } else {
       activeId.value = id
     }
+    console.log('selectType', selectType);
+    
     handleSelect(selectType, [])
   });
+
+  instance?.proxy?.$Bus.on('selectBtn', (num) => {
+    handleSelect(num, [])
+  })
 
   instance?.proxy?.$Bus.on('clickBus', (num) => {
     if(num === '301') {

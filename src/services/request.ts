@@ -168,7 +168,7 @@ export default function request(
     dataType = 'json'
   }
 ) {
-  debugger
+  // debugger
   const baseURL = autoMatchBaseUrl(prefix)
 
   const formatHeaders = {

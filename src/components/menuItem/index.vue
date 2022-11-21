@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%; background: #fff">
     <div class="title"><component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<b style="font-size: 14px;">{{titleData.title}}</b></div>
-    <el-menu v-bind="$attrs" :default-openeds="state.openeds">
+    <el-menu v-bind="$attrs" :default-openeds="state.openeds"  @select="handleSelect">
       <el-sub-menu
         v-for="(item, index) in state.menuData"
         :key="item.uid"
@@ -72,7 +72,7 @@ import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
 import { setCenterStore } from '@/store/setting'
 
-const emit = defineEmits(['handleClose'])
+// const emit = defineEmits(['handleSelect'])
 const props = defineProps({
   data: {
     type: Array,
@@ -159,13 +159,9 @@ const jump = (val:any)=>{
 const nodeClick = (val: any) => {
   setCenterStore().currentSelectItme = val
 }
-// const handleClose = () => {
-//   emit('handleClose', 'menu')
-// }
-// const select = () => {
-//   emit('handleClose', 'tree')
-
-// }
+const handleSelect = (key: any) => {
+  instance?.proxy?.$Bus.emit('selectBtn', key)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -226,3 +222,4 @@ const nodeClick = (val: any) => {
     background: #f2f4f9;
   }
 </style>
+
