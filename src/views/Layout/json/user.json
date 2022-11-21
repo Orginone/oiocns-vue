@@ -25,14 +25,14 @@
                 "name": "好友设置",
                 "type": "3",
                 "uid": "1-1",
-                "url": "/relation/friend",
+                "url": "/mine/friend",
                 "children": []
             },
             {
                 "name": "群组设置",
                 "type": "4",
                 "uid": "1-1",
-                "url": "/relation/cohort",
+                "url": "/mine/cohort",
                 "children": []
             },
             {
