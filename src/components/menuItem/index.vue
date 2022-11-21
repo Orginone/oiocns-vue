@@ -116,7 +116,6 @@ const onOut = () => {
   state.flag1 = ''
 }
 const init =  () => {
-  nextTick(() => {
     state.treeData = props.data.filter((item: any) => {
       return item.structure === true
     })
@@ -124,15 +123,16 @@ const init =  () => {
       return item.structure === false
     })
     state.query = state.treeData[0]?.query
-  })
   
 }
 init();
 let router = useRouter()
 watch(() => router.currentRoute.value.path, (newValue:any) => {
-  nextTick(() => {
-    init();
-  })
+  // nextTick(() => {
+    setTimeout(() => {
+      init();
+    });
+  // })
 })
 watch(filterText, (val) => {
   console.log('a',val);

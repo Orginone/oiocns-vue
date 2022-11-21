@@ -2,29 +2,29 @@
   <div class="detail">
     <div class="detail-title">最近打开</div>
     <div class="detail-list">
-      <div class="list-item" v-for="(item, index) in 5" :key="index">
+      <div class="list-item" v-for="(item, index) in appList"
+        :key="index"
+        >
         <div class="row row-left">
-          <img src="@/assets/img/whatsapp.png" alt="" />
-          <div class="version">V 1.1</div>
+          <img :src="item.icon" alt="" />
+          <div class="version">v0.1</div>
         </div>
         <div class="row row-content">
           <div class="title">
-            <span>资产内控</span>
+            <span class="title-text">{{item.name}}</span>
             <span>
               <el-dropdown>
                 <span class="el-dropdown-link"> ··· </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item>审核申请</el-dropdown-item>
-                    <el-dropdown-item>查看详情</el-dropdown-item>
-                    <el-dropdown-item>查看详情</el-dropdown-item>
+                    <el-dropdown-item @click="handleChooseItem(item)">打开</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
             </span>
           </div>
           <div class="describe">
-            资产内控资产内控资产内控资产内控资产内控
+            {{item.remark}}
           </div>
         </div>
       </div>
@@ -33,94 +33,41 @@
 </template>
 
 <script setup lang="ts">
-import diytab from "@/components/diyTable/index.vue";
-import { ref, reactive, onMounted, nextTick } from "vue";
-const dialogVisible = ref<boolean>(true);
-const diyTable = ref(null);
-// 表格展示数据
-const pageStore = reactive({
-  currentPage: 1,
-  pageSize: 20,
-  total: 0,
-});
-const tableData = ref([
-  {
-    paymentType: "线上",
-    price: "100",
-    status: "200",
-    createTime: "2022-11-01 16:01",
-  },
-]);
-const activeName = ref<string>(); //table tab index
-const tableActiveIndex = ref<string>(); //table nav index
-const handleSelect = () => {
-  console.log("index");
-};
-const handleClick = (key?: any) => {
-  console.log(key);
-};
-
-interface ListItem {
-  code: string;
-  name: string;
-  trueName: string;
-  teamCode: string;
-  remark: string;
+import { reactive, onMounted, ref } from 'vue'
+import { appstore } from '@/module/store/app'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { useCommonStore } from '@store/common'
+import img1 from '@/assets/img/group22.png'
+const emit = defineEmits(['joinFriend'])
+const router = useRouter()
+const appList = ref<ProductType[]>([])
+const commonStore = useCommonStore()
+const handleChooseItem = async (app: any) => {
+  const { result = [], total = 0 } = await appstore.queryOwnResource(app.id)
+  if (total === 0) {
+    return ElMessage({
+      type: 'error',
+      message: '该应用资源缺失,请联系管理员'
+    })
+  }
+  const { link } = result[0]
+  let data = { type: '', appInfo: app, icon: img1, link, path: '/online' }
+  data.type = 'app'
+  commonStore.iframeLink = data?.link
+  router.push(data.path)
 }
-
+const getAppList = async () => {
+  const result = await appstore.searchUsefulProduct()
+  appList.value = result.map((item: any) => {
+    return { ...item, icon: img1 }
+  })
+  console.log('====', appList.value)
+}
 onMounted(() => {
-  remoteMethod();
-});
-const remoteMethod = () => {};
-
-const handleUpdate = (page: any) => {
-  pageStore.currentPage = page.currentPage;
-  pageStore.pageSize = page.pageSize;
-  remoteMethod();
-};
-const checkList = reactive<any>([]);
-const selectionChange = (val: any) => {
-  checkList.value = val;
-};
-
-const tableHead = ref([
-  {
-    prop: "paymentType",
-    label: "付款方式",
-  },
-  {
-    prop: "price",
-    label: "价格",
-    name: "price",
-  },
-  {
-    prop: "status",
-    label: "状态",
-    name: "status",
-  },
-  {
-    prop: "createTime",
-    label: "创建时间",
-    name: "createTime",
-  },
-  {
-    type: "slot",
-    label: "操作",
-    fixed: "right",
-    align: "center",
-    width: "150",
-    name: "operate",
-  },
-]);
-const options = ref<any>({
-  checkBox: false,
-  order: true,
-  selectLimit: 1,
-  defaultSort: { prop: "createTime", order: "descending" },
-  treeProps: {
-    children: "children",
-    hasChildren: "hasChildren",
-  },
+  getAppList()
+})
+onMounted(() => {
 });
 const showDiong = () => {};
 const commontActive = () => {};
@@ -143,7 +90,8 @@ const commontActive = () => {};
   flex-direction: column;
   flex-wrap: nowrap;
   max-height: 200px;
-  padding: 16px;
+  min-height: 130px;
+  padding: 12px;
   margin-top:3px;
   .detail-title {
     font-size: 14px;
@@ -159,7 +107,6 @@ const commontActive = () => {};
   .list-item {
     width: 187px;
     min-width: 187px;
-    height: 102px;
     display: flex;
     flex-wrap: nowrap;
     border: 1px solid #eee;
@@ -184,6 +131,12 @@ const commontActive = () => {};
         display: flex;
         align-items: center;
         justify-content: space-between;
+        .title-text{
+          width:75px;
+          white-space:nowrap;
+          overflow:hidden;
+          text-overflow:ellipsis;
+        }
         span:nth-child(2n) {
           display: flex;
           align-items: center;

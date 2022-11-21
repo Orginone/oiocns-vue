@@ -15,31 +15,24 @@
                 "children": []
             },
             {
-                "name": "人员设置",
-                "type": "1",
-                "uid": "1-1",
-                "url": "/mine/relation",
-                "children": []
-            },
-            {
                 "name": "我的单位",
                 "type": "2",
                 "uid": "1-1",
-                "url": "/mine/dfs",
+                "url": "/mine/unit",
                 "children": []
             },
             {
                 "name": "好友设置",
                 "type": "3",
                 "uid": "1-1",
-                "url": "/setCenter/department",
+                "url": "/relation/friend",
                 "children": []
             },
             {
                 "name": "群组设置",
                 "type": "4",
                 "uid": "1-1",
-                "url": "/setCenter/group",
+                "url": "/relation/cohort",
                 "children": []
             },
             {
@@ -54,6 +47,47 @@
                 "type": "6",
                 "uid": "1-1",
                 "url": "/#/store",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "自定义设置",
+        "structure": false,
+        "children": [
+            {
+                "name": "地址管理",
+                "type": "1",
+                "uid": "1-1",
+                "url": "/mine/certificate",
+                "children": []
+            },
+            {
+                "name": "证书管理",
+                "type": "2",
+                "uid": "1-1",
+                "url": "/mine/certificate",
+                "children": []
+            },
+            {
+                "name": "安全管理",
+                "type": "3",
+                "uid": "1-1",
+                "url": "/mine/certificate",
+                "children": []
+            },
+            {
+                "name": "消息设置",
+                "type": "4",
+                "uid": "1-1",
+                "url": "/mine/certificate",
+                "children": []
+            },
+            {
+                "name": "主题设置",
+                "type": "5",
+                "uid": "1-1",
+                "url": "/mine/certificate",
                 "children": []
             }
         ]

@@ -89,9 +89,9 @@
   }
   getNav();
   watch(() => router.currentRoute.value.path, (newValue:any) => {
-    nextTick(() => {
+    // nextTick(() => {
       getNav();
-    })
+    // })
   })
 
   onBeforeMount(async () => {

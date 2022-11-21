@@ -83,22 +83,6 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/relation/cohort',
-        name: 'cohort1',
-        component: () => import('@/views/Relation/cohort/index.vue'),
-        meta: {
-          title: '单位群组'
-        }
-      },
-      {
-        path: '/relation/friend',
-        name: 'friend1',
-        component: () => import('@/views/Relation/friend/index.vue'),
-        meta: {
-          title: '我的好友'
-        }
-      },
-      {
         path: '/relation/org',
         name: 'org',
         component: () => import('@/views/Relation/org/index.vue'),
@@ -531,6 +515,14 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
+        path: '/store/putShelves',
+        name: 'storePutShelves',
+        component: () => import('@/views/Store/putShelves/index.vue'),
+        meta: {
+          title: '应用上架'
+        }
+      },
+      {
         path: '/store/payOrder',
         name: 'storePayOrder',
         component: () => import('@/views/Store/payOrder/index.vue'),
@@ -568,6 +560,15 @@ const mainRouter: RouteRecordRaw[] = [
         component: () => import('@/views/Store/appApproval/index.vue'),
         meta: {
           title: '应用上架审批'
+        }
+      },
+      {
+        path: '/store/appRegister',
+        name: 'storeAppRegister',
+        component: () => import('@/views/Store/appRegister/index.vue'),
+        meta: {
+          isHidden: true,
+          title: '应用创建'
         }
       }
     ]

@@ -1,25 +1,26 @@
 <template>
   <div>
-    <!--  -->
-    <div v-show="tabOption.length">
-      <!-- <el-tabs v-model="activeName" @tab-change="changeTab">
-        <el-tab-pane
-          v-for="item in tabOption"
-          :label="item.label"
-          :name="item.name"
-        ></el-tab-pane>
-      </el-tabs> -->
-    </div>
     <div class="titleBox">
       <div class="title" v-show="title">
         <p>{{ title }}</p>
         <slot name="titleSuffix"></slot>
       </div>
-      <div class="btns" v-show="btns.length">
-        <template v-for="i in btns" :key="i.name">
-          <p class="titlebtn" @click="i.event">{{ i.name }}</p>
-          <div class="btnline" v-show="line"></div>
-        </template>
+      <div class="content">
+        <div v-show="tabOption.length">
+          <el-tabs v-model="activeName" @tab-change="changeTab">
+            <el-tab-pane
+              v-for="item in tabOption"
+              :label="item.label"
+              :name="item.name"
+            ></el-tab-pane>
+          </el-tabs>
+        </div>
+        <div class="btns" v-show="btns.length">
+          <template v-for="i in btns" :key="i.name">
+            <p class="titlebtn" @click="i.event">{{ i.name }}</p>
+            <div class="btnline" v-show="line"></div>
+          </template>
+        </div>
       </div>
     </div>
   </div>
@@ -65,12 +66,17 @@ const emit = defineEmits(["changeTab"]);
   display: flex;
   justify-content: space-between;
   background: #fff;
+  flex-direction: column;
   .title {
     font-weight: 600;
     font-size: 16px;
     line-height: 22px;
     color: #303133;
-    margin-bottom: 14px;
+  }
+  .content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   .btns {
     display: flex;
