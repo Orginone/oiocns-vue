@@ -84,8 +84,8 @@
             titleArr.state= jsonData[currentRouteName][0]
             menuArr.state = jsonData[currentRouteName]
           } else {
-            titleArr.state= jsonData.unit[0]
-            menuArr.state = jsonData.unit
+            titleArr.state= settingJosn[0]
+            menuArr.state = settingJosn
           }
         }
       } else if (router.currentRoute.value.path.indexOf('mine') != -1) {
