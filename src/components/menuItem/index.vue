@@ -1,6 +1,10 @@
 <template>
   <div style="height: 100%; background: #fff">
-    <div class="title"><component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<b style="font-size: 14px;">{{titleData.title}}</b></div>
+    <div class="title">
+      <component v-show="titleData.backFlag" @click="goBack" :is="'ArrowLeft'" style="width: 16px;height: 16px;cursor:pointer;position: absolute;left: 20px;"></component>
+      <component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;
+      <b style="font-size: 14px;">{{titleData.title}}</b>
+    </div>
     <el-menu v-bind="$attrs" :default-openeds="state.openeds"  @select="handleSelect">
       <el-sub-menu
         v-for="(item, index) in state.menuData"
@@ -101,6 +105,10 @@ const onHover = (id: string) => {
 
 const onOver = (id: string) => {
   state.flag1 = id
+}
+
+const goBack = () => {
+  window.history.go(-1)
 }
 
 const customNodeClass = (data: any, node: Node) => {
