@@ -32,9 +32,14 @@
           @selectionChange="selectionChange"
           :tableHead="tableHead"
         >
+        <template #buttons>
+            <el-button class="btn-check" type="primary" @click="goBuyCar()" link>购物车</el-button>
+          </template>
           <template #price="scope">
-          
-            
+              ￥{{scope.row.price||"0.00"}}
+          </template>
+          <template #days="scope">
+              {{scope.row.days?scope.row.days+'天':'-'}}
           </template>
           <template #operate="scope">
             <el-dropdown>
@@ -99,6 +104,9 @@
   })
   const remoteMethod = () => {
   }
+  const goBuyCar = ()=>{
+    router.push({path: "/store/shoppingCar" });
+  }
   const checkList = reactive<any>([])
   const selectionChange = (val: any) => {
     checkList.value = val
@@ -150,17 +158,20 @@
       label: '应用权限'
     },
     {
-      prop: 'price',
       type:'slot',
+      name: 'price',
       label: '价格'
     },
     {
+      type: 'slot',
       prop: 'days',
+      name:'days',
       label: '使用期限'
     },
     {
       prop: 'createTime',
-      label: '创建时间'
+      label: '创建时间',
+      width:'200'
     },
     {
       type: 'slot',
@@ -277,7 +288,7 @@ const buyThings = (item:any) => {
     display: flex;
     flex: 1;
     color: #303133;
-  
+    border-top: 3px solid #f0f4f8;
     .nav-list{
       width: 240px;
       height: 100%;

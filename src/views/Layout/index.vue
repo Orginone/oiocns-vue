@@ -6,7 +6,7 @@
     </el-header>
     <el-container>
       <!-- 主导航 -->
-      <div class="menu-list" v-if="router.currentRoute.value.path !='/workHome'">
+      <div class="menu-list" v-if="showMenu">
         <MenuNav :data="menuArr.state" :titleData="titleArr.state"></MenuNav>
       </div>
       <div class="layout-main">
@@ -62,13 +62,13 @@
   let menuArr = reactive({
     state:[]
   });
+  const showMenu = ref<boolean>(true);
+
   const getNav = ()=>{
-    if(router.currentRoute.value.path.indexOf('store') != -1){    
-        console.log(1);
-        
+      if(router.currentRoute.value.path.indexOf('store') != -1){    
         titleArr.state = storeJosn[0]
         menuArr.state = storeJosn
-        console.log('menuArr',menuArr,storeJosn)
+        showMenu.value = true;
       }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){
         if (router.currentRoute.value.name === 'department') {
             titleArr.state= {icon: 'User',title: '部门设置'}
@@ -79,12 +79,15 @@
           titleArr.state= jsonData[currentRouteName][0]
           menuArr.state = jsonData[currentRouteName]
         }
+        showMenu.value = true;
       } else if (router.currentRoute.value.path.indexOf('mine') != -1) {
         titleArr.state = userJosn[0]
         menuArr.state = userJosn
+        showMenu.value = true;
       } else{
-        titleArr.state = detailJosn[0]
-        menuArr.state = detailJosn
+        // titleArr.state = detailJosn[0]
+        // menuArr.state = detailJosn
+        showMenu.value = false;
       } 
   }
   getNav();

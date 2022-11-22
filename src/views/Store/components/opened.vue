@@ -18,6 +18,7 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item @click="handleChooseItem(item)">打开</el-dropdown-item>
+                    <el-dropdown-item @click="jumpDetail(item)">详情</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -56,6 +57,9 @@ const handleChooseItem = async (app: any) => {
   data.type = 'app'
   commonStore.iframeLink = data?.link
   router.push(data.path)
+}
+const jumpDetail = ()=>{
+  router.push('/store/putShelves')
 }
 const getAppList = async () => {
   const result = await appstore.searchUsefulProduct()
