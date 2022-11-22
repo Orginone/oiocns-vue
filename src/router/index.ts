@@ -132,7 +132,43 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/cardDetail',
     meta: {
       keepAlive: false,
-      title: '待办详情'
+      title: '办事'
+    }
+  },
+  {
+    component: () => import('@/views/Work/friend.vue'),
+    name: 'friend',
+    path: '/friend',
+    meta: {
+      keepAlive: false,
+      title: '好友申请'
+    }
+  },
+  {
+    component: () => import('@/views/Work/company.vue'),
+    name: 'company',
+    path: '/company',
+    meta: {
+      keepAlive: false,
+      title: '单位审核'
+    }
+  },
+  {
+    component: () => import('@/views/Work/shop.vue'),
+    name: 'shop',
+    path: '/shop',
+    meta: {
+      keepAlive: false,
+      title: '商店审核'
+    }
+  },
+  {
+    component: () => import('@/views/Work/order.vue'),
+    name: 'order',
+    path: '/order',
+    meta: {
+      keepAlive: false,
+      title: '订单审核'
     }
   },
   {

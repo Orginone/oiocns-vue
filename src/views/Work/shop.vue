@@ -15,48 +15,10 @@
           <el-menu-item index="2">已办</el-menu-item>
           <el-menu-item index="3">我发起的</el-menu-item>
           <el-menu-item index="4">抄送我的</el-menu-item>
-          <!-- <el-menu-item index="5">公告</el-menu-item> -->
         </el-menu>
-
-        <!-- <div class="btnList">
-          <el-button type="primary" style="width: 80px;">新增</el-button>
-          <el-button type="primary" style="width: 80px;">审核</el-button>
-          <el-button type="primary" style="width: 80px;">退回</el-button>
-          <el-button type="primary" style="width: 80px;">打印</el-button>
-        </div> -->
       </div>
       
       <div class="tab-list"  v-if="whiteList.includes(activeIndex)">
-        <div v-if="activeIndex != '1-3'">
-          <DiyTable
-          class="diytable"
-          ref="diyTable"
-          :options="options"
-          :hasTableHead="false"
-          :tableData="tableData"
-          :tableHead="tableHead"
-        >
-          <template #target.name="scope">
-            {{chat.getName(scope.row.createUser)}}
-          </template>
-          <template #content="scope">
-            {{ scope.row.target.name }}申请加入{{ scope.row.team.name }}
-          </template>
-          <template #status="scope">
-            <div v-if="scope.row.status >= 0 && scope.row.status < 100">待批</div>
-            <div v-else-if="scope.row.status >= 100 && scope.row.status < 200">已通过</div>
-            <div v-else>已拒绝</div>
-          </template>
-          <template #option="scope">
-            <div v-if="activeIndex =='1-1'">
-              <el-button link type="primary" style="margin-right: 10px" @click="joinSuccess(scope.row)" >通过</el-button>
-              <el-button link type="warning" @click="joinRefse(scope.row)">拒绝</el-button>
-            </div>
-            
-            <el-button v-else link type="warning" @click="cancelJoin(scope.row)">取消申请</el-button>
-          </template>
-          </DiyTable>
-        </div>
         <div v-if="activeIndex == '1-3'">
           <DiyTable
           ref="diyTable"
@@ -451,17 +413,11 @@
   const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
   const handleSelect = (key: any, keyPath: string[]) => {
     tableData.value = []
-    diyTable.value.state.page.total = 0
+    // diyTable.value.state.page.total = 0
     activeIndex.value = key;
     ThingServices.whiteList = [];
     if (whiteList.includes(key)) {
-      if(key == '1-1'){
-        getList()
-        tableHead.value = ThingServices.examineHead;
-      }else if (key == '1-2'){
-        getApplyList()
-        tableHead.value = ThingServices.examineHead;
-      }else if (key == '1-3'){
+      if (key == '1-3'){
         searchJoinApply()
       }
     } else {
@@ -486,11 +442,11 @@
     handleSelect(selectType, [])
   });
 
-  // instance?.proxy?.$Bus.on('selectBtn', (num) => {
-  //   console.log(num);
+  instance?.proxy?.$Bus.on('selectBtn', (num) => {
+    console.log(num);
     
-  //   handleSelect(num, [])
-  // })
+    handleSelect(num, [])
+  })
 
   instance?.proxy?.$Bus.on('clickBus', (num) => {
     if(num === '301') {
