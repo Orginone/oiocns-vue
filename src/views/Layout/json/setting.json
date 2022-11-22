@@ -43,7 +43,7 @@
                     "name": "帮助中心",
                     "type": "5",
                     "uid": "1-1",
-                    "url": "/#/store",
+                    "url": "/setCenter/help",
                     "children": []
                 }
             ]
@@ -56,49 +56,49 @@
                     "name": "单位首页",
                     "type": "6",
                     "uid": "1-1",
-                    "url": "",
+                    "url": "/setCenter/unitMain",
                     "children": []
                 },
                 {
                     "name": "数据设置",
                     "type": "7",
                     "uid": "1-1",
-                    "url": "",
+                    "url": "/setCenter/data",
                     "children": []
                 },
                 {
                     "name": "资源设置",
                     "type": "8",
                     "uid": "1-1",
-                    "url": "",
+                    "url": "/setCenter/resource",
                     "children": []
                 },
                 {
                     "name": "应用设置",
                     "type": "9",
                     "uid": "1-1",
-                    "url": "",
+                    "url": "/setCenter/use",
                     "children": []
                 },
                 {
                     "name": "流程设置",
                     "type": "10",
                     "uid": "1-1",
-                    "url": "",
+                    "url": "/setCenter/flow",
                     "children": []
                 },
                 {
                     "name": "标准设置",
                     "type": "11",
                     "uid": "1-1",
-                    "url": "",
+                    "url": "/setCenter/standard",
                     "children": []
                 },
                 {
                     "name": "权限设置",
                     "type": "12",
                     "uid": "1-1",
-                    "url": "",
+                    "url": "/setCenter/authority",
                     "children": []
                 }
             ]

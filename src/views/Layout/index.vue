@@ -76,8 +76,13 @@
         } else {
           let currentRouteName: any = router.currentRoute.value.name
           const jsonData: any = settingJosn
-          titleArr.state= jsonData[currentRouteName][0]
-          menuArr.state = jsonData[currentRouteName]
+          if (currentRouteName === 'unit' || currentRouteName === 'post' || currentRouteName === 'group') {
+            titleArr.state= jsonData[currentRouteName][0]
+            menuArr.state = jsonData[currentRouteName]
+          } else {
+            titleArr.state= jsonData.unit[0]
+            menuArr.state = jsonData.unit
+          }
         }
       } else if (router.currentRoute.value.path.indexOf('mine') != -1) {
         titleArr.state = userJosn[0]

@@ -200,6 +200,86 @@ const mainRouter: RouteRecordRaw[] = [
           searchType: '2'
         }
       },
+      {
+        path: '/setCenter/help',
+        name: 'help',
+        component: () => import('@/views/SetCenter/help/index.vue'),
+        meta: {
+          title: '帮助中心',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
+      {
+        path: '/setCenter/unitMain',
+        name: 'unitMain',
+        component: () => import('@/views/SetCenter/unitMain/index.vue'),
+        meta: {
+          title: '单位首页',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
+      {
+        path: '/setCenter/data',
+        name: 'data',
+        component: () => import('@/views/SetCenter/data/index.vue'),
+        meta: {
+          title: '数据设置',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
+      {
+        path: '/setCenter/resource',
+        name: 'resource',
+        component: () => import('@/views/SetCenter/resource/index.vue'),
+        meta: {
+          title: '资源设置',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
+      {
+        path: '/setCenter/use',
+        name: 'use',
+        component: () => import('@/views/SetCenter/use/index.vue'),
+        meta: {
+          title: '应用设置',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
+      {
+        path: '/setCenter/flow',
+        name: 'flow',
+        component: () => import('@/views/SetCenter/flow/index.vue'),
+        meta: {
+          title: '流程设置',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
+      {
+        path: '/setCenter/standard',
+        name: 'standard',
+        component: () => import('@/views/SetCenter/standard/index.vue'),
+        meta: {
+          title: '标准设置',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
+      {
+        path: '/setCenter/authority',
+        name: 'authority',
+        component: () => import('@/views/SetCenter/authority/index.vue'),
+        meta: {
+          title: '权限设置',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
     ]
   },
   {
