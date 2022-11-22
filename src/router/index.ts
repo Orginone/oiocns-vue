@@ -35,7 +35,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/home',
     meta: {
       keepAlive: false,
-      title: '首页'
+      title: '首页',
+      id: "home"
     }
   },
   {
@@ -44,7 +45,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/Thing',
     meta: {
       keepAlive: false,
-      title: '元数据'
+      title: '元数据',
+      id: "thing"
     }
   },
   {
@@ -53,7 +55,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/chat',
     meta: {
       keepAlive: false,
-      title: '消息'
+      title: '消息',
+      id: "chat"
     }
   },
   // 我的
@@ -63,7 +66,8 @@ const mainRouter: RouteRecordRaw[] = [
     component: () => import('@/views/Relation/index.vue'),
     meta: {
       keepAlive: false,
-      title: '关系'
+      title: '关系',
+      id: "relation"
     },
     children: [
       {
@@ -71,7 +75,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'department',
         component: () => import('@/views/Relation/department/index.vue'),
         meta: {
-          title: '部门维护'
+          title: '部门维护',
+          id: "relation.department"
         }
       },
       {
@@ -79,7 +84,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'group1',
         component: () => import('@/views/Relation/group/index.vue'),
         meta: {
-          title: '集团维护'
+          title: '集团维护',
+          id: "relation.group"
         }
       },
       {
@@ -87,7 +93,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'org',
         component: () => import('@/views/Relation/org/index.vue'),
         meta: {
-          title: '单位维护'
+          title: '单位维护',
+          id: "relation.org"
         }
       },
       {
@@ -95,7 +102,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'authority',
         component: () => import('@/views/Relation/authority/index.vue'),
         meta: {
-          title: '角色管理'
+          title: '角色管理',
+          id: "relation.authority"
         }
       },
       {
@@ -103,7 +111,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'identity',
         component: () => import('@/views/Relation/identity/index.vue'),
         meta: {
-          title: '岗位管理'
+          title: '岗位管理',
+          id: "relation.identity"
         }
       }
     ]
@@ -114,7 +123,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/workHome',
     meta: {
       keepAlive: false,
-      title: '工作组'
+      title: '工作组',
+      id: "workHome"
     }
   },
   {
@@ -123,7 +133,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/work',
     meta: {
       keepAlive: false,
-      title: '自定义首页'
+      title: '自定义首页',
+      id: "workindex"
     }
   },
   {
@@ -132,7 +143,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/cardDetail',
     meta: {
       keepAlive: false,
-      title: '办事'
+      title: '办事',
+      id: "cardDetail"
     }
   },
   {
@@ -141,7 +153,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/friend',
     meta: {
       keepAlive: false,
-      title: '好友申请'
+      title: '好友申请',
+      id: "friend"
     }
   },
   {
@@ -150,7 +163,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/company',
     meta: {
       keepAlive: false,
-      title: '单位审核'
+      title: '单位审核',
+      id: 'company'
     }
   },
   {
@@ -159,7 +173,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/shop',
     meta: {
       keepAlive: false,
-      title: '商店审核'
+      title: '商店审核',
+      id: 'shop'
     }
   },
   {
@@ -168,7 +183,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/order',
     meta: {
       keepAlive: false,
-      title: '订单审核'
+      title: '订单审核',
+      id: 'order'
     }
   },
   {
@@ -176,7 +192,8 @@ const mainRouter: RouteRecordRaw[] = [
     component: () => import('@/views/SetCenter/index.vue'),
     meta: {
       keepAlive: false,
-      title: '设置'
+      title: '设置',
+      id: "setCenter"
     },
     redirect: '/setCenter/unit',
     children: [
@@ -187,7 +204,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '单位设置',
           icon: 'OfficeBuilding',
-          searchType: '1'
+          searchType: '1',
+          id: "setCenter.unit"
         }
       },
       {
@@ -197,7 +215,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '部门设置',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.department"
         }
       },
       {
@@ -207,7 +226,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '集团设置',
           icon: 'Postcard',
-          searchType: '1'
+          searchType: '1',
+          id: "setCenter.group"
         }
       },
       {
@@ -216,6 +236,87 @@ const mainRouter: RouteRecordRaw[] = [
         component: () => import('@/views/SetCenter/post/index.vue'),
         meta: {
           title: '岗位设置',
+          icon: 'Postcard',
+          searchType: '2',
+          id: "setCenter.post"
+        }
+      },
+      {
+        path: '/setCenter/help',
+        name: 'help',
+        component: () => import('@/views/SetCenter/help/index.vue'),
+        meta: {
+          title: '帮助中心',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
+      {
+        path: '/setCenter/unitMain',
+        name: 'unitMain',
+        component: () => import('@/views/SetCenter/unitMain/index.vue'),
+        meta: {
+          title: '单位首页',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
+      {
+        path: '/setCenter/data',
+        name: 'data',
+        component: () => import('@/views/SetCenter/data/index.vue'),
+        meta: {
+          title: '数据设置',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
+      {
+        path: '/setCenter/resource',
+        name: 'resource',
+        component: () => import('@/views/SetCenter/resource/index.vue'),
+        meta: {
+          title: '资源设置',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
+      {
+        path: '/setCenter/use',
+        name: 'use',
+        component: () => import('@/views/SetCenter/use/index.vue'),
+        meta: {
+          title: '应用设置',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
+      {
+        path: '/setCenter/flow',
+        name: 'flow',
+        component: () => import('@/views/SetCenter/flow/index.vue'),
+        meta: {
+          title: '流程设置',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
+      {
+        path: '/setCenter/standard',
+        name: 'standard',
+        component: () => import('@/views/SetCenter/standard/index.vue'),
+        meta: {
+          title: '标准设置',
+          icon: 'Postcard',
+          searchType: '2'
+        }
+      },
+      {
+        path: '/setCenter/authority',
+        name: 'authority',
+        component: () => import('@/views/SetCenter/authority/index.vue'),
+        meta: {
+          title: '权限设置',
           icon: 'Postcard',
           searchType: '2'
         }
@@ -228,7 +329,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/work/process',
     meta: {
       keepAlive: false,
-      title: '待办详情'
+      title: '待办详情',
+      id: "work-process"
     }
   },
   {
@@ -237,7 +339,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/application',
     meta: {
       keepAlive: false,
-      title: '我的申请'
+      title: '我的申请',
+      id: "application"
     }
   },
   //个人中心信息设置路由
@@ -245,13 +348,17 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/user',
     component: () => import('@/views/Layout/msgLayout/layout.vue'),
     redirect: '/user/userMsg',
+    meta: {
+      id: "userold"
+    },
     children: [
       {
         path: '/user/userMsg',
         name: 'userMsg',
         component: () => import('@/views/Person/msgSetting/userMsg.vue'),
         meta: {
-          title: '个人信息'
+          title: '个人信息',
+          id: "userold.userMsg"
         }
       },
       {
@@ -259,7 +366,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'userUnit',
         component: () => import('@/views/Person/msgSetting/userUnit.vue'),
         meta: {
-          title: '我的单位'
+          title: '我的单位',
+          id: "userold.userUnit"
         }
       },
       {
@@ -267,7 +375,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'userAccountBind',
         component: () => import('@/views/Person/msgSetting/userAccountBind.vue'),
         meta: {
-          title: '账号绑定'
+          title: '账号绑定',
+          id: "userold.userAccountBind"
         }
       },
       {
@@ -275,7 +384,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'userSaveSet',
         component: () => import('@/views/Person/msgSetting/userSaveSet.vue'),
         meta: {
-          title: '安全设置'
+          title: '安全设置',
+          id: "userold.userSaveSet"
         }
       },
 
@@ -287,7 +397,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/online',
     meta: {
       keepAlive: false,
-      title: '外部应用'
+      title: '外部应用',
+      id: "foreignApp"
     }
   },
   // 应用市场 路由信息
@@ -295,7 +406,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/market',
     meta: {
       keepAlive: false,
-      title: '我的应用'
+      title: '我的应用',
+      id: "market"
     },
     // component: () => import('@/views/Layout/msgLayout/layout.vue'),
     children: [
@@ -304,7 +416,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'market',
         component: () => import('@/views/Market/index.vue'),
         meta: {
-          title: '应用中心'
+          title: '应用中心',
+          id: "market.index"
         }
       },
       {
@@ -312,7 +425,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'marketGroup',
         component: () => import('@/views/Market/AppShare/group.vue'),
         meta: {
-          title: '共享集团'
+          title: '共享集团',
+          id: "market.group"
         }
       },
       {
@@ -320,7 +434,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'marketUnit',
         component: () => import('@/views/Market/AppShare/unit.vue'),
         meta: {
-          title: '共享单位'
+          title: '共享单位',
+          id: "market.unit"
         }
       },
       {
@@ -328,7 +443,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'marketList',
         component: () => import('@/views/Market/MarketList/index.vue'),
         meta: {
-          title: '商店列表'
+          title: '商店列表',
+          id: "market.list"
         }
       },
       {
@@ -336,7 +452,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'marketAppList',
         component: () => import('@/views/Market/MarketList/appList.vue'),
         meta: {
-          title: '应用列表'
+          title: '应用列表',
+          id: "market.appList"
         }
       },
       {
@@ -344,7 +461,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'marketAppRegister',
         component: () => import('@/views/Market/AppRegister/index.vue'),
         meta: {
-          title: '应用注册'
+          title: '应用注册',
+          id: "market.register"
         }
       },
       // 可使用应用 信息展示页面
@@ -353,7 +471,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'marketAppDetail',
         component: () => import('@/views/Market/AppInfo/index.vue'),
         meta: {
-          title: '应用信息'
+          title: '应用信息',
+          id: "market.detail"
         }
       },
       {
@@ -361,7 +480,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'softShare',
         component: () => import('@/views/Market/SoftShare/index.vue'),
         meta: {
-          title: '开放市场'
+          title: '开放市场',
+          id: "market.share"
         }
       },
       {
@@ -369,7 +489,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'marketUserManage',
         component: () => import('@/views/Market/MarketList/userManage.vue'),
         meta: {
-          title: '用户管理'
+          title: '用户管理',
+          id: "market.user"
         }
       },
       {
@@ -377,7 +498,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'marketOrderBuy',
         component: () => import('@/views/Market/Order/index.vue'),
         meta: {
-          title: '采购订单'
+          title: '采购订单',
+          id: "market.order-buy"
         }
       },
       {
@@ -385,7 +507,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'marketOrderSell',
         component: () => import('@/views/Market/Order/index.vue'),
         meta: {
-          title: '售卖订单'
+          title: '售卖订单',
+          id: "market.order-sell"
         }
       },
       {
@@ -393,7 +516,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'userShopCar',
         component: () => import('@/views/Market/ShopCar/index.vue'),
         meta: {
-          title: '购物车'
+          title: '购物车',
+          id: "market.shopCar"
         }
       },
       {
@@ -401,7 +525,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'userApply',
         component: () => import('@/views/Market/JoinMarketApproval/starter.vue'),
         meta: {
-          title: '加入商店申请列表'
+          title: '加入商店申请列表',
+          id: "market.apply-user"
         }
       },
       {
@@ -409,7 +534,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'appApply',
         component: () => import('@/views/Market/AppShelves/apply.vue'),
         meta: {
-          title: '应用上架申请列表'
+          title: '应用上架申请列表',
+          id: "market.apply-app"
         }
       },
       {
@@ -417,7 +543,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'appDetail',
         component: () => import('@/views/Market/AppDetail/index.vue'),
         meta: {
-          title: '应用详情'
+          title: '应用详情',
+          id: "market.appDetail"
         }
       },
       {
@@ -425,7 +552,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'publishList',
         component: () => import('@/views/Market/AppDetail/publishList.vue'),
         meta: {
-          title: '应用上架列表'
+          title: '应用上架列表',
+          id: "market.publishList"
         }
       },
       {
@@ -433,7 +561,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'merchandiseDetail',
         component: () => import('@/views/Market/MerchandiseDetail/index.vue'),
         meta: {
-          title: '商品详情'
+          title: '商品详情',
+          id: "market.merchandiseDetail"
         }
       },
       {
@@ -441,7 +570,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'marketDetail',
         component: () => import('@/views/Market/MarketDetail/index.vue'),
         meta: {
-          title: '商店详情'
+          title: '商店详情',
+          id: "market.marketDetail"
         }
       },
       {
@@ -449,7 +579,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'managerApply',
         component: () => import('@/views/Market/JoinMarketApproval/manager.vue'),
         meta: {
-          title: '加入商店审批列表'
+          title: '加入商店审批列表',
+          id: "market.managerApply"
         }
       },
       {
@@ -457,7 +588,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'managerApproval',
         component: () => import('@/views/Market/JoinMarketApproval/index.vue'),
         meta: {
-          title: '申请审批'
+          title: '申请审批',
+          id: "market.managerApproval"
         }
       },
       {
@@ -465,7 +597,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'appShelvesApproval',
         component: () => import('@/views/Market/AppShelves/approval.vue'),
         meta: {
-          title: '应用上架审批列表'
+          title: '应用上架审批列表',
+          id: "market.appShelvesApproval"
         }
       }
     ]
@@ -474,13 +607,17 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/company',
     redirect: '/company/unitMsg',
     component: () => import('@/views/Layout/msgLayout/layout.vue'),
+    meta: {
+      id: "company"
+    },
     children: [
       {
         path: '/company/unitMsg',
         name: 'unitMsg',
         component: () => import('@/views/Person/msgSetting/unitMsg.vue'),
         meta: {
-          title: '单位信息'
+          title: '单位信息',
+          id: "company.info"
         }
       },
       {
@@ -488,7 +625,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'affiliatedGroups',
         component: () => import('@/views/Person/msgSetting/affiliatedGroups.vue'),
         meta: {
-          title: '关联集团'
+          title: '关联集团',
+          id: "company.group"
         }
       }
     ]
@@ -499,7 +637,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/cloud',
     meta: {
       keepAlive: false,
-      title: '云盘'
+      title: '云盘',
+      id: "cloud"
     }
   },
   {
@@ -507,7 +646,8 @@ const mainRouter: RouteRecordRaw[] = [
     path: '/store',
     meta: {
       keepAlive: false,
-      title: '仓库'
+      title: '仓库',
+      id: "store"
     },
     children: [
       {
@@ -515,7 +655,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'store',
         component: () => import('@/views/Store/index.vue'),
         meta: {
-          title: '仓库'
+          title: '仓库',
+          id: "store.index"
         }
       },
       {
@@ -523,7 +664,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'storeAppDetails',
         component: () => import('@/views/Store/appDetails/index.vue'),
         meta: {
-          title: '应用详情'
+          title: '应用详情',
+          id: "store.appDetails"
         }
       },
       {
@@ -531,7 +673,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'storeAppManagement',
         component: () => import('@/views/Store/appManagement/index.vue'),
         meta: {
-          title: '应用设置'
+          title: '应用设置',
+          id: "store.storeAppManagement"
         }
       },
       {
@@ -539,7 +682,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'storeShop',
         component: () => import('@/views/Store/shop/index.vue'),
         meta: {
-          title: '应用商店'
+          title: '应用商店',
+          id: "store.shop"
         }
       },
       {
@@ -547,7 +691,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'storeAppApply',
         component: () => import('@/views/Store/appApply/index.vue'),
         meta: {
-          title: '上架申请'
+          title: '上架申请',
+          id: "store.appApply"
         }
       },
       {
@@ -563,7 +708,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'storePayOrder',
         component: () => import('@/views/Store/payOrder/index.vue'),
         meta: {
-          title: '采购订单'
+          title: '采购订单',
+          id: "store.order-pay"
         }
       },
       {
@@ -571,7 +717,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'storeSellOrder',
         component: () => import('@/views/Store/sellOrder/index.vue'),
         meta: {
-          title: '售卖订单'
+          title: '售卖订单',
+          id: "store.order-cell"
         }
       },
       {
@@ -579,7 +726,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'storeShoppingCar',
         component: () => import('@/views/Store/shoppingCar/index.vue'),
         meta: {
-          title: '购物车'
+          title: '购物车',
+          id: "store.shoppingCar"
         }
       },
       {
@@ -587,7 +735,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'storeAppList',
         component: () => import('@/views/Store/appList/index.vue'),
         meta: {
-          title: '应用列表'
+          title: '应用列表',
+          id: "store.appList"
         }
       },
       {
@@ -595,7 +744,8 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'storeAppApproval',
         component: () => import('@/views/Store/appApproval/index.vue'),
         meta: {
-          title: '应用上架审批'
+          title: '应用上架审批',
+          id: "store.appApproval"
         }
       },
       {

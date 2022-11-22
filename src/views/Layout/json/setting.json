@@ -1,353 +1,114 @@
-{
-    "unit": [
-        {
-            "icon": "User",
-            "title": "设置"
-        },
-        {
-            "name": "组织设置",
-            "structure": false,
-            "children": [
-                {
-                    "name": "单位设置",
-                    "type": "1",
-                    "uid": "1-1",
-                    "icon": "User",
-                    "url": "/setCenter/unit",
-                    "children": []
-                },
-                {
-                    "name": "部门设置",
-                    "icon": "User",
-                    "type": "2",
-                    "uid": "1-1",
-                    "url": "/setCenter/department",
-                    "children": []
-                },
-                {
-                    "name": "集团设置",
-                    "type": "3",
-                    
-                    "uid": "1-1",
-                    "url": "/setCenter/group",
-                    "children": []
-                },
-                {
-                    "name": "岗位设置",
-                    "type": "4",
-                    "uid": "1-1",
-                    "url": "/setCenter/post",
-                    "children": []
-                },
-                {
-                    "name": "帮助中心",
-                    "type": "5",
-                    "uid": "1-1",
-                    "url": "/#/store",
-                    "children": []
-                }
-            ]
-        },
-        {
-            "name": "配置中心",
-            "structure": false,
-            "children": [
-                {
-                    "name": "单位首页",
-                    "type": "6",
-                    "uid": "1-1",
-                    "url": "",
-                    "children": []
-                },
-                {
-                    "name": "数据设置",
-                    "type": "7",
-                    "uid": "1-1",
-                    "url": "",
-                    "children": []
-                },
-                {
-                    "name": "资源设置",
-                    "type": "8",
-                    "uid": "1-1",
-                    "url": "",
-                    "children": []
-                },
-                {
-                    "name": "应用设置",
-                    "type": "9",
-                    "uid": "1-1",
-                    "url": "",
-                    "children": []
-                },
-                {
-                    "name": "流程设置",
-                    "type": "10",
-                    "uid": "1-1",
-                    "url": "",
-                    "children": []
-                },
-                {
-                    "name": "标准设置",
-                    "type": "11",
-                    "uid": "1-1",
-                    "url": "",
-                    "children": []
-                },
-                {
-                    "name": "权限设置",
-                    "type": "12",
-                    "uid": "1-1",
-                    "url": "",
-                    "children": []
-                }
-            ]
-        }
-    ],
-    "post": [
-        {
-            "icon": "User",
-            "title": "岗位设置"
-        },
-        {
-            "label": "单位房产管理员",
-            "structure": true,
-            "query": true,
-            "btns": [
-                {
-                    "name": "更改岗位名称",
-                    "id": "201"
-                },
-                {
-                    "name": "删除岗位",
-                    "id": "202"
-                }
-            ]
-        },
-        {
-            "label": "单位设备管理员",
-            "structure": true,
-            "query": true,
-            "btns": [
-                {
-                    "name": "更改岗位名称",
-                    "id": "201"
-                },
-                {
-                    "name": "删除岗位",
-                    "id": "202"
-                }
-            ]
-        },
-        {
-            "label": "单位财务管理员",
-            "structure": true,
-            "query": true,
-            "btns": [
-                {
-                    "name": "更改岗位名称",
-                    "id": "201"
-                },
-                {
-                    "name": "删除岗位",
-                    "id": "202"
-                }
-            ]
-        },
-        {
-            "label": "单位应用管理员",
-            "structure": true,
-            "query": true,
-            "btns": [
-                {
-                    "name": "更改岗位名称",
-                    "id": "201"
-                },
-                {
-                    "name": "删除岗位",
-                    "id": "202"
-                }
-            ]
-        },
-        {
-            "label": "团队消息管理员",
-            "structure": true,
-            "query": true,
-            "btns": [
-                {
-                    "name": "更改岗位名称",
-                    "id": "201"
-                },
-                {
-                    "name": "删除岗位",
-                    "id": "202"
-                }
-            ]
-        }
-    ],
-    "group": [
-        {
-            "icon": "User",
-            "title": "集团设置"
-        },
-        {
-            "label": "创建集团",
-            "structure": true,
-            "query": true,
-            "isPenultimate": true,
-            "children": [
-                {
-                    "label": "浙江省资产年报集团",
-                    "isPenultimate": true,
-                    "id": "",
-                    "children": [
-                        {
-                            "label": "集团子节点",
-                            "isPenultimate": true,
-                            "id": "",
-                            "children": []
-                        },
-                        {
-                            "label": "集团子节点",
-                            "isPenultimate": true,
-                            "id": "",
-                            "children": []
-                        }
-                    ]
-                },
-                {
-                    "label": "浙江省资产年报集团",
-                    "isPenultimate": true,
-                    "id": "",
-                    "children": [
-                        {
-                            "label": "集团子节点",
-                            "isPenultimate": true,
-                            "id": "",
-                            "children": []
-                        },
-                        {
-                            "label": "集团子节点",
-                            "isPenultimate": true,
-                            "id": "",
-                            "children": []
-                        }
-                    ]
-                },
-                {
-                    "label": "浙江省资产年报集团",
-                    "isPenultimate": true,
-                    "id": "",
-                    "children": [
-                        {
-                            "label": "集团子节点",
-                            "isPenultimate": true,
-                            "id": "",
-                            "children": []
-                        },
-                        {
-                            "label": "集团子节点",
-                            "isPenultimate": true,
-                            "id": "",
-                            "children": []
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "label": "加入集团",
-            "structure": true,
-            "isPenultimate": true,
-            "children": [
-                {
-                    "label": "浙江省资产年报集团1",
-                    "isPenultimate": true,
-                    "id": "",
-                    "children": [
-                        {
-                            "label": "集团子节点1",
-                            "isPenultimate": true,
-                            "id": "",
-                            "children": []
-                        },
-                        {
-                            "label": "集团子节点1",
-                            "isPenultimate": true,
-                            "id": "",
-                            "children": []
-                        }
-                    ]
-                },
-                {
-                    "label": "浙江省资产年报集团2",
-                    "isPenultimate": true,
-                    "id": "",
-                    "children": [
-                        {
-                            "label": "集团子节点2",
-                            "isPenultimate": true,
-                            "id": "",
-                            "children": []
-                        },
-                        {
-                            "label": "集团子节点2",
-                            "isPenultimate": true,
-                            "id": "",
-                            "children": []
-                        }
-                    ]
-                },
-                {
-                    "label": "浙江省资产年报集团",
-                    "isPenultimate": true,
-                    "id": "",
-                    "children": [
-                        {
-                            "label": "集团子节点",
-                            "isPenultimate": true,
-                            "id": "",
-                            "children": []
-                        },
-                        {
-                            "label": "集团子节点",
-                            "isPenultimate": true,
-                            "id": "",
-                            "children": []
-                        }
-                    ]
-                }
-            ]
-        }
-    ],
-    "department": [
-        {
-            "icon": "User",
-            "title": "部门设置"
-        },
-        {
-            "label": "浙江省财政厅",
-            "structure": true,
-            "isPenultimate": true,
-            "query": true,
-            "btns": [
-                {
-                    "name": "创建",
-                    "id": "101"
-                },
-                {
-                    "name": "事件",
-                    "id": "102"
-                }
-            ],
-            "children": [
-                {
-                    "label": "资产处",
-                    "isPenultimate": true,
-                    "id": "",
-                    "children": []
-                }
-            ]
-        }
-    ]
-}
+[
+    {
+        "icon": "Setting",
+        "title": "设置"
+    },
+    {
+        "name": "组织设置",
+        "structure": false,
+        "children": [
+            {
+                "name": "单位设置",
+                "type": "1",
+                "uid": "1-1",
+                "icon": "Discount",
+                "url": "/setCenter/unit",
+                "children": []
+            },
+            {
+                "name": "部门设置",
+                "icon": "User",
+                "type": "2",
+                "uid": "1-1",
+                "url": "/setCenter/department",
+                "children": []
+            },
+            {
+                "name": "集团设置",
+                "type": "3",
+                "icon": "OfficeBuilding",
+                "uid": "1-1",
+                "url": "/setCenter/group",
+                "children": []
+            },
+            {
+                "name": "岗位设置",
+                "type": "4",
+                "icon": "Film",
+                "uid": "1-1",
+                "url": "/setCenter/post",
+                "children": []
+            },
+            {
+                "name": "帮助中心",
+                "type": "5",
+                "icon": "Wallet",
+                "uid": "1-1",
+                "url": "/setCenter/help",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "配置中心",
+        "structure": false,
+        "children": [
+            {
+                "name": "单位首页",
+                "type": "6",
+                "icon": "HomeFilled",
+                "uid": "1-1",
+                "url": "/setCenter/unitMain",
+                "children": []
+            },
+            {
+                "name": "数据设置",
+                "type": "7",
+                "icon": "HelpFilled",
+                "uid": "1-1",
+                "url": "/setCenter/data",
+                "children": []
+            },
+            {
+                "name": "资源设置",
+                "type": "8",
+                "icon": "Histogram",
+                "uid": "1-1",
+                "url": "/setCenter/resource",
+                "children": []
+            },
+            {
+                "name": "应用设置",
+                "type": "9",
+                "icon": "Grid",
+                "uid": "1-1",
+                "url": "/setCenter/use",
+                "children": []
+            },
+            {
+                "name": "流程设置",
+                "type": "10",
+                "icon": "Rank",
+                "uid": "1-1",
+                "url": "/setCenter/flow",
+                "children": []
+            },
+            {
+                "name": "标准设置",
+                "type": "11",
+                "icon": "PriceTag",
+                "uid": "1-1",
+                "url": "/setCenter/standard",
+                "children": []
+            },
+            {
+                "name": "权限设置",
+                "type": "12",
+                "icon": "Stamp",
+                "uid": "1-1",
+                "url": "/setCenter/authority",
+                "children": []
+            }
+        ]
+    }
+]
