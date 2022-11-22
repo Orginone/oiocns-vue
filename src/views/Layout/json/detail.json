@@ -12,28 +12,28 @@
               "name": "好友申请",
               "type":"1",
               "uid":"1-1",
-              "url":"/cardDetail?id=1",
+              "url":"/friend",
               "children": []
           },
           {
               "name": "单位审核",
               "type":"2",
               "uid":"1-2",
-              "url":"/cardDetail?id=2",
+              "url":"/company",
               "children": []
           },
           {
               "name": "商店审核",
               "type":"3",
               "uid":"1-3",
-              "url":"/cardDetail?id=3",
+              "url":"/shop",
               "children": []
           },
           {
               "name": "订单审核",
               "type":"4",
               "uid":"1-4",
-              "url":"/cardDetail?id=4",
+              "url":"/order",
               "children": []
           }
       ]
@@ -42,6 +42,7 @@
       "label": "应用待办",
       "structure": true,
       "isPenultimate": true,
+      "id": 1,
       "btns":[{
         "name":"发起业务",
         "id":"301"
