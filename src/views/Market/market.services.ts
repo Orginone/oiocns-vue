@@ -126,8 +126,8 @@ class MarketServices {
     const { success, data } = await API.market.searchStaging({
       data: {
         id: 0, //市场id （需删除）
-        offset: 0,
-        limit: 2,
+        offset: '0',
+        limit: '2',
         filter: ''
       }
     })

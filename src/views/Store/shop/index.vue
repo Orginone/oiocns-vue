@@ -45,7 +45,7 @@
                 <el-dropdown-menu>
                   <el-dropdown-item @click="requireItem">查看详情</el-dropdown-item>
                   <el-dropdown-item @click="joinShopCar(scope.row.id)">加入购物车</el-dropdown-item>
-                  <el-dropdown-item @click="requireItem">购买</el-dropdown-item>
+                  <el-dropdown-item @click="buyThings(scope.row)">购买</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -65,6 +65,8 @@
   import card from '../components/card.vue'
   import { reactive, onMounted, ref, watch, nextTick } from 'vue'
   import { useRouter } from 'vue-router'
+  import $services from '@/services'
+  import { ElMessage, ElMessageBox } from 'element-plus'
   import { appstore } from '@/module/store/app'
   const diyTable = ref(null)
   const valuee = ref<any>('');
@@ -174,10 +176,34 @@
     pageStore.pageSize = page.pageSize
     getAppList()
   }
-  const searchList = () => {
-    pageStore.currentPage = 1
-    getAppList()
-  }
+  //立即购买回调
+const buyThings = (item:any) => {
+  ElMessageBox.confirm('此操作将生成交易订单。是否确认?', '确认订单', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'success'
+  }).then(() => {
+    
+    setTimeout(async () => {
+      await $services.order
+        .create({
+          data: {
+            code: new Date().getTime().toString().substring(0, 13),
+            name: item.caption,
+            merchandiseId: item.id
+          }
+        })
+        .then((res: ResultType) => {
+          if (res.code == 200) {
+            ElMessage({
+              message: '创建订单成功',
+              type: 'success'
+            })
+          }
+        })
+    }, 1)
+  }).catch(()=>{})
+}
   onMounted(() => {
     getMarketInfo()
     getShopcarNum()
@@ -280,7 +306,7 @@
       .table{
         background: #fff;
         display: flex;
-        flex: 1;
+        height:calc(100vh - 100px);
         .btn-check{
           padding: 8px 16px;
           color: #154ad8;

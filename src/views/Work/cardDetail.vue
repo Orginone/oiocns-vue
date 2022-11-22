@@ -2,20 +2,29 @@
 <template>
   <div class="thing">
     <div class="content">
-      <el-menu
-        v-if="!whiteList.includes(activeIndex)"
-        :default-active="flowActive"
-        class="el-menu"
-        style="height: 40px; padding-left: 20px; margin-bottom: 20px"
-        mode="horizontal"
-        @select="flowSelect"
-      >
-        <el-menu-item index="1">待办</el-menu-item>
-        <el-menu-item index="2">已办</el-menu-item>
-        <el-menu-item index="3">我发起的</el-menu-item>
-        <el-menu-item index="4">抄送我的</el-menu-item>
-        <!-- <el-menu-item index="5">公告</el-menu-item> -->
-      </el-menu>
+      <div>
+        <el-menu
+          v-if="!whiteList.includes(activeIndex)"
+          :default-active="flowActive"
+          class="el-menu"
+          style="height: 40px; padding-left: 20px; margin-bottom: 20px"
+          mode="horizontal"
+          @select="flowSelect"
+        >
+          <el-menu-item index="1">待办</el-menu-item>
+          <el-menu-item index="2">已办</el-menu-item>
+          <el-menu-item index="3">我发起的</el-menu-item>
+          <el-menu-item index="4">抄送我的</el-menu-item>
+          <!-- <el-menu-item index="5">公告</el-menu-item> -->
+        </el-menu>
+
+        <!-- <div class="btnList">
+          <el-button type="primary" style="width: 80px;">新增</el-button>
+          <el-button type="primary" style="width: 80px;">审核</el-button>
+          <el-button type="primary" style="width: 80px;">退回</el-button>
+          <el-button type="primary" style="width: 80px;">打印</el-button>
+        </div> -->
+      </div>
       
       <div class="tab-list"  v-if="whiteList.includes(activeIndex)">
         <div v-if="activeIndex != '1-3'">
@@ -261,7 +270,7 @@
   }
   var getList = async () => {
     await ThingServices.getAllApproval('0')
-    tableData.value =ThingServices.approvalList
+    tableData.value = ThingServices.approvalList
   }
 
   var getApplyList = async () => {
@@ -472,8 +481,14 @@
     } else {
       activeId.value = id
     }
+    console.log('selectType', selectType);
+    
     handleSelect(selectType, [])
   });
+
+  instance?.proxy?.$Bus.on('selectBtn', (num) => {
+    handleSelect(num, [])
+  })
 
   instance?.proxy?.$Bus.on('clickBus', (num) => {
     if(num === '301') {
@@ -550,6 +565,12 @@
         font-size: 14px;
         font-weight: bold;
       }
+    }
+
+    .btnList{
+      position: absolute;
+      top: 20px;
+      right: 20px;
     }
     .tab-list {
       height: calc(100% - 40px);

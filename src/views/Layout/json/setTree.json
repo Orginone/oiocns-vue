@@ -1,0 +1,369 @@
+{
+    "post": [
+        {
+            "icon": "Film",
+            "title": "岗位设置",
+            "backFlag": true
+        },
+        {
+            "label": "单位房产管理员",
+            "structure": true,
+            "query": true,
+            "btns": [
+                {
+                    "name": "更改岗位名称",
+                    "id": "201"
+                },
+                {
+                    "name": "删除岗位",
+                    "id": "202"
+                }
+            ]
+        },
+        {
+            "label": "单位设备管理员",
+            "structure": true,
+            "query": true,
+            "btns": [
+                {
+                    "name": "更改岗位名称",
+                    "id": "201"
+                },
+                {
+                    "name": "删除岗位",
+                    "id": "202"
+                }
+            ]
+        },
+        {
+            "label": "单位财务管理员",
+            "structure": true,
+            "query": true,
+            "btns": [
+                {
+                    "name": "更改岗位名称",
+                    "id": "201"
+                },
+                {
+                    "name": "删除岗位",
+                    "id": "202"
+                }
+            ]
+        },
+        {
+            "label": "单位应用管理员",
+            "structure": true,
+            "query": true,
+            "btns": [
+                {
+                    "name": "更改岗位名称",
+                    "id": "201"
+                },
+                {
+                    "name": "删除岗位",
+                    "id": "202"
+                }
+            ]
+        },
+        {
+            "label": "团队消息管理员",
+            "structure": true,
+            "query": true,
+            "btns": [
+                {
+                    "name": "更改岗位名称",
+                    "id": "201"
+                },
+                {
+                    "name": "删除岗位",
+                    "id": "202"
+                }
+            ]
+        }
+    ],
+    "group": [
+        {
+            "icon": "OfficeBuilding",
+            "title": "集团设置",
+            "backFlag": true
+        },
+        {
+            "label": "创建集团",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": [
+                {
+                    "label": "浙江省资产年报集团",
+                    "isPenultimate": true,
+                    "id": "",
+                    "children": [
+                        {
+                            "label": "集团子节点",
+                            "isPenultimate": true,
+                            "id": "",
+                            "children": []
+                        },
+                        {
+                            "label": "集团子节点",
+                            "isPenultimate": true,
+                            "id": "",
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "label": "浙江省资产年报集团",
+                    "isPenultimate": true,
+                    "id": "",
+                    "children": [
+                        {
+                            "label": "集团子节点",
+                            "isPenultimate": true,
+                            "id": "",
+                            "children": []
+                        },
+                        {
+                            "label": "集团子节点",
+                            "isPenultimate": true,
+                            "id": "",
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "label": "浙江省资产年报集团",
+                    "isPenultimate": true,
+                    "id": "",
+                    "children": [
+                        {
+                            "label": "集团子节点",
+                            "isPenultimate": true,
+                            "id": "",
+                            "children": []
+                        },
+                        {
+                            "label": "集团子节点",
+                            "isPenultimate": true,
+                            "id": "",
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "label": "加入集团",
+            "structure": true,
+            "isPenultimate": true,
+            "children": [
+                {
+                    "label": "浙江省资产年报集团1",
+                    "isPenultimate": true,
+                    "id": "",
+                    "children": [
+                        {
+                            "label": "集团子节点1",
+                            "isPenultimate": true,
+                            "id": "",
+                            "children": []
+                        },
+                        {
+                            "label": "集团子节点1",
+                            "isPenultimate": true,
+                            "id": "",
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "label": "浙江省资产年报集团2",
+                    "isPenultimate": true,
+                    "id": "",
+                    "children": [
+                        {
+                            "label": "集团子节点2",
+                            "isPenultimate": true,
+                            "id": "",
+                            "children": []
+                        },
+                        {
+                            "label": "集团子节点2",
+                            "isPenultimate": true,
+                            "id": "",
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "label": "浙江省资产年报集团",
+                    "isPenultimate": true,
+                    "id": "",
+                    "children": [
+                        {
+                            "label": "集团子节点",
+                            "isPenultimate": true,
+                            "id": "",
+                            "children": []
+                        },
+                        {
+                            "label": "集团子节点",
+                            "isPenultimate": true,
+                            "id": "",
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "department": [
+        {
+            "icon": "User",
+            "title": "部门设置",
+            "backFlag": true
+        },
+        {
+            "label": "浙江省财政厅",
+            "structure": true,
+            "isPenultimate": true,
+            "query": true,
+            "btns": [
+                {
+                    "name": "创建",
+                    "id": "101"
+                },
+                {
+                    "name": "事件",
+                    "id": "102"
+                }
+            ],
+            "children": [
+                {
+                    "label": "资产处",
+                    "isPenultimate": true,
+                    "id": "",
+                    "children": []
+                }
+            ]
+        }
+    ],
+    "data": [
+        {
+            "icon": "HelpFilled",
+            "title": "数据设置",
+            "backFlag": true
+        },
+        {
+            "label": "智慧公物仓",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": [
+                {
+                    "label": "余杭公务仓",
+                    "isPenultimate": true,
+                    "id": ""
+                }
+            ]
+        },
+        {
+            "label": "资产云数据",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        },
+        {
+            "label": "应用使用数据",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        }
+    ],
+    "resource": [
+        {
+            "icon": "Histogram",
+            "title": "资源设置",
+            "backFlag": true
+        },
+        {
+            "label": "智慧公物仓",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        },
+        {
+            "label": "信息公共安全",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        },
+        {
+            "label": "数字化业务",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        }
+    ],
+    "standard": [
+        {
+            "icon": "PriceTag",
+            "title": "标准设置",
+            "backFlag": true
+        },
+        {
+            "label": "业务元数据",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        },
+        {
+            "label": "技术元数据",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        },
+        {
+            "label": "结构化元数据",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        }
+    ],
+    "authority": [
+        {
+            "icon": "Stamp",
+            "title": "权限设置",
+            "backFlag": true
+        },
+        {
+            "label": "应用1",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        },
+        {
+            "label": "应用2",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        },
+        {
+            "label": "应用3",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        }
+    ]
+}

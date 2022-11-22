@@ -44,8 +44,8 @@
         </template>
         <template #buttons>
           <el-button class="btn-check" type="primary" link>岗位设置</el-button>
-          <el-button class="btn-check" type="primary" link>添加成员</el-button>
-          <el-button class="btn-check" type="primary" link>查看申请</el-button>
+          <el-button class="btn-check" type="primary" link @click="showAssignDialog">添加成员</el-button>
+          <el-button class="btn-check" type="primary" link @click="viewApplication">查看申请</el-button>
         </template>
         <template #operate="scope">
           <el-dropdown>
@@ -68,6 +68,47 @@
       </diytab>
     </div>
   </div>
+  <el-dialog v-model="deptDialogVisible" title="请录入部门信息" width="40%" center append-to-body @close="dialogHide">
+    <div>
+      <el-form-item label="部门名称" style="width: 100%">
+        <el-input v-model="formData.name" placeholder="请输入" clearable style="width: 100%" />
+      </el-form-item>
+      <el-form-item label="部门编号" style="width: 100%">
+        <el-input v-model="formData.code" placeholder="请输入" clearable style="width: 100%" />
+      </el-form-item>
+      <el-form-item label="部门简介" style="width: 100%">
+        <el-input v-model="formData.remark" :autosize="{ minRows: 5 }" placeholder="请输入" type="textarea" clearable />
+      </el-form-item>
+    </div>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogHide">取消</el-button>
+        <el-button type="primary" @click="createDept">确认</el-button>
+      </span>
+    </template>
+  </el-dialog>
+
+  <el-dialog v-model="jobDialogVisible" title="请录入工作组信息" width="40%" center append-to-body @close="dialogHide">
+    <div>
+      <el-form-item label="工作组名称" style="width: 100%">
+        <el-input v-model="formData.name" placeholder="请输入" clearable style="width: 100%" />
+      </el-form-item>
+      <el-form-item label="工作组编号" style="width: 100%">
+        <el-input v-model="formData.code" placeholder="请输入" clearable style="width: 100%" />
+      </el-form-item>
+      <el-form-item label="工作组简介" style="width: 100%">
+        <el-input v-model="formData.remark" :autosize="{ minRows: 5 }" placeholder="请输入" type="textarea" clearable />
+      </el-form-item>
+    </div>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogHide">取消</el-button>
+        <el-button type="primary" @click="createJob">确认</el-button>
+      </span>
+    </template>
+  </el-dialog>
+  <AssignedPerson v-if="assignDialog" :checkList='tableData' :id="company.id" :selectLimit='0' :serachType='5'
+    @closeDialog="hideAssignDialog" @checksSearch='checksCompanySearch' />
 </template>
 <script lang="ts" setup>
 // @ts-nocheck
@@ -76,6 +117,7 @@ import diytab from "@/components/diyTable/index.vue";
 import $services from '@/services'
 import { ref, onMounted, getCurrentInstance, onBeforeMount } from "vue";
 import { setCenterStore } from '@/store/setting'
+import AssignedPerson from '@/components/searchs/index.vue'
 const store = setCenterStore()
 import DepartmentServices from '@/module/relation/department'
 const departmentServices = new DepartmentServices()
@@ -100,6 +142,124 @@ const subscribe = store.$subscribe(
     // 如果设置detached值为 true 时，即使所在组件被卸载，订阅依然在生效
 )
 
+let deptDialogVisible = ref<boolean>(false)
+let jobDialogVisible = ref<boolean>(false)
+let formData = ref<any>({})
+//关闭弹窗清空
+const dialogHide = () => {
+  formData.value = { parentId: store.currentSelectItme?.id }
+  deptDialogVisible.value = false
+  jobDialogVisible.value = false
+}
+// 创建部门
+const createDept = () => {
+  $services.company.createDepartment({
+    data: {
+      id: formData.value.id,
+      code: formData.value.code,
+      name: formData.value.name,
+      parentId: store.currentSelectItme?.id,
+      teamName: formData.value.name,
+      teamRemark: formData.value.remark
+    }
+  }).then((res: ResultType) => {
+    if (res.success) {
+      dialogHide()
+      // loadOrgTree()
+      ElMessage({
+        message: res.msg,
+        type: 'success'
+      })
+    } else {
+      ElMessage({
+        message: res.msg,
+        type: 'error'
+      })
+    }
+  })
+}
+// 创建工作组
+const createJob = () => {
+  $services.company.createJob({
+    data: {
+      id: formData.value.id,
+      code: formData.value.code,
+      name: formData.value.name,
+      parentId: store.currentSelectItme?.id,
+      teamName: formData.value.name,
+      teamRemark: formData.value.remark
+    }
+  }).then((res: ResultType) => {
+    if (res.success) {
+      dialogHide()
+      loadOrgTree()
+      ElMessage({
+        message: res.msg,
+        type: 'success'
+      })
+    } else {
+      ElMessage({
+        message: res.msg,
+        type: 'error'
+      })
+    }
+  })
+}
+
+const assignDialog = ref<boolean>(false)
+const hideAssignDialog = () => {
+  assignDialog.value = false
+}
+const showAssignDialog = () => {
+  assignDialog.value = true
+}
+
+const checksCompanySearch = (val: any) => {
+  if (val.value.length > 0) {
+    let arr: Array<arrList> = []
+    val.value.forEach((element: any) => {
+      arr.push(element.id)
+    });
+    assign(arr)
+  } else {
+    assignDialog.value = false;
+  }
+}
+
+// 分配人员
+const assign = (arr: any) => {
+  const userIds = arr
+  if (store.currentSelectItme?.data.typeName == '部门') {
+    assignDepartment(store.currentSelectItme.id, userIds)
+  } else if (store.currentSelectItme?.data.typeName == '工作组') {
+    assignJob(store.currentSelectItme.id, userIds)
+  }
+}
+//分配部门
+const assignDepartment =  async (id:string, targetIds: string[]) => {
+  const data = await departmentServices.assignDepartment(id,targetIds)
+  if(data){
+    ElMessage({
+      message: '分配成功',
+      type: 'success'
+    })
+    hideAssignDialog()
+    getUsers(store.currentSelectItme?.data)
+  }
+}
+//分配工作组
+const assignJob = async (id: string, targetIds: string[]) => {
+  const data = await departmentServices.assignJob(id,targetIds)
+  if(data){
+    ElMessage({
+      message: '分配成功',
+      type: 'success'
+    })
+    hideAssignDialog()
+    getUsers(store.currentSelectItme?.data)
+  }
+}
+
 // 加载用户
 const getUsers = async (currentData?) => {
   if(currentData){
@@ -114,11 +274,23 @@ const getUsers = async (currentData?) => {
   }
 }
 
+//查看申请
+const viewApplication = (row: any) => {
+  router.push({ path: '/cardDetail', query: { type: 1, id: store.currentSelectItme?.id } })
+}
+
+
 const { proxy } = getCurrentInstance()
 
 proxy?.$Bus.on('clickBus', (id) => {
-  console.log(id);
+  if(id === '105') {
+    deptDialogVisible.value = true
+  } else if(id === '106') {
+    jobDialogVisible.value = true
+  }
 })
+
+const company = ref<any>({})
 
 // 表格展示数据
 const pageStore = reactive({

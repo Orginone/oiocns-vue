@@ -89,17 +89,17 @@ defineExpose({ selectItemChange });
 
 // 修改信息
 const handleUpdate = () => {
-  if (!selectItem.value.id) {
+  if (!currentData.value.id) {
     ElMessage.warning('请左侧选择部门或者工作组！')
     return
   }
-  formData.value = selectItem.value.data
+  formData.value = currentData.value.data
   dialogVisible.value = true
 }
 
 // 保存
 const update = async () => {
-  const data = { ...formData.value, ...selectItem.value.data };
+  const data = { ...formData.value, ...currentData.value.data, parentId:  store.unitInfo?.id };
   const val =  await service.upDateDempartment(data)
   dialogVisible.value = false
   ElMessage.success('信息修改成功!')

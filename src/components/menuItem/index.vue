@@ -1,7 +1,11 @@
 <template>
   <div style="height: 100%; background: #fff">
-    <div class="title"><component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;<span style="font-size: 14px;">{{titleData.title}}</span></div>
-    <el-menu v-bind="$attrs">
+    <div class="title">
+      <component v-show="titleData.backFlag" @click="goBack" :is="'ArrowLeft'" style="width: 16px;height: 16px;cursor:pointer;position: absolute;left: 20px;"></component>
+      <component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;
+      <b style="font-size: 14px;">{{titleData.title}}</b>
+    </div>
+    <el-menu v-bind="$attrs" :default-openeds="state.openeds"  @select="handleSelect">
       <el-sub-menu
         v-for="(item, index) in state.menuData"
         :key="item.uid"
@@ -9,7 +13,7 @@
       >
         <template #title>
           <component :is="item.icon" style="width: 16px;height: 16px;"></component>&nbsp;
-          <span style="font-size: 12px;color: #909399;">{{ item.name }}</span>
+          <span style="font-size: 13px;color: #909399;">{{ item.name }}</span>
         </template>
         <el-menu-item
           v-for="val in item.children"
@@ -18,8 +22,8 @@
           @mouseover='onOver(val.type)' @mouseout="onOut"
           @click="jump(val)"
         >
-          <component :is="val.icon" style="width: 16px;height: 16px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }" ></component>&nbsp;
-          <b style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#c7ccdc' }" >{{ val.name }}</b>
+          <component :is="val.icon" style="width: 16px;height: 16px;" :style="{color: state.flag1 === val.type ? '#1642cb' : '#c7ccdc' }" ></component>&nbsp;
+          <span style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#a5a8ba' }" >{{ val.name }}</span>
         </el-menu-item>
       </el-sub-menu>
     </el-menu>
@@ -72,7 +76,7 @@ import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
 import { setCenterStore } from '@/store/setting'
 
-const emit = defineEmits(['handleClose'])
+// const emit = defineEmits(['handleSelect'])
 const props = defineProps({
   data: {
     type: Array,
@@ -89,6 +93,7 @@ const filterText = ref('')
 const treeRef = ref()
 const state = reactive({
   menuData: [],
+  openeds: ['1'],
   treeData: [],
   query: false, // 是否显示搜索框
   flag: '', // 是否高亮标记
@@ -100,6 +105,10 @@ const onHover = (id: string) => {
 
 const onOver = (id: string) => {
   state.flag1 = id
+}
+
+const goBack = () => {
+  window.history.go(-1)
 }
 
 const customNodeClass = (data: any, node: Node) => {
@@ -115,7 +124,6 @@ const onOut = () => {
   state.flag1 = ''
 }
 const init =  () => {
-  nextTick(() => {
     state.treeData = props.data.filter((item: any) => {
       return item.structure === true
     })
@@ -123,15 +131,16 @@ const init =  () => {
       return item.structure === false
     })
     state.query = state.treeData[0]?.query
-  })
   
 }
 init();
 let router = useRouter()
 watch(() => router.currentRoute.value.path, (newValue:any) => {
-  nextTick(() => {
-    init();
-  })
+  // nextTick(() => {
+    setTimeout(() => {
+      init();
+    });
+  // })
 })
 watch(filterText, (val) => {
   console.log('a',val);
@@ -158,17 +167,13 @@ const jump = (val:any)=>{
 const nodeClick = (val: any) => {
   setCenterStore().currentSelectItme = val
 }
-// const handleClose = () => {
-//   emit('handleClose', 'menu')
-// }
-// const select = () => {
-//   emit('handleClose', 'tree')
-
-// }
+const handleSelect = (key: any) => {
+  instance?.proxy?.$Bus.emit('selectBtn', key)
+}
 </script>
 
 <style lang="scss" scoped>
-  
+  *{font-family: '微软雅黑';}
   .title{
     display: flex;
     justify-content: center;
@@ -194,19 +199,21 @@ const nodeClick = (val: any) => {
     }
   }
 
+  :deep .el-sub-menu__icon-arrow{
+    display: none;
+  }
   :deep .el-menu-item{
-    height: 35px;
+    height: 45px;
     width: 180px;
   }
 
-  :deep .no-penultimate > .el-tree-node__content{
-    font-weight: 800;
-  }
+  // :deep .no-penultimate > .el-tree-node__content{
+    // font-weight: 800;
+  // }
 
   :deep .is-penultimate > .el-tree-node__content {
     font-size: 10px;
     color: #909399;
-    font-weight: normal;
   }
   :deep .el-tree-node__content{
     height: 40px;
@@ -223,3 +230,4 @@ const nodeClick = (val: any) => {
     background: #f2f4f9;
   }
 </style>
+
