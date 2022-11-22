@@ -14,10 +14,10 @@
           :tableHead="tableHead"
         >
           <template #slot-tabs>
-            <h4>智慧公物仓</h4>
+            <h4>应用1</h4>
           </template>
           <template #buttons>
-            <el-button v-if="false" class="btn-check" type="primary" link>添加方案</el-button>
+            <el-button class="btn-check" type="primary" link>创建</el-button>
           </template>
           <template #operate="scope">
             <el-dropdown>
@@ -49,12 +49,18 @@
     total: 0
   })
   const tableData = ref([{
-    account:'公务仓业务',
-    nickname:'豪波安全科技',
-    name:'管理员',
-    phone:'致力于公共物资仓储线下仓',
-    phone2: ''
-  }])
+    account:'权限设置',
+    nickname:'管理员',
+    name:'是',
+    phone:'菜单',
+  },
+  {
+    account:'权限设置-创建',
+    nickname:'管理员',
+    name:'是',
+    phone:'按钮',
+  }
+  ])
   const options = ref<any>({
     checkBox: false,
     order: true,
@@ -68,22 +74,22 @@
   const tableHead = ref([
     {
       prop: 'account',
-      label: '业务数据名称',
+      label: '功能名称',
+    },
+    {
+      prop: 'phone',
+      label: '功能类型',
+      name: 'createTime'
     },
     {
       prop: 'nickname',
-      label: '归属公司',
+      label: '权限',
       name: 'nickname'
     },
     {
       prop: 'name',
-      label: '角色',
+      label: '是否可见',
       name: 'name'
-    },
-    {
-      prop: 'phone',
-      label: '备注',
-      name: 'createTime'
     },
     {
       type: 'slot',

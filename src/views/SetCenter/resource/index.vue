@@ -1,9 +1,11 @@
 <template>
-<div class="container">
-    <h3 style="margin-left:20px;">功能开发中...</h3>
-</div>
+    <div class="container">
+        <i-table />
+    </div>
 </template>
 <script lang="ts" setup>
+import iTable from './components/table.vue'
+
 </script>
 <style lang="scss" scoped>
 .container {

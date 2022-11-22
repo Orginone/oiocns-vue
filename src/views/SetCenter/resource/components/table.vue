@@ -14,10 +14,10 @@
           :tableHead="tableHead"
         >
           <template #slot-tabs>
-            <h4>智慧公物仓</h4>
+            <h4>医疗物资</h4>
           </template>
           <template #buttons>
-            <el-button v-if="false" class="btn-check" type="primary" link>添加方案</el-button>
+            <el-button class="btn-check" type="primary" link>添加资源</el-button>
           </template>
           <template #operate="scope">
             <el-dropdown>
@@ -49,11 +49,10 @@
     total: 0
   })
   const tableData = ref([{
-    account:'公务仓业务',
+    account:'公共物资仓储',
     nickname:'豪波安全科技',
-    name:'管理员',
-    phone:'致力于公共物资仓储线下仓',
-    phone2: ''
+    name:'张叁',
+    phone:'',
   }])
   const options = ref<any>({
     checkBox: false,
@@ -68,16 +67,16 @@
   const tableHead = ref([
     {
       prop: 'account',
-      label: '业务数据名称',
+      label: '资源名称',
     },
     {
       prop: 'nickname',
-      label: '归属公司',
+      label: '所属公司',
       name: 'nickname'
     },
     {
       prop: 'name',
-      label: '角色',
+      label: '创建人',
       name: 'name'
     },
     {

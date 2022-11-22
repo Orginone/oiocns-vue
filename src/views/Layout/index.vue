@@ -71,12 +71,19 @@
         console.log('menuArr',menuArr,storeJosn)
       }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){
         if (router.currentRoute.value.name === 'department') {
-            titleArr.state= {icon: 'User',title: '部门设置'}
+            titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
             menuArr.state = setCenterStore().departmentInfo
         } else {
           let currentRouteName: any = router.currentRoute.value.name
           const jsonData: any = settingJosn
-          if (currentRouteName === 'unit' || currentRouteName === 'post' || currentRouteName === 'group') {
+          if (currentRouteName === 'unit' || 
+              currentRouteName === 'post' || 
+              currentRouteName === 'group' ||
+              currentRouteName === 'data'||
+              currentRouteName === 'resource' ||
+              currentRouteName === 'standard' ||
+              currentRouteName === 'authority'
+            ) {
             titleArr.state= jsonData[currentRouteName][0]
             menuArr.state = jsonData[currentRouteName]
           } else {

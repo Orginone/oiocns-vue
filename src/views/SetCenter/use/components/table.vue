@@ -14,18 +14,19 @@
           :tableHead="tableHead"
         >
           <template #slot-tabs>
-            <h4>智慧公物仓</h4>
+            <h4>应用列表</h4>
           </template>
           <template #buttons>
-            <el-button v-if="false" class="btn-check" type="primary" link>添加方案</el-button>
+            <el-button class="btn-check" type="primary" link>创建应用</el-button>
           </template>
           <template #operate="scope">
             <el-dropdown>
               <span class="el-dropdown-link"> ··· </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="showDiong">修改</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong" style="color: #f67c80">删除</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">应用分配</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong">查看详情</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong" style="color: #f67c80">退订</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -49,11 +50,10 @@
     total: 0
   })
   const tableData = ref([{
-    account:'公务仓业务',
-    nickname:'豪波安全科技',
-    name:'管理员',
-    phone:'致力于公共物资仓储线下仓',
-    phone2: ''
+    account:'自动化测试',
+    nickname:'ZDHCS889',
+    name:'Web应用',
+    phone:'所属权',
   }])
   const options = ref<any>({
     checkBox: false,
@@ -68,21 +68,21 @@
   const tableHead = ref([
     {
       prop: 'account',
-      label: '业务数据名称',
+      label: '应用名称',
     },
     {
       prop: 'nickname',
-      label: '归属公司',
+      label: '应用编码',
       name: 'nickname'
     },
     {
       prop: 'name',
-      label: '角色',
+      label: '应用类型',
       name: 'name'
     },
     {
       prop: 'phone',
-      label: '备注',
+      label: '持有权限',
       name: 'createTime'
     },
     {
