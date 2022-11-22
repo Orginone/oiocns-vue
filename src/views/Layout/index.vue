@@ -51,6 +51,7 @@
   import { useRouter } from 'vue-router';
   import storeJosn from './json/store.json';
   import settingJosn from './json/setting.json';
+  import setTree from './json/setTree.json';
   import detailJosn from './json/detail.json';
   import userJosn from './json/user.json';
   import { chat } from '@/module/chat/orgchat'
@@ -73,9 +74,12 @@
         if (router.currentRoute.value.name === 'department') {
             titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
             menuArr.state = setCenterStore().departmentInfo
+        } else if (router.currentRoute.value.name === 'unit') {
+          titleArr.state= settingJosn[0]
+          menuArr.state = settingJosn
         } else {
           let currentRouteName: any = router.currentRoute.value.name
-          const jsonData: any = settingJosn
+          const jsonData: any = setTree
           if (['unit', 'post', 'group', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
             titleArr.state= jsonData[currentRouteName][0]
             menuArr.state = jsonData[currentRouteName]
