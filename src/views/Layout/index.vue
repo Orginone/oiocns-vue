@@ -76,14 +76,7 @@
         } else {
           let currentRouteName: any = router.currentRoute.value.name
           const jsonData: any = settingJosn
-          if (currentRouteName === 'unit' || 
-              currentRouteName === 'post' || 
-              currentRouteName === 'group' ||
-              currentRouteName === 'data'||
-              currentRouteName === 'resource' ||
-              currentRouteName === 'standard' ||
-              currentRouteName === 'authority'
-            ) {
+          if (['unit', 'post', 'group', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
             titleArr.state= jsonData[currentRouteName][0]
             menuArr.state = jsonData[currentRouteName]
           } else {
