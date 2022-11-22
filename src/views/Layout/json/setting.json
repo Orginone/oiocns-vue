@@ -1,7 +1,7 @@
 {
     "unit": [
         {
-            "icon": "User",
+            "icon": "Setting",
             "title": "设置"
         },
         {
@@ -12,7 +12,7 @@
                     "name": "单位设置",
                     "type": "1",
                     "uid": "1-1",
-                    "icon": "User",
+                    "icon": "Discount",
                     "url": "/setCenter/unit",
                     "children": []
                 },
@@ -27,7 +27,7 @@
                 {
                     "name": "集团设置",
                     "type": "3",
-                    
+                    "icon": "OfficeBuilding",
                     "uid": "1-1",
                     "url": "/setCenter/group",
                     "children": []
@@ -35,6 +35,7 @@
                 {
                     "name": "岗位设置",
                     "type": "4",
+                    "icon": "Film",
                     "uid": "1-1",
                     "url": "/setCenter/post",
                     "children": []
@@ -42,8 +43,9 @@
                 {
                     "name": "帮助中心",
                     "type": "5",
+                    "icon": "Wallet",
                     "uid": "1-1",
-                    "url": "/#/store",
+                    "url": "/setCenter/help",
                     "children": []
                 }
             ]
@@ -55,50 +57,57 @@
                 {
                     "name": "单位首页",
                     "type": "6",
+                    "icon": "HomeFilled",
                     "uid": "1-1",
-                    "url": "",
+                    "url": "/setCenter/unitMain",
                     "children": []
                 },
                 {
                     "name": "数据设置",
                     "type": "7",
+                    "icon": "HelpFilled",
                     "uid": "1-1",
-                    "url": "",
+                    "url": "/setCenter/data",
                     "children": []
                 },
                 {
                     "name": "资源设置",
                     "type": "8",
+                    "icon": "Histogram",
                     "uid": "1-1",
-                    "url": "",
+                    "url": "/setCenter/resource",
                     "children": []
                 },
                 {
                     "name": "应用设置",
                     "type": "9",
+                    "icon": "Grid",
                     "uid": "1-1",
-                    "url": "",
+                    "url": "/setCenter/use",
                     "children": []
                 },
                 {
                     "name": "流程设置",
                     "type": "10",
+                    "icon": "Rank",
                     "uid": "1-1",
-                    "url": "",
+                    "url": "/setCenter/flow",
                     "children": []
                 },
                 {
                     "name": "标准设置",
                     "type": "11",
+                    "icon": "PriceTag",
                     "uid": "1-1",
-                    "url": "",
+                    "url": "/setCenter/standard",
                     "children": []
                 },
                 {
                     "name": "权限设置",
                     "type": "12",
+                    "icon": "Stamp",
                     "uid": "1-1",
-                    "url": "",
+                    "url": "/setCenter/authority",
                     "children": []
                 }
             ]
@@ -106,8 +115,9 @@
     ],
     "post": [
         {
-            "icon": "User",
-            "title": "岗位设置"
+            "icon": "Film",
+            "title": "岗位设置",
+            "backFlag": true
         },
         {
             "label": "单位房产管理员",
@@ -187,8 +197,9 @@
     ],
     "group": [
         {
-            "icon": "User",
-            "title": "集团设置"
+            "icon": "OfficeBuilding",
+            "title": "集团设置",
+            "backFlag": true
         },
         {
             "label": "创建集团",
@@ -323,7 +334,8 @@
     "department": [
         {
             "icon": "User",
-            "title": "部门设置"
+            "title": "部门设置",
+            "backFlag": true
         },
         {
             "label": "浙江省财政厅",
@@ -348,6 +360,124 @@
                     "children": []
                 }
             ]
+        }
+    ],
+    "data": [
+        {
+            "icon": "HelpFilled",
+            "title": "数据设置",
+            "backFlag": true
+        },
+        {
+            "label": "智慧公物仓",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": [
+                {
+                    "label": "余杭公务仓",
+                    "isPenultimate": true,
+                    "id": ""
+                }
+            ]
+        },
+        {
+            "label": "资产云数据",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        },
+        {
+            "label": "应用使用数据",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        }
+    ],
+    "resource": [
+        {
+            "icon": "Histogram",
+            "title": "资源设置",
+            "backFlag": true
+        },
+        {
+            "label": "智慧公物仓",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        },
+        {
+            "label": "信息公共安全",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        },
+        {
+            "label": "数字化业务",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        }
+    ],
+    "standard": [
+        {
+            "icon": "PriceTag",
+            "title": "标准设置",
+            "backFlag": true
+        },
+        {
+            "label": "业务元数据",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        },
+        {
+            "label": "技术元数据",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        },
+        {
+            "label": "结构化元数据",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        }
+    ],
+    "authority": [
+        {
+            "icon": "Stamp",
+            "title": "权限设置",
+            "backFlag": true
+        },
+        {
+            "label": "应用1",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        },
+        {
+            "label": "应用2",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
+        },
+        {
+            "label": "应用3",
+            "structure": true,
+            "query": true,
+            "isPenultimate": true,
+            "children": []
         }
     ]
 }

@@ -270,7 +270,7 @@
   }
   var getList = async () => {
     await ThingServices.getAllApproval('0')
-    tableData.value =ThingServices.approvalList
+    tableData.value = ThingServices.approvalList
   }
 
   var getApplyList = async () => {

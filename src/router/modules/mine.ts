@@ -5,6 +5,10 @@ const Mine: RouteRecordRaw[] = [
     // 我的
     component: () => import("@/views/Mine/index.vue"),
     path: "/mine",
+    meta: {
+      title: "我的",
+      id: "mine"
+    },
     children: [
       {
         component: () => import("@/views/Mine/Relation/index.vue"),
@@ -13,6 +17,7 @@ const Mine: RouteRecordRaw[] = [
         meta: {
           keepAlive: false,
           title: "个人信息",
+          id: "mine.index"
         },
       },
       {
@@ -22,6 +27,7 @@ const Mine: RouteRecordRaw[] = [
         meta: {
           keepAlive: false,
           title: "证书管理",
+          id: "mine.my-certificate"
         },
       },
       {
@@ -31,6 +37,7 @@ const Mine: RouteRecordRaw[] = [
         meta: {
           keepAlive: false,
           title: "我的单位",
+          id: "mine.my-unit"
         },
       },
       {
@@ -38,7 +45,8 @@ const Mine: RouteRecordRaw[] = [
         name: 'cohort1',
         component: () => import('@/views/Relation/cohort/index.vue'),
         meta: {
-          title: '单位群组'
+          title: '单位群组',
+          id: "mine.my-cohort"
         }
       },
       {
@@ -46,7 +54,8 @@ const Mine: RouteRecordRaw[] = [
         name: 'friend1',
         component: () => import('@/views/Relation/friend/index.vue'),
         meta: {
-          title: '我的好友'
+          title: '我的好友',
+          id: "mine.my-friend"
         }
       },
     ],
