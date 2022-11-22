@@ -29,10 +29,10 @@
       </el-select>
     </el-form-item>
     <el-form-item label="上架应用:" name="name">
-      <el-input readonly v-model="props.info.name" />
+      <el-input readonly v-model="route.query.name" />
     </el-form-item>
     <el-form-item label="应用类型:">
-      <el-input readonly v-model="props.info.typeName" />
+      <el-input readonly v-model="route.query.typeName" />
     </el-form-item>
     <el-form-item label="应用权限:" prop="sellAuth">
       <el-radio-group v-model.number="formLabelAlign.sellAuth">
@@ -65,16 +65,20 @@
 <script lang="ts" setup>
   import API from '@/services'
   import { ElMessage, FormInstance, FormRules } from 'element-plus'
+  import { useRoute } from 'vue-router'
   import { onMounted, reactive, ref } from 'vue'
   import { appstore } from '@/module/store/app'
   type PropType = {
     info: ProductType
   }
+  const route = useRoute()
+  console.log('oute.query.',route)
+
   const props = defineProps<PropType>()
   const formRef = ref<FormInstance>()
   const formLabelAlign = reactive({
-    caption: props.info.name,
-    productid: props.info.id,
+    caption: route.query.name,
+    productid: route.query.id,
     price: undefined,
     sellAuth: '使用权',
     marketId: undefined,
@@ -85,7 +89,7 @@
   const marketList = ref([])
 
   const loading = ref(false)
-
+  
   onMounted(() => {
     // 获取市场列表
     getMarketOptions()

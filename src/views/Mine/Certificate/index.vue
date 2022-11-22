@@ -1,6 +1,6 @@
 <template>
   <div class="certificate">
-    <!-- <userInfoBox></userInfoBox> -->
+    <UserInfo />
     <div class="tabBox">
       <diytab
         :style="{ height: 300 + 'px', width: '100%' }"
@@ -35,7 +35,7 @@ import $services from "@/services";
 import diytab from "@components/diyTable/index.vue";
 import { BtnItem } from "@/components/titleBox/index.vue";
 import useSearch from "@/hooks/useSearch";
-
+import UserInfo from "../components/UserInfo.vue";
 const { dataSource, refresh, changeOffset, changeFilter } = useSearch(
   $services.market.searchAll
 );

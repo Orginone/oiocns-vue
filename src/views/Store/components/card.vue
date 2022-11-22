@@ -1,6 +1,6 @@
 <template>
   <div class="card-list">
-    <div class="card-item" v-for="(item, index) in 8" :key="index">
+    <div class="card-item" v-for="(item, index) in 2" :key="index">
       <div class="item-head">
         <div class="item-img">人</div>
         <div class="item-head-content">

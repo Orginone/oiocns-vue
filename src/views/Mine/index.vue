@@ -1,12 +1,12 @@
 <template>
   <div class="user-page--index">
-    <UserInfo />
+    <!-- <UserInfo /> -->
     <router-view />
   </div>      
 
 </template>
 <script setup lang="ts">
-import UserInfo from "./components/UserInfo.vue";
+// import UserInfo from "./components/UserInfo.vue";
 </script>
 <style lang="scss">
 .user-page--index {
