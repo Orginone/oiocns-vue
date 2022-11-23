@@ -4,7 +4,10 @@
             <div class="main-wrap">
                 <div class="title-tips">应用管理</div>
                 <div class="content">
-                    <div class="">应用分配？</div>
+                    <div class="row">
+                        <div class="app-title">应用分配</div>
+                        <div class="app-btn"></div>
+                    </div>
                 </div>
             </div>
         </div>

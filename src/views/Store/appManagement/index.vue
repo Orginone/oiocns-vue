@@ -32,6 +32,7 @@
       display: flex;
       flex-direction: column;
       flex: 1;
+      border-top: 3px solid #f0f4f8;
     }
   </style>
   

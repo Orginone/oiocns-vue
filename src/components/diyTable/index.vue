@@ -477,13 +477,13 @@ import { TabPaneName } from 'element-plus';
       .header-tabs {
         width: 100%;
         display: flex;
-        height: 35px;
         align-items: center;
         justify-content: space-between;
       }
 
       .header-buttons {
         display: flex;
+        margin-bottom: 10px;
       }
     }
 
