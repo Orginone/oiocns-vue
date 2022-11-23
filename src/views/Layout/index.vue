@@ -91,7 +91,7 @@
       } else if (router.currentRoute.value.path.indexOf('mine') != -1) {
         titleArr.state = userJosn[0]
         menuArr.state = userJosn
-      } else{
+      } else if (router.currentRoute.value.path.indexOf('service') != -1){
         titleArr.state = detailJosn[0]
         menuArr.state = detailJosn
       } 

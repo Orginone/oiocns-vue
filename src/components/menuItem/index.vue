@@ -37,6 +37,7 @@
       :filter-node-method="filterNode"
       :props="{ class: customNodeClass }"
       @node-click="nodeClick"
+      v-show="state.treeData.length"
     >
       <template #default="{ node, data }">
         <div class="custom-tree-node" @mouseover='onHover(node.id)' @mouseout="onOut" @click="jump(node)">
@@ -94,7 +95,7 @@ const filterText = ref('')
 const treeRef = ref()
 const state = reactive({
   menuData: [],
-  openeds: ['1'],
+  openeds: ['1', '2'],
   treeData: [],
   query: false, // 是否显示搜索框
   flag: '', // 是否高亮标记
