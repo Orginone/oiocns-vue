@@ -12,28 +12,28 @@
               "name": "好友申请",
               "type":"1",
               "uid":"1-1",
-              "url":"/friend",
+              "url":"/service/friendApply",
               "children": []
           },
           {
               "name": "单位审核",
               "type":"2",
               "uid":"1-2",
-              "url":"/company",
+              "url":"/service/company",
               "children": []
           },
           {
               "name": "商店审核",
               "type":"3",
               "uid":"1-3",
-              "url":"/shop",
+              "url":"/service/shop",
               "children": []
           },
           {
               "name": "订单审核",
               "type":"4",
               "uid":"1-4",
-              "url":"/order",
+              "url":"/service/order",
               "children": []
           }
       ]
