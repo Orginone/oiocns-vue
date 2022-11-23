@@ -9,8 +9,16 @@
     import detail from './components/detail.vue'
     import management from './components/management.vue'
     import { ref, reactive, onMounted, nextTick } from 'vue'
-  
+    import { appstore, Application } from '@/module/store/app'
+    import { useRouter, useRoute } from 'vue-router'
+    const router = useRouter()
+    const getInfo = async () =>{
+      // console.log('router.currentRoute.value.query.id',router.currentRoute.value.query.id)
+      // const id:string = router.currentRoute.value.query.id
+      // const data = await appstore.queryInfo(id)
+    }
     onMounted(() => {
+      getInfo();
     })
     
   </script>

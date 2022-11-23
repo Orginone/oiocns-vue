@@ -9,9 +9,9 @@
       <div class="menu-list" v-if="showMenu">
         <MenuNav :data="menuArr.state" :titleData="titleArr.state"></MenuNav>
       </div>
-      <div class="layout-main">
+      <div class="layout-main" >
           <!-- 面包屑 -->
-        <div class="breadcrumb-box"  v-if="router.currentRoute.value.path !='/workHome'">
+        <div class="breadcrumb-box" v-if="showMenu">
           <Breadcrumb></Breadcrumb>
         </div>
         <!-- main -->
