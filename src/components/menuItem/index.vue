@@ -30,7 +30,8 @@
     <el-input v-model="filterText" placeholder="搜索" v-if="state.query" class="w-50 m-2" :prefix-icon="Search" />
     <el-tree ref="treeRef" 
       v-bind="$attrs" 
-      :data="state.treeData" 
+      :data="state.treeData"
+      :default-expanded-keys="[1]"
       node-key="id" 
       :expand-on-click-node="false" 
       :filter-node-method="filterNode"

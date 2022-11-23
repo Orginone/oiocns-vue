@@ -11,103 +11,12 @@
           mode="horizontal"
           @select="flowSelect"
         >
-          <el-menu-item index="1">待办</el-menu-item>
-          <el-menu-item index="2">已办</el-menu-item>
-          <el-menu-item index="3">我发起的</el-menu-item>
-          <el-menu-item index="4">抄送我的</el-menu-item>
-          <!-- <el-menu-item index="5">公告</el-menu-item> -->
+          <el-menu-item index="1">待处理</el-menu-item>
+          <el-menu-item index="2">已完成</el-menu-item>
+          <el-menu-item index="3">我的请求</el-menu-item>
         </el-menu>
-
-        <!-- <div class="btnList">
-          <el-button type="primary" style="width: 80px;">新增</el-button>
-          <el-button type="primary" style="width: 80px;">审核</el-button>
-          <el-button type="primary" style="width: 80px;">退回</el-button>
-          <el-button type="primary" style="width: 80px;">打印</el-button>
-        </div> -->
       </div>
-      
-      <div class="tab-list"  v-if="whiteList.includes(activeIndex)">
-        <div v-if="activeIndex != '1-3'">
-          <DiyTable
-          class="diytable"
-          ref="diyTable"
-          :options="options"
-          :hasTableHead="false"
-          :tableData="tableData"
-          :tableHead="tableHead"
-        >
-          <template #target.name="scope">
-            {{chat.getName(scope.row.createUser)}}
-          </template>
-          <template #content="scope">
-            {{ scope.row.target.name }}申请加入{{ scope.row.team.name }}
-          </template>
-          <template #status="scope">
-            <div v-if="scope.row.status >= 0 && scope.row.status < 100">待批</div>
-            <div v-else-if="scope.row.status >= 100 && scope.row.status < 200">已通过</div>
-            <div v-else>已拒绝</div>
-          </template>
-          <template #option="scope">
-            <div v-if="activeIndex =='1-1'">
-              <el-button link type="primary" style="margin-right: 10px" @click="joinSuccess(scope.row)" >通过</el-button>
-              <el-button link type="warning" @click="joinRefse(scope.row)">拒绝</el-button>
-            </div>
-            
-            <el-button v-else link type="warning" @click="cancelJoin(scope.row)">取消申请</el-button>
-          </template>
-          </DiyTable>
-        </div>
-        <div v-if="activeIndex == '1-3'">
-          <DiyTable
-          ref="diyTable"
-          :hasTitle="false"
-          :hasTabs="true"
-          :options="options"
-          :hasTableHead="true"
-          :tableData="state.approvalList"
-          :tableHead="state.tableHead"
-        >
-          <template #slot-tabs>
-            <el-tabs v-model="activeName" style="width: 100%" @tabClick="shopClick">
-              <el-tab-pane label="加入市场申请" name="first"> </el-tab-pane>
-              <el-tab-pane label="应用上架申请" name="second"> </el-tab-pane>
-              <el-tab-pane label="加入市场审批" name="third"> </el-tab-pane>
-              <el-tab-pane label="应用上架审批" name="four"> </el-tab-pane>
-            </el-tabs>
-          </template>
-          <template #operate="scope">
-            <el-button v-if="activeName === 'first'" @click="cancelApply(scope.row.id)" type="primary"
-              >取消申请</el-button
-            >
-            <el-button
-              v-if="activeName === 'third'"
-              @click="approvalSuccess(scope.row.id, 100)"
-              type="primary"
-              >审批通过</el-button
-            >
-            <el-button
-              v-if="activeName === 'third'"
-              @click="approvalSuccess(scope.row.id, 200)"
-              type="danger"
-              >驳回申请</el-button
-            >
-            <el-button
-              v-if="activeName === 'four'"
-              @click="LastSuccess(scope.row.id, 100)"
-              type="primary"
-              >审批通过</el-button
-            >
-            <el-button
-              v-if="activeName === 'four'"
-              @click="LastSuccess(scope.row.id, 200)"
-              type="danger"
-              >驳回申请</el-button
-            >
-          </template>
-          </DiyTable>
-        </div>
-      </div>
-       <div class="tab-list" v-else>
+       <div class="tab-list">
         <DiyTable
           class="diytable"
           ref="diyTable"
@@ -166,7 +75,6 @@
   import DiyTable from '@/components/diyTable/index.vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { TabsPaneContext } from 'element-plus'
-  import menuItem from '@/components/menuItem/index.vue'
   import { chat } from '@/module/chat/orgchat'
   
   import thingServices from '@/module/flow/thing'
@@ -451,19 +359,14 @@
   const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
   const handleSelect = (key: any, keyPath: string[]) => {
     tableData.value = []
-    diyTable.value.state.page.total = 0
+    // diyTable.value.state.page.total = 0
     activeIndex.value = key;
     ThingServices.whiteList = [];
     if (whiteList.includes(key)) {
-      if(key == '1-1'){
-        getList()
-        tableHead.value = ThingServices.examineHead;
-      }else if (key == '1-2'){
-        getApplyList()
-        tableHead.value = ThingServices.examineHead;
-      }else if (key == '1-3'){
-        searchJoinApply()
-      }
+        if(key == '1-2') {
+          getApplyList()
+          tableHead.value = ThingServices.examineHead;
+        }
     } else {
       getWflow();
      
@@ -486,11 +389,9 @@
     handleSelect(selectType, [])
   });
 
-  // instance?.proxy?.$Bus.on('selectBtn', (num) => {
-  //   console.log(num);
-    
-  //   handleSelect(num, [])
-  // })
+  instance?.proxy?.$Bus.on('selectBtn', (num) => {
+    handleSelect(num, [])
+  })
 
   instance?.proxy?.$Bus.on('clickBus', (num) => {
     if(num === '301') {
