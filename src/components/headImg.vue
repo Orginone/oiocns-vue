@@ -57,6 +57,7 @@
       font-weight: bold;
       letter-spacing: 1px;
       color: #fff;
+      margin-right: 10px;
     }
 
     .user-img {

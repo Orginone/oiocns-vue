@@ -1,6 +1,6 @@
 <template>
     <div class="store-detail">
-        <i class="icon iconfont icon-jiantou-left"></i>
+        <i class="icon iconfont icon-jiantou-left"  @click="goback()"></i>
         <div class="detail-main">
             <div class="main-wrap">
                 <div class="title-tips">应用信息</div>
@@ -38,8 +38,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, nextTick } from "vue";
-
+    import { ref, reactive, onMounted, nextTick } from "vue";
+    import { useRouter } from 'vue-router'
+    const router = useRouter()
+    const goback = ()=>{
+        router.go(-1)
+    }
 </script>
 
 <style lang="scss" scoped>

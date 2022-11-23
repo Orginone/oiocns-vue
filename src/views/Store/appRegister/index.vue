@@ -1,5 +1,4 @@
 <template>
-    <MarketCard />
     <div class="app-register-wrap">
       <div class="app-base-info register-content">
         <div class="custom-title">
@@ -78,14 +77,12 @@
     </div>
   </template>
   <script lang="ts" setup>
-    import API from '@/services'
     import SetAppMenu from './setAppMenu.vue'
     import { reactive, ref } from 'vue'
     import { ElMessage, FormRules } from 'element-plus'
     import { useRouter } from 'vue-router'
     import { useCommonStore } from '@/store/common'
     import { appstore } from '@/module/store/app'
-    import { nanoid } from 'nanoid'
     const commonStore = useCommonStore()
     const router = useRouter()
   
@@ -454,6 +451,7 @@
       overflow-y: auto;
       height: calc(100vh - 110px);
       padding: 20px;
+      margin-top: 3px;
   
       .register-content {
         width: 700px;
