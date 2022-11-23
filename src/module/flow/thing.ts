@@ -324,7 +324,7 @@ class thingServices {
         data: {
             offset: 0,
             limit: 1000,
-            typeName: "string"
+            typeName: "approve"
         }
     })
     if (success) {
