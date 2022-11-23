@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-      <detail></detail>
+      <detail :info="info"></detail>
       <management></management>
   </div>
 </template>
@@ -12,10 +12,12 @@
     import { appstore, Application } from '@/module/store/app'
     import { useRouter, useRoute } from 'vue-router'
     const router = useRouter()
+    const info = ref<Object>();
     const getInfo = async () =>{
-      // console.log('router.currentRoute.value.query.id',router.currentRoute.value.query.id)
-      // const id:string = router.currentRoute.value.query.id
-      // const data = await appstore.queryInfo(id)
+      console.log('router.currentRoute.value.query.id',router.currentRoute.value.query.id)
+      const id:string= router.currentRoute.value.query.id.toString();
+      info.value = await appstore.queryInfo(id)
+      console.log('data',info)
     }
     onMounted(() => {
       getInfo();
