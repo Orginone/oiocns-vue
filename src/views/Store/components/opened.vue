@@ -58,8 +58,8 @@ const handleChooseItem = async (app: any) => {
   commonStore.iframeLink = data?.link
   router.push(data.path)
 }
-const jumpDetail = ()=>{
-  router.push('/store/putShelves')
+const jumpDetail = (item:any)=>{
+  router.push('/store/appManagement?id='+item.id)
 }
 const getAppList = async () => {
   const result = await appstore.searchUsefulProduct()
