@@ -458,7 +458,7 @@
       if(key == '1-1'){
         getList()
         tableHead.value = ThingServices.examineHead;
-      }else if (key == '1-2'){  
+      }else if (key == '1-2'){
         getApplyList()
         tableHead.value = ThingServices.examineHead;
       }else if (key == '1-3'){
@@ -486,9 +486,11 @@
     handleSelect(selectType, [])
   });
 
-  instance?.proxy?.$Bus.on('selectBtn', (num) => {
-    handleSelect(num, [])
-  })
+  // instance?.proxy?.$Bus.on('selectBtn', (num) => {
+  //   console.log(num);
+    
+  //   handleSelect(num, [])
+  // })
 
   instance?.proxy?.$Bus.on('clickBus', (num) => {
     if(num === '301') {

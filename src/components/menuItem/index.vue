@@ -30,12 +30,14 @@
     <el-input v-model="filterText" placeholder="搜索" v-if="state.query" class="w-50 m-2" :prefix-icon="Search" />
     <el-tree ref="treeRef" 
       v-bind="$attrs" 
-      :data="state.treeData" 
+      :data="state.treeData"
+      :default-expanded-keys="[1]"
       node-key="id" 
       :expand-on-click-node="false" 
       :filter-node-method="filterNode"
       :props="{ class: customNodeClass }"
       @node-click="nodeClick"
+      v-show="state.treeData.length"
     >
       <template #default="{ node, data }">
         <div class="custom-tree-node" @mouseover='onHover(node.id)' @mouseout="onOut" @click="jump(node)">
@@ -93,7 +95,7 @@ const filterText = ref('')
 const treeRef = ref()
 const state = reactive({
   menuData: [],
-  openeds: ['1'],
+  openeds: ['1', '2'],
   treeData: [],
   query: false, // 是否显示搜索框
   flag: '', // 是否高亮标记

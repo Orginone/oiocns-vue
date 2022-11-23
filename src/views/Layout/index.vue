@@ -51,6 +51,7 @@
   import { useRouter } from 'vue-router';
   import storeJosn from './json/store.json';
   import settingJosn from './json/setting.json';
+  import setTree from './json/setTree.json';
   import detailJosn from './json/detail.json';
   import userJosn from './json/user.json';
   import { chat } from '@/module/chat/orgchat'
@@ -73,27 +74,30 @@
         if (router.currentRoute.value.name === 'department') {
             titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
             menuArr.state = setCenterStore().departmentInfo
+        } else if (router.currentRoute.value.name === 'unit') {
+          titleArr.state= settingJosn[0]
+          menuArr.state = settingJosn
         } else {
           let currentRouteName: any = router.currentRoute.value.name
-          const jsonData: any = settingJosn
+          const jsonData: any = setTree
           if (['unit', 'post', 'group', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
             titleArr.state= jsonData[currentRouteName][0]
             menuArr.state = jsonData[currentRouteName]
           } else {
-            titleArr.state= jsonData.unit[0]
-            menuArr.state = jsonData.unit
+            titleArr.state= settingJosn[0]
+            menuArr.state = settingJosn
           }
         }
         showMenu.value = true;
       } else if (router.currentRoute.value.path.indexOf('mine') != -1) {
         titleArr.state = userJosn[0]
         menuArr.state = userJosn
-        showMenu.value = true;
-      } else{
-        // titleArr.state = detailJosn[0]
-        // menuArr.state = detailJosn
+      } else if (router.currentRoute.value.path.indexOf('service') != -1){
+        titleArr.state = detailJosn[0]
+        menuArr.state = detailJosn
+      } else {
         showMenu.value = false;
-      } 
+      }
   }
   getNav();
   watch(() => router.currentRoute.value.path, (newValue:any) => {
