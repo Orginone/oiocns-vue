@@ -138,54 +138,51 @@ const mainRouter: RouteRecordRaw[] = [
     }
   },
   {
-    component: () => import('@/views/Work/cardDetail.vue'),
-    name: 'cardDetail',
-    path: '/cardDetail',
+    path: '/service',
+    component: () => import('@/views/Service/index.vue'),
     meta: {
       keepAlive: false,
       title: '办事',
-      id: "cardDetail"
-    }
-  },
-  {
-    component: () => import('@/views/Work/friend.vue'),
-    name: 'friend',
-    path: '/friend',
-    meta: {
-      keepAlive: false,
-      title: '好友申请',
-      id: "friend"
-    }
-  },
-  {
-    component: () => import('@/views/Work/company.vue'),
-    name: 'company',
-    path: '/company',
-    meta: {
-      keepAlive: false,
-      title: '单位审核',
-      id: 'company'
-    }
-  },
-  {
-    component: () => import('@/views/Work/shop.vue'),
-    name: 'shop',
-    path: '/shop',
-    meta: {
-      keepAlive: false,
-      title: '商店审核',
-      id: 'shop'
-    }
-  },
-  {
-    component: () => import('@/views/Work/order.vue'),
-    name: 'order',
-    path: '/order',
-    meta: {
-      keepAlive: false,
-      title: '订单审核',
-      id: 'order'
-    }
+      id: "service"
+    },
+    children: [
+      {
+        path: '/service/friendApply',
+        name: 'friendApply',
+        component: () => import('@/views/Service/friendApply/index.vue'),
+        meta: {
+          title: '好友申请',
+          id: "service.friendApply"
+        }
+      },
+      {
+        path: '/service/company',
+        name: 'company',
+        component: () => import('@/views/Service/company/index.vue'),
+        meta: {
+          title: '单位审核',
+          id: "service.company"
+        }
+      },
+      {
+        path: '/service/shop',
+        name: 'shop',
+        component: () => import('@/views/Service/shop/index.vue'),
+        meta: {
+          title: '商店审核',
+          id: "service.shop"
+        }
+      },
+      {
+        path: '/service/order',
+        name: 'order',
+        component: () => import('@/views/Service/order/index.vue'),
+        meta: {
+          title: '订单审核',
+          id: "service.order"
+        }
+      }
+    ]
   },
   {
     path: '/setCenter',
