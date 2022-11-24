@@ -192,10 +192,9 @@ const mainRouter: RouteRecordRaw[] = [
       title: '设置',
       id: "setCenter"
     },
-    redirect: '/setCenter/unit',
     children: [
       {
-        path: '/setCenter/unit',
+        path: '/setCenter',
         name: 'unit',
         component: () => import('@/views/SetCenter/unit/index.vue'),
         meta: {
