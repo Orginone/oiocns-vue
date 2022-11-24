@@ -56,7 +56,7 @@
                     @click="handleCommand('own', 'share', scope.row)">
                     共享</el-dropdown-item>
                   <el-dropdown-item link type="primary" v-if="authority.IsCompanySpace()"
-                    @click="dialogType.cohortVisible = true">分配
+                  @click="handleCommand('own', 'distribution', scope.row)">分配
                   </el-dropdown-item>
                   <el-dropdown-item link type="primary" @click="goDetail(scope.row.id)">
                     查看详情
@@ -343,22 +343,23 @@
     item: any
   ) => {
     selectProductItem.value = item;
-    switch (command) {
-      case "share":
+    console.log('selectProductItem',selectProductItem.value)
+    switch (command) { 
+      case "share": //分享
         openShareDialog();
         break;
-      case "putaway":
-        router.push({
+      case "putaway": //上架
+        router.push({ 
           path: "/store/putShelves",
           query: { name: item.name, id: item.id, typeName: item.typeName },
         });
         break;
       case "unsubscribe":
         break;
-      case "distribution":
-        dialogType.cohortVisible.value = true;
+      case "distribution": //分配
+        dialogType.cohortVisible = true;
         break;
-      case "detail":
+      case "detail": //详情
         break;
       default:
         break;

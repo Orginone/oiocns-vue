@@ -41,7 +41,7 @@
     >
       <template #default="{ node, data }">
         <div class="custom-tree-node" @mouseover='onHover(node.id)' @mouseout="onOut" @click="jump(node)">
-          <span>{{ node.label }} </span>
+          <span>{{ node.label }}</span>
           <span class="sp_10" v-show="node.id === state.flag">
             <el-popover
               placement="right"
@@ -52,7 +52,7 @@
                 <el-icon><Plus /></el-icon>
               </template>
               <div class="btn-bus" @click="clickBus" :style="{cursor: 'pointer'}" >
-                <div class="row-btn" v-for="(item,index) in state.treeData[0].btns" :key="item" :data-index="item.id">{{item.name}}</div>
+                <div class="row-btn" v-for="(item,index) in data.btns" :key="item" :data-index="item.id">{{item.name}}</div>
               </div>
             </el-popover>&nbsp;
             <el-popover
@@ -73,7 +73,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, reactive ,nextTick ,getCurrentInstance} from 'vue'
+import { ref, watch, reactive ,nextTick ,getCurrentInstance, onMounted} from 'vue'
 import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
 import { setCenterStore } from '@/store/setting'
@@ -120,12 +120,16 @@ const customNodeClass = (data: any, node: Node) => {
     return 'no-penultimate'
   }
 }
-
+onMounted(()=>{
+  init();
+})
 const onOut = () => {
   state.flag = ''
   state.flag1 = ''
 }
 const init =  () => {
+  setTimeout(() => {
+    console.log(props.data)
     state.treeData = props.data.filter((item: any) => {
       return item.structure === true
     })
@@ -133,9 +137,8 @@ const init =  () => {
       return item.structure === false
     })
     state.query = state.treeData[0]?.query
-  
+  })
 }
-init();
 let router = useRouter()
 watch(() => router.currentRoute.value.path, (newValue:any) => {
   // nextTick(() => {
