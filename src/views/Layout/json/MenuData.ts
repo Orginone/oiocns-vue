@@ -8,7 +8,8 @@ export interface HeaderData {
 
 export interface MenuDataItem extends TreeNodeBase {
     name: string;
-    $kind?: string;
+    $kind: "header" | "menu";
+    parentId?: string;
     url?: string;
     isPenultimate?: boolean;
     structure?: boolean;
@@ -36,16 +37,27 @@ const allJson: Record<string ,MenuData> = {
 
 
 
+function setMenuItem(menu: MenuDataItem[], parentId = "") {
+    for (const m of menu) {
+        m.parentId = parentId;
+        m.$kind = "menu";
+        
+        setMenuItem(m.children || [], m.id);
+    }
+}
+
+
 export function createAllMenuTree() {
     const allMenu: MenuDataItem[] = [];
     for (const [key, json] of Object.entries(allJson)) {
         const [header, ...menu] = json;
 
         const children = _.cloneDeep(menu);
+        setMenuItem(children, key);
         
         const topMenu: MenuDataItem = {
             id: key,
-            $kind: "topmenu",
+            $kind: "header",
             name: header.title,
             icon: header.icon,
             backFlag: header.backFlag,
