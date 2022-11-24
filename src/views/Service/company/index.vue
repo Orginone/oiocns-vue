@@ -49,12 +49,8 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item v-if="flowActive == '1'" @click="showDetail(scope.row,1)">审核申请</el-dropdown-item>
-                  <el-dropdown-item v-if="flowActive == '2'" @click="showDetail(scope.row,1)">查看详情</el-dropdown-item>
-                  <el-dropdown-item v-if="flowActive == '3'" @click="showDetail(scope.row,1)">查看详情</el-dropdown-item>
-                  <el-dropdown-item v-if="flowActive == '4'" @click="showDetail(scope.row,1)">查看详情</el-dropdown-item>
-                  <el-dropdown-item v-if="flowActive == '3'" @click="showDetail(scope.row,3)">撤销</el-dropdown-item>
-                  <el-dropdown-item v-if="flowActive == '4'" @click="showDetail(scope.row,4)">阅读</el-dropdown-item>
+                  <el-dropdown-item v-if="flowActive == '1'">审核申请</el-dropdown-item>
+                  <el-dropdown-item v-if="flowActive == '3'">退回申请</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -87,7 +83,7 @@
   const { workspaceData } = storeToRefs(store)
   var tableData = ref<any>([{id:123,flowInstance:{}}])
   const diyTable = ref(null)
-  const tableHead =ref<any>(ThingServices.examineHead) ;
+  const tableHead =ref<any>(ThingServices.companyHead) ;
   const options = {
     expandAll: false,
     checkBox: false,
@@ -103,45 +99,45 @@
     total: 0
   })
 
-  const showDetail = async (row: any,type:number) => {
-    if(type == 4){
-      $services.wflow.approvalTask({data:{id: row.id,status: 100,}}).then(async (res: ResultType) => {
-        ElMessage({
-          message: res.msg,
-          type: 'success'
-        })
-        ThingServices.whiteList = [];
-        await ThingServices.queryTask()
-        tableHead.value = ThingServices.flowHead;
-        tableData.value = ThingServices.copyList
-      })
+  // const showDetail = async (row: any,type:number) => {
+  //   if(type == 4){
+  //     $services.wflow.approvalTask({data:{id: row.id,status: 100,}}).then(async (res: ResultType) => {
+  //       ElMessage({
+  //         message: res.msg,
+  //         type: 'success'
+  //       })
+  //       ThingServices.whiteList = [];
+  //       await ThingServices.queryTask()
+  //       tableHead.value = ThingServices.flowHead;
+  //       tableData.value = ThingServices.copyList
+  //     })
       
-    }else if(type ==3){
-      $services.wflow.deleteInstance({data:{id: row.id}}).then(async (res: ResultType) => {
-        ElMessage({
-          message: res.msg,
-          type: 'success'
-        })
-        ThingServices.whiteList = [];
-        await ThingServices.queryInstance()
-        tableHead.value = ThingServices.queryInstanceHead;
-        tableData.value =ThingServices.queryInstanceList
-      })
+  //   }else if(type ==3){
+  //     $services.wflow.deleteInstance({data:{id: row.id}}).then(async (res: ResultType) => {
+  //       ElMessage({
+  //         message: res.msg,
+  //         type: 'success'
+  //       })
+  //       ThingServices.whiteList = [];
+  //       await ThingServices.queryInstance()
+  //       tableHead.value = ThingServices.queryInstanceHead;
+  //       tableData.value =ThingServices.queryInstanceList
+  //     })
      
-    }else{
-      let instanceId:string;
-      if(flowActive.value == '1'){
-        instanceId = row?.instanceId
-      }else if(flowActive.value == '2'){
-        instanceId = row?.flowTask?.instanceId
-      }else if(flowActive.value == '3'){
-        instanceId = row?.id
-      }else{
-        instanceId = row?.instanceId
-      }
-      router.push({ path: '/work/process', query: {id:row.id,type:flowActive.value,instanceId:instanceId}});
-    }
-  }
+  //   }else{
+  //     let instanceId:string;
+  //     if(flowActive.value == '1'){
+  //       instanceId = row?.instanceId
+  //     }else if(flowActive.value == '2'){
+  //       instanceId = row?.flowTask?.instanceId
+  //     }else if(flowActive.value == '3'){
+  //       instanceId = row?.id
+  //     }else{
+  //       instanceId = row?.instanceId
+  //     }
+  //     router.push({ path: '/work/process', query: {id:row.id,type:flowActive.value,instanceId:instanceId}});
+  //   }
+  // }
 
   const activeIndex = ref<string>('1')
   const flowActive = ref<string>('1')
@@ -161,7 +157,7 @@
 
   const getWflow =async () => {
     await ThingServices.queryTask()
-    tableHead.value = ThingServices.flowHead;
+    tableHead.value = ThingServices.companyHead;
     tableData.value =ThingServices.taskList
   }
 
@@ -172,18 +168,14 @@
   const flowSwitch  = async (key: string) => {
     if(key == '1'){
       await ThingServices.queryTask()
-      tableHead.value = ThingServices.flowHead;
       tableData.value =ThingServices.taskList
     }else if(key =='2'){
       await ThingServices.queryRecord()
-      tableHead.value = ThingServices.recordHead;
       tableData.value =ThingServices.recordList
     }else if(key =='3'){
       await ThingServices.queryInstance()
-      tableHead.value = ThingServices.queryInstanceHead;
       tableData.value =ThingServices.queryInstanceList
     }else if(key =='4'){
-      tableHead.value = ThingServices.flowHead;
       tableData.value = ThingServices.copyList
     }
   }
@@ -197,7 +189,7 @@
     if (whiteList.includes(key)) {
         if(key == '1-2') {
           getApplyList()
-          tableHead.value = ThingServices.examineHead;
+          tableHead.value = ThingServices.companyHead;
         }
     } else {
       getWflow();
