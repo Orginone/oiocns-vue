@@ -148,7 +148,9 @@
       }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){
         if (router.currentRoute.value.name === 'department') {
             titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
-            menuArr.state = setCenterStore().departmentInfo
+            setCenterStore().GetDepartmentInfo().then((treeData)=> {
+              menuArr.state = treeData
+            })
         } else if (router.currentRoute.value.name === 'unit') {
           titleArr.state= settingJosn[0]
           menuArr.state = settingJosn

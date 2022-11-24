@@ -144,6 +144,12 @@ watch(() => router.currentRoute.value.path, (newValue:any) => {
     });
   // })
 })
+watch(() => props.data, (newValue:any) => {
+  init();
+},
+{
+  immediate: true
+})
 watch(filterText, (val) => {
   console.log('a',val);
   treeRef.value!.filter(val)

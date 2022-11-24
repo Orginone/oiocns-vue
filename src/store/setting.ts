@@ -35,6 +35,7 @@ export const setCenterStore = defineStore({
                   })
                 }
               })
+            return this.departmentInfo
           },
           filter(nodes: any[]) {
             nodes = nodes.map(node => {
