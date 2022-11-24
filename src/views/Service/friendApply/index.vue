@@ -15,6 +15,12 @@
           <el-menu-item index="3">我的请求</el-menu-item>
         </el-menu>
       </div>
+      <div class="btnStyle">
+        <el-button type="primary">新增</el-button>
+        <el-button type="primary">审核</el-button>
+        <el-button type="primary">退回</el-button>
+        <el-button type="primary">打印</el-button>
+      </div>
        <div class="tab-list">
         <DiyTable
           class="diytable"
@@ -49,8 +55,8 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item v-if="flowActive == '1'">审核申请</el-dropdown-item>
-                  <el-dropdown-item v-if="flowActive == '3'">退回申请</el-dropdown-item>
+                  <el-dropdown-item>审核申请</el-dropdown-item>
+                  <el-dropdown-item>退回申请</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -183,15 +189,12 @@
   const handleSelect = (key: any, keyPath: string[]) => {
     tableData.value = []
     // diyTable.value.state.page.total = 0
-    console.log(key,'key111');
     
     activeIndex.value = key;
     ThingServices.whiteList = [];
     if (whiteList.includes(key)) {
-        if(key == '1-1'){
-          getList()
-          tableHead.value = ThingServices.friendHead;
-        }
+      getList()
+      tableHead.value = ThingServices.friendHead;
     } else {
       getWflow();
     }
@@ -213,18 +216,11 @@
   });
 
   instance?.proxy?.$Bus.on('selectBtn', (num) => {
-    handleSelect(num, [])
-  })
-
-  instance?.proxy?.$Bus.on('clickBus', (num) => {
-    if(num === '301') {
-      console.log('发起业务')
-    }else if(num === '302') {
-      console.log('重命名')
-    }else if(num === '303') {
-      console.log('删除应用')
+    if(num === '1-1') {
+      handleSelect(num, [])
     }
   })
+
 </script>
 
 
@@ -279,6 +275,14 @@
     padding: 20px;
     box-sizing: border-box;
     background: var(--el-bg-color-overlay);
+    .btnStyle{
+      position: absolute;
+      right: 30px;
+      top: 20px;
+      :deep .el-button{
+        width: 80px;
+      }
+    }
     .search {
       background: #fff;
       padding: 20px;

@@ -253,9 +253,7 @@
     activeIndex.value = key;
     ThingServices.whiteList = [];
     if (whiteList.includes(key)) {
-      if (key == '1-3'){
-        searchJoinApply()
-      }
+      searchJoinApply()
     } 
   }
 
@@ -275,16 +273,8 @@
   });
 
   instance?.proxy?.$Bus.on('selectBtn', (num) => {
-    handleSelect(num, [])
-  })
-
-  instance?.proxy?.$Bus.on('clickBus', (num) => {
-    if(num === '301') {
-      console.log('发起业务')
-    }else if(num === '302') {
-      console.log('重命名')
-    }else if(num === '303') {
-      console.log('删除应用')
+    if(num === '1-3') {
+      handleSelect(num, [])
     }
   })
 </script>

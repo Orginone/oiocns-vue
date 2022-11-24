@@ -15,6 +15,12 @@
           <el-menu-item index="3">我的请求</el-menu-item>
         </el-menu>
       </div>
+      <div class="btnStyle">
+        <el-button type="primary">新增</el-button>
+        <el-button type="primary">审核</el-button>
+        <el-button type="primary">退回</el-button>
+        <el-button type="primary">打印</el-button>
+      </div>
        <div class="tab-list">
         <DiyTable
           class="diytable"
@@ -187,10 +193,8 @@
     activeIndex.value = key;
     ThingServices.whiteList = [];
     if (whiteList.includes(key)) {
-        if(key == '1-2') {
-          getApplyList()
-          tableHead.value = ThingServices.companyHead;
-        }
+      getApplyList()
+      tableHead.value = ThingServices.companyHead;
     } else {
       getWflow();
     }
@@ -211,18 +215,11 @@
   });
 
   instance?.proxy?.$Bus.on('selectBtn', (num) => {
-    handleSelect(num, [])
-  })
-
-  instance?.proxy?.$Bus.on('clickBus', (num) => {
-    if(num === '301') {
-      console.log('发起业务')
-    }else if(num === '302') {
-      console.log('重命名')
-    }else if(num === '303') {
-      console.log('删除应用')
+    if(num === '1-2') {
+      handleSelect(num, [])
     }
   })
+
 </script>
 
 
@@ -277,6 +274,14 @@
     padding: 20px;
     box-sizing: border-box;
     background: var(--el-bg-color-overlay);
+    .btnStyle{
+      position: absolute;
+      right: 30px;
+      top: 20px;
+      :deep .el-button{
+        width: 80px;
+      }
+    }
     .search {
       background: #fff;
       padding: 20px;
