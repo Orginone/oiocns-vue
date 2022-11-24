@@ -17,6 +17,7 @@ export const setCenterStore = defineStore({
             unitInfo: [], // 单位信息
             departmentInfo: [], // 部门树节点信息
             currentSelectItme: {}, // 当前选中的节点信息
+            identityInfo: [] // 岗位信息
         }
     },
     getters: { },
@@ -37,9 +38,31 @@ export const setCenterStore = defineStore({
               })
             return this.departmentInfo
           },
+          async GetIdentities() {
+            // 加载岗位
+            await $services.cohort.getIdentitys({data: {id: this.unitInfo?.id,offset: 0,limit: 1000} }).then((res: any) => {
+                if (res.success) {
+                    if (res.data?.result?.length) {
+                        this.identityInfo = res.data?.result?.map((element: any) => {
+                            return Object.assign({},element, {label: element.name,structure: true, query: true})
+                        });
+                        this.currentSelectItme = this.identityInfo[0]
+                    } else {
+                        this.identityInfo = []
+                        this.currentSelectItme = []
+                    }
+                } else {
+                  ElMessage({
+                    message: res.msg,
+                    type: 'warning'
+                  })
+                }
+              })
+            return this.identityInfo
+          },
           filter(nodes: any[]) {
             nodes = nodes.map(node => {
-                const btns = node.data.typeName === '工作组' ?  [
+                const btns = node.data?.typeName === '工作组' ?  [
                     {
                         name: "新增工作组",
                         id: "106"
