@@ -61,6 +61,8 @@
         </diytab>
       </div>
     </div>
+    <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog', false)"/>
+
   </div>
   
 </template>
@@ -68,13 +70,16 @@
 <script setup lang="ts">
   import diytab from '@/components/diyTable/index.vue'
   import card from '../components/card.vue'
-  import { reactive, onMounted, ref, watch, nextTick } from 'vue'
+  import { reactive, onMounted, ref, watch, nextTick ,getCurrentInstance } from 'vue'
   import { useRouter } from 'vue-router'
   import $services from '@/services'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { appstore } from '@/module/store/app'
+  import createShop from "../components/createShop.vue";
+
   const diyTable = ref(null)
   const valuee = ref<any>('');
+  const instance = getCurrentInstance();
   const optionsList = [
     {
       label: '功能分类',
@@ -90,7 +95,9 @@
       ],
     },
   ]
-
+  const dialogType: any = reactive({
+    createDialog: false, // 创建商店弹窗状态
+  });
   interface ListItem {
     code: string
     name: string
@@ -121,19 +128,14 @@
       hasChildren: 'hasChildren'
     }
   })
-  const showDiong = (type:number) => {
-    if(type ==1){
-
-    }else if(type ==2){
-      
-    }
-  }
+   // 关闭弹窗
+   const closeDialog = (type: string, key: boolean) => {
+    dialogType[type] = key;
+  };
   const modeType = ref<'card' | 'list'>('card')
   const router = useRouter()
   const shopcarNum = ref(0)
-  const GoPageWithQuery = (path: string, query: any) => {
-    router.push({ path, query })
-  }
+
   // 表格展示数据
   const pageStore = reactive({
     tableData: [],
@@ -259,6 +261,37 @@ const buyThings = (item:any) => {
       getAppList()
     })
   })
+  const getShopData = () => {
+    console.log('1')
+
+    $services.appstore
+      .merchandise({
+        data: {
+          id: router.currentRoute.value.query.id,
+          offset: 0,
+          limit: 20,
+          filter:'',
+        }
+      })
+      .then((res: ResultType) => {
+        if (res.code == 200) {
+          state.myAppList = res.data.result || []
+        }
+      })
+  }
+  watch(() => router.currentRoute.value.fullPath, () => {
+    if(router.currentRoute.value.query?.id){
+      getShopData();
+    }else{
+      console.log('2')
+      getAppList()
+    }
+  })
+  instance?.proxy?.$Bus.on("clickBus", (num) => {
+    if(num =='1020'){ //创建商店
+      dialogType.createDialog = true;
+    }
+  });
 </script>
 <style lang="scss">
   .el-dropdown-link{

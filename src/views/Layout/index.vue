@@ -9,9 +9,9 @@
       <div class="menu-list" v-if="showMenu">
         <MenuNav :data="menuArr.state" :titleData="titleArr.state"></MenuNav>
       </div>
-      <div class="layout-main">
+      <div class="layout-main" >
           <!-- 面包屑 -->
-        <div class="breadcrumb-box"  v-if="router.currentRoute.value.path !='/workHome'">
+        <div class="breadcrumb-box" v-if="showMenu">
           <Breadcrumb></Breadcrumb>
         </div>
         <!-- main -->
@@ -55,6 +55,7 @@
   import detailJosn from './json/detail.json';
   import userJosn from './json/user.json';
   import { chat } from '@/module/chat/orgchat'
+  import marketServices from "@/module/store/market"
 
   import { createAllMenuTree, MenuDataItem } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
@@ -139,13 +140,96 @@
     state:[]
   });
   const showMenu = ref<boolean>(true);
-
+  // 获取我的商店列表
+  const getShopList = async ()=>{
+    await marketServices.getMarketList({
+      offset: 0,
+      limit: 10,
+      filter: ""
+    });
+    let myList:any = []
+    let addList:any = []
+    marketServices.marketList.forEach(element => {
+      if(element.belongId){
+        myList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
+              "name":"删除商店",
+              "id":"1021"
+          },{
+              "name":"用户管理",
+              "id":"1022"
+          },{
+              "name":"基础详情",
+              "id":"1023"
+          }]})
+      }else{
+        // TODO 暂时文字匹配开放市场，不显示在商店加入列表里
+        if(element.name !='开放市场'){
+          addList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
+              "name":"退出商店",
+              "id":"1024"
+          },{
+              "name":"用户管理",
+              "id":"1022"
+          },{
+              "name":"基础详情",
+              "id":"1023"
+          }]})
+        }
+      }
+    });
+    let newObj:any =  {
+        label: "商城",
+        structure: true,
+        "isPenultimate": true,
+        "btns":[] as string[],
+        "children": [
+          {
+            "label": "开放市场",
+            "isPenultimate": true,
+            "url":'/store/shop',
+            "id": ""
+          },
+          {
+            "label": "商店(自建)",
+            "isPenultimate": true,
+            "id": "",
+            "btns":[{
+              "name":"创建商店",
+              "id":"1020"
+            }],
+            "children": myList
+          },
+          {
+            "label": "商店(加入)",
+            "id": "1",
+            "children":addList
+          },
+        ]
+    }
+    let shopStoreJosn = JSON.parse(JSON.stringify(storeJosn))
+    showMenu.value = true;
+    shopStoreJosn[2] = newObj
+    titleArr.state = shopStoreJosn[0]
+    menuArr.state = shopStoreJosn
+    
+  }
+  // store 路由设置
+  const storeFun =()=>{
+    if(router.currentRoute.value.path.indexOf('store/shop') != -1){
+      console.log('1')
+      getShopList();
+    }else{
+      console.log('2')
+      showMenu.value = true;
+      titleArr.state = storeJosn[0]
+      menuArr.state = storeJosn
+    }
+  }
   const getNav = ()=>{
       if(router.currentRoute.value.path.indexOf('store') != -1){    
-        titleArr.state = storeJosn[0]
-        menuArr.state = storeJosn
-        showMenu.value = true;
+        storeFun()
       }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){
+        showMenu.value = true;
         if (router.currentRoute.value.name === 'department') {
             titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
             setCenterStore().GetDepartmentInfo().then((treeData)=> {
@@ -170,21 +254,23 @@
             menuArr.state = settingJosn
           }
         }
-        showMenu.value = true;
+        
       } else if (router.currentRoute.value.path.indexOf('mine') != -1) {
+        showMenu.value = true;
         titleArr.state = userJosn[0]
         menuArr.state = userJosn
-        showMenu.value = true;
+        
       } else if (router.currentRoute.value.path.indexOf('service') != -1){
+        showMenu.value = true;
         titleArr.state = detailJosn[0]
         menuArr.state = detailJosn
-        showMenu.value = true;
       } else {
         showMenu.value = false;
       }
   }
   getNav();
-  watch(() => router.currentRoute.value.path, (newValue:any) => {
+  
+  watch(() => router.currentRoute.value.path, () => {
     // nextTick(() => {
       getNav();
     // })

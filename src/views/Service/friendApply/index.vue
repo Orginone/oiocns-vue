@@ -15,6 +15,12 @@
           <el-menu-item index="3">我的请求</el-menu-item>
         </el-menu>
       </div>
+      <div class="btnStyle">
+        <el-button type="primary">新增</el-button>
+        <el-button type="primary">审核</el-button>
+        <el-button type="primary">退回</el-button>
+        <el-button type="primary">打印</el-button>
+      </div>
        <div class="tab-list">
         <DiyTable
           class="diytable"
@@ -25,22 +31,13 @@
           :tableHead="tableHead"
         >
           <template #productId="scope">
-            {{chat.getName(scope.row?.flowInstance?.flowRelation?.productId||scope.row?.flowTask?.flowInstance?.flowRelation?.productId||scope.row?.flowRelation?.productId)}}
+            <!-- {{chat.getName(scope.row?.team?.flowRelation?.productId||scope.row?.flowTask?.flowInstance?.flowRelation?.productId||scope.row?.flowRelation?.productId)}} -->
+          </template>
+          <template #remark="scope">
+            {{ scope.row?.team?.remark }}
           </template>
           <template #target.name="scope">
-            {{chat.getName(scope.row.createUser)}}
-          </template>
-          <template #content="scope">
-            {{scope.row?.flowInstance?.content || scope?.row?.flowTask?.flowInstance?.content || scope?.row?.content}}
-          </template>
-          <template #status="scope">
-            <div v-if="scope.row.status >= 0 && scope.row.status < 100">待批</div>
-            <div v-else-if="scope.row.status >= 100 && scope.row.status < 200">
-              <div v-if="scope.row?.flowTask?.flowNode?.nodeType=='审批'">已通过</div>
-              <div v-else-if="scope.row?.flowTask?.flowNode?.nodeType=='抄送'">已查阅</div>
-              <div v-else>已通过</div>
-            </div>
-            <div v-else>已拒绝</div>
+            {{ chat.getName(scope.row.createUser) }}
           </template>
           <template #option="scope">
             <el-dropdown>
@@ -49,12 +46,8 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item v-if="flowActive == '1'" @click="showDetail(scope.row,1)">审核申请</el-dropdown-item>
-                  <el-dropdown-item v-if="flowActive == '2'" @click="showDetail(scope.row,1)">查看详情</el-dropdown-item>
-                  <el-dropdown-item v-if="flowActive == '3'" @click="showDetail(scope.row,1)">查看详情</el-dropdown-item>
-                  <el-dropdown-item v-if="flowActive == '4'" @click="showDetail(scope.row,1)">查看详情</el-dropdown-item>
-                  <el-dropdown-item v-if="flowActive == '3'" @click="showDetail(scope.row,3)">撤销</el-dropdown-item>
-                  <el-dropdown-item v-if="flowActive == '4'" @click="showDetail(scope.row,4)">阅读</el-dropdown-item>
+                  <el-dropdown-item>审核申请</el-dropdown-item>
+                  <el-dropdown-item>退回申请</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -88,7 +81,7 @@
   const { workspaceData } = storeToRefs(store)
   var tableData = ref<any>([{id:123,flowInstance:{}}])
   const diyTable = ref(null)
-  const tableHead =ref<any>(ThingServices.examineHead);
+  const tableHead =ref<any>(ThingServices.friendHead);
   const options = {
     expandAll: false,
     checkBox: false,
@@ -104,45 +97,45 @@
     total: 0
   })
 
-  const showDetail = async (row: any,type:number) => {
-    if(type == 4){
-      $services.wflow.approvalTask({data:{id: row.id,status: 100,}}).then(async (res: ResultType) => {
-        ElMessage({
-          message: res.msg,
-          type: 'success'
-        })
-        ThingServices.whiteList = [];
-        await ThingServices.queryTask()
-        tableHead.value = ThingServices.flowHead;
-        tableData.value = ThingServices.copyList
-      })
+  // const showDetail = async (row: any,type:number) => {
+  //   if(type == 4){
+  //     $services.wflow.approvalTask({data:{id: row.id,status: 100,}}).then(async (res: ResultType) => {
+  //       ElMessage({
+  //         message: res.msg,
+  //         type: 'success'
+  //       })
+  //       ThingServices.whiteList = [];
+  //       await ThingServices.queryTask()
+  //       tableHead.value = ThingServices.flowHead;
+  //       tableData.value = ThingServices.copyList
+  //     })
       
-    }else if(type ==3){
-      $services.wflow.deleteInstance({data:{id: row.id}}).then(async (res: ResultType) => {
-        ElMessage({
-          message: res.msg,
-          type: 'success'
-        })
-        ThingServices.whiteList = [];
-        await ThingServices.queryInstance()
-        tableHead.value = ThingServices.queryInstanceHead;
-        tableData.value =ThingServices.queryInstanceList
-      })
+  //   }else if(type ==3){
+  //     $services.wflow.deleteInstance({data:{id: row.id}}).then(async (res: ResultType) => {
+  //       ElMessage({
+  //         message: res.msg,
+  //         type: 'success'
+  //       })
+  //       ThingServices.whiteList = [];
+  //       await ThingServices.queryInstance()
+  //       tableHead.value = ThingServices.queryInstanceHead;
+  //       tableData.value =ThingServices.queryInstanceList
+  //     })
      
-    }else{
-      let instanceId:string;
-      if(flowActive.value == '1'){
-        instanceId = row?.instanceId
-      }else if(flowActive.value == '2'){
-        instanceId = row?.flowTask?.instanceId
-      }else if(flowActive.value == '3'){
-        instanceId = row?.id
-      }else{
-        instanceId = row?.instanceId
-      }
-      router.push({ path: '/work/process', query: {id:row.id,type:flowActive.value,instanceId:instanceId}});
-    }
-  }
+  //   }else{
+  //     let instanceId:string;
+  //     if(flowActive.value == '1'){
+  //       instanceId = row?.instanceId
+  //     }else if(flowActive.value == '2'){
+  //       instanceId = row?.flowTask?.instanceId
+  //     }else if(flowActive.value == '3'){
+  //       instanceId = row?.id
+  //     }else{
+  //       instanceId = row?.instanceId
+  //     }
+  //     router.push({ path: '/work/process', query: {id:row.id,type:flowActive.value,instanceId:instanceId}});
+  //   }
+  // }
 
   const activeIndex = ref<string>('1')
   const flowActive = ref<string>('1')
@@ -156,13 +149,15 @@
   }
   var getList = async () => {
     await ThingServices.getAllApproval('0')
+    console.log(friendJosn);
+    
     tableData.value = friendJosn
   }
 
   const getWflow =async () => {
     await ThingServices.queryTask()
-    tableHead.value = ThingServices.flowHead;
-    tableData.value = ThingServices.taskList
+    tableHead.value = ThingServices.friendHead;
+    tableData.value = friendJosn
   }
 
   const flowSelect = (key: string) => {
@@ -172,34 +167,27 @@
   const flowSwitch  = async (key: string) => {
     if(key == '1'){
       await ThingServices.queryTask()
-      tableHead.value = ThingServices.flowHead;
-      tableData.value =ThingServices.taskList
+      tableData.value = friendJosn
     }else if(key =='2'){
       await ThingServices.queryRecord()
-      tableHead.value = ThingServices.recordHead;
-      tableData.value =ThingServices.recordList
+      tableData.value = friendJosn
     }else if(key =='3'){
       await ThingServices.queryInstance()
-      tableHead.value = ThingServices.queryInstanceHead;
-      tableData.value =ThingServices.queryInstanceList
+      tableData.value = friendJosn
     }else if(key =='4'){
-      tableHead.value = ThingServices.flowHead;
-      tableData.value = ThingServices.copyList
+      tableData.value = friendJosn
     }
   }
   const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
   const handleSelect = (key: any, keyPath: string[]) => {
     tableData.value = []
     // diyTable.value.state.page.total = 0
-    console.log(key,'key111');
     
     activeIndex.value = key;
     ThingServices.whiteList = [];
     if (whiteList.includes(key)) {
-        if(key == '1-1'){
-          getList()
-          tableHead.value = ThingServices.examineHead;
-        }
+      getList()
+      tableHead.value = ThingServices.friendHead;
     } else {
       getWflow();
     }
@@ -217,22 +205,15 @@
     //   activeId.value = id
     // }
     
-    // handleSelect(selectType, [])
+    handleSelect('1-1', [])
   });
 
   instance?.proxy?.$Bus.on('selectBtn', (num) => {
-    handleSelect(num, [])
-  })
-
-  instance?.proxy?.$Bus.on('clickBus', (num) => {
-    if(num === '301') {
-      console.log('发起业务')
-    }else if(num === '302') {
-      console.log('重命名')
-    }else if(num === '303') {
-      console.log('删除应用')
+    if(num === '1-1') {
+      handleSelect(num, [])
     }
   })
+
 </script>
 
 
@@ -287,6 +268,14 @@
     padding: 20px;
     box-sizing: border-box;
     background: var(--el-bg-color-overlay);
+    .btnStyle{
+      position: absolute;
+      right: 30px;
+      top: 20px;
+      :deep .el-button{
+        width: 80px;
+      }
+    }
     .search {
       background: #fff;
       padding: 20px;
