@@ -29,6 +29,7 @@ type shareTeam = {
 
 // 市场信息类型
 interface MarketType {
+  belongId?:string
   code: string
   createTime: string
   createUser: string

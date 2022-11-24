@@ -52,7 +52,6 @@
     appList.value = result.map((item: any) => {
       return { ...item, icon: img1 }
     })
-    console.log('====', appList.value)
   }
   onMounted(() => {
     getAppList()

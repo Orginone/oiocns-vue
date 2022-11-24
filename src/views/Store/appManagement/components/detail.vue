@@ -9,16 +9,16 @@
                 <div class="content">
                     <div class="row">
                         <div class="title">应用名称</div>
-                        <div class="app-name">应用名称文本---</div>
+                        <div class="app-name">{{props?.info?.name}}</div>
                     </div>
                     <div class="row">
                         <div class="title">应用描述</div>
-                        <div class="describe">描述描述描述描述描述描述描述描述描述描述</div>
+                        <div class="describe">{{props?.info?.remark}}</div>
                     </div>
                 </div>
                 <div class="content-foot">
-                    <div class="foot-row">创建人:熊桂英</div>
-                    <div class="foot-row">创建时间: 2022-11-08</div>
+                    <div class="foot-row">创建人:{{props?.info?.createUser}}</div>
+                    <div class="foot-row">创建时间: {{props?.info?.createTime}}</div>
                 </div>
             </div>
             <div class="operation">
@@ -40,6 +40,11 @@
 <script setup lang="ts">
     import { ref, reactive, onMounted, nextTick } from "vue";
     import { useRouter } from 'vue-router'
+    const props = defineProps({
+        info: {
+            type:Object
+        }
+    })
     const router = useRouter()
     const goback = ()=>{
         router.go(-1)
@@ -111,7 +116,7 @@
                 flex: 1;
                 .foot-row{
                     color: #909399;
-                    margin-right: 30px;
+                    margin-right: 40px;
                 }
             }
         }
