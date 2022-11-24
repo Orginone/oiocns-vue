@@ -147,7 +147,7 @@ const mainRouter: RouteRecordRaw[] = [
     },
     children: [
       {
-        path: '/service/friendApply',
+        path: '/service',
         name: 'friendApply',
         component: () => import('@/views/Service/friendApply/index.vue'),
         meta: {

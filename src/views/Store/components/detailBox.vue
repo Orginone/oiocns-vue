@@ -1,5 +1,5 @@
 <template>
-    <div class="store-detail" @click="goback">
+    <div class="store-detail">
         <i class="icon iconfont icon-jiantou-left" @click="goback()"></i>
         <div class="detail-main">
             <div class="main-wrap">

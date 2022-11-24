@@ -4,7 +4,6 @@
     <div class="content">
       <div>
         <el-menu
-          v-if="!whiteList.includes(activeIndex)"
           :default-active="flowActive"
           class="el-menu"
           style="height: 40px; padding-left: 20px; margin-bottom: 20px"
@@ -68,7 +67,7 @@
 
 <script lang="ts" setup>
   import $services from '@/services'
-  import { ref, onMounted, reactive, getCurrentInstance } from 'vue'
+  import { ref, onMounted, reactive, nextTick, getCurrentInstance } from 'vue'
   import { storeToRefs } from 'pinia'
   import { useUserStore } from '@/store/user'
   import { useRoute,useRouter } from 'vue-router'
@@ -88,7 +87,7 @@
   const { workspaceData } = storeToRefs(store)
   var tableData = ref<any>([{id:123,flowInstance:{}}])
   const diyTable = ref(null)
-  const tableHead =ref<any>(ThingServices.flowHead) ;
+  const tableHead =ref<any>(ThingServices.examineHead) ;
   const options = {
     expandAll: false,
     checkBox: false,
@@ -150,35 +149,9 @@
   const elmenus = ref(null);
   const activeName = ref('first') //商店tab
 
-  const state = reactive({
-    approvalList: [],
-    tableHead: [],
-  })
   const handleClose = (index:any) => {
     elmenus.value.open(index)
     handleSelect(activeIndex.value, [])
-  }
-  const shopClick = (tab: TabsPaneContext, event: any) => {
-    if (tab.index === '0') {
-      activeName.value = 'first'
-      searchJoinApply()
-    }
-    if (tab.index === '1') {
-      activeName.value = 'second'
-      searchPublishApply()
-    }
-    if (tab.index === '2') {
-      activeName.value = 'third'
-      searchJoinApplyManager()
-    }
-    if (tab.index === '3') {
-      activeName.value = 'four'
-      searchManagerPublishApply()
-    }
-  }
-  var getList = async () => {
-    await ThingServices.getAllApproval('0')
-    tableData.value = ThingServices.approvalList
   }
 
   var getApplyList = async () => {
@@ -186,36 +159,10 @@
     tableData.value = ThingServices.applyList
   }
 
-  //查询加入市场申请
-  var searchJoinApply = async () => {
-    await ThingServices.searchJoinApply()
-    state.approvalList =ThingServices.state.searchJoinApplyList
-    state.tableHead =ThingServices.state.searchJoinApplyHead
-  }
-  //查询加入市场审批
-  const searchJoinApplyManager = async () => {
-    await ThingServices.searchJoinApplyManager()
-    state.approvalList =ThingServices.state.searchJoinApplyManagerList
-    state.tableHead =ThingServices.state.searchJoinApplyManagerHead
-  }
-  //查询产品上架申请
-  const searchPublishApply = async () => {
-    await ThingServices.searchPublishApply()
-    state.approvalList =ThingServices.state.searchPublishApplyList
-    state.tableHead =ThingServices.state.searchPublishApplyHead
-  }
-  //查询应用上架审批
-  const searchManagerPublishApply = async () => {
-    await ThingServices.searchManagerPublishApply()
-    state.approvalList =ThingServices.state.searchManagerPublishApplyList
-    state.tableHead =ThingServices.state.searchManagerPublishApplyHead
-  }
-
   const getWflow =async () => {
     await ThingServices.queryTask()
     tableHead.value = ThingServices.flowHead;
     tableData.value =ThingServices.taskList
-    
   }
 
   const flowSelect = (key: string) => {
@@ -241,121 +188,6 @@
     }
   }
 
-  const handleNodeClick = (data: Array<any>) => {
-    console.log(data)
-  }
-  
-  //审核拒绝
-  var joinRefse = (item: { id: '' }) => {
-    ElMessageBox.confirm('确定拒绝吗？', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then( async () => {
-    const data = await ThingServices.joinRefuse(item.id)
-      if(data){
-        ElMessage({
-          message: '拒绝成功',
-          type: 'success'
-        })
-        handleSelect(activeIndex.value, [])
-      }
-    })
-  }
-  //取消申请
-  var cancelJoin = (item: { id: '' }) => {
-    ElMessageBox.confirm('确定取消吗？', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(async () => {
-     const data = await ThingServices.cancelJoin(item.id)
-      if(data){
-        ElMessage({
-          message: '取消成功',
-          type: 'success'
-        })
-        ThingServices.whiteList = [];
-        handleSelect(activeIndex.value, [])
-      }
-    })
-  }
-  //通过审核
-  var joinSuccess = (item: { id: '' }) => {
-    ElMessageBox.confirm('确定通过吗？', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then( async () => {
-     const data = await ThingServices.joinSuccess(item.id)
-      if(data){
-        ElMessage({
-          message: '添加成功',
-          type: 'success'
-        })
-        handleSelect(activeIndex.value, [])
-      }
-    })
-  }
-  //取消申请
-  const cancelApply = async (index: number) => {
-    await $services.appstore
-      .cancelJoin({
-        data: {
-          id: index
-        }
-      })
-      .then((res: ResultType) => {
-        if (res.success) {
-          ElMessage({
-            message: '取消申请成功',
-            type: 'success'
-          })
-          ThingServices.whiteList = [];
-          searchJoinApply()
-        }
-      })
-  }
-  //审批加入市场
-  const approvalSuccess = async (index: number, status: number) => {
-    await $services.appstore
-      .approvalJoin({
-        data: {
-          id: index,
-          status: status
-        }
-      })
-      .then((res: ResultType) => {
-        if (res.success) {
-          ElMessage({
-            message: '审批完成',
-            type: 'success'
-          })
-          ThingServices.whiteList = [];
-          searchJoinApplyManager()
-        }
-      })
-  }
-   //上架审批
-  const LastSuccess = async (index: number, status: number) => {
-    await $services.appstore
-      .approvalPublish({
-        data: {
-          id: index,
-          status: status
-        }
-      })
-      .then((res: ResultType) => {
-        if (res.success) {
-          ElMessage({
-            message: '审批完成',
-            type: 'success'
-          })
-          ThingServices.whiteList = [];
-          searchManagerPublishApply()
-        }
-      })
-  }
   const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
   const handleSelect = (key: any, keyPath: string[]) => {
     tableData.value = []
@@ -369,24 +201,21 @@
         }
     } else {
       getWflow();
-     
     }
   }
 
   onMounted(() => {
-    ThingServices.whiteList = [];
-    const route = useRouter();
-    const selectType = route.currentRoute.value.query.type?'1-1':'2-1';
-    let id = route.currentRoute.value.query.id;
-    activeIndex.value = '1-1';
-    if (Array.isArray(id)) {
-      activeId.value = id[0];
-    } else {
-      activeId.value = id
-    }
-    console.log('selectType', selectType);
-    
-    handleSelect(selectType, [])
+    // ThingServices.whiteList = [];
+    // const route = useRouter();
+    // const selectType = route.currentRoute.value.query.type?'1-1':'2-1';
+    // let id = route.currentRoute.value.query.id;
+    // activeIndex.value = '1-1';
+    // if (Array.isArray(id)) {
+    //   activeId.value = id[0];
+    // } else {
+    //   activeId.value = id
+    // }
+    // handleSelect(selectType, [])
   });
 
   instance?.proxy?.$Bus.on('selectBtn', (num) => {
