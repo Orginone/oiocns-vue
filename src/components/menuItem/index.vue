@@ -45,7 +45,7 @@
           <span class="sp_10" v-show="node.id === state.flag">
             <el-popover
               placement="right"
-              :width="150"
+              :width="100"
               trigger="click"
             >
               <template #reference>
@@ -57,7 +57,7 @@
             </el-popover>&nbsp;
             <el-popover
               placement="right"
-              :width="150"
+              :width="100"
               trigger="click"
             >
               <template #reference>
@@ -189,7 +189,14 @@ const handleSelect = (key: any) => {
   }
 
   .row-btn{
-    margin: 10px 0px;
+    text-align: center;
+    line-height: 27px;
+  }
+  .row-btn:hover{
+    background: #EBEEF5;
+  }
+  .row-btn:last-child{
+    margin-bottom: 0;
   }
   .custom-tree-node {
     width: 180px;

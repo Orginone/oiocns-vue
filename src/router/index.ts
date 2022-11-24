@@ -684,20 +684,12 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/store/appApply',
-        name: 'storeAppApply',
-        component: () => import('@/views/Store/appApply/index.vue'),
-        meta: {
-          title: '上架申请',
-          id: "store.appApply"
-        }
-      },
-      {
         path: '/store/putShelves',
         name: 'storePutShelves',
         component: () => import('@/views/Store/putShelves/index.vue'),
         meta: {
-          title: '应用上架'
+          title: '应用上架',
+          id: "store.put-shelves"
         }
       },
       {
@@ -734,15 +726,6 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '应用列表',
           id: "store.appList"
-        }
-      },
-      {
-        path: '/store/appApproval',
-        name: 'storeAppApproval',
-        component: () => import('@/views/Store/appApproval/index.vue'),
-        meta: {
-          title: '应用上架审批',
-          id: "store.appApproval"
         }
       },
       {

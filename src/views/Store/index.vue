@@ -1,8 +1,6 @@
 <template>
   <div class="main">
     <div class="content">
-      <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog', false)">
-      </createShop>
       <appDetail :detailDialog="dialogType.detailDialog" @closeDialog="closeDialog('detailDialog', false)"></appDetail>
       <opened></opened>
       <div class="table">
@@ -116,7 +114,6 @@
   import authority from "@/utils/authority";
   import { appstore } from "@/module/store/app";
   import opened from "./components/opened.vue";
-  import createShop from "./components/createShop.vue";
   import appDetail from "./components/appDetail.vue";
   import card from "./components/card.vue";
   import ShareComponent from "./components/shareComponents.vue";
@@ -126,7 +123,6 @@
     router.push({ path: "/store/appRegister" });
   };
   const dialogType: any = reactive({
-    createDialog: false, // 创建商店弹窗状态
     detailDialog: false, //应用详情弹窗
     cohortVisible: false, //共享弹窗
     shareVisible: false, //分享

@@ -6,7 +6,7 @@
             :style="{width:'100%'}"
             ref="diyTable"
             :hasTabs="true"
-            :tableName="'采购订单'"
+            :tableName="'订单'"
             :hasTitle="true"
             :hasTableHead="true"
             :tableData="tableData"
