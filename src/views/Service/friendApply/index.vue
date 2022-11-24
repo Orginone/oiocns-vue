@@ -31,22 +31,13 @@
           :tableHead="tableHead"
         >
           <template #productId="scope">
-            {{chat.getName(scope.row?.flowInstance?.flowRelation?.productId||scope.row?.flowTask?.flowInstance?.flowRelation?.productId||scope.row?.flowRelation?.productId)}}
+            <!-- {{chat.getName(scope.row?.team?.flowRelation?.productId||scope.row?.flowTask?.flowInstance?.flowRelation?.productId||scope.row?.flowRelation?.productId)}} -->
+          </template>
+          <template #remark="scope">
+            {{ scope.row?.team?.remark }}
           </template>
           <template #target.name="scope">
-            {{chat.getName(scope.row.createUser)}}
-          </template>
-          <template #content="scope">
-            {{scope.row?.flowInstance?.content || scope?.row?.flowTask?.flowInstance?.content || scope?.row?.content}}
-          </template>
-          <template #status="scope">
-            <div v-if="scope.row.status >= 0 && scope.row.status < 100">待批</div>
-            <div v-else-if="scope.row.status >= 100 && scope.row.status < 200">
-              <div v-if="scope.row?.flowTask?.flowNode?.nodeType=='审批'">已通过</div>
-              <div v-else-if="scope.row?.flowTask?.flowNode?.nodeType=='抄送'">已查阅</div>
-              <div v-else>已通过</div>
-            </div>
-            <div v-else>已拒绝</div>
+            {{ chat.getName(scope.row.createUser) }}
           </template>
           <template #option="scope">
             <el-dropdown>
@@ -158,6 +149,8 @@
   }
   var getList = async () => {
     await ThingServices.getAllApproval('0')
+    console.log(friendJosn);
+    
     tableData.value = friendJosn
   }
 
@@ -212,7 +205,7 @@
     //   activeId.value = id
     // }
     
-    // handleSelect(selectType, [])
+    handleSelect('1-1', [])
   });
 
   instance?.proxy?.$Bus.on('selectBtn', (num) => {

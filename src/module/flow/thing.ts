@@ -48,9 +48,9 @@ class thingServices {
      },
      {
         type: 'slot',
-        prop: 'content',
+        prop: 'remark',
         label: '说明',
-        name: 'content'
+        name: 'remark'
       },
       {
         prop: 'target.name',
