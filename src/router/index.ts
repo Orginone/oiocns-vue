@@ -735,7 +735,16 @@ const mainRouter: RouteRecordRaw[] = [
           isHidden: true,
           title: '应用创建'
         }
-      }
+      },
+      {
+        path: '/store/userManage',
+        name: 'storeUserManage',
+        component: () => import('@/views/Store/userManage/index.vue'),
+        meta: {
+          title: '人员管理',
+          id: "store.UserManage"
+        }
+      },
     ]
   },
   {

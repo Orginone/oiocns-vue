@@ -411,7 +411,7 @@
     }
 
     .content {
-      width: calc(100vw - 150px);
+      width: calc(100vw - 200px);
       display: flex;
       flex-direction: column;
       background: #f0f4f8;
@@ -426,7 +426,7 @@
       .table {
         background: #fff;
         margin-top: 3px;
-        height: calc(100vh - 250px);
+        height: calc(100vh - 260px);
 
         .btn-check {
           padding: 8px 16px;
