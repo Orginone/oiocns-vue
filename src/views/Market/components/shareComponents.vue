@@ -124,8 +124,6 @@
   import authority from '@/utils/authority'
   import { useUserStore } from '@/store/user'
   import { Application } from '@/module/store/app.ts'
-  import type { TabsPaneContext } from 'element-plus'
-  import { AnyAaaaRecord } from 'dns'
   const typePD: any = computed(() => {
     if (props.dialogType == '1') {
       return 1
@@ -137,6 +135,7 @@
       }
     }
   })
+  console.log('props',props)
   const application = new Application(props.info.id, typePD.value)
   interface Tree {
     id: string
@@ -352,8 +351,11 @@
   // 获取集团数据
   const getGroupList = async () => {
     tabs.value = await application.searchResource()
-    resource.value = tabs.value[0].id
-    await getGroupTree()
+    if(tabs.value[0]){
+      resource.value = tabs.value[0].id
+      await getGroupTree()
+    }
+   
   }
 
   const getGroupTree = async (val?: boolean) => {

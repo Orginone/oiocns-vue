@@ -192,10 +192,9 @@ const mainRouter: RouteRecordRaw[] = [
       title: '设置',
       id: "setCenter"
     },
-    redirect: '/setCenter/unit',
     children: [
       {
-        path: '/setCenter/unit',
+        path: '/setCenter',
         name: 'unit',
         component: () => import('@/views/SetCenter/unit/index.vue'),
         meta: {
@@ -245,7 +244,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '帮助中心',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.help"
         }
       },
       {
@@ -255,7 +255,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '单位首页',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.unitMain"
         }
       },
       {
@@ -265,7 +266,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '数据设置',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.data"
         }
       },
       {
@@ -275,7 +277,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '资源设置',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.resource"
         }
       },
       {
@@ -285,7 +288,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '应用设置',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.use"
         }
       },
       {
@@ -295,7 +299,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '流程设置',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.flow"
         }
       },
       {
@@ -305,7 +310,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '标准设置',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.standard"
         }
       },
       {
@@ -315,7 +321,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '权限设置',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.authority"
         }
       },
     ]
@@ -684,20 +691,12 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/store/appApply',
-        name: 'storeAppApply',
-        component: () => import('@/views/Store/appApply/index.vue'),
-        meta: {
-          title: '上架申请',
-          id: "store.appApply"
-        }
-      },
-      {
         path: '/store/putShelves',
         name: 'storePutShelves',
         component: () => import('@/views/Store/putShelves/index.vue'),
         meta: {
-          title: '应用上架'
+          title: '应用上架',
+          id: "store.put-shelves"
         }
       },
       {
@@ -737,15 +736,6 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/store/appApproval',
-        name: 'storeAppApproval',
-        component: () => import('@/views/Store/appApproval/index.vue'),
-        meta: {
-          title: '应用上架审批',
-          id: "store.appApproval"
-        }
-      },
-      {
         path: '/store/appRegister',
         name: 'storeAppRegister',
         component: () => import('@/views/Store/appRegister/index.vue'),
@@ -753,7 +743,16 @@ const mainRouter: RouteRecordRaw[] = [
           isHidden: true,
           title: '应用创建'
         }
-      }
+      },
+      {
+        path: '/store/userManage',
+        name: 'storeUserManage',
+        component: () => import('@/views/Store/userManage/index.vue'),
+        meta: {
+          title: '人员管理',
+          id: "store.UserManage"
+        }
+      },
     ]
   },
   {

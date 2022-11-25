@@ -59,6 +59,7 @@ export function createAllMenuTree() {
             id: key,
             $kind: "header",
             name: header.title,
+            title: header.title,
             icon: header.icon,
             backFlag: header.backFlag,
             children
