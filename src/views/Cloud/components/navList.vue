@@ -10,7 +10,10 @@
       @node-expand="nodeExpand"
     >
       <template #default="{ node, data }">
-        <el-icon><FolderOpened v-if="node.expanded"/><Folder v-else/></el-icon> {{ node.label }}
+        <div class="folder-node">
+          <el-icon><FolderOpened v-if="node.expanded"/><Folder v-else/></el-icon>
+          <span>{{ node.label }}</span>
+        </div>
       </template>
     </el-tree>
   </div>
@@ -76,6 +79,14 @@
       justify-content: space-between;
       .tree-text {
         font-size: 14px;
+      }
+    }
+    .folder-node {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      span {
+        margin-left: 5px;
       }
     }
   }
