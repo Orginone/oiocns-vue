@@ -3,17 +3,20 @@
 <!--    <div class="menuRight-fixed">固定在菜单上</div>-->
 <!--    <div class="menuRight-cancel">取消固定</div>-->
 <!--  </div>-->
-  <div v-show="showFileMenu" class="fileMenu" :style="{ left: left + 'px', top: top + 'px' }">
-    <div class="fileMenu-item" @click="rename">重命名</div>
-    <div class="fileMenu-item">复制</div>
-    <div class="fileMenu-item">移动</div>
-    <div class="fileMenu-item" @click="deleteFile">删除文件</div>
-  </div>
+<!--  <div v-show="showFileMenu" class="fileMenu" :style="{ left: left + 'px', top: top + 'px' }">-->
+<!--    <div class="fileMenu-item" @click="rename">重命名</div>-->
+<!--    <div class="fileMenu-item">复制</div>-->
+<!--    <div class="fileMenu-item">移动</div>-->
+<!--    <div class="fileMenu-item" @click="deleteFile">删除文件</div>-->
+    <el-card v-show="showFileMenu" class="fileMenu" :style="{ left: left + 'px', top: top + 'px' }">
+      <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div>
+    </el-card>
+<!--  </div>-->
   <div class="cloudMainBox">
     <div class="cloudBar">
       <el-space size="default">
-        <el-icon class="operateBtn" :class="{disabled: props.breadcrumb.length === 1}" @click="goBackOneStep"><Back /></el-icon>
-        <el-icon class="operateBtn" @click="refreshDirectory"><Refresh /></el-icon>
+        <el-icon title="后退" class="operateBtn" :class="{disabled: props.breadcrumb.length === 1}" @click="goBackOneStep"><Back /></el-icon>
+        <el-icon title="刷新" class="operateBtn" @click="refreshDirectory"><Refresh /></el-icon>
         <el-upload class="upload-demo"
             :action="`/orginone/anydata/Bucket/Upload?shareDomain=user&prefix=${cloud.getHistoryKey(props.breadcrumb).key}`"
             multiple
@@ -24,9 +27,9 @@
             :on-success="handleSuccess"
             :limit="3"
         >
-          <el-icon class="operateBtn"><UploadFilled /></el-icon>
+          <el-icon title="上传文件" class="operateBtn"><UploadFilled /></el-icon>
         </el-upload>
-        <el-icon class="operateBtn" @click="createFile"><FolderAdd /></el-icon>
+        <el-icon title="创建文件夹" class="operateBtn" @click="createFile"><FolderAdd /></el-icon>
       </el-space>
       <el-divider direction="vertical" />
       <div class="breadcrumb">
@@ -209,6 +212,7 @@
     left.value = event.pageX
     state.clickMenu = item
     state.onIndex = index
+    inputShow.value = false
   }
 
   const onClick = (data: any) => {
@@ -332,8 +336,6 @@
     width: 100px;
     height: 120px;
     position: absolute;
-    background-color: #fff;
-    border: 1px solid #000;
     font-size: 12px;
     z-index: 999;
     display: flex;

@@ -5,9 +5,14 @@
       :data="props.menuList"
       :props="defaultProps"
       :expand-on-click-node="false"
+      accordion
       @node-click="nodeClick"
       @node-expand="nodeExpand"
-    />
+    >
+      <template #default="{ node, data }">
+        <el-icon><FolderOpened v-if="node.expanded"/><Folder v-else/></el-icon> {{ node.label }}
+      </template>
+    </el-tree>
   </div>
 </template>
 
@@ -16,6 +21,7 @@
   import { ref, onMounted, watch } from 'vue'
   import Bucket from '@/module/cloud/bucket'
   import { encodeURIString } from '../conversion'
+  import ObjectLay from "@/module/store/objectlay";
   interface Tree {
     label: string
     children?: Tree[]
@@ -27,21 +33,25 @@
     }
   })
   const treeRef = ref(null)
-  const emit = defineEmits(['changeCurrentLocation'])
+  const emit = defineEmits(['changeCurrentLocation', 'gotoBTM'])
 
   defineExpose({ treeRef })
 
   const defaultProps = {
     children: 'children',
-    label: 'Name'
+    label: 'Name',
   }
-  const nodeClick = (data: Tree, item: any, treenode: any, event: any) => {
-    data.level = item.level
-    emit('changeCurrentLocation', data)
+  const nodeClick = (data: ObjectLay, item: any, treenode: any, event: any) => {
+    //data.Meta.level = item.level || 0
+    console.log(data, item, treenode)
+    if(item.level == 1) {
+      emit('gotoBTM')
+    } else {
+      emit('changeCurrentLocation', data.Meta)
+    }
   }
   const nodeExpand = async (data: any, node: any, nodeData: any) => {
-    data.children = await Bucket.GetLeftTree(data.Key)
-    console.log('dianji', data)
+    data.children = await Bucket.GetLeftTree(data)
   }
 </script>
 <style lang="scss">

@@ -1,6 +1,6 @@
 <template>
   <div class="cloud">
-    <NavList ref="navRef" :menuList="state.cloudMenu"></NavList>
+    <NavList ref="navRef" :menuList="state.cloudMenu" @changeCurrentLocation="changeCurrentLocation" @gotoBTM="gotoBTM"></NavList>
     <CloudMain
       @createFile="createFile"
       @gotoBTM="gotoBTM"
@@ -76,8 +76,6 @@
   }
   // 点击菜单
   const changeCurrentLocation = async (data: any, type: string) => {
-    console.log('点击的data', data)
-
     if (data.key == '') {
       state.cloudData = cloud.cloud.get('default')
     } else {
@@ -114,7 +112,7 @@
     state.cloudMenu.push(Bucket.Root)
     //默认打开根路径
     const res = await cloud.bucketObjects({shareDomain: 'user', key: ''}, true)
-    changeCurrentLocation({key: '', name: '主文件夹', level: 0}, null)
+    changeCurrentLocation({key: '', name: '我的云盘', level: 0}, null)
     handleCloudMenu([state.breadcrumb[state.breadcrumb.length - 1]], res)
   })
 </script>
