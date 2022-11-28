@@ -1,8 +1,6 @@
 <template>
   <div class="main">
     <div class="content">
-      <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog', false)">
-      </createShop>
       <appDetail :detailDialog="dialogType.detailDialog" @closeDialog="closeDialog('detailDialog', false)"></appDetail>
       <opened></opened>
       <div class="table">
@@ -56,7 +54,7 @@
                     @click="handleCommand('own', 'share', scope.row)">
                     共享</el-dropdown-item>
                   <el-dropdown-item link type="primary" v-if="authority.IsCompanySpace()"
-                    @click="dialogType.cohortVisible = true">分配
+                  @click="handleCommand('own', 'distribution', scope.row)">分配
                   </el-dropdown-item>
                   <el-dropdown-item link type="primary" @click="goDetail(scope.row.id)">
                     查看详情
@@ -116,7 +114,6 @@
   import authority from "@/utils/authority";
   import { appstore } from "@/module/store/app";
   import opened from "./components/opened.vue";
-  import createShop from "./components/createShop.vue";
   import appDetail from "./components/appDetail.vue";
   import card from "./components/card.vue";
   import ShareComponent from "./components/shareComponents.vue";
@@ -126,7 +123,6 @@
     router.push({ path: "/store/appRegister" });
   };
   const dialogType: any = reactive({
-    createDialog: false, // 创建商店弹窗状态
     detailDialog: false, //应用详情弹窗
     cohortVisible: false, //共享弹窗
     shareVisible: false, //分享
@@ -343,22 +339,23 @@
     item: any
   ) => {
     selectProductItem.value = item;
-    switch (command) {
-      case "share":
+    console.log('selectProductItem',selectProductItem.value)
+    switch (command) { 
+      case "share": //分享
         openShareDialog();
         break;
-      case "putaway":
-        router.push({
+      case "putaway": //上架
+        router.push({ 
           path: "/store/putShelves",
           query: { name: item.name, id: item.id, typeName: item.typeName },
         });
         break;
       case "unsubscribe":
         break;
-      case "distribution":
-        dialogType.cohortVisible.value = true;
+      case "distribution": //分配
+        dialogType.cohortVisible = true;
         break;
-      case "detail":
+      case "detail": //详情
         break;
       default:
         break;
@@ -414,7 +411,7 @@
     }
 
     .content {
-      width: calc(100vw - 150px);
+      width: calc(100vw - 200px);
       display: flex;
       flex-direction: column;
       background: #f0f4f8;
@@ -429,7 +426,7 @@
       .table {
         background: #fff;
         margin-top: 3px;
-        height: calc(100vh - 250px);
+        height: calc(100vh - 260px);
 
         .btn-check {
           padding: 8px 16px;
