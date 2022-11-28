@@ -206,7 +206,11 @@
           {
             "label": "商店(加入)",
             "id": "1",
-            "children":addList
+            "children":addList,
+            "btns":[{
+                "name":"加入商店",
+                "id":"1025"
+            }]
           },
         ]
     }

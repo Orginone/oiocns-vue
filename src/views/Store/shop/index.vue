@@ -62,7 +62,7 @@
       </div>
     </div>
     <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog', false)"/>
-
+    <addShop :createDialog="dialogType.addDialog" @closeDialog="closeDialog('addDialog', false)"/>
   </div>
   
 </template>
@@ -76,6 +76,7 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { appstore } from '@/module/store/app'
   import createShop from "../components/createShop.vue";
+  import addShop from "../components/addShop.vue";
   import marketServices from "@/module/store/market"
 
   const diyTable = ref(null)
@@ -98,6 +99,7 @@
   ]
   const dialogType: any = reactive({
     createDialog: false, // 创建商店弹窗状态
+    addDialog:false,//加入商店弹窗
     detailDialog: false, // 基础详情弹窗状态
   });
   interface ListItem {
@@ -278,8 +280,6 @@ const buyThings = (item:any) => {
     })
   })
   const getShopData = () => {
-    console.log('1')
-
     $services.appstore
       .merchandise({
         data: {
@@ -299,7 +299,6 @@ const buyThings = (item:any) => {
     if(router.currentRoute.value.query?.id){
       getShopData();
     }else{
-      console.log('2')
       getAppList()
     }
   })
@@ -312,6 +311,8 @@ const buyThings = (item:any) => {
       router.push({path:'/store/userManage',query:{data:router.currentRoute.value.query.id}})
     }else if(num == '1023'){
       // dialogType.detailDialog = true;
+    }else if(num == '1025'){
+      dialogType.addDialog = true;
     }
   });
 </script>
