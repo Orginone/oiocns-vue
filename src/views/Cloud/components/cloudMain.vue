@@ -3,16 +3,13 @@
 <!--    <div class="menuRight-fixed">固定在菜单上</div>-->
 <!--    <div class="menuRight-cancel">取消固定</div>-->
 <!--  </div>-->
-<!--  <div v-show="showFileMenu" class="fileMenu" :style="{ left: left + 'px', top: top + 'px' }">-->
-<!--    <div class="fileMenu-item" @click="rename">重命名</div>-->
-<!--    <div class="fileMenu-item">复制</div>-->
-<!--    <div class="fileMenu-item">移动</div>-->
-<!--    <div class="fileMenu-item" @click="deleteFile">删除文件</div>-->
-    <el-card v-show="showFileMenu" class="fileMenu" :style="{ left: left + 'px', top: top + 'px' }">
-      <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div>
-    </el-card>
-<!--  </div>-->
-  <div class="cloudMainBox">
+  <el-card v-show="showFileMenu" class="fileMenu" :style="{ left: left + 'px', top: top + 'px' }">
+    <div class="text fileMenu-item" @click="rename">重命名</div>
+    <div class="text fileMenu-item">复制</div>
+    <div class="text fileMenu-item">移动</div>
+    <div class="text fileMenu-item" @click="deleteFile">删除文件</div>
+  </el-card>
+  <div class="cloudMainBox" @click="onContent">
     <div class="cloudBar">
       <el-space size="default">
         <el-icon title="后退" class="operateBtn" :class="{disabled: props.breadcrumb.length === 1}" @click="goBackOneStep"><Back /></el-icon>
@@ -46,7 +43,7 @@
       </div>
     </div>
     <div class="cloudFiles">
-      <div class="content" @contextmenu.prevent="rightClick($event)" @click="onContent">
+      <div class="content" @contextmenu.prevent="rightClick($event)">
         <div
             class="content-box"
             :style="state.onIndex == index || isFile == index ? 'background: #f8f7f9' : ''"
@@ -207,12 +204,15 @@
   }
 
   const contentClick = (event: any, item: any, index: number) => {
-    showFileMenu.value = true
-    top.value = event.pageY - 40
+    showFileMenu.value = false
+    top.value = event.pageY - 60
     left.value = event.pageX
     state.clickMenu = item
     state.onIndex = index
     inputShow.value = false
+    setTimeout(() => {
+      showFileMenu.value = true
+    }, 200)
   }
 
   const onClick = (data: any) => {
@@ -275,6 +275,12 @@
     window.removeEventListener('click', clickother)
   })
 </script>
+<style lang="scss">
+  .el-card__body {
+    padding: 0;
+    width: 100%;
+  }
+</style>
 <style lang="scss" scoped>
   :deep(.el-input) {
     width: 80%;
@@ -340,7 +346,7 @@
     z-index: 999;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     cursor: pointer;
 
@@ -412,7 +418,6 @@
     .content {
       display: flex;
       width: 100%;
-      height: 100vh;
       flex-wrap: wrap;
       overflow: auto;
       padding-bottom: 60px;
@@ -425,6 +430,8 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        margin-right: 5px;
+        margin-bottom: 5px;
         &:hover {
           background-color: #f8f7f9;
         }
