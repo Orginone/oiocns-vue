@@ -505,9 +505,9 @@ const closeDialog = (data: { value: boolean }) => {
 }
 // 获取共享仓库信息
 const getMarketInfo = async() => {
-await marketServices.getPublicStore()
-      store.softShareInfo=marketServices.PUBLIC_STORE
-      software.value = marketServices.PUBLIC_STORE.id
+// await marketServices.getPublicStore()
+      // store.softShareInfo=marketServices.PUBLIC_STORE
+      // software.value = marketServices.PUBLIC_STORE.id
 
 }
 // 复制商店编码

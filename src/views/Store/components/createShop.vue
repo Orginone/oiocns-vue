@@ -79,7 +79,6 @@ const emit = defineEmits([
 ])
 
 const closeDialog = (type:boolean)=>{
-  console.log('aaa')
   emit('closeDialog', type)
 }
 const createShop = async (formEl: FormInstance | undefined) =>{

@@ -56,13 +56,13 @@
             </el-dropdown>
           </template>
           <template #slot-card>
-            <card></card>
+            <card :data="state.myAppList"></card>
           </template>
         </diytab>
       </div>
     </div>
     <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog', false)"/>
-    <addShop :createDialog="dialogType.addDialog" @closeDialog="closeDialog('addDialog', false)"/>
+    <addShop :addDialog="dialogType.addDialog" @closeDialog="closeDialog('addDialog', false)"/>
   </div>
   
 </template>
@@ -78,7 +78,6 @@
   import createShop from "../components/createShop.vue";
   import addShop from "../components/addShop.vue";
   import marketServices from "@/module/store/market"
-
   const diyTable = ref(null)
   const valuee = ref<any>('');
   const instance = getCurrentInstance();

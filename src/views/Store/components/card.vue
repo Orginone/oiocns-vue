@@ -1,22 +1,20 @@
 <template>
   <div class="card-list">
-    <div class="card-item" v-for="(item, index) in 2" :key="index">
+    <div class="card-item" v-for="(item, index) in props.data" :key="index">
       <div class="item-head">
         <div class="item-img">人</div>
         <div class="item-head-content">
           <p>
-            <span>应用名称 <el-tag class="ml-2" type="success">免费</el-tag></span>
+            <span>{{item?.caption}}
+               <!-- <el-tag class="ml-2" type="success">免费</el-tag> -->
+            </span>
             <el-dropdown>
               <span class="el-dropdown-link drop-list"> ··· </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="showDiong">打开</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">详情</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">管理</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">上架</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">共享</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">分配</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">暂存</el-dropdown-item>
+                  <el-dropdown-item @click="requireItem">查看详情</el-dropdown-item>
+                  <el-dropdown-item @click="joinShopCar(scope.row.id)">加入购物车</el-dropdown-item>
+                  <el-dropdown-item @click="buyThings(scope.row)">购买</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -36,33 +34,19 @@
 </template>
 
 <script setup lang="ts">
-import diytab from "@/components/diyTable/index.vue";
-import opened from "./components/opened.vue";
 import { ref, reactive, onMounted, nextTick } from "vue";
-const dialogVisible = ref<boolean>(true);
-const diyTable = ref(null);
+
 // 表格展示数据
 const pageStore = reactive({
   currentPage: 1,
   pageSize: 20,
   total: 0,
 });
-const tableData = ref([
-  {
-    paymentType: "线上",
-    price: "100",
-    status: "200",
-    createTime: "2022-11-01 16:01",
+const props = defineProps({
+  data: {
+    type:Array
   },
-]);
-const activeName = ref<string>(); //table tab index
-const tableActiveIndex = ref<string>(); //table nav index
-const handleSelect = () => {
-  console.log("index");
-};
-const handleClick = (key?: any) => {
-  console.log(key);
-};
+})
 
 interface ListItem {
   code: string;
@@ -76,58 +60,8 @@ onMounted(() => {
   remoteMethod();
 });
 const remoteMethod = () => {};
+const requireItem = () => {}
 
-const handleUpdate = (page: any) => {
-  pageStore.currentPage = page.currentPage;
-  pageStore.pageSize = page.pageSize;
-  remoteMethod();
-};
-const checkList = reactive<any>([]);
-const selectionChange = (val: any) => {
-  checkList.value = val;
-};
-
-const tableHead = ref([
-  {
-    prop: "paymentType",
-    label: "付款方式",
-  },
-  {
-    prop: "price",
-    label: "价格",
-    name: "price",
-  },
-  {
-    prop: "status",
-    label: "状态",
-    name: "status",
-  },
-  {
-    prop: "createTime",
-    label: "创建时间",
-    name: "createTime",
-  },
-  {
-    type: "slot",
-    label: "操作",
-    fixed: "right",
-    align: "center",
-    width: "150",
-    name: "operate",
-  },
-]);
-const options = ref<any>({
-  checkBox: false,
-  order: true,
-  selectLimit: 1,
-  defaultSort: { prop: "createTime", order: "descending" },
-  treeProps: {
-    children: "children",
-    hasChildren: "hasChildren",
-  },
-});
-const showDiong = () => {};
-const commontActive = () => {};
 </script>
 <style lang="scss">
 .drop-link {

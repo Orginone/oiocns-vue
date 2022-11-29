@@ -133,11 +133,11 @@ class MarketServices {
    * @return {*}
    */
   public async getPublicStore() {
-    const { success, data } = await API.market.getSoftShareInfo()
-    if (success) {
-      const { id } = data
-      this.PUBLIC_STORE = data
-    }
+    // const { success, data } = await API.market.getSoftShareInfo()
+    // if (success) {
+    //   const { id } = data
+    //   this.PUBLIC_STORE = data
+    // }
   }
 }
 const marketServices = new MarketServices()
