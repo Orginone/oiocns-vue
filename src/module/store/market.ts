@@ -92,7 +92,7 @@ class MarketServices {
     remark: string
     public: boolean
   }) {
-    const { success } = await API.appstore.updateMarket({
+    const { success } = await API.market.updateMarket({
       data: params
     })
     if (success) {
@@ -100,7 +100,7 @@ class MarketServices {
     }
   }
   /**
-   * @desc: 删除 管理的市场
+   * @desc: 删除 管理的市场 
    * @param {string} id 市场id
    * @return {*}
    */
@@ -133,11 +133,11 @@ class MarketServices {
    * @return {*}
    */
   public async getPublicStore() {
-    const { success, data } = await API.market.getSoftShareInfo()
-    if (success) {
-      const { id } = data
-      this.PUBLIC_STORE = data
-    }
+    // const { success, data } = await API.market.getSoftShareInfo()
+    // if (success) {
+    //   const { id } = data
+    //   this.PUBLIC_STORE = data
+    // }
   }
 }
 const marketServices = new MarketServices()

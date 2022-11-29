@@ -13,6 +13,7 @@
   "dependencies": {
     "@kangc/v-md-editor": "^2.3.15",
     "@microsoft/signalr": "^6.0.7",
+    "@msgpack/msgpack": "^2.8.0",
     "@types/qrcode": "^1.5.0",
     "@wcjiang/notify": "^2.1.0",
     "@yzfe/svgicon": "1.0.1",

@@ -68,3 +68,68 @@ export function createAllMenuTree() {
     }
     return allMenu;
 }
+
+
+export function findMenu(route: RouteLocationNormalizedLoaded, allMenuItems: MenuDataItem[]) {
+  const id = route.meta.id;
+  if (!id) {
+    console.warn(`路由 ${route.fullPath} 没有id！`);
+    return null;
+  }
+  const matched = allMenuItems.find(m => m.id == id);
+  if (!matched) {
+    console.warn(`路由 ${route.fullPath} 没有对应的菜单！`);
+    return null;
+  }
+
+  let current = matched;
+  do {
+    if (!current.parentId) {
+      break;
+    }
+    const parent = allMenuItems.find(m => m.id == current.parentId);
+    if (!parent) {
+      console.warn(`找不到菜单 ${current.name} 的父级！`);
+      return null;
+    }
+    current = parent;
+  } while (current);
+
+  if (current.$kind != "header") {
+    console.warn(`找到的顶级菜单 ${current.name} 是子菜单项！`);
+    return null;
+  }
+  return {
+    matched,
+    top: current
+  };
+}
+
+export function findParent(route: RouteLocationNormalizedLoaded, allMenuItems: MenuDataItem[]) {
+  const id = route.meta.id;
+  if (!id) {
+    console.warn(`路由 ${route.fullPath} 没有id！`);
+    return null;
+  }
+  const matched = allMenuItems.find(m => m.id == id);
+  if (!matched) {
+    console.warn(`路由 ${route.fullPath} 没有对应的菜单！`);
+    return null;
+  }
+
+  if (!matched.parentId) {
+    console.warn(`路由 ${route.fullPath} 是顶级菜单！`);
+    return null;
+  }
+
+  const parent = allMenuItems.find(m => m.id == matched.parentId);
+  if (!parent) {
+    console.warn(`找不到菜单 ${matched.name} 的父级！`);
+    return null;
+  }
+
+  return {
+    matched,
+    parent
+  };
+}
