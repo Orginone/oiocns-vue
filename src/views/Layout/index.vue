@@ -117,7 +117,10 @@
         }
       }
     }
-
+    if(router.currentRoute.value.path.indexOf('store') != -1){    
+      storeFun()
+      return;
+    }
     const ret = findMenu(router.currentRoute.value);
     if (!ret) {
       showMenu.value = false;
@@ -158,10 +161,6 @@
               "name":"用户管理",
               "id":"1022"
           }
-          // ,{
-          //     "name":"基础详情",
-          //     "id":"1023"
-          // }
         ]})
       }else{
         // TODO 暂时文字匹配开放市场，不显示在商店加入列表里
@@ -173,10 +172,6 @@
               "name":"用户管理",
               "id":"1022"
           }
-          // ,{
-          //     "name":"基础详情",
-          //     "id":"1023"
-          // }
         ]})
         }
       }
@@ -224,10 +219,8 @@
   // store 路由设置
   const storeFun =()=>{
     if(router.currentRoute.value.path.indexOf('store/shop') != -1){
-      console.log('1')
       getShopList();
     }else{
-      console.log('2')
       showMenu.value = true;
       titleArr.state = storeJosn[0]
       menuArr.state = storeJosn
@@ -280,10 +273,10 @@
   getNavData2();
 
   watch(() => router.currentRoute.value.path, () => {
-    // nextTick(() => {
+    nextTick(() => {
       // getNav();
       getNavData2();
-    // })
+    })
   })
 
   onBeforeMount(async () => {
