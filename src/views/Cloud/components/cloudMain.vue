@@ -1,90 +1,78 @@
 <template>
-  <div v-show="visible" class="menuRight" :style="{ left: left + 'px', top: top + 'px' }">
-    <div class="menuRight-fixed">固定在菜单上</div>
-    <div class="menuRight-cancel">取消固定</div>
-  </div>
-  <div v-show="visible2" class="fileMenu" :style="{ left: left + 'px', top: top + 'px' }">
-    <div class="fileMenu-item" @click="rename">重命名</div>
-    <div class="fileMenu-item">复制</div>
-    <div class="fileMenu-item">移动</div>
-    <div class="fileMenu-item" @click="deleteFile">删除文件</div>
-  </div>
-  <div class="cloudMainBox">
-    <div class="breadcrumb">
-      <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item
-          v-for="(item, index) in props.breadcrumb"
-          :to="{}"
-          :key="index"
-          @click="goBack(item, index)"
+<!--  <div v-show="visible" class="menuRight" :style="{ left: left + 'px', top: top + 'px' }">-->
+<!--    <div class="menuRight-fixed">固定在菜单上</div>-->
+<!--    <div class="menuRight-cancel">取消固定</div>-->
+<!--  </div>-->
+  <el-card v-show="showFileMenu" class="fileMenu" :style="{ left: left + 'px', top: top + 'px' }">
+    <div class="text fileMenu-item" @click="rename">重命名</div>
+    <div class="text fileMenu-item">复制</div>
+    <div class="text fileMenu-item">移动</div>
+    <div class="text fileMenu-item" @click="deleteFile">删除文件</div>
+  </el-card>
+  <div class="cloudMainBox" @click="onContent">
+    <div class="cloudBar">
+      <el-space size="default">
+        <el-icon title="后退" class="operateBtn" :class="{disabled: props.breadcrumb.length === 1}" @click="goBackOneStep"><Back /></el-icon>
+        <el-icon title="刷新" class="operateBtn" @click="refreshDirectory"><Refresh /></el-icon>
+        <el-upload class="upload-demo"
+            :action="`/orginone/anydata/Bucket/Upload?shareDomain=user&prefix=${cloud.getHistoryKey(props.breadcrumb).key}`"
+            multiple
+            ref="uploadRef"
+            :show-file-list="false"
+            :headers="state.uploadHeaders"
+            :before-upload="beforeUpload"
+            :on-success="handleSuccess"
+            :limit="3"
         >
-          {{ item.name }}
-        </el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
-    <div class="topBtn">
-      <el-upload
-        class="upload-demo"
-        :action="
-          '/orginone/anydata/Bucket/Upload?shareDomain=' +
-          '&key=' +
-          cloud.getHistoryKey(props.breadcrumb).key
-        "
-        multiple
-        ref="uploadRef"
-        :show-file-list="false"
-        :headers="state.uploadHeaders"
-        :before-upload="beforeUpload"
-        :on-success="handleSuccess"
-        :limit="3"
-      >
-        <el-button style="margin: 20px 0px 0 20px" type="primary"
-          ><el-icon><UploadFilled /></el-icon>上传</el-button
-        >
-      </el-upload>
-      <el-button @click="createFile" style="margin: 20px 0px 0 20px" type="primary" plain
-        ><el-icon><FolderAdd /></el-icon>新建文件夹</el-button
-      >
-    </div>
-    <div class="content" @contextmenu.prevent="rightClick($event)" @click="onContent">
-      <div
-        class="content-box"
-        :style="state.onIndex == index || isFile == index ? 'background:rgb(218,245,255)' : ''"
-        v-for="(item, index) in state.fileList"
-        :key="item"
-        @click.stop="onClick(index)"
-        @dblclick.stop="doubleClick(item)"
-        @contextmenu.prevent.stop="contentClick($event, item, index)"
-      >
-        <div v-if="state.onIndex == index || isFile == index" class="elCircle"></div>
-        <el-icon v-if="isFile == index" @click.stop="addFile" class="right"
-          ><CircleCheckFilled
-        /></el-icon>
-        <el-icon v-if="isFile == index" @click.stop="cancelFile" class="filled"
-          ><CircleCloseFilled
-        /></el-icon>
-        <el-icon class="elUpload" v-if="item.isDirectory"><Folder /></el-icon>
-        <el-icon class="elUpload" v-else><Document /></el-icon>
-        <div v-if="(inputShow && state.onIndex == index) || isFile == index" class="elUpload-text">
-          <el-input ref="inpRef" v-model="fileName" />
-        </div>
-        <div v-else-if="state.onIndex !== index" class="elUpload-text">{{ item.name }}</div>
-        <div v-else-if="!inputShow && state.onIndex == index" class="elUpload-text">{{
-          item.name
-        }}</div>
+          <el-icon title="上传文件" class="operateBtn"><UploadFilled /></el-icon>
+        </el-upload>
+        <el-icon title="创建文件夹" class="operateBtn" @click="createFile"><FolderAdd /></el-icon>
+      </el-space>
+      <el-divider direction="vertical" />
+      <div class="breadcrumb">
+        <el-breadcrumb>
+          <el-breadcrumb-item
+              v-for="(item, index) in props.breadcrumb"
+              :to="{}"
+              :key="index"
+              @click="goBack(item, index)"
+          >
+            {{ item.name }}
+          </el-breadcrumb-item>
+        </el-breadcrumb>
       </div>
-      <i class="content-i" v-for="item in 99" :key="item"></i>
+    </div>
+    <div class="cloudFiles">
+      <div class="content" @contextmenu.prevent="rightClick($event)">
+        <div
+            class="content-box"
+            :style="state.onIndex == index || isFile == index ? 'background: #f8f7f9' : ''"
+            v-for="(item, index) in state.fileList"
+            :key="item"
+            @click.stop="onClick(item)"
+            @contextmenu.prevent.stop="contentClick($event, item, index)"
+        >
+          <el-icon v-if="isFile == index" @click.stop="cancelFile" class="filled"><CircleCloseFilled/></el-icon>
+          <file-icon :file-item="item"></file-icon>
+          <div v-if="(inputShow && state.onIndex == index) || isFile == index" class="elUpload-text">
+            <el-input ref="inpRef" v-model="fileName" @blur="addFile"/>
+          </div>
+          <div v-else-if="state.onIndex !== index" class="elUpload-text">{{ item.name }}</div>
+          <div v-else-if="!inputShow && state.onIndex == index" class="elUpload-text">{{ item.name }}</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { ArrowRight } from '@element-plus/icons-vue'
   import { reactive, ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { useUserStore } from '@/store/user'
   import { encodeURIString } from '../conversion'
+  import FileIcon from './fileIcon.vue'
   import Cloud from '@/module/cloud/operation'
+  import * as _ from 'lodash'
   import type { UploadProps } from 'element-plus'
   import API from '@/services'
   const store = useUserStore()
@@ -117,31 +105,32 @@
   const fileName = ref<string | number>('')
   const inputShow = ref<boolean>(false)
   const visible = ref<boolean>(false)
-  const visible2 = ref<boolean>(false)
+  const showFileMenu = ref<boolean>(false)
   const isFile = ref<number>(null)
   const left = ref<number>(0)
   const top = ref<number>(0)
   const inpRef = ref(null)
   const renameValue = ref<boolean>(false)
   const uploadRef = ref(null)
-  type Cloud = {
+  type CloudProps = {
     cloudData: any
     breadcrumb: any
   }
-  const props = defineProps<Cloud>()
+  const props = defineProps<CloudProps>()
 
   const emit = defineEmits([
     'createFile',
     'gotoBTM',
     'gotoBack',
     'changeCurrentLocation',
-    'uploadList'
+    'uploadList',
+    'refreshDirectory'
   ])
 
   watch(
     () => props.cloudData,
     (val, old) => {
-      state.fileList = JSON.parse(JSON.stringify(props.cloudData))
+      state.fileList = _.cloneDeep(props.cloudData)
       fileName.value = ''
       isFile.value = null
       if (state.fileList[state.fileList.length - 1]?.key == '') {
@@ -151,10 +140,13 @@
   )
   const handleSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
     emit('uploadList')
+    if(response.success) {
+      ElMessage({type: 'success', message: '文件上传成功'})
+    }
   }
   const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
     // uploadRef.value.clearFiles()
-    state.params.shareDomain = ''
+    state.params.shareDomain = 'user'
     state.params.key = encodeURIString(rawFile.name)
     return true
   }
@@ -165,11 +157,17 @@
       emit('gotoBack', item)
     }
   }
+  const goBackOneStep = () => {
+    if(props.breadcrumb.length === 1) {
+      return false
+    }
+    emit('gotoBack', props.breadcrumb[props.breadcrumb.length - 2])
+  }
   const addFile = async () => {
     if (fileName.value == '') {
       ElMessage({
         type: 'warning',
-        message: '文件名不能为空'
+        message: '文件夹名称不能为空'
       })
       state.fileList.pop()
       return
@@ -177,13 +175,11 @@
     inputShow.value = false
     state.onIndex = null
     let params = {
-      shareDomain: '',
+      shareDomain: 'user',
       prefix: cloud.getHistoryKey(props.breadcrumb, fileName.value).key
     }
     const res = await API.bucket.bucketCreate({ params: params })
     if (res.success) {
-      // 创建时 暂时选择最后一位
-      state.fileList[state.fileList.length - 1].key = fileName.value
       emit('createFile')
       fileName.value = ''
     }
@@ -191,36 +187,38 @@
   const cancelFile = () => {
     state.fileList.pop()
     isFile.value = null
+    state.onIndex = null
+    inputShow.value = false
   }
 
   const onContent = () => {
-    visible2.value = false
+    showFileMenu.value = false
     state.onIndex = null
   }
 
   const rightClick = (event: any) => {
     visible.value = true
-    visible2.value = false
+    showFileMenu.value = false
     top.value = event.pageY - 40
     left.value = event.pageX
   }
 
   const contentClick = (event: any, item: any, index: number) => {
-    visible2.value = true
-    top.value = event.pageY - 40
+    showFileMenu.value = false
+    top.value = event.pageY - 60
     left.value = event.pageX
     state.clickMenu = item
     state.onIndex = index
-  }
-
-  const onClick = (index: number) => {
-    visible.value = false
-    visible2.value = false
     inputShow.value = false
-    state.onIndex = index
+    setTimeout(() => {
+      showFileMenu.value = true
+    }, 200)
   }
 
-  const doubleClick = (data: any) => {
+  const onClick = (data: any) => {
+    if(!data.isDirectory) {
+      return false
+    }
     emit('changeCurrentLocation', data, 'file')
   }
 
@@ -230,7 +228,7 @@
 
   const createFile = () => {
     state.fileList.push({
-      shareDomain: '',
+      shareDomain: 'user',
       key: '',
       isDirectory: true
     })
@@ -242,7 +240,7 @@
   const rename = async () => {
     inputShow.value = true
     renameValue.value = true
-    visible2.value = false
+    showFileMenu.value = false
     nextTick(() => {
       inpRef.value[0].focus()
     })
@@ -250,7 +248,7 @@
 
   const deleteFile = async () => {
     let params = {
-      shareDomain: '',
+      shareDomain: 'user',
       key: encodeURIString(state.clickMenu.name)
     }
     const res = await API.bucket.bucketDelete({ params: params })
@@ -262,18 +260,27 @@
     }
   }
 
+  //刷新当前目录
+  const refreshDirectory = async () => {
+    emit('refreshDirectory')
+  }
+
   onMounted(() => {
     nextTick(() => {
       state.fileList = props.cloudData
-      console.log('444444444', state.fileList)
     })
-
     window.addEventListener('click', clickother)
   })
   onUnmounted(() => {
     window.removeEventListener('click', clickother)
   })
 </script>
+<style lang="scss">
+  .el-card__body {
+    padding: 0;
+    width: 100%;
+  }
+</style>
 <style lang="scss" scoped>
   :deep(.el-input) {
     width: 80%;
@@ -287,39 +294,59 @@
   }
   .filled {
     position: absolute;
-    color: rgb(175, 221, 255);
-    right: 30px;
+    color: var(--el-color-danger);
+    right: 10px;
     top: 5px;
     z-index: 99;
+    font-size: 18px;
   }
-  .breadcrumb {
-    height: 40px;
-    width: 100%;
-    background-color: #fff;
-    padding-left: 20px;
-    padding-top: 20px;
+  .cloudBar {
+    margin: 0 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     border-bottom: 1px solid #eee;
-    padding-bottom: 30px;
+    height: 40px;
+    box-sizing: border-box;
+    .operateBtn {
+      cursor: pointer;
+      font-size: 20px;
+      color: var(--el-color-primary);
+      &.disabled {
+        cursor: no-drop;
+        color: var(--el-disabled-text-color)
+      }
+    }
+    .upload-demo {
+      display: flex;
+      align-items: center;
+    }
+    .breadcrumb {
+      width: auto;
+    }
   }
+
   .elUpload-text {
     display: flex;
     justify-content: center;
+    color: var(--el-text-color-regular);
+    font-size: var(--el-font-size-base);
   }
   .cloudMainBox {
     width: 100%;
     height: 100%;
+    border-left: 1px solid #eee;
+    background-color: #fff;
   }
   .fileMenu {
     width: 100px;
     height: 120px;
     position: absolute;
-    background-color: #fff;
-    border: 1px solid #000;
     font-size: 12px;
     z-index: 999;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     cursor: pointer;
 
@@ -383,38 +410,33 @@
       margin-top: 5px;
     }
   }
-  .topBtn {
-    display: flex;
-    width: 100%;
-    height: 40px;
-    background-color: #fff;
-  }
-  .content {
-    display: flex;
-    background: #fff;
-    width: 100%;
-    height: 100vh;
-    border-left: 1px solid #eee;
+  .cloudFiles {
     padding: 20px;
     display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    overflow: auto;
-    padding-bottom: 60px;
-    &-i {
-      width: 150px;
-    }
-    &-box {
-      position: relative;
-      cursor: pointer;
-      width: 150px;
-      height: 150px;
+    flex-direction: column;
+    background: #fff;
+    .content {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      &:hover {
-        background-color: rgb(242, 250, 255);
+      width: 100%;
+      flex-wrap: wrap;
+      overflow: auto;
+      padding-bottom: 60px;
+      &-box {
+        position: relative;
+        cursor: pointer;
+        width: 150px;
+        height: 150px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        &:hover {
+          background-color: #f8f7f9;
+        }
       }
     }
   }
+
 </style>

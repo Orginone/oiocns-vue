@@ -33,18 +33,20 @@ class Bucket {
    * 获取左侧目录树
    * @returns 目录树结构
    */
-  public GetLeftTree = async (key: string) => {
+  public GetLeftTree = async (data: any) => {
+    //设置Current
+    this.Current = data
     let children
-    if (this.expand.includes(key)) {
-      children = this.GetExpandTree(key, false)
+    if (this.expand.includes(data.Key)) {
+      children = this.GetExpandTree(false)
     } else {
-      this.expand.push(key)
-      children = this.GetExpandTree(key, true)
+      this.expand.push(data.Key)
+      children = this.GetExpandTree(true)
     }
     return children
   }
-  public GetExpandTree = async (key: string, refresh: boolean) => {
-    let arr = await this.Current.GetChildren(refresh, key)
+  public GetExpandTree = async (refresh: boolean) => {
+    let arr = await this.Current.GetChildren(refresh)
     let children: any[] = []
     arr.forEach((el: any) => {
       if (el.HasSubDirectories) {
@@ -67,7 +69,6 @@ class Bucket {
    */
   public GetContent = async () => {
     let children = await this.Current.GetChildren()
-    console.log(children)
   }
 }
 
