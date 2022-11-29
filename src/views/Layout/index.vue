@@ -49,7 +49,7 @@
   import authority from '@/utils/authority'
   import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick} from 'vue'
   import { RouteLocationNormalizedLoaded, useRouter } from 'vue-router';
-  // import storeJosn from './json/store.json';
+  import storeJosn from './json/store.json';
   // import settingJosn from './json/setting.json';
   import setTree from './json/setTree.json';
   // import detailJosn from './json/detail.json';
@@ -96,7 +96,9 @@
         }
       }
     }
-
+    if(router.currentRoute.value.path.indexOf('store') != -1){    
+        storeFun()
+    }
     const ret = findMenu(router.currentRoute.value, allMenuItems.value);
     if (!ret) {
       showMenu.value = false;
@@ -120,98 +122,93 @@
   });
   const showMenu = ref<boolean>(true);
   // 获取我的商店列表
-  // const getShopList = async ()=>{
-  //   await marketServices.getMarketList({
-  //     offset: 0,
-  //     limit: 10,
-  //     filter: ""
-  //   });
-  //   let myList:any = []
-  //   let addList:any = []
-  //   marketServices.marketList.forEach(element => {
-  //     if(element.belongId){
-  //       myList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
-  //             "name":"删除商店",
-  //             "id":"1021"
-  //         },{
-  //             "name":"用户管理",
-  //             "id":"1022"
-  //         }
-  //         // ,{
-  //         //     "name":"基础详情",
-  //         //     "id":"1023"
-  //         // }
-  //       ]})
-  //     }else{
-  //       // TODO 暂时文字匹配开放市场，不显示在商店加入列表里
-  //       if(element.name !='开放市场'){
-  //         addList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
-  //             "name":"退出商店",
-  //             "id":"1024"
-  //         },{
-  //             "name":"用户管理",
-  //             "id":"1022"
-  //         }
-  //         // ,{
-  //         //     "name":"基础详情",
-  //         //     "id":"1023"
-  //         // }
-  //       ]})
-  //       }
-  //     }
-  //   });
-  //   let newObj:any =  {
-  //       label: "商城",
-  //       structure: true,
-  //       "isPenultimate": true,
-  //       "btns":[] as string[],
-  //       "children": [
-  //         {
-  //           "label": "开放市场",
-  //           "isPenultimate": true,
-  //           "url":'/store/shop',
-  //           "id": ""
-  //         },
-  //         {
-  //           "label": "商店(自建)",
-  //           "isPenultimate": true,
-  //           "id": "",
-  //           "btns":[{
-  //             "name":"创建商店",
-  //             "id":"1020"
-  //           }],
-  //           "children": myList
-  //         },
-  //         {
-  //           "label": "商店(加入)",
-  //           "id": "1",
-  //           "children":addList,
-  //           "btns":[{
-  //               "name":"加入商店",
-  //               "id":"1025"
-  //           }]
-  //         },
-  //       ]
-  //   }
-  //   let shopStoreJosn = JSON.parse(JSON.stringify(storeJosn))
-  //   showMenu.value = true;
-  //   shopStoreJosn[2] = newObj
-  //   titleArr.state = shopStoreJosn[0]
-  //   menuArr.state = shopStoreJosn
+  const getShopList = async ()=>{
+    await marketServices.getMarketList({
+      offset: 0,
+      limit: 10,
+      filter: ""
+    });
+    let myList:any = []
+    let addList:any = []
+    marketServices.marketList.forEach(element => {
+      if(element.belongId){
+        myList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
+              "name":"删除商店",
+              "id":"1021"
+          },{
+              "name":"用户管理",
+              "id":"1022"
+          }
+          // ,{
+          //     "name":"基础详情",
+          //     "id":"1023"
+          // }
+        ]})
+      }else{
+        // TODO 暂时文字匹配开放市场，不显示在商店加入列表里
+        if(element.name !='开放市场'){
+          addList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
+              "name":"退出商店",
+              "id":"1024"
+          },{
+              "name":"用户管理",
+              "id":"1022"
+          }
+          // ,{
+          //     "name":"基础详情",
+          //     "id":"1023"
+          // }
+        ]})
+        }
+      }
+    });
+    let newObj:any =  {
+        label: "商城",
+        structure: true,
+        "isPenultimate": true,
+        "btns":[] as string[],
+        "children": [
+          {
+            "label": "开放市场",
+            "isPenultimate": true,
+            "url":'/store/shop',
+            "id": ""
+          },
+          {
+            "label": "商店(自建)",
+            "isPenultimate": true,
+            "id": "",
+            "btns":[{
+              "name":"创建商店",
+              "id":"1020"
+            }],
+            "children": myList
+          },
+          {
+            "label": "商店(加入)",
+            "id": "1",
+            "children":addList,
+            "btns":[{
+                "name":"加入商店",
+                "id":"1025"
+            }]
+          },
+        ]
+    }
+    let shopStoreJosn = JSON.parse(JSON.stringify(storeJosn))
+    showMenu.value = true;
+    shopStoreJosn[2] = newObj
+    titleArr.state = shopStoreJosn[0]
+    menuArr.state = shopStoreJosn
     
-  // }
+  }
   // store 路由设置
-  // const storeFun =()=>{
-  //   if(router.currentRoute.value.path.indexOf('store/shop') != -1){
-  //     console.log('1')
-  //     getShopList();
-  //   }else{
-  //     console.log('2')
-  //     showMenu.value = true;
-  //     titleArr.state = storeJosn[0]
-  //     menuArr.state = storeJosn
-  //   }
-  // }
+  const storeFun =()=>{
+    if(router.currentRoute.value.path.indexOf('store/shop') != -1){
+      console.log('1')
+      getShopList();
+    }
+  }
   // const getNav = ()=>{
   //     if(router.currentRoute.value.path.indexOf('store') != -1){    
   //       storeFun()
