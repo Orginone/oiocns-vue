@@ -4,9 +4,9 @@
         <diytab
           :style="{ width: '100%' }"
           ref="diyTable"
-          :hasTabs="true"
           :hasTitle="true"
           :hasTableHead="true"
+          tableName="岗位人员"
           :tableData="tableData"
           :options="options"
           :total="pageStore.total"

@@ -8,9 +8,9 @@
         <el-button small link type="primary" @click="toIdentity">更多信息</el-button>
       </div>
     </div>
-    <div class="tab-list">
+    <!-- <div class="tab-list">
       <img class="image" src="@assets/img/DIANZIUNIVERSITYLOGO.png" alt="" />
-    </div>
+    </div> -->
     <div class="tab-list">
       <el-descriptions :column="2" border>
         <el-descriptions-item :label="title+'名称'" label-align="center" align="center" width="150px"
