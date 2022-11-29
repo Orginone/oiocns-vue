@@ -57,46 +57,13 @@
   import { chat } from '@/module/chat/orgchat'
   import marketServices from "@/module/store/market"
 
-  import { createAllMenuTree, MenuDataItem } from "./json/MenuData";
+  import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
 
 
   const menuTree = ref(createAllMenuTree());
   const allMenuItems = ref(getAllNodes(menuTree.value));
-  function findMenu(route: RouteLocationNormalizedLoaded) {
-    const id = route.meta.id;
-    if (!id) {
-      console.warn(`路由 ${route.fullPath} 没有id！`);
-      return null;
-    }
-    const matched = allMenuItems.value.find(m => m.id == id);
-    if (!matched) {
-      console.warn(`路由 ${route.fullPath} 没有对应的菜单！`);
-      return null;
-    }
-
-    let current = matched;
-    do {
-      if (!current.parentId) {
-        break;
-      }
-      const parent = allMenuItems.value.find(m => m.id == current.parentId);
-      if (!parent) {
-        console.warn(`找不到菜单 ${current.name} 的父级！`);
-        return null;
-      }
-      current = parent;
-    } while (current);
-
-    if (current.$kind != "header") {
-      console.warn(`找到的顶级菜单 ${current.name} 是子菜单项！`);
-      return null;
-    }
-    return {
-      matched,
-      top: current
-    };
-  }
+  
 
   function getNavData2() {
 
@@ -130,7 +97,7 @@
       }
     }
 
-    const ret = findMenu(router.currentRoute.value);
+    const ret = findMenu(router.currentRoute.value, allMenuItems.value);
     if (!ret) {
       showMenu.value = false;
       return;
