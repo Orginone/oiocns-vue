@@ -14,7 +14,7 @@
                     </div>
                 </div>
             </div>
-            <div class="operation">
+            <!-- <div class="operation">
                 <div class="pay-btn">续费</div>
                 <el-dropdown>
                     <span class="el-dropdown-link">
@@ -27,7 +27,7 @@
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>

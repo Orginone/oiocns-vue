@@ -1,21 +1,25 @@
 [
     {
         "icon": "Setting",
-        "title": "设置"
+        "title": "设置",
+        "id": "setCenter-header"
     },
     {
         "name": "组织设置",
         "structure": false,
+        "id": "setCenter-org",
         "children": [
             {
+                "id": "setCenter.unit",
                 "name": "单位设置",
                 "type": "1",
                 "uid": "1-1",
                 "icon": "Discount",
-                "url": "/setCenter/unit",
+                "url": "/setCenter",
                 "children": []
             },
             {
+                "id": "setCenter.department",
                 "name": "部门设置",
                 "icon": "User",
                 "type": "2",
@@ -24,6 +28,7 @@
                 "children": []
             },
             {
+                "id": "setCenter.unit",
                 "name": "集团设置",
                 "type": "3",
                 "icon": "OfficeBuilding",
@@ -32,6 +37,7 @@
                 "children": []
             },
             {
+                "id": "setCenter.post",
                 "name": "岗位设置",
                 "type": "4",
                 "icon": "Film",
@@ -40,6 +46,7 @@
                 "children": []
             },
             {
+                "id": "setCenter.help",
                 "name": "帮助中心",
                 "type": "5",
                 "icon": "Wallet",
@@ -52,8 +59,10 @@
     {
         "name": "配置中心",
         "structure": false,
+        "id": "setCenter-config",
         "children": [
             {
+                "id": "setCenter.unitMain",
                 "name": "单位首页",
                 "type": "6",
                 "icon": "HomeFilled",
@@ -62,6 +71,7 @@
                 "children": []
             },
             {
+                "id": "setCenter.data",
                 "name": "数据设置",
                 "type": "7",
                 "icon": "HelpFilled",
@@ -70,6 +80,7 @@
                 "children": []
             },
             {
+                "id": "setCenter.resource",
                 "name": "资源设置",
                 "type": "8",
                 "icon": "Histogram",
@@ -78,6 +89,7 @@
                 "children": []
             },
             {
+                "id": "setCenter.use",
                 "name": "应用设置",
                 "type": "9",
                 "icon": "Grid",
@@ -86,6 +98,7 @@
                 "children": []
             },
             {
+                "id": "setCenter.flow",
                 "name": "流程设置",
                 "type": "10",
                 "icon": "Rank",
@@ -94,6 +107,7 @@
                 "children": []
             },
             {
+                "id": "setCenter.standard",
                 "name": "标准设置",
                 "type": "11",
                 "icon": "PriceTag",
@@ -102,6 +116,7 @@
                 "children": []
             },
             {
+                "id": "setCenter.authority",
                 "name": "权限设置",
                 "type": "12",
                 "icon": "Stamp",

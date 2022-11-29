@@ -89,6 +89,7 @@
         },
         {
             "label": "创建集团",
+            "id": 1,
             "structure": true,
             "query": true,
             "isPenultimate": true,
@@ -155,6 +156,7 @@
         {
             "label": "加入集团",
             "structure": true,
+            "id": 1,
             "isPenultimate": true,
             "children": [
                 {

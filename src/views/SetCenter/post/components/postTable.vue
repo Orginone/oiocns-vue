@@ -9,6 +9,7 @@
           :hasTableHead="true"
           :tableData="tableData"
           :options="options"
+          :total="pageStore.total"
           @handleUpdate="handleUpdate"
           @selectionChange="selectionChange"
           :tableHead="tableHead"
@@ -17,8 +18,8 @@
             <h4>岗位人员</h4>
           </template>
           <template #buttons>
-            <el-button class="btn-check" type="primary" link>
-              <span style="transform: scale(1.5);">+</span>
+            <el-button class="btn-check" @click="showGiveDialog" type="primary" link>指派岗位
+              <!-- <span style="transform: scale(1.5);">+</span> -->
             </el-button>
           </template>
           <template #operate="scope">
@@ -27,7 +28,7 @@
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item @click="showDiong">调整岗位</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong" style="color: #f67c80">移出岗位</el-dropdown-item>
+                  <el-dropdown-item @click="removeFrom(scope.row)" style="color: #f67c80" >移出岗位</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -37,12 +38,48 @@
           </template>
         </diytab>
       </div>
+      <el-dialog v-model="giveDialog" @close="hideGiveDialog" :title="'给人员 => ' + store.currentSelectItme.name + ' 岗位'" width="50%">
+        <el-input v-model="giveSearch" class="search" placeholder="搜索用户" @input="giveSearchChange">
+          <template #prefix>
+            <el-icon class="el-input__icon">
+              <Search />
+            </el-icon>
+          </template>
+        </el-input>
+        <DiyTable ref="giveTable" :hasTableHead="true" :tableData="companyUsers" :options="{
+          expandAll: false,
+          checkBox: true,
+          order: true,
+          selectLimit:0,
+          noPage: false
+        }" @handleUpdate="giveTableChange" :tableHead="columns" :style="{height: '350px'}">
+        </DiyTable>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="hideGiveDialog">取消</el-button>
+            <el-button type="primary" @click="giveIdentity">确认</el-button>
+          </span>
+        </template>
+      </el-dialog>
     </div>
   </template>
   <script lang="ts" setup>
   // @ts-nocheck
   import diytab from "@/components/diyTable/index.vue";
   import { ref } from "vue";
+  import $services from '@/services'
+  import { setCenterStore } from '@/store/setting'
+  import { ElMessage, ElMessageBox } from 'element-plus';
+  import { Search } from '@element-plus/icons-vue'
+  import identityServices from '@/module/relation/identity'
+  const store = setCenterStore()
+  const IdentityServices = new identityServices()
+  store.$subscribe(
+  (_, state) => {
+    getUsers(state.currentSelectItme)
+  },
+  { detached: false }
+  )
   
   // 表格展示数据
   const pageStore = reactive({
@@ -50,12 +87,7 @@
     pageSize: 20,
     total: 0
   })
-  const tableData = ref([{
-    account:'张叁',
-    nickname:'资产处',
-    name:'办事员',
-    phone:'18857125641',
-  }])
+  const tableData = ref([])
   const options = ref<any>({
     checkBox: true,
     order: true,
@@ -68,7 +100,7 @@
   })
   const tableHead = ref([
     {
-      prop: 'account',
+      prop: 'name',
       label: '人员名称',
     },
     {
@@ -82,9 +114,9 @@
       name: 'name'
     },
     {
-      prop: 'phone',
+      prop: 'team.code',
       label: '手机号',
-      name: 'createTime'
+      name: 'teamCode'
     },
     {
       type: 'slot',
@@ -98,11 +130,146 @@
   const handleUpdate = (page: any) => {
     pageStore.currentPage = page.currentPage
     pageStore.pageSize = page.pageSize
-    remoteMethod()
+    getUsers()
   }
   const checkList = reactive<any>([])
   const selectionChange = (val: any) => {
     checkList.value = val
+  }
+
+  // 加载岗位下的用户
+  const getUsers = async (currentData = store.currentSelectItme) => {
+    if(currentData){
+      const backData =  await IdentityServices.getIdentityPerson(currentData?.id)
+      if(backData.result){
+        tableData.value =backData.result;
+        pageStore.total = backData.total
+      }else{
+        tableData.value =[];
+        pageStore.total = 0
+      }
+    }
+  }
+  // 移除岗位下的人员
+  const removeFrom = (row: any) => {
+    let url: string = 'removeIdentity';
+    ElMessageBox.confirm(
+      `确定把 ${row.name} 从当前岗位移除吗？`,
+      '警告',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    ).then(async () => {
+      const data = await IdentityServices.removeIdentity(store.currentSelectItme?.id, row.id)
+      if(data){
+        getUsers()
+        ElMessage({
+          message: '操作成功',
+          type: 'success'
+        })
+      }
+    })
+      .catch(() => {
+        console.log('移除成功!')
+      })
+  }
+
+  let companyUsers = ref<any>([])
+  const giveDialog = ref<boolean>(false)
+  const giveTable = ref(null)
+  const columns = ref([
+    {
+      prop: 'code',
+      label: '账号',
+      width: '180',
+    },
+    {
+      prop: 'name',
+      label: '姓名',
+      width: '240',
+      name: 'name',
+    },
+    {
+      prop: 'team.code',
+      label: '手机号',
+      width: '330',
+      name: 'teamCode',
+    }
+  ])
+  const hideGiveDialog = () => {
+    giveDialog.value = false
+    getUsers()
+  }
+  // 过滤数据
+  const giveSearch = ref('')
+  const giveTableChange = (page: any) => {
+    pageStore.currentPage = page.currentPage
+    pageStore.pageSize = page.pageSize
+    getOrgUsers()
+  }
+
+  // 分配页面搜索用户变化
+  const giveSearchChange = (e: string) => {
+    getOrgUsers(e)
+  }
+
+  // 指派岗位
+  const showGiveDialog = () => {
+    pageStore.currentPage =1;
+    if (!store.currentSelectItme.id) {
+      ElMessage({
+        type: 'warning',
+        message: '请选择岗位'
+      })
+      return false
+    }
+    giveDialog.value = true
+    getOrgUsers()
+  }
+
+  // 加载单位所有用户
+  const getOrgUsers = (filter?: string) => {
+    
+    let data = {
+      id: store.currentSelectItme.id,
+      offset: (pageStore.currentPage - 1) * pageStore.pageSize,
+      limit: pageStore.pageSize
+    }
+    if (filter && filter.trim() != '') {
+      data = { ...data, ...{ filter } }
+    }
+    $services.company.getPersons({
+        data,
+    }).then((res: ResultType) => {
+      if (res.code == 200 && res.success) {
+        // 去除已分配到岗位
+        let us = res.data.result || []
+        let userIds = []
+        if (tableData.value) {
+          userIds = tableData.value.map((u: any) => u.id);
+        }
+        const set: Set<string> = new Set(userIds)
+        companyUsers.value = us.filter((u: any) => !set.has(u.id))
+        pageStore.total = res.data.total - userIds.length
+        giveTable.value.state.page.total = pageStore.total;
+      }
+    })
+  }
+
+  // 给人员岗位
+  const giveIdentity = async () => {
+    const userIds = giveTable?.value?.state?.multipleSelection.map((u: any) => u.id);
+    const data = await IdentityServices.giveIdentity(store.currentSelectItme?.id, userIds)
+    if (data) {
+      ElMessage({
+        message: '分配成功',
+        type: 'success'
+      })
+      hideGiveDialog()
+      getUsers()
+    }
   }
   
   </script>

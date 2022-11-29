@@ -353,8 +353,11 @@
   // 获取集团数据
   const getGroupList = async () => {
     tabs.value = await application.searchResource()
-    resource.value = tabs.value[0].id
-    await getGroupTree()
+    if(tabs.value[0]){
+      resource.value = tabs.value[0].id
+      await getGroupTree()
+    }
+ 
   }
 
   const getGroupTree = async (val?: boolean) => {
