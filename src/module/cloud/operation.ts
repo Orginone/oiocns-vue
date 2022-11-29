@@ -20,7 +20,7 @@ export default class Cloud {
     }
     const { data, success } = await API.bucket.bucketObjects({
       params: {
-        shareDomain: item?.shareDomain,
+        shareDomain: item?.shareDomain || 'user',
         prefix: item?.key
       }
     })
@@ -57,7 +57,7 @@ export default class Cloud {
 
     let obj = {
       key: encodeURIString(arr.join('/')),
-      level: item[item.length - 1].level
+      level: item[item.length - 1]?.level
     }
     return obj
   }

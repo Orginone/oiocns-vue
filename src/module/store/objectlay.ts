@@ -12,17 +12,19 @@ export default class ObjectLay {
   public DateModified: string
   public IsDirectory: boolean
   public HasSubDirectories: boolean
+  public Meta: any
   private parent: ObjectLay
   public children: ObjectLay[]
   public constructor(data: any = null, parent: ObjectLay = null) {
     this.parent = parent
     this.children = null
     this.Key = data?.key || ''
-    this.Name = data?.name || '主文件夹'
-    this.IsDirectory = data?.isDirectory || true
+    this.Name = data?.name || '我的云盘'
+    this.IsDirectory = data?.isDirectory || false
     this.DateCreated = data?.dateCreated || ''
     this.DateModified = data?.dateModified || ''
-    this.HasSubDirectories = data?.hasSubDirectories || true
+    this.HasSubDirectories = this.Name == '我的云盘' ? true : (data?.hasSubDirectories || false)
+    this.Meta = data || {key: '', name: '我的云盘'}
   }
   /**
    * 是否包含上级目录
@@ -47,9 +49,7 @@ export default class ObjectLay {
    * 获取下级对象数据
    * @returns 下级对象数组
    */
-  public async GetChildren(refresh: boolean = false, key: string) {
-    console.log('获取children', this.children)
-
+  public async GetChildren(refresh: boolean = false) {
     if (!this.children || refresh) {
       let res: ResultType = await API.bucket.bucketObjects({
         params: {

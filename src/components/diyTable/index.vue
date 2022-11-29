@@ -41,7 +41,7 @@
     <div class="diy-table__body" ref='bodyBox' >
       <div class="diy-table__body-box">
         <el-table
-          v-if="showType == 1"
+          v-show="showType == 1"
           ref="diyTable"
           :style="{ width: '100%', height: '100%' }"
           class="table-row-sty"
@@ -98,8 +98,8 @@
             <el-table-column v-else v-bind="item"></el-table-column>
           </template>
         </el-table>
-        <div class="card-wrap" :style="{'max-height':bodyHeight+'px'}">
-          <slot v-if="showType == 2" name="slot-card"></slot>
+        <div v-show="showType == 2"  class="card-wrap" :style="{'max-height':bodyHeight+'px'}">
+          <slot name="slot-card"></slot>
         </div>
       </div>
     </div>
@@ -129,7 +129,7 @@
   import { ref, reactive, toRefs, computed, onMounted, watch,nextTick } from 'vue'
   import titleBox, { BtnItem, TabType } from "@/components/titleBox/index.vue";
   import { useUserStore } from '@/store/user'
-import { TabPaneName } from 'element-plus';
+  import { TabPaneName } from 'element-plus';
 
   const store = useUserStore()
   const bodyBox = ref(null);
