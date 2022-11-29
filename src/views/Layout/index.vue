@@ -276,11 +276,13 @@
         showMenu.value = false;
       }
   }
-  getNav();
-  
+  // getNav();
+  getNavData2();
+
   watch(() => router.currentRoute.value.path, () => {
     // nextTick(() => {
-      getNav();
+      // getNav();
+      getNavData2();
     // })
   })
 

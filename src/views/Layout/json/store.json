@@ -1,12 +1,15 @@
 [   {
         "icon": "User",
-        "title": "仓库"
+        "title": "仓库",
+        "id": "store-header"
     },
     {
         "name": "常用分类",
         "structure": false,
+        "id": "store-kind",
         "children": [
             {
+                "id": "store.index",
                 "name": "应用",
                 "type":"1",
                 "uid":"1-1",
@@ -14,6 +17,7 @@
                 "children": []
             },
             {
+                "id": "cloud",
                 "name": "文档",
                 "type":"2",
                 "uid":"1-1",
@@ -21,6 +25,7 @@
                 "children": []
             },
             {
+                "id": "store.data",
                 "name": "数据",
                 "type":"3",
                 "uid":"1-1",
@@ -28,6 +33,7 @@
                 "children": []
             },
             {
+                "id": "store.resource",
                 "name": "资源",
                 "type":"4",
                 "uid":"1-1",
