@@ -16,10 +16,9 @@
         </el-menu>
       </div>
       <div class="btnStyle">
-        <el-button type="primary">新增</el-button>
-        <el-button type="primary">审核</el-button>
-        <el-button type="primary">退回</el-button>
-        <el-button type="primary">打印</el-button>
+        <el-button @click="labor(1)" type="primary">加好友</el-button>
+        <el-button @click="labor(2)" type="primary">审核</el-button>
+        <el-button @click="labor(3)" type="primary">退回</el-button>
       </div>
        <div class="tab-list">
         <DiyTable
@@ -142,6 +141,12 @@
   const activeId = ref<string>('0')
   const elmenus = ref(null);
   const activeName = ref('first') //商店tab
+
+  const labor = (index:any) => {
+    if(index === 1) {
+      router.push({ path: '/chat' })
+    }
+  }
 
   const handleClose = (index:any) => {
     elmenus.value.open(index)

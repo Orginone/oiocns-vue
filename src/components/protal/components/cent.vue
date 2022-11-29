@@ -158,6 +158,7 @@ const cardOnHover = (id: string) => {
       justify-content: center;
       align-items: flex-start;
       flex-wrap: wrap;
+      font-size: 13px;
       .card1{
         margin: 5px 10px;
         width: 25%;
@@ -174,7 +175,7 @@ const cardOnHover = (id: string) => {
       }
       .card{
         margin: 5px 10px;
-        width: 25%;
+        width: 27%;
         height: 57px;
         display: flex;
         border-radius: 8px;
