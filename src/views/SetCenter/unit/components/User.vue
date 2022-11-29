@@ -1,16 +1,34 @@
 <template>
   <div class="card" ref="cardHeight">
       <div style="width: 100%; height: 100%">
-        <DiyTable ref="diyTable" :hasTableHead="true" :hasTitle="true" :tableName="selectItem.label" :tableData="users" :checkList="[]" @handleUpdate="handleUpdate"
+        <DiyTable 
+          ref="diyTable" 
+          :hasTableHead="true" 
+          :hasTitle="true" 
+          :tableName="selectItem.label" 
+          :tableData="users" 
+          :options="options"
+          :checkList="[]" 
+          @handleUpdate="handleUpdate"
+          @selectionChange="selectionChange"
           :tableHead="tableHead">
           <template #buttons>
             <el-button small link type="primary" @click="friendDialog = true">添加成员</el-button>
           </template>
           <template #operate="scope">
-            <div v-if="selectItem?.data?.typeName == '单位'">
-              <el-button link type="danger"
-                size="small" @click="removeFrom(scope.row)">操作离职</el-button>
-            </div>
+            <el-dropdown>
+              <span class="el-dropdown-link"> ··· </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="removeFrom(scope.row)">修改信息</el-dropdown-item>
+                  <el-dropdown-item @click="removeFrom(scope.row)">变更部门</el-dropdown-item>
+                  <el-dropdown-item @click="removeFrom(scope.row)">岗位设置</el-dropdown-item>
+                  <el-dropdown-item @click="removeFrom(scope.row)">部门设置</el-dropdown-item>
+                  <el-dropdown-item @click="removeFrom(scope.row)">停用</el-dropdown-item>
+                  <el-dropdown-item @click="removeFrom(scope.row)" style="color: #f67c80">操作离职</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </DiyTable>
       </div>
@@ -49,36 +67,46 @@ const allowEdit = () => {
   ])
 }
 
+const checkList = reactive<any>([])
+const selectionChange = (val: any) => {
+  checkList.value = val
+}
+
 const company = ref<any>({})
+const options = ref<any>({
+  checkBox: true,
+  order: true,
+  selectLimit: 1,
+  defaultSort: { prop: 'createTime', order: 'descending' },
+  treeProps: {
+    children: 'children',
+    hasChildren: 'hasChildren'
+  }
+})
 
 const tableHead = ref([
   {
     prop: 'code',
     label: '账号',
-    width: '180',
   },
   {
     prop: 'name',
     label: '昵称',
-    width: '200',
     name: 'name',
   },
   {
     prop: 'team.name',
     label: '姓名',
-    width: '200',
     name: 'teamName',
   },
   {
     prop: 'team.code',
     label: '手机号',
-    width: '200',
     name: 'teamCode',
   },
   {
     prop: 'team.remark',
     label: '座右铭',
-    width: '330',
     name: 'teamRemark',
   },
   {
@@ -284,6 +312,53 @@ watch(()=> selectItem.value, (newValue)=> {
 
   .search {
     width: 50%;
+  }
+}
+.el-dropdown-link{
+  padding: 2px 10px;
+  cursor: pointer;
+  border-radius: 10px;
+  }
+  .el-dropdown-link:hover{
+  background:#1642cb;
+  color: #fff;
+  }
+  .btn-check{
+    padding: 8px 16px;
+    color: #154ad8;
+  }
+  .btn-check:hover{
+      background: #154ad8;
+      color: #fff;
+      padding: 8px  16px;
+  }
+.table-tabs{
+  width: 500px;
+  .el-menu--horizontal{
+    border: 0;
+  }
+  .el-menu-item{
+    padding: 0;
+    margin-right: 16px;
+    margin-bottom: 3px;
+    border: 0 !important;
+  }
+  .is-active{
+    background: #fff;
+  }
+  .is-active::after{
+    content:'';
+    position: absolute;
+    left: 0;
+    margin-left: calc(50% - 9px);
+    bottom: 25%;
+    width:18px;
+    border-radius: 5px;
+    height: 2px;
+    background: #154ad8;
+  }
+  .el-menu--horizontal:hover, .el-menu-item:hover{
+    background: #fff;
   }
 }
 </style>

@@ -103,13 +103,25 @@
     if(router.currentRoute.value.path.indexOf('setCenter') != -1){
       if (router.currentRoute.value.name === 'department') {
           titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
-          menuArr.state = setCenterStore().departmentInfo
+          setCenterStore().GetDepartmentInfo().then((treeData)=> {
+            menuArr.state = treeData
+          })
           showMenu.value = true;
           return;
-      } else if (router.currentRoute.value.name !== 'unit') {
+      } else if (router.currentRoute.value.name === 'post') {
+          titleArr.state= {icon: 'User',title: '岗位设置',"backFlag": true}
+          setCenterStore().GetIdentities().then((treeData)=> {
+            menuArr.state = treeData
+          })
+          showMenu.value = true;
+          return;
+      }else if (router.currentRoute.value.name === 'group') {
+        showMenu.value = false;
+        return;
+      }else if (router.currentRoute.value.name !== 'unit') {
         let currentRouteName: any = router.currentRoute.value.name
         const jsonData: any = setTree
-        if (['unit', 'post', 'group', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
+        if (['unit', 'group', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
           titleArr.state= jsonData[currentRouteName][0]
           menuArr.state = jsonData[currentRouteName]
           showMenu.value = true;
@@ -247,10 +259,14 @@
           setCenterStore().GetIdentities().then((treeData)=> {
             menuArr.state = treeData
           })
-        } else {
+        }else if (router.currentRoute.value.name === 'group') {
+          showMenu.value = false;
+          return;
+        }
+         else {
           let currentRouteName: any = router.currentRoute.value.name
           const jsonData: any = setTree
-          if (['unit', 'group', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
+          if (['unit', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
             titleArr.state= jsonData[currentRouteName][0]
             menuArr.state = jsonData[currentRouteName]
           } else {
@@ -277,8 +293,8 @@
 
   watch(() => router.currentRoute.value.path, () => {
     // nextTick(() => {
-      // getNav();
-      getNavData2();
+      getNav();
+      // getNavData2();
     // })
   })
 
