@@ -1,13 +1,16 @@
 [
     {
         "icon": "User",
-        "title": "我的"
+        "title": "我的",
+        "id": "mine-header"
     },
     {
         "name": "信息中心",
         "structure": false,
+        "id": "mine.info",
         "children": [
             {
+                "id": "mine.index",
                 "name": "个人信息",
                 "type": "0",
                 "uid": "1-1",
@@ -15,6 +18,7 @@
                 "children": []
             },
             {
+                "id": "mine.my-unit",
                 "name": "我的单位",
                 "type": "2",
                 "uid": "1-1",
@@ -22,6 +26,7 @@
                 "children": []
             },
             {
+                "id": "mine.my-friend",
                 "name": "好友设置",
                 "type": "3",
                 "uid": "1-1",
@@ -29,6 +34,7 @@
                 "children": []
             },
             {
+                "id": "mine.my-cohort",
                 "name": "群组设置",
                 "type": "4",
                 "uid": "1-1",

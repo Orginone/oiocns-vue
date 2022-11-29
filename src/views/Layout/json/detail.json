@@ -2,13 +2,16 @@
   {
     "icon": "List",
     "title": "办事",
-    "backFlag": true
+    "backFlag": true,
+    "id": "service-header"
   },
   {
       "name": "平台待办",
       "structure": false,
+      "id": "service",
       "children": [
           {
+              "id": "service.friendApply",
               "name": "好友申请",
               "type":"1",
               "uid":"1-1",
@@ -16,6 +19,7 @@
               "children": []
           },
           {
+            "id": "service.company",
               "name": "单位审核",
               "type":"2",
               "uid":"1-2",
@@ -23,6 +27,7 @@
               "children": []
           },
           {
+            "id": "service.shop",
               "name": "商店审核",
               "type":"3",
               "uid":"1-3",
@@ -30,6 +35,7 @@
               "children": []
           },
           {
+            "id": "service.order",
               "name": "订单审核",
               "type":"4",
               "uid":"1-4",

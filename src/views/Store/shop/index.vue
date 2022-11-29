@@ -76,6 +76,7 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { appstore } from '@/module/store/app'
   import createShop from "../components/createShop.vue";
+  import marketServices from "@/module/store/market"
 
   const diyTable = ref(null)
   const valuee = ref<any>('');
@@ -97,6 +98,7 @@
   ]
   const dialogType: any = reactive({
     createDialog: false, // 创建商店弹窗状态
+    detailDialog: false, // 基础详情弹窗状态
   });
   interface ListItem {
     code: string
@@ -107,9 +109,23 @@
   }
 
   onMounted(() => {
-    remoteMethod()
   })
-  const remoteMethod = () => {
+  // 从文件内获取展示数据
+  const getPageDataFromServices = ()=>{
+      state.myAppList = marketServices.marketList
+  }
+
+  const handleClick = (item: any) => {
+    ElMessageBox.confirm(`确认操作吗?`, '提示', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+    .then(async() => {
+      await marketServices.deleteMarket(item.id);
+      getPageDataFromServices()
+    })
+    .catch(() => { })
   }
   const goBuyCar = ()=>{
     router.push({path: "/store/shoppingCar" });
@@ -290,6 +306,12 @@ const buyThings = (item:any) => {
   instance?.proxy?.$Bus.on("clickBus", (num) => {
     if(num =='1020'){ //创建商店
       dialogType.createDialog = true;
+    }else if(num == '1021'){
+      handleClick(router.currentRoute.value.query.id)
+    }else if(num == '1022'){
+      router.push({path:'/store/userManage',query:{data:router.currentRoute.value.query.id}})
+    }else if(num == '1023'){
+      // dialogType.detailDialog = true;
     }
   });
 </script>

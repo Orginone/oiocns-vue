@@ -244,7 +244,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '帮助中心',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.help"
         }
       },
       {
@@ -254,7 +255,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '单位首页',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.unitMain"
         }
       },
       {
@@ -264,7 +266,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '数据设置',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.data"
         }
       },
       {
@@ -274,7 +277,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '资源设置',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.resource"
         }
       },
       {
@@ -284,7 +288,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '应用设置',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.use"
         }
       },
       {
@@ -294,7 +299,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '流程设置',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.flow"
         }
       },
       {
@@ -304,7 +310,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '标准设置',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.standard"
         }
       },
       {
@@ -314,7 +321,8 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '权限设置',
           icon: 'Postcard',
-          searchType: '2'
+          searchType: '2',
+          id: "setCenter.authority"
         }
       },
     ]
@@ -735,7 +743,16 @@ const mainRouter: RouteRecordRaw[] = [
           isHidden: true,
           title: '应用创建'
         }
-      }
+      },
+      {
+        path: '/store/userManage',
+        name: 'storeUserManage',
+        component: () => import('@/views/Store/userManage/index.vue'),
+        meta: {
+          title: '人员管理',
+          id: "store.UserManage"
+        }
+      },
     ]
   },
   {

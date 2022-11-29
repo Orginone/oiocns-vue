@@ -157,10 +157,12 @@
           },{
               "name":"用户管理",
               "id":"1022"
-          },{
-              "name":"基础详情",
-              "id":"1023"
-          }]})
+          }
+          // ,{
+          //     "name":"基础详情",
+          //     "id":"1023"
+          // }
+        ]})
       }else{
         // TODO 暂时文字匹配开放市场，不显示在商店加入列表里
         if(element.name !='开放市场'){
@@ -170,10 +172,12 @@
           },{
               "name":"用户管理",
               "id":"1022"
-          },{
-              "name":"基础详情",
-              "id":"1023"
-          }]})
+          }
+          // ,{
+          //     "name":"基础详情",
+          //     "id":"1023"
+          // }
+        ]})
         }
       }
     });
@@ -268,11 +272,13 @@
         showMenu.value = false;
       }
   }
-  getNav();
-  
+  // getNav();
+  getNavData2();
+
   watch(() => router.currentRoute.value.path, () => {
     // nextTick(() => {
-      getNav();
+      // getNav();
+      getNavData2();
     // })
   })
 
