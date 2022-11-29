@@ -40,7 +40,9 @@ const nodeClick = (selectItem: any) => {
     }
   }, 100);
 }
-
+const goBack = () => {
+  window.history.go(-1)
+}
 const refresh = () => {
   unitTree.value.refresh();
 }

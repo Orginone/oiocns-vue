@@ -1,13 +1,18 @@
 <template>
   <el-card class="card">
+    <div class="contentTile">
+      <component @click="goBack" :is="'ArrowLeft'" style="width: 16px;height: 16px;cursor:pointer;position: absolute;left: 20px;"></component>
+      <component :is="'User'" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;
+      <b style="font-size: 14px;">集团设置</b>
+    </div>
     <div>
-      <el-select v-model="selectedValue" @change="changeGroupIndex" value-key="id" placeholder="请选择集团">
+      <el-select  v-model="selectedValue" @change="changeGroupIndex" value-key="id" placeholder="请选择集团">
         <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
     </div>
 
     <div class="search-wrap">
-      <el-input class="search" v-model="filterText" placeholder="搜索集团">
+      <el-input class="search" v-model="filterText" placeholder="搜索" :prefix-icon="Search">
 
       </el-input>
       <li class="con tree-btns">
@@ -66,7 +71,11 @@
 import { ref, reactive, onMounted, watch } from 'vue'
 import $services from '@/services'
 import { ElMessage } from 'element-plus';
+import { Search } from '@element-plus/icons-vue'
 import authority from '@/utils/authority'
+const goBack = () => {
+  window.history.go(-1)
+}
 
 const emit = defineEmits(['nodeClick'])
 
@@ -75,6 +84,7 @@ const state = reactive({
 })
 let formData = ref<any>({})
 const selectItem = ref<any>();
+
   
 const allowEdit = () => {
   if(selectItem.value && selectItem.value.id){
@@ -217,16 +227,29 @@ watch(filterText, (val) => {
 
 </script>
 <style lang="scss" scoped>
+.contentTile{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: #f9fbfe;
+  font-size: 16px;
+}
 .card {
   height: 100%;
   border: 0;
 }
+:deep .el-card__body{
+  padding: 0 !important;
+}
+
 .tree-btns {
-  padding: 10px 0;
+  padding: 10px 20px;
   display: flex;
   justify-content: space-between;
 }
 .tree{
+  padding: 0 20px;
   position: relative;
   height: calc(100vh - 200px);
   overflow-y: auto;
@@ -265,5 +288,16 @@ watch(filterText, (val) => {
     margin-left: 5px;
   }
 }
+// 去掉el-input自带边框
+:deep .el-input__wrapper {
+    margin: 15px;
+    padding-left: 15px !important;
+    box-sizing: border-box;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0px; //前边边距去掉
+    border-radius: 15px;
+    background: #f2f4f9;
+  }
 </style>
 
