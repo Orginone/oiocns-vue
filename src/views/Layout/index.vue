@@ -49,11 +49,11 @@
   import authority from '@/utils/authority'
   import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick} from 'vue'
   import { RouteLocationNormalizedLoaded, useRouter } from 'vue-router';
-  import storeJosn from './json/store.json';
-  import settingJosn from './json/setting.json';
+  // import storeJosn from './json/store.json';
+  // import settingJosn from './json/setting.json';
   import setTree from './json/setTree.json';
-  import detailJosn from './json/detail.json';
-  import userJosn from './json/user.json';
+  // import detailJosn from './json/detail.json';
+  // import userJosn from './json/user.json';
   import { chat } from '@/module/chat/orgchat'
   import marketServices from "@/module/store/market"
 
@@ -153,148 +153,148 @@
   });
   const showMenu = ref<boolean>(true);
   // 获取我的商店列表
-  const getShopList = async ()=>{
-    await marketServices.getMarketList({
-      offset: 0,
-      limit: 10,
-      filter: ""
-    });
-    let myList:any = []
-    let addList:any = []
-    marketServices.marketList.forEach(element => {
-      if(element.belongId){
-        myList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
-              "name":"删除商店",
-              "id":"1021"
-          },{
-              "name":"用户管理",
-              "id":"1022"
-          }
-          // ,{
-          //     "name":"基础详情",
-          //     "id":"1023"
-          // }
-        ]})
-      }else{
-        // TODO 暂时文字匹配开放市场，不显示在商店加入列表里
-        if(element.name !='开放市场'){
-          addList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
-              "name":"退出商店",
-              "id":"1024"
-          },{
-              "name":"用户管理",
-              "id":"1022"
-          }
-          // ,{
-          //     "name":"基础详情",
-          //     "id":"1023"
-          // }
-        ]})
-        }
-      }
-    });
-    let newObj:any =  {
-        label: "商城",
-        structure: true,
-        "isPenultimate": true,
-        "btns":[] as string[],
-        "children": [
-          {
-            "label": "开放市场",
-            "isPenultimate": true,
-            "url":'/store/shop',
-            "id": ""
-          },
-          {
-            "label": "商店(自建)",
-            "isPenultimate": true,
-            "id": "",
-            "btns":[{
-              "name":"创建商店",
-              "id":"1020"
-            }],
-            "children": myList
-          },
-          {
-            "label": "商店(加入)",
-            "id": "1",
-            "children":addList
-          },
-        ]
-    }
-    let shopStoreJosn = JSON.parse(JSON.stringify(storeJosn))
-    showMenu.value = true;
-    shopStoreJosn[2] = newObj
-    titleArr.state = shopStoreJosn[0]
-    menuArr.state = shopStoreJosn
+  // const getShopList = async ()=>{
+  //   await marketServices.getMarketList({
+  //     offset: 0,
+  //     limit: 10,
+  //     filter: ""
+  //   });
+  //   let myList:any = []
+  //   let addList:any = []
+  //   marketServices.marketList.forEach(element => {
+  //     if(element.belongId){
+  //       myList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
+  //             "name":"删除商店",
+  //             "id":"1021"
+  //         },{
+  //             "name":"用户管理",
+  //             "id":"1022"
+  //         }
+  //         // ,{
+  //         //     "name":"基础详情",
+  //         //     "id":"1023"
+  //         // }
+  //       ]})
+  //     }else{
+  //       // TODO 暂时文字匹配开放市场，不显示在商店加入列表里
+  //       if(element.name !='开放市场'){
+  //         addList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
+  //             "name":"退出商店",
+  //             "id":"1024"
+  //         },{
+  //             "name":"用户管理",
+  //             "id":"1022"
+  //         }
+  //         // ,{
+  //         //     "name":"基础详情",
+  //         //     "id":"1023"
+  //         // }
+  //       ]})
+  //       }
+  //     }
+  //   });
+  //   let newObj:any =  {
+  //       label: "商城",
+  //       structure: true,
+  //       "isPenultimate": true,
+  //       "btns":[] as string[],
+  //       "children": [
+  //         {
+  //           "label": "开放市场",
+  //           "isPenultimate": true,
+  //           "url":'/store/shop',
+  //           "id": ""
+  //         },
+  //         {
+  //           "label": "商店(自建)",
+  //           "isPenultimate": true,
+  //           "id": "",
+  //           "btns":[{
+  //             "name":"创建商店",
+  //             "id":"1020"
+  //           }],
+  //           "children": myList
+  //         },
+  //         {
+  //           "label": "商店(加入)",
+  //           "id": "1",
+  //           "children":addList,
+  //           "btns":[{
+  //               "name":"加入商店",
+  //               "id":"1025"
+  //           }]
+  //         },
+  //       ]
+  //   }
+  //   let shopStoreJosn = JSON.parse(JSON.stringify(storeJosn))
+  //   showMenu.value = true;
+  //   shopStoreJosn[2] = newObj
+  //   titleArr.state = shopStoreJosn[0]
+  //   menuArr.state = shopStoreJosn
     
-  }
+  // }
   // store 路由设置
-  const storeFun =()=>{
-    if(router.currentRoute.value.path.indexOf('store/shop') != -1){
-      console.log('1')
-      getShopList();
-    }else{
-      console.log('2')
-      showMenu.value = true;
-      titleArr.state = storeJosn[0]
-      menuArr.state = storeJosn
-    }
-  }
-  const getNav = ()=>{
-      if(router.currentRoute.value.path.indexOf('store') != -1){    
-        storeFun()
-      }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){
-        showMenu.value = true;
-        if (router.currentRoute.value.name === 'department') {
-            titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
-            setCenterStore().GetDepartmentInfo().then((treeData)=> {
-              menuArr.state = treeData
-            })
-        } else if (router.currentRoute.value.name === 'unit') {
-          titleArr.state= settingJosn[0]
-          menuArr.state = settingJosn
-        } else if (router.currentRoute.value.name === 'post') {
-          titleArr.state= {icon: 'User',title: '岗位设置',"backFlag": true}
-          setCenterStore().GetIdentities().then((treeData)=> {
-            menuArr.state = treeData
-          })
-        }else if (router.currentRoute.value.name === 'group') {
-          showMenu.value = false;
-          return;
-        }
-         else {
-          let currentRouteName: any = router.currentRoute.value.name
-          const jsonData: any = setTree
-          if (['unit', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
-            titleArr.state= jsonData[currentRouteName][0]
-            menuArr.state = jsonData[currentRouteName]
-          } else {
-            titleArr.state= settingJosn[0]
-            menuArr.state = settingJosn
-          }
-        }
+  // const storeFun =()=>{
+  //   if(router.currentRoute.value.path.indexOf('store/shop') != -1){
+  //     console.log('1')
+  //     getShopList();
+  //   }else{
+  //     console.log('2')
+  //     showMenu.value = true;
+  //     titleArr.state = storeJosn[0]
+  //     menuArr.state = storeJosn
+  //   }
+  // }
+  // const getNav = ()=>{
+  //     if(router.currentRoute.value.path.indexOf('store') != -1){    
+  //       storeFun()
+  //     }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){
+  //       showMenu.value = true;
+  //       if (router.currentRoute.value.name === 'department') {
+  //           titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
+  //           setCenterStore().GetDepartmentInfo().then((treeData)=> {
+  //             menuArr.state = treeData
+  //           })
+  //       } else if (router.currentRoute.value.name === 'unit') {
+  //         titleArr.state= settingJosn[0]
+  //         menuArr.state = settingJosn
+  //       } else if (router.currentRoute.value.name === 'post') {
+  //         titleArr.state= {icon: 'User',title: '岗位设置',"backFlag": true}
+  //         setCenterStore().GetIdentities().then((treeData)=> {
+  //           menuArr.state = treeData
+  //         })
+  //       } else {
+  //         let currentRouteName: any = router.currentRoute.value.name
+  //         const jsonData: any = setTree
+  //         if (['unit', 'group', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
+  //           titleArr.state= jsonData[currentRouteName][0]
+  //           menuArr.state = jsonData[currentRouteName]
+  //         } else {
+  //           titleArr.state= settingJosn[0]
+  //           menuArr.state = settingJosn
+  //         }
+  //       }
         
-      } else if (router.currentRoute.value.path.indexOf('mine') != -1) {
-        showMenu.value = true;
-        titleArr.state = userJosn[0]
-        menuArr.state = userJosn
+  //     } else if (router.currentRoute.value.path.indexOf('mine') != -1) {
+  //       showMenu.value = true;
+  //       titleArr.state = userJosn[0]
+  //       menuArr.state = userJosn
         
-      } else if (router.currentRoute.value.path.indexOf('service') != -1){
-        showMenu.value = true;
-        titleArr.state = detailJosn[0]
-        menuArr.state = detailJosn
-      } else {
-        showMenu.value = false;
-      }
-  }
+  //     } else if (router.currentRoute.value.path.indexOf('service') != -1){
+  //       showMenu.value = true;
+  //       titleArr.state = detailJosn[0]
+  //       menuArr.state = detailJosn
+  //     } else {
+  //       showMenu.value = false;
+  //     }
+  // }
   // getNav();
   getNavData2();
 
   watch(() => router.currentRoute.value.path, () => {
     // nextTick(() => {
-      getNav();
-      // getNavData2();
+      // getNav();
+      getNavData2();
     // })
   })
 
