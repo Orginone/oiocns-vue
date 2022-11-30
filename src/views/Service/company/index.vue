@@ -16,10 +16,9 @@
         </el-menu>
       </div>
       <div class="btnStyle">
-        <el-button type="primary">新增</el-button>
+        <el-button type="primary">加好友</el-button>
         <el-button type="primary">审核</el-button>
         <el-button type="primary">退回</el-button>
-        <el-button type="primary">打印</el-button>
       </div>
        <div class="tab-list">
         <DiyTable
@@ -157,33 +156,34 @@
   }
 
   var getApplyList = async () => {
-    await ThingServices.getAllApply()
-    tableData.value = ThingServices.applyList
+    await ThingServices.getAllApproval('0')
+    tableData.value = ThingServices.approvalList
+    console.log(tableData.value);
   }
 
-  const getWflow =async () => {
-    await ThingServices.queryTask()
-    tableHead.value = ThingServices.companyHead;
-    tableData.value =ThingServices.taskList
-  }
+  // const getWflow =async () => {
+  //   await ThingServices.queryTask()
+  //   tableHead.value = ThingServices.companyHead;
+  //   tableData.value =ThingServices.taskList
+  // }
 
   const flowSelect = (key: string) => {
     flowActive.value = key
     flowSwitch(key)
   }
   const flowSwitch  = async (key: string) => {
-    if(key == '1'){
-      await ThingServices.queryTask()
-      tableData.value =ThingServices.taskList
-    }else if(key =='2'){
-      await ThingServices.queryRecord()
-      tableData.value =ThingServices.recordList
-    }else if(key =='3'){
-      await ThingServices.queryInstance()
-      tableData.value =ThingServices.queryInstanceList
-    }else if(key =='4'){
-      tableData.value = ThingServices.copyList
-    }
+    // if(key == '1'){
+    //   await ThingServices.queryTask()
+    //   tableData.value =ThingServices.taskList
+    // }else if(key =='2'){
+    //   await ThingServices.queryRecord()
+    //   tableData.value =ThingServices.recordList
+    // }else if(key =='3'){
+    //   await ThingServices.queryInstance()
+    //   tableData.value =ThingServices.queryInstanceList
+    // }else if(key =='4'){
+    //   tableData.value = ThingServices.copyList
+    // }
   }
 
   const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
@@ -195,9 +195,10 @@
     if (whiteList.includes(key)) {
       getApplyList()
       tableHead.value = ThingServices.companyHead;
-    } else {
-      getWflow();
     }
+    //  else {
+    //   getWflow();
+    // }
   }
 
   onMounted(() => {
@@ -211,7 +212,7 @@
     // } else {
     //   activeId.value = id
     // }
-    // handleSelect(selectType, [])
+    handleSelect('1-2', [])
   });
 
   instance?.proxy?.$Bus.on('selectBtn', (num) => {

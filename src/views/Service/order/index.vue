@@ -16,10 +16,9 @@
         </el-menu>
       </div>
       <div class="btnStyle">
-        <el-button type="primary">新增</el-button>
+        <el-button type="primary">加好友</el-button>
         <el-button type="primary">审核</el-button>
         <el-button type="primary">退回</el-button>
-        <el-button type="primary">打印</el-button>
       </div>
        <div class="tab-list">
         <DiyTable
