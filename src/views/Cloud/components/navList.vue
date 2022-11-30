@@ -24,7 +24,7 @@
   import { ref, onMounted, watch } from 'vue'
   import Bucket from '@/module/cloud/bucket'
   import { encodeURIString } from '../conversion'
-  import ObjectLay from "@/module/store/objectlay";
+  import ObjectLay from "@/module/cloud/objectlay";
   interface Tree {
     label: string
     children?: Tree[]
