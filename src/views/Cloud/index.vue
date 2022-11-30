@@ -170,6 +170,7 @@
 
   // 打开创建文件夹对话框
   const openCreateFileDialog = () => {
+    state.fileName = ''
     createFileDialog.value = true
   }
 
