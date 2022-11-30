@@ -20,7 +20,8 @@
         <el-button @click="labor(2)" type="primary">审核</el-button>
         <el-button @click="labor(3)" type="primary">退回</el-button>
       </div>
-       <div class="tab-list">
+    <searchFriend v-if="dialogVisible" @closeDialog="dialogVisible = false" :serachType="1" @checksSearch="checksSearch" />
+    <div class="tab-list">
         <DiyTable
           class="diytable"
           ref="diyTable"
@@ -32,6 +33,9 @@
           <template #productId="scope">
             <!-- {{chat.getName(scope.row?.team?.flowRelation?.productId||scope.row?.flowTask?.flowInstance?.flowRelation?.productId||scope.row?.flowRelation?.productId)}} -->
           </template>
+          <!-- <template #target.typeName="scope">
+            {{ scope.row.team.target.typeName }}
+          </template> -->
           <template #remark="scope">
             {{ scope.row?.team?.remark }}
           </template>
@@ -68,6 +72,7 @@
   import friendJosn from '../json/friend.json';
   import type { TabsPaneContext } from 'element-plus'
   import { chat } from '@/module/chat/orgchat'
+  import searchFriend from '@/components/searchs/index.vue'
   
   import thingServices from '@/module/flow/thing'
 
@@ -83,7 +88,7 @@
   const tableHead =ref<any>(ThingServices.friendHead);
   const options = {
     expandAll: false,
-    checkBox: false,
+    checkBox: true,
     order: true,
     noPage: true,
     selectLimit: 0
@@ -144,7 +149,8 @@
 
   const labor = (index:any) => {
     if(index === 1) {
-      router.push({ path: '/chat' })
+      // router.push({ path: '/chat' })
+      dialogVisible.value = true
     }
   }
 
@@ -153,35 +159,35 @@
     handleSelect(activeIndex.value, [])
   }
   var getList = async () => {
-    await ThingServices.getAllApproval('0')
-    console.log(friendJosn);
-    
-    tableData.value = friendJosn
+    await ThingServices.getAllApply()
+    // const personnelData = ThingServices.approvalList.filter(item => {
+    //   return item.team.target.typeName === '人员'
+    // })
+    console.log(ThingServices.applyList);
+    tableData.value = ThingServices.applyList
   }
 
-  const getWflow =async () => {
-    await ThingServices.queryTask()
-    tableHead.value = ThingServices.friendHead;
-    tableData.value = friendJosn
-  }
+  // const getWflow =async () => {
+  //   await ThingServices.queryTask()
+  //   tableHead.value = ThingServices.friendHead;
+  //   tableData.value = friendJosn
+  // }
 
   const flowSelect = (key: string) => {
     flowActive.value = key
     flowSwitch(key)
   }
   const flowSwitch  = async (key: string) => {
-    if(key == '1'){
-      await ThingServices.queryTask()
-      tableData.value = friendJosn
-    }else if(key =='2'){
-      await ThingServices.queryRecord()
-      tableData.value = friendJosn
-    }else if(key =='3'){
-      await ThingServices.queryInstance()
-      tableData.value = friendJosn
-    }else if(key =='4'){
-      tableData.value = friendJosn
-    }
+    // if(key == '1'){
+    //   await ThingServices.queryTask()
+    //   tableData.value = friendJosn
+    // }else if(key =='2'){
+    //   await ThingServices.queryRecord()
+    //   tableData.value = friendJosn
+    // }else if(key =='3'){
+    //   await ThingServices.queryInstance()
+    //   tableData.value = friendJosn
+    // }
   }
   const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
   const handleSelect = (key: any, keyPath: string[]) => {
@@ -193,9 +199,10 @@
     if (whiteList.includes(key)) {
       getList()
       tableHead.value = ThingServices.friendHead;
-    } else {
-      getWflow();
-    }
+    } 
+    // else {
+    //   getWflow();
+    // }
   }
 
   onMounted(() => {
