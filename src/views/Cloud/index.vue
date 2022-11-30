@@ -1,6 +1,6 @@
 <template>
   <div class="cloud">
-<!--    <NavList ref="navRef" :menuList="state.cloudMenu"></NavList>-->
+    <NavList ref="navRef" @clickFileFromTree="clickFile"></NavList>
     <div class="cloudMainBox" @click="onContent">
       <div class="cloudBar" v-if="state.currentLay">
         <el-space size="default">
@@ -44,7 +44,7 @@
               @contextmenu.prevent.stop="fileRightClick($event, item, index)"
           >
             <file-icon :file-item="item"></file-icon>
-            <div class="elUpload-text" :title="item.Name">{{ zipFileName(item.Name) }}</div>
+            <div class="elUpload-text" :title="item.Name">{{ doZipFileName(item.Name) }}</div>
           </div>
         </div>
         <el-empty v-else description="没有文件" :image-size="100"/>
@@ -96,13 +96,11 @@
   import FileIcon from './components/fileIcon.vue'
   import {ElMessageBox, ElMessage, UploadProps} from "element-plus";
   import {useUserStore} from "@store/user";
+  import { zipFileName } from '@/utils'
   const store = useUserStore()
 
   const navRef = ref()
   const state = reactive({
-    cloudMenu: [],
-    keyArr: [],
-    currentLocation: '',
     currentLay: null,
     uploadHeaders: {
       Authorization: store.userToken
@@ -238,13 +236,8 @@
   }
 
   // 文本展示工具函数
-  const zipFileName = (name: string) => {
-    if(name.length > 10) {
-      const rp = name.substring(2, name.length - 6);
-      return rp != name ? name.replace(rp, "..") : name
-    } else {
-      return name
-    }
+  const doZipFileName = (name: string) => {
+    return zipFileName(name, 10, 2, 6)
   }
 
   onMounted(async () => {

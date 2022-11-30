@@ -12,19 +12,21 @@ export default class ObjectLay {
   public DateModified: string
   public IsDirectory: boolean
   public HasSubDirectories: boolean
-  public Meta: any
   private parent: ObjectLay
   public children: ObjectLay[]
+  public dirChildren: ObjectLay[]
+  public isLeaf: boolean
   public constructor(data: any = null, parent: ObjectLay = null) {
     this.parent = parent
     this.children = null
+    this.dirChildren = null
     this.Key = data?.key || ''
     this.Name = data?.name || '我的云盘'
-    this.IsDirectory = data?.isDirectory || false
+    this.IsDirectory = !this.parent ? true : data?.isDirectory || false
     this.DateCreated = data?.dateCreated || ''
     this.DateModified = data?.dateModified || ''
-    this.HasSubDirectories = this.Name == '我的云盘' ? true : (data?.hasSubDirectories || false)
-    this.Meta = data || {key: '', name: '我的云盘'}
+    this.HasSubDirectories = !this.parent ? true : (data?.hasSubDirectories || false)
+    this.isLeaf = !this.HasSubDirectories
   }
   /**
    * 是否包含上级目录

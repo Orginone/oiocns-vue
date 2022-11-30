@@ -33,33 +33,23 @@ class Bucket {
    * @returns 目录树结构
    */
   public GetLeftTree = async (data: any) => {
-    //设置Current
-    this.Current = data
     let children
-    if (this.expand.includes(data.Key)) {
-      children = this.GetExpandTree(false)
-    } else {
-      this.expand.push(data.Key)
-      children = this.GetExpandTree(true)
-    }
-    return children
+    children = await this.GetExpandTree(data, !data.children)
+    data.dirChildren = children
   }
   /**
    * 获取已经展开的树
    * @param refresh
    * @constructor
    */
-  private GetExpandTree = async (refresh: boolean) => {
-    let arr = await this.Current.GetChildren(refresh)
+  private GetExpandTree = async (data: ObjectLay, refresh: boolean) => {
+    let arr = await data.GetChildren(refresh)
     let children: any[] = []
-    arr.forEach((el: any) => {
-      if (el.HasSubDirectories) {
-        el.children = [{} as ObjectLay]
-      }
+    for (const el of arr) {
       if (el.IsDirectory) {
         children.push(el)
       }
-    })
+    }
     return children.length > 0 ? children : []
   }
   /**

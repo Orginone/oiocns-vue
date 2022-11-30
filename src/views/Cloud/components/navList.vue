@@ -2,17 +2,18 @@
   <div class="main">
     <el-tree
       ref="treeRef"
-      :data="props.menuList"
       :props="defaultProps"
-      :expand-on-click-node="false"
+      :node-key="'Key'"
+      :expand-on-click-node="true"
+      :lazy="true"
+      :load="loadNode"
       accordion
       @node-click="nodeClick"
-      @node-expand="nodeExpand"
     >
       <template #default="{ node, data }">
         <div class="folder-node">
           <el-icon><FolderOpened v-if="node.expanded"/><Folder v-else/></el-icon>
-          <span>{{ node.label }}</span>
+          <span>{{ doZipFileName(node.label) }}</span>
         </div>
       </template>
     </el-tree>
@@ -21,40 +22,47 @@
 
 <script lang="ts" setup>
   import type Node from 'element-plus/es/components/tree/src/model/node'
-  import { ref, onMounted, watch } from 'vue'
+  import { ref, onMounted, watch, reactive } from 'vue'
   import Bucket from '@/module/cloud/bucket'
-  import { encodeURIString } from '../conversion'
   import ObjectLay from "@/module/cloud/objectlay";
+  import { zipFileName } from '@/utils'
   interface Tree {
     label: string
     children?: Tree[]
-    level?: number
   }
-  const props = defineProps({
-    menuList: {
-      type: Array
-    }
+  const state = reactive({
+    treeData: null
   })
+  const props = defineProps({})
   const treeRef = ref(null)
-  const emit = defineEmits(['changeCurrentLocation', 'gotoBTM'])
+  const emit = defineEmits(['clickFileFromTree'])
 
   defineExpose({ treeRef })
 
   const defaultProps = {
-    children: 'children',
+    children: 'dirChildren',
     label: 'Name',
+    isLeaf: 'isLeaf'
   }
-  const nodeClick = (data: ObjectLay, item: any, treenode: any, event: any) => {
-    //data.Meta.level = item.level || 0
-    console.log(data, item, treenode)
-    if(item.level == 1) {
-      emit('gotoBTM')
+
+  // 动态加载子目录
+  const loadNode = async (node: Node, resolve: (data: any[]) => void) => {
+    if(node.level == 0) {
+      resolve([Bucket.Root])
     } else {
-      emit('changeCurrentLocation', data.Meta)
+      await Bucket.GetLeftTree(node.data)
+      resolve(node.data.dirChildren)
     }
   }
-  const nodeExpand = async (data: any, node: any, nodeData: any) => {
-    data.children = await Bucket.GetLeftTree(data)
+
+  // 点击节点目录
+  const nodeClick = (data: ObjectLay, item: any, treenode: any, event: any) => {
+    emit('clickFileFromTree', data)
+  }
+
+  // 文本展示工具函数
+  const doZipFileName = (name: string) => {
+    return zipFileName(name, 15, 5, 6)
   }
 </script>
 <style lang="scss">
