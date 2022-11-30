@@ -20,12 +20,19 @@
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item
+                <!-- <el-dropdown-item
                   v-for="(childrenitem, childrenindex) in filterRoute(item?.children)"
                   :command="childrenitem.path"
                   :key="childrenindex"
                   :disabled="currentRoute === childrenitem.path"
                   >{{ childrenitem.meta?.title }}</el-dropdown-item
+                > -->
+                <el-dropdown-item
+                  v-for="childrenitem in currentLevelMenus"
+                  :command="childrenitem.url"
+                  :key="childrenitem.id"
+                  :disabled="currentRoute === childrenitem.url"
+                  >{{ childrenitem.name }}</el-dropdown-item
                 >
               </el-dropdown-menu>
             </template>
@@ -85,6 +92,10 @@ import { useRouter } from "vue-router";
 import shareDrawer from './components/shareDrawer.vue'
 import searchDrawer from './components/searchDrawer.vue'
 
+import { createAllMenuTree, MenuDataItem, findParent } from "@/views/Layout/json/MenuData";
+import { getAllNodes } from '@/utils/tree'
+
+
 // 打开分享抽屉
 const showShareDrawer = ref(false)
 // 打开搜索抽屉
@@ -116,6 +127,36 @@ watch(
   },
   { immediate: true }
 );
+
+
+const menuTree = ref(createAllMenuTree());
+const allMenuItems = ref(getAllNodes(menuTree.value));
+const currentLevelMenus = ref<MenuDataItem[]>([]);
+function setDropdownItems() {
+  const ret = findParent(router.currentRoute.value, allMenuItems.value);
+  if (!ret) {
+    // 找不到菜单，创建一个占位的
+    currentLevelMenus.value = [
+      {
+        id: "$current",
+        name: router.currentRoute.value.name as string,
+        $kind: "menu",
+        url: currentRoute.value
+      }
+    ];
+    return;
+  }
+
+  const children = ret.parent.children || [];
+  
+  currentLevelMenus.value = children;
+}
+watch(
+  router.currentRoute,
+  (newValue) => setDropdownItems(),
+  { immediate: true }
+);
+
 </script>
 
 <style lang="scss" scoped>

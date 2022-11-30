@@ -13,9 +13,9 @@
     </div>
     <div class="tab-list">
       <el-descriptions :column="2" border>
-        <el-descriptions-item :label="'部门名称'" label-align="center" align="center" width="150px"
+        <el-descriptions-item :label="`${title}名称`" label-align="center" align="center" width="150px"
           label-class-name="my-label" class-name="my-content">{{currentData?.data?.team.name}}</el-descriptions-item>
-        <el-descriptions-item :label="'部门编码'" label-align="center" align="center" width="150px"
+        <el-descriptions-item :label="`${title}编码`" label-align="center" align="center" width="150px"
           label-class-name="my-label" class-name="my-content">{{currentData?.data?.code}}</el-descriptions-item>
         <el-descriptions-item :label="'我的岗位'" label-align="center" align="center" width="150px"
           label-class-name="my-label" class-name="my-content">{{authority.GetTargetIdentitys(currentData?.data?.id)}}
@@ -73,13 +73,13 @@ const allowEdit = () => {
       selectItem.value.data.belongId
     ])
 }
-let title = ref<string>('部门')
 let selectItem = ref<any>({})
 let dialogVisible = ref<boolean>(false)
 let formData: any = ref({})
 const service  = new DepartmentServices()
 
 const currentData = computed(() => store.currentSelectItme)
+const title = computed(() => currentData.value.data?.typeName ?? '部门')
 
 // 获取单位
 const selectItemChange = (data: any) => {
