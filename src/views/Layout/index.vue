@@ -6,12 +6,12 @@
     </el-header>
     <el-container>
       <!-- 主导航 -->
-      <div class="menu-list" v-if="showMenu">
+      <div class="menu-list" v-show="showMenu">
         <MenuNav :data="menuArr.state" :titleData="titleArr.state"></MenuNav>
       </div>
       <div class="layout-main" >
           <!-- 面包屑 -->
-        <div class="breadcrumb-box" v-if="showMenu">
+        <div class="breadcrumb-box" v-show="showMenu">
           <Breadcrumb></Breadcrumb>
         </div>
         <!-- main -->
@@ -96,8 +96,9 @@
         }
       }
     }
-    if(router.currentRoute.value.path.indexOf('store') != -1){    
-        storeFun()
+    if(router.currentRoute.value.path.indexOf('store/shop') != -1){
+      getShopList();
+      return
     }
     const ret = findMenu(router.currentRoute.value, allMenuItems.value);
     if (!ret) {
@@ -106,7 +107,7 @@
     }
     titleArr.state = ret.top;
     menuArr.state = ret.top.children;
-    
+    showMenu.value = true;
   }
 
 
@@ -201,13 +202,6 @@
     titleArr.state = shopStoreJosn[0]
     menuArr.state = shopStoreJosn
     
-  }
-  // store 路由设置
-  const storeFun =()=>{
-    if(router.currentRoute.value.path.indexOf('store/shop') != -1){
-      console.log('1')
-      getShopList();
-    }
   }
   // const getNav = ()=>{
   //     if(router.currentRoute.value.path.indexOf('store') != -1){    
