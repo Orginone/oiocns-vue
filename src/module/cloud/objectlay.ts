@@ -132,6 +132,8 @@ export default class ObjectLay {
           message: res.msg,
           type: 'error'
         })
+      } else {
+        ElMessage.success( '文件重命名成功')
       }
     }
   }

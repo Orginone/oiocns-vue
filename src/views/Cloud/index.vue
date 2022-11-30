@@ -64,11 +64,25 @@
         </span>
       </template>
     </el-dialog>
+    <!-- 文件重命名对话框 -->
+    <el-dialog v-model="editFileDialog" title="文件重命名" :width="600">
+      <el-form>
+        <el-form-item label="文件名称" :label-width="140">
+          <el-input v-model="state.fileName" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="editFileDialog = false">取消</el-button>
+          <el-button type="primary" @click="confirmEditFile">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
     <!-- 文件操作菜单 -->
     <el-card v-show="showFileMenu" class="fileMenu" :style="{ left: menuLeft + 'px', top: menuTop + 'px' }">
-      <div class="text fileMenu-item" @click="rename">重命名</div>
-      <div class="text fileMenu-item">复制</div>
-      <div class="text fileMenu-item">移动</div>
+      <div class="text fileMenu-item" @click="openEditFileDialog">重命名</div>
+<!--      <div class="text fileMenu-item">复制</div>-->
+<!--      <div class="text fileMenu-item">移动</div>-->
       <div class="text fileMenu-item" @click="deleteFile">删除文件</div>
     </el-card>
   </div>
@@ -98,6 +112,7 @@
     operateItem: null
   })
   const createFileDialog = ref<boolean>(false)
+  const editFileDialog = ref<boolean>(false)
   const showFileMenu = ref<boolean>(false)
   const menuLeft = ref<number>(0)
   const menuTop = ref<number>(0)
@@ -158,6 +173,12 @@
     createFileDialog.value = true
   }
 
+  // 打开文件重命名对话框
+  const openEditFileDialog = () => {
+    editFileDialog.value = true
+    state.fileName = state.operateItem.Name
+  }
+
   // 确认创建文件夹
   const confirmCreateFile = async () => {
     if(!state.fileName.trim()) {
@@ -167,6 +188,18 @@
     createFileDialog.value = false
     await Bucket.Current.Create(state.fileName)
     await refreshCurrent()
+  }
+
+  // 确认重命名
+  const confirmEditFile = async () => {
+    if(!state.fileName.trim()) {
+      ElMessage.warning('请填写名称')
+      return false
+    }
+    editFileDialog.value = false
+    await state.operateItem.Rename(state.fileName)
+    await refreshCurrent()
+    onContent()
   }
 
   // 删除文件
@@ -368,7 +401,7 @@
     }
     .fileMenu {
       width: 100px;
-      height: 120px;
+      min-height: 30px;
       position: absolute;
       font-size: 12px;
       z-index: 999;
@@ -377,6 +410,7 @@
       justify-content: space-evenly;
       align-items: center;
       cursor: pointer;
+      padding: 5px 0;
 
       &-item {
         padding: 5px 0;
