@@ -16,6 +16,7 @@
           :hasTableHead="true"
           :tableData="state.ownProductList"
           :options="options"
+          :total="pageStore.total"
           @handleUpdate="handleUpdate"
           @selectionChange="selectionChange"
           :tableHead="state.tableHead"
@@ -443,7 +444,6 @@ const title = ref<string>("");
 onMounted(() => {
   // 获取列表
   getProductList();
-  getShopcarNum();
 });
 
 //列表
@@ -457,12 +457,6 @@ watch([isCard], ([val], [valOld]) => {
     }
   });
 });
-
-const shopcarNum = ref(0);
-const getShopcarNum = async () => {
-  const total = await appstore.getShopcarNum();
-  shopcarNum.value = total;
-};
 
 const handleUpdate = (page: any) => {
   pageStore.currentPage = page.currentPage;
@@ -492,10 +486,8 @@ const getProductList = async () => {
 
     product.resourcesList = flowArr;
   }
-  state[`ownTotal`] = res.total;
   pageStore.total = res.total;
-  // diyTable.value.state.page.total = res.total
-  // pageContent.value.state.page.total = res.total
+  diyTable.value.state.page.total = res.total
 };
 
 // 移除app
@@ -628,7 +620,6 @@ instance?.proxy?.$Bus.on("clickBus", (num) => {
       }
 
       .table-tabs {
-        width: 500px;
 
         .el-menu--horizontal {
           border: 0;

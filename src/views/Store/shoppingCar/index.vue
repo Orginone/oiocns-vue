@@ -274,9 +274,6 @@
               color: #fff;
               padding: 8px  16px;
           }
-          .table-tabs{
-            width: 500px;
-          }
         }
       }
     }
