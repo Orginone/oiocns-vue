@@ -13,8 +13,8 @@ type TreeData = {
   type: string
 }
 type PageStore = {
-  tableData?: any[]
   currentPage: number
+  tableData?: any[]
   pageSize: number
   total?: number
 }
@@ -28,9 +28,10 @@ class appStore {
    * @param searchText 查询条件
    */
   public async getProductList(pageStore: PageStore, searchText: string) {
+    console.log('aaaaaa',pageStore)
     const { data, success } = await API.product['searchOwnProduct']({
       data: {
-        offset: (pageStore.currentPage - 1) * pageStore.pageSize,
+        offset: pageStore.currentPage,
         limit: pageStore.pageSize,
         filter: searchText
       }
@@ -294,7 +295,7 @@ class appStore {
     const { success, data } = await API.appstore.merchandise({
       data: {
         id: id,
-        offset: (page.currentPage - 1) * page.pageSize,
+        offset:page.currentPage,
         limit: page.pageSize,
         filter: search
       }
@@ -728,7 +729,7 @@ export class Application {
       data: {
         id: node.id,
         limit: page.pageSize,
-        offset: this.handleCurrent(page),
+        offset: page.current,
         filter: typeof search == 'string' ? search : ''
       }
     })

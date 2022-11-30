@@ -459,7 +459,7 @@ watch([isCard], ([val], [valOld]) => {
 });
 
 const handleUpdate = (page: any) => {
-  pageStore.currentPage = page.currentPage;
+  pageStore.currentPage = page.current;
   pageStore.pageSize = page.pageSize;
   getProductList();
 };

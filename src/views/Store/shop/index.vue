@@ -49,7 +49,7 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="requireItem">查看详情</el-dropdown-item>
+                  <!-- <el-dropdown-item @click="requireItem(scope.row.id)">查看详情</el-dropdown-item> -->
                   <el-dropdown-item @click="joinShopCar(scope.row.id)">加入购物车</el-dropdown-item>
                   <el-dropdown-item @click="buyThings(scope.row)">购买</el-dropdown-item>
                 </el-dropdown-menu>
@@ -73,7 +73,7 @@
                         <el-dropdown>
                           <span class="el-dropdown-link drop-list"> ··· </span>
                           <template #dropdown>
-                            <el-dropdown-item @click="requireItem">查看详情</el-dropdown-item>
+                            <!-- <el-dropdown-item @click="requireItem(item.id)">查看详情</el-dropdown-item> -->
                             <el-dropdown-item @click="joinShopCar(item.id)">加入购物车</el-dropdown-item>
                             <el-dropdown-item @click="buyThings(item)">购买</el-dropdown-item>
                           </template>
@@ -189,7 +189,7 @@
   // 表格展示数据
   const pageStore = reactive({
     tableData: [],
-    currentPage: 1,
+    currentPage: 0,
     pageSize: 20,
     total: 0
   })
@@ -235,7 +235,7 @@
     }
   ]
   const handleUpdate = (page: any) => {
-    pageStore.currentPage = page.currentPage
+    pageStore.currentPage = page.current
     pageStore.pageSize = page.pageSize
     getAppList()
   }
@@ -276,7 +276,10 @@ const buyThings = (item:any) => {
     await appstore.staging(id)
     getAppList()
   }
-  const requireItem = () => {}
+  // TODO 暂时去掉跳转详情
+  const requireItem = (id:string) => {
+    router.push({ path: "/store/appManagement", query: { id: id } });
+  }
   // 获取购物车数量
   const getShopcarNum = async () => {
     shopcarNum.value = await appstore.getShopcarNum()
@@ -293,6 +296,7 @@ const buyThings = (item:any) => {
       searchVal.value
     )
     state.myAppList = result || []
+    pageStore.total = total
   }
 
   // 获取共享仓库信息
@@ -304,13 +308,6 @@ const buyThings = (item:any) => {
   const GoPage = (path: string) => {
     router.push(path)
   }
-
-  watch(modeType, (val, valOld) => {
-    // 监听 展示方式变化
-    nextTick(() => {
-      getAppList()
-    })
-  })
   const getShopData = () => {
     $services.appstore
       .merchandise({
