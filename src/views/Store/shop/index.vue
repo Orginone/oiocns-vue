@@ -29,6 +29,7 @@
           :tableData="state.myAppList"
           :options="options"
           @handleUpdate="handleUpdate"
+          :total="pageStore.total"
           @selectionChange="selectionChange"
           :tableHead="tableHead"
         >
@@ -415,7 +416,7 @@ const buyThings = (item:any) => {
             padding: 8px  16px;
         }
         .table-tabs{
-          width: 500px;
+          min-width: 300px;
           .el-menu--horizontal{
             border: 0;
           }
