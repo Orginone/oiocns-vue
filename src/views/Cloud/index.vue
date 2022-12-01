@@ -81,8 +81,8 @@
     <!-- 文件操作菜单 -->
     <el-card v-show="showFileMenu" class="fileMenu" :style="{ left: menuLeft + 'px', top: menuTop + 'px' }">
       <div class="text fileMenu-item" @click="openEditFileDialog">重命名</div>
-<!--      <div class="text fileMenu-item">复制</div>-->
-<!--      <div class="text fileMenu-item">移动</div>-->
+      <!--<div class="text fileMenu-item">复制</div>-->
+      <!--<div class="text fileMenu-item">移动</div>-->
       <div class="text fileMenu-item" @click="deleteFile">删除文件</div>
     </el-card>
   </div>
@@ -99,7 +99,7 @@
   import { zipFileName } from '@/utils'
   const store = useUserStore()
 
-  const navRef = ref()
+  const navRef = ref(null)
   const state = reactive({
     currentLay: null,
     uploadHeaders: {
@@ -144,6 +144,7 @@
     }
     await Bucket.OpenDirectory(item)
     state.currentLay = Bucket.Current
+    navRef.value.checkedNode(item)
   }
 
   // 返回上一层
@@ -154,8 +155,7 @@
 
   // 返回到某一层
   const goBack = async (item: Objectlay, index: number) => {
-    await Bucket.GoDirectory(item)
-    state.currentLay = Bucket.Current
+    await clickFile(item)
   }
   
   // 文件上传成功
@@ -241,8 +241,7 @@
   }
 
   onMounted(async () => {
-    await Bucket.GetContent()
-    state.currentLay = Bucket.Current
+    await clickFile(Bucket.Current)
   })
 </script>
 <style lang="scss">

@@ -5,6 +5,8 @@
       :props="defaultProps"
       :node-key="'Key'"
       :expand-on-click-node="true"
+      :default-expanded-keys="['']"
+      :highlight-current="true"
       :lazy="true"
       :load="loadNode"
       accordion
@@ -22,7 +24,7 @@
 
 <script lang="ts" setup>
   import type Node from 'element-plus/es/components/tree/src/model/node'
-  import { ref, onMounted, watch, reactive } from 'vue'
+  import { ref, onMounted, watch, reactive, nextTick } from 'vue'
   import Bucket from '@/module/cloud/bucket'
   import ObjectLay from "@/module/cloud/objectlay";
   import { zipFileName } from '@/utils'
@@ -36,8 +38,6 @@
   const props = defineProps({})
   const treeRef = ref(null)
   const emit = defineEmits(['clickFileFromTree'])
-
-  defineExpose({ treeRef })
 
   const defaultProps = {
     children: 'dirChildren',
@@ -64,6 +64,28 @@
   const doZipFileName = (name: string) => {
     return zipFileName(name, 15, 5, 6)
   }
+
+  // 选中某个节点
+  const checkedNode = (data: ObjectLay) => {
+    nextTick(() => {
+      treeRef.value.setCurrentKey(data.Key, true)
+      const node = treeRef.value.getNode(data.Key)
+      if(!node.expanded) {
+        node.expand()
+      }
+      node.childNodes.map((child: any) => {
+        if(child.expanded){
+          child.collapse()
+        }
+      })
+    })
+  }
+
+  defineExpose({ checkedNode })
+
+  onMounted(async () => {
+
+  })
 </script>
 <style lang="scss">
   .main {
