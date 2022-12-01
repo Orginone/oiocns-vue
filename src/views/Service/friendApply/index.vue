@@ -29,6 +29,7 @@
           :tableData="tableData"
           :options="options"
           :tableHead="tableHead"
+          @selectionChange="selectionChange"
         >
           <template #productId="scope">
             <!-- {{chat.getName(scope.row?.team?.flowRelation?.productId||scope.row?.flowTask?.flowInstance?.flowRelation?.productId||scope.row?.flowRelation?.productId)}} -->
@@ -100,6 +101,10 @@
     pageSize: 20,
     total: 0
   })
+  const checkList = reactive<any>([])
+  const selectionChange = (val: any) => {
+    checkList.value = val
+  }
 
   // const showDetail = async (row: any,type:number) => {
   //   if(type == 4){
@@ -147,10 +152,19 @@
   const elmenus = ref(null);
   const activeName = ref('first') //商店tab
 
-  const labor = (index:any) => {
+  const labor = async (index:any) => {
     if(index === 1) {
       // router.push({ path: '/chat' })
       dialogVisible.value = true
+    }else if(index === 3) {
+      const data = await ThingServices.cancelJoin(checkList.value[0].id)
+      if(data){
+        ElMessage({
+          message: '取消成功',
+          type: 'success'
+        })
+        handleSelect('1-1', [])
+      }
     }
   }
 
@@ -163,7 +177,6 @@
     // const personnelData = ThingServices.approvalList.filter(item => {
     //   return item.team.target.typeName === '人员'
     // })
-    console.log(ThingServices.applyList);
     tableData.value = ThingServices.applyList
   }
 

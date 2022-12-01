@@ -104,6 +104,8 @@
     total: 0
   })
 
+  
+
   // const showDetail = async (row: any,type:number) => {
   //   if(type == 4){
   //     $services.wflow.approvalTask({data:{id: row.id,status: 100,}}).then(async (res: ResultType) => {
@@ -158,7 +160,6 @@
   var getApplyList = async () => {
     await ThingServices.getAllApproval('0')
     tableData.value = ThingServices.approvalList
-    console.log(tableData.value);
   }
 
   // const getWflow =async () => {
