@@ -641,7 +641,7 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'storeAppManagement',
         component: () => import('@/views/Store/appManagement/index.vue'),
         meta: {
-          title: '应用设置',
+          title: '应用详情',
           id: "store.storeAppManagement"
         }
       },

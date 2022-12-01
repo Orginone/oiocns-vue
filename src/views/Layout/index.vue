@@ -100,6 +100,11 @@
       getShopList();
       return
     }
+    if(router.currentRoute.value.path.indexOf('store/appManagement') != -1){
+      titleArr.state = storeJosn[0]
+      menuArr.state = storeJosn
+      return
+    }
     const ret = findMenu(router.currentRoute.value, allMenuItems.value);
     if (!ret) {
       showMenu.value = false;
@@ -126,13 +131,13 @@
   const getShopList = async ()=>{
     await marketServices.getMarketList({
       offset: 0,
-      limit: 10,
+      limit: 1000,
       filter: ""
     });
     let myList:any = []
     let addList:any = []
     marketServices.marketList.forEach(element => {
-      if(element.belongId){
+      if(element.belongId == useUserStore().userInfo.workspaceId){
         myList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
               "name":"删除商店",
               "id":"1021"

@@ -49,7 +49,7 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <!-- <el-dropdown-item @click="requireItem(scope.row.id)">查看详情</el-dropdown-item> -->
+                  <el-dropdown-item @click="requireItem(scope.row)">查看详情</el-dropdown-item>
                   <el-dropdown-item @click="joinShopCar(scope.row.id)">加入购物车</el-dropdown-item>
                   <el-dropdown-item @click="buyThings(scope.row)">购买</el-dropdown-item>
                 </el-dropdown-menu>
@@ -73,7 +73,7 @@
                         <el-dropdown>
                           <span class="el-dropdown-link drop-list"> ··· </span>
                           <template #dropdown>
-                            <!-- <el-dropdown-item @click="requireItem(item.id)">查看详情</el-dropdown-item> -->
+                            <el-dropdown-item @click="requireItem(item)">查看详情</el-dropdown-item>
                             <el-dropdown-item @click="joinShopCar(item.id)">加入购物车</el-dropdown-item>
                             <el-dropdown-item @click="buyThings(item)">购买</el-dropdown-item>
                           </template>
@@ -97,6 +97,7 @@
     </div>
     <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog', false)"/>
     <addShop :addDialog="dialogType.addDialog" @closeDialog="closeDialog('addDialog', false)"/>
+    <appInfo :infoDialog="dialogType.infoDialog" :infoDetail="infoDetail.info" @closeDialog="closeDialog('infoDialog', false)"></appInfo>
   </div>
   
 </template>
@@ -111,6 +112,7 @@
   import createShop from "../components/createShop.vue";
   import addShop from "../components/addShop.vue";
   import marketServices from "@/module/store/market"
+  import appInfo from "./components/appInfo.vue"
   const diyTable = ref(null)
   const valuee = ref<any>('');
   const instance = getCurrentInstance();
@@ -132,16 +134,11 @@
   const dialogType: any = reactive({
     createDialog: false, // 创建商店弹窗状态
     addDialog:false,//加入商店弹窗
-    detailDialog: false, // 基础详情弹窗状态
+    infoDialog:false, // 基础详情弹窗状态
   });
-  interface ListItem {
-    code: string
-    name: string
-    trueName: string
-    teamCode: string
-    remark: string
-  }
-
+  const infoDetail:any= reactive({
+    info:{}
+  })
   onMounted(() => {
   })
   // 从文件内获取展示数据
@@ -277,8 +274,9 @@ const buyThings = (item:any) => {
     getAppList()
   }
   // TODO 暂时去掉跳转详情
-  const requireItem = (id:string) => {
-    router.push({ path: "/store/appManagement", query: { id: id } });
+  const requireItem = (item:Object) => {
+    dialogType.infoDialog = true;
+    infoDetail.info = item;
   }
   // 获取购物车数量
   const getShopcarNum = async () => {
