@@ -57,7 +57,7 @@ export default function (iframeRef: Ref<any>, appInfo: any, link: string) {
       case "actions":
         return { success: true, code: 200, data: funcs, msg: "成功." }
       case "appInfo":
-        return { success: true, code: 200, data: appInfo, msg: "成功."}
+        return { success: true, code: 200, data: {...appInfo}, msg: "成功."}
       default:
         let urls = data.url.split('.')
         let action = APPFUNS
