@@ -273,33 +273,33 @@ const createDept = () => {
 
 // 变更部门
 const editDept = ()=>{
-  $services.company.updateDepartment({
-    data: {
-      id: currentData.value?.id,
-      name: currentData.value?.name,
-      code: currentData.value?.code,
-      teamName: currentData.value?.team?.name,
-      teamCode: currentData.value?.team?.code,
-      teamRemark: currentData.value?.team?.remark,
-      parentId: formData.value?.parentId
-    }
-  }).then((res: ResultType) => {
-    if (res.success) {
-      loadOrgTree()
-      ElMessage({
-        message: res.msg,
-        type: 'success'
-      })
-      dialogHide()
-      getUsers(store.currentSelectItme?.data)
-      getUsers(store.currentSelectItme?.data)
-    } else {
-      ElMessage({
-        message: res.msg,
-        type: 'error'
-      })
-    }
-  })
+  // $services.company.updateDepartment({
+  //   data: {
+  //     id: currentData.value?.id,
+  //     name: currentData.value?.name,
+  //     code: currentData.value?.code,
+  //     teamName: currentData.value?.team?.name,
+  //     teamCode: currentData.value?.team?.code,
+  //     teamRemark: currentData.value?.team?.remark,
+  //     parentId: formData.value?.parentId
+  //   }
+  // }).then((res: ResultType) => {
+  //   if (res.success) {
+  //     loadOrgTree()
+  //     ElMessage({
+  //       message: res.msg,
+  //       type: 'success'
+  //     })
+  //     dialogHide()
+  //     getUsers(store.currentSelectItme?.data)
+  //     getUsers(store.currentSelectItme?.data)
+  //   } else {
+  //     ElMessage({
+  //       message: res.msg,
+  //       type: 'error'
+  //     })
+  //   }
+  // })
 }
 
 // 加载单位
