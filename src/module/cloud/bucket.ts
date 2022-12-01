@@ -74,22 +74,6 @@ class Bucket {
     this.Current = current
     await this.GetContent()
   }
-  /**
-   * 返回上一层文件夹目录
-   * @constructor
-   */
-  public GoPrevDirectory = async () => {
-    this.Current = this.Current.GetParent()
-    await this.GetContent()
-  }
-  /**
-   * 返回某一层文件夹目录
-   * @constructor
-   */
-  public GoDirectory = async (item: ObjectLay) => {
-    this.Current = item
-    await this.GetContent()
-  }
 }
 
 const bucket = new Bucket()

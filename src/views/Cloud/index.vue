@@ -149,8 +149,7 @@
 
   // 返回上一层
   const goBackOneStep = async () => {
-    await Bucket.GoPrevDirectory()
-    state.currentLay = Bucket.Current
+    await clickFile(Bucket.Current.GetParent())
   }
 
   // 返回到某一层
@@ -212,6 +211,10 @@
           type: 'warning',
         }
     ).then(async () => {
+      // 同时删除节点
+      if(state.operateItem.IsDirectory) {
+        navRef.value.removeNode(state.operateItem)
+      }
       await state.operateItem.Delete()
       await refreshCurrent()
       onContent()

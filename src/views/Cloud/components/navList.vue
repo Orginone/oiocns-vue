@@ -70,10 +70,10 @@
     nextTick(() => {
       treeRef.value.setCurrentKey(data.Key, true)
       const node = treeRef.value.getNode(data.Key)
-      if(!node.expanded) {
+      if(node && !node.expanded) {
         node.expand()
       }
-      node.childNodes.map((child: any) => {
+      node.childNodes && node.childNodes.map((child: any) => {
         if(child.expanded){
           child.collapse()
         }
@@ -81,7 +81,19 @@
     })
   }
 
-  defineExpose({ checkedNode })
+  // 添加节点
+  const appendNode = (data: ObjectLay, parent: ObjectLay) => {
+
+  }
+
+  // 删除节点
+  const removeNode = (data: ObjectLay) => {
+    nextTick(() => {
+      treeRef.value.remove(data.Key)
+    })
+  }
+
+  defineExpose({ checkedNode, removeNode })
 
   onMounted(async () => {
 
