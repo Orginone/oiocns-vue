@@ -16,11 +16,12 @@ export default class ObjectLay {
   public children: ObjectLay[]
   public dirChildren: ObjectLay[]
   public isLeaf: boolean
+  static rootKey: string = 'root'
   public constructor(data: any = null, parent: ObjectLay = null) {
     this.parent = parent
     this.children = null
     this.dirChildren = null
-    this.Key = data?.key || ''
+    this.Key = data?.key || ObjectLay.rootKey
     this.Name = data?.name || '我的云盘'
     this.IsDirectory = !this.parent ? true : data?.isDirectory || false
     this.DateCreated = data?.dateCreated || ''
@@ -240,12 +241,12 @@ export default class ObjectLay {
    * @returns 格式化后的key
    */
   private formatKey(subName: string = '') {
-    if (!this.Key && !subName) {
+    if (this.Key == ObjectLay.rootKey && !subName) {
       return ''
     }
     try {
       let keys = []
-      if(this.Key){
+      if(this.Key != ObjectLay.rootKey){
         keys.push(this.Key)
       }
       if (subName != '' && subName.length > 0) {

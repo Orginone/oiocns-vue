@@ -5,7 +5,7 @@
       :props="defaultProps"
       :node-key="'Key'"
       :expand-on-click-node="true"
-      :default-expanded-keys="['']"
+      :default-expanded-keys="[ObjectLay.rootKey]"
       :highlight-current="true"
       :lazy="true"
       :load="loadNode"
@@ -83,7 +83,9 @@
 
   // 添加节点
   const appendNode = (data: ObjectLay, parent: ObjectLay) => {
-
+    nextTick(() => {
+      treeRef.value.append(data, parent.Key)
+    })
   }
 
   // 删除节点
@@ -93,7 +95,7 @@
     })
   }
 
-  defineExpose({ checkedNode, removeNode })
+  defineExpose({ checkedNode, removeNode, appendNode })
 
   onMounted(async () => {
 

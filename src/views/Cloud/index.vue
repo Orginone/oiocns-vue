@@ -97,6 +97,7 @@
   import {ElMessageBox, ElMessage, UploadProps} from "element-plus";
   import {useUserStore} from "@store/user";
   import { zipFileName } from '@/utils'
+  import ObjectLay from "@/module/cloud/objectlay";
   const store = useUserStore()
 
   const navRef = ref(null)
@@ -185,6 +186,13 @@
     }
     createFileDialog.value = false
     await Bucket.Current.Create(state.fileName)
+    // 追加节点
+    const dataLay = new Objectlay({}, state.currentLay)
+    dataLay.Key = state.currentLay.Key != ObjectLay.rootKey ? `${state.currentLay.Key}/${state.fileName}` : state.fileName
+    dataLay.Name = state.fileName
+    dataLay.IsDirectory = true
+    dataLay.HasSubDirectories = false
+    navRef.value.appendNode(dataLay, state.currentLay)
     await refreshCurrent()
   }
 
