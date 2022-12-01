@@ -1,28 +1,37 @@
 <template>
   <div class="card" ref="cardHeight">
-    <div class="header">
-      <div class="title">{{ props.selectItem.label }}</div>
-      <div class="box-btns">
-        <div v-if="props.selectItem?.data?.typeName == '集团'">
-          <el-button v-if="allowEdit()" small link type="primary" @click="pullCompanysDialog = true">添加单位</el-button>
-          <el-button v-if="allowEdit()" small link type="primary" @click="viewApplication">查看申请</el-button>
-        </div>
-        <div v-if="
-          props.selectItem?.data?.typeName == '子集团' ||
-          props.selectItem?.data?.typeName == '工作组'
-        ">
-          <el-button v-if="allowEdit()" small link type="primary" @click="showAssignDialog">分配单位</el-button>
-        </div>
-      </div>
-    </div>
-
-    <div :style="{ height: tabHeight - 30 + 'px' }">
+    <div :style="{ height: tabHeight + 'px' }">
       <div style="width: 100%; height: 100%">
-        <DiyTable ref="diyTable" :hasTableHead="false" :tableData="companies" @handleUpdate="handleUpdate"
-          :tableHead="tableHead">
+        <DiyTable 
+          ref="diyTable"
+          :hasTitle="true" 
+          :tableName="props.selectItem?.label ?? props.selectItem?.name" 
+          :hasTableHead="true" 
+          :tableData="companies"
+          @handleUpdate="handleUpdate"
+          :tableHead="tableHead"
+        >
+          <template #buttons>
+            <div style="display: flex;align-items: center">
+              <el-button class="btn-check" type="primary" link>岗位设置</el-button>
+              <el-divider direction="vertical"/>
+              <el-button class="btn-check" v-if="!allowEdit() && props.selectItem?.typeName == '集团'" small link type="primary" @click="pullCompanysDialog = true">添加单位</el-button>
+              <el-divider v-if="props.selectItem?.typeName == '集团'" direction="vertical"/>
+              <el-button class="btn-check" v-if="!allowEdit() && props.selectItem?.typeName == '集团'" small link type="primary" @click="viewApplication">查看申请</el-button>
+              <el-button class="btn-check" v-if="!allowEdit() && props.selectItem?.typeName == '子集团'" small link type="primary" @click="showAssignDialog">分配单位</el-button>
+            </div>
+          </template>
           <template #operate="scope">
-            <el-button link type="danger" size="small"
-              v-if="allowEdit() && scope.row.id !== authority.getSpaceId()" @click="removeFrom(scope.row)">移除单位</el-button>
+            <el-dropdown>
+              <span class="el-dropdown-link"> ··· </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="removeFrom">调整节点</el-dropdown-item>
+                  <el-dropdown-item @click="removeFrom">集团岗位</el-dropdown-item>
+                  <el-dropdown-item v-if="!allowEdit() && scope.row.id !== authority.getSpaceId()" @click="removeFrom(scope.row)" style="color: #f67c80">移出集团</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </DiyTable>
       </div>
@@ -52,10 +61,10 @@ const rootGroup = ref<any>({})
 let companies = ref<any>([])
 
 const allowEdit = () => {
-  if (props.selectItem.data && props.selectItem.data.id) {
+  if (props.selectItem && props.selectItem.id) {
     return authority.IsRelationAdmin([
-      props.selectItem.data.id,
-      props.selectItem.data.belongId
+      props.selectItem.id,
+      props.selectItem.belongId
     ])
   }
   return false
@@ -114,7 +123,7 @@ const handleUpdate = (page: any) => {
 
 // 加载单位
 const getCompanies = async () => {
-  const item = props.selectItem?.data
+  const item = props.selectItem
   if(item){
     if (item.typeName == '集团') {
       rootGroup.value = JSON.parse(JSON.stringify(item))
@@ -178,9 +187,9 @@ const removeFrom = async (row: any) => {
   let rowObj = {
     name:row.name,
     id:row.id,
-    typeName:props.selectItem.data.typeName
+    typeName:props.selectItem.typeName
   }
-  const data =  await groupServices.removeCompany(rowObj,props.selectItem.data.id)
+  const data =  await groupServices.removeCompany(rowObj,props.selectItem.id)
   if(data){
     ElMessage({
       message: '操作成功',
@@ -239,33 +248,30 @@ watch(props.tabHeight, () => {
 </script>
 
 <style lang="scss" scoped>
+.el-dropdown-link{
+  padding: 2px 10px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+.el-dropdown-link:hover{
+  background:#1642cb;
+  color: #fff;
+}
+
 .card {
   height: 100%;
   width: 100%;
   // background-color: #fff;
   padding: 10px 0;
-
-  .header {
-    display: flex;
-
-    .title {
-      text-align: left;
-      font-size: 16px;
-      width: 50%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-weight: bold;
-    }
-
-    .box-btns {
-      text-align: right;
-      padding-right: 14px;
-      padding-bottom: 10px;
-      width: 70%;
-    }
+  .btn-check{
+    padding: 8px 16px;
+    color: #154ad8;
   }
-
+  .btn-check:hover{
+    background: #154ad8;
+    color: #fff;
+    padding: 8px  16px;
+  }
   .search {
     width: 50%;
   }

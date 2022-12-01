@@ -52,12 +52,12 @@
             <span class="el-dropdown-link"> ··· </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="showDiong">修改信息</el-dropdown-item>
-                <el-dropdown-item @click="showDiong">变更部门</el-dropdown-item>
+                <el-dropdown-item @click="reviseInfo(scope.row)">修改信息</el-dropdown-item>
+                <el-dropdown-item @click="changeDepartment(scope.row)">变更部门</el-dropdown-item>
                 <el-dropdown-item @click="showDiong">岗位设置</el-dropdown-item>
                 <el-dropdown-item @click="showDiong">部门设置</el-dropdown-item>
                 <el-dropdown-item @click="showDiong">停用</el-dropdown-item>
-                <el-dropdown-item @click="showDiong" style="color: #f67c80">移出单位</el-dropdown-item>
+                <el-dropdown-item @click="removeFrom(scope.row)" style="color: #f67c80">移出成员</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -107,6 +107,78 @@
       </span>
     </template>
   </el-dialog>
+
+  <el-dialog v-model="personDialogVisible" title="修改信息" width="40%" append-to-body @close="dialogHide">
+    <el-form
+      label-position="top"
+      label-width="100px"
+      :model="personFormData"
+    >
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-form-item label="账号" style="width: 100%">
+          <el-input disabled v-model="personFormData.code" placeholder="请输入账号" clearable style="width: 100%" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="昵称" style="width: 100%">
+          <el-input v-model="personFormData.name" placeholder="请输入昵称" clearable style="width: 100%" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="姓名" style="width: 100%">
+          <el-input v-model="personFormData.teamName" placeholder="请输入姓名" clearable />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="手机号" style="width: 100%">
+          <el-input v-model="personFormData.teamCode" placeholder="请输入手机号" clearable />
+        </el-form-item>
+      </el-col>
+      <el-col :span="24">
+        <el-form-item label="其他信息" style="width: 100%">
+          <el-input v-model="personFormData.remark" placeholder="请输入" clearable />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogHide">取消</el-button>
+        <el-button type="primary" @click="personUpdate">完成</el-button>
+      </span>
+    </template>
+  </el-dialog>
+
+  <el-dialog
+    v-model="createDeptDialogVisible"
+    title="变更部门"
+    width="40%"
+    append-to-body
+    @close="dialogHide"
+  >
+    <el-form
+      label-position="top"
+      label-width="100px"
+      :model="personFormData"
+    >
+      <el-form-item label="部门" style="width: 100%">
+        <el-cascader
+          :props="cascaderProps"
+          :options="cascaderTree"
+          v-model="formData.parentId"
+          style="width: 100%"
+          placeholder="请选择"
+        />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogHide">取消</el-button>
+        <el-button type="primary" @click="editDept">确认</el-button>
+      </span>
+    </template>
+  </el-dialog>
   <AssignedPerson v-if="assignDialog" :checkList='tableData' :id="company.id" :selectLimit='0' :serachType='5'
     @closeDialog="hideAssignDialog" @checksSearch='checksCompanySearch' />
 </template>
@@ -121,6 +193,13 @@ import AssignedPerson from '@/components/searchs/index.vue'
 const store = setCenterStore()
 import DepartmentServices from '@/module/relation/department'
 const departmentServices = new DepartmentServices()
+
+const cascaderProps = {
+  checkStrictly: true,
+  value: 'id',
+  emitPath: false,
+}
+let cascaderTree = ref<OrgTreeModel[]>([])
 
 const subscribe = store.$subscribe(
   (mutation, state) => {
@@ -144,12 +223,26 @@ const subscribe = store.$subscribe(
 
 let deptDialogVisible = ref<boolean>(false)
 let jobDialogVisible = ref<boolean>(false)
+let personDialogVisible = ref<boolean>(false)
+let createDeptDialogVisible = ref<boolean>(false)
 let formData = ref<any>({})
+let personFormData = ref<any>({
+  id: '',
+  code: '', // 账号
+  name: '', // 昵称
+  thingId: '',
+  teamName: '', // 姓名
+  teamCode: '', // 手机号
+  teamRemark: '' // 其他信息
+})
+let currentData = ref<any>({}) 
 //关闭弹窗清空
 const dialogHide = () => {
   formData.value = { parentId: store.currentSelectItme?.id }
   deptDialogVisible.value = false
   jobDialogVisible.value = false
+  personDialogVisible.value = false
+  createDeptDialogVisible.value = false
 }
 // 创建部门
 const createDept = () => {
@@ -165,7 +258,6 @@ const createDept = () => {
   }).then((res: ResultType) => {
     if (res.success) {
       dialogHide()
-      // loadOrgTree()
       ElMessage({
         message: res.msg,
         type: 'success'
@@ -177,6 +269,55 @@ const createDept = () => {
       })
     }
   })
+}
+
+// 变更部门
+const editDept = ()=>{
+  $services.company.updateDepartment({
+    data: {
+      id: currentData.value?.id,
+      name: currentData.value?.name,
+      code: currentData.value?.code,
+      teamName: currentData.value?.team?.name,
+      teamCode: currentData.value?.team?.code,
+      teamRemark: currentData.value?.team?.remark,
+      parentId: formData.value?.parentId
+    }
+  }).then((res: ResultType) => {
+    if (res.success) {
+      loadOrgTree()
+      ElMessage({
+        message: res.msg,
+        type: 'success'
+      })
+      dialogHide()
+      getUsers(store.currentSelectItme?.data)
+      getUsers(store.currentSelectItme?.data)
+    } else {
+      ElMessage({
+        message: res.msg,
+        type: 'error'
+      })
+    }
+  })
+}
+
+// 加载单位
+const loadOrgTree = () => {
+  $services.company.getCompanyTree({}).then((res: any)=>{
+    const orgTree = []
+    orgTree.push(res.data)
+    cascaderTree.value = filter(JSON.parse(JSON.stringify(orgTree)))
+  })
+}
+
+// 过滤掉工作组作为表单级联数据
+const filter = (nodes: OrgTreeModel[]): OrgTreeModel[] => {
+  nodes = nodes.filter(node => node.data?.typeName !== '工作组')
+  for (const node of nodes) {
+    node.children = filter(node.children)
+  }
+  return nodes;
 }
 // 创建工作组
 const createJob = () => {
@@ -192,7 +333,6 @@ const createJob = () => {
   }).then((res: ResultType) => {
     if (res.success) {
       dialogHide()
-      loadOrgTree()
       ElMessage({
         message: res.msg,
         type: 'success'
@@ -205,6 +345,28 @@ const createJob = () => {
     }
   })
 }
+const personUpdate = () => {
+  const {id, code, name, thingId, teamName, teamCode, teamRemark } = personFormData.value
+  $services.person
+    .update({
+      data: { id, code, name, thingId, teamName, teamCode, teamRemark }
+    })
+    .then((res: ResultType) => {
+      if (res.success) {
+        dialogHide()
+        getUsers(store.currentSelectItme?.data)
+        ElMessage({
+          message: '更新成功',
+          type: 'success'
+        })
+      } else {
+        ElMessage({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    })
+  }
 
 const assignDialog = ref<boolean>(false)
 const hideAssignDialog = () => {
@@ -277,6 +439,41 @@ const getUsers = async (currentData?) => {
 //查看申请
 const viewApplication = (row: any) => {
   router.push({ path: '/cardDetail', query: { type: 1, id: store.currentSelectItme?.id } })
+}
+// 修改信息
+const reviseInfo = (row: any) => {
+  personFormData.value.id = row.id
+  personFormData.value.code = row.code
+  personFormData.value.name = row.name
+  personFormData.value.thingId = row.thingId
+  personFormData.value.teamName = row.team?.name
+  personFormData.value.teamCode = row.team?.code
+  personFormData.value.teamRemark = row.team.remark
+  personDialogVisible.value = true
+}
+
+// 变更部门
+const changeDepartment = (row: any) => {
+  formData.value = { parentId: store.currentSelectItme?.id }
+  currentData.value = row
+  createDeptDialogVisible.value = true
+}
+
+// 移除人员
+const removeFrom = async (row: any) => {
+  let rowObj = {
+    name:row.name,
+    id:row.id,
+    typeName:store?.currentSelectItme?.data.typeName
+  }
+  const data =  await departmentServices.removePerson(rowObj,store?.currentSelectItme?.data.id)
+  if(data){
+    ElMessage({
+      message: '操作成功',
+      type: 'success'
+    })
+    getUsers(store.currentSelectItme?.data)
+  }
 }
 
 
@@ -351,6 +548,7 @@ const selectionChange = (val: any) => {
 }
 //获取单位信息
 onMounted(() => {
+  loadOrgTree()
 })
 // 获取单位信息
 onBeforeMount(()=> {

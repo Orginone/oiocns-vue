@@ -5,19 +5,13 @@
       <component :is="'User'" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;
       <b style="font-size: 14px;">集团设置</b>
     </div>
-    <div>
-      <el-select  v-model="selectedValue" @change="changeGroupIndex" value-key="id" placeholder="请选择集团">
-        <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
-      </el-select>
-    </div>
-
     <div class="search-wrap">
       <el-input class="search" v-model="filterText" placeholder="搜索" :prefix-icon="Search">
 
       </el-input>
       <li class="con tree-btns">
         <div class="title">集团管理</div>
-        <el-icon color="#154ad8" :size="20" v-if="allowEdit()" @click="createGroupDialogShow">
+        <el-icon color="#154ad8" :size="20" v-if="!allowEdit()" @click="createGroupDialogShow">
           <CirclePlus />
         </el-icon>
       </li>
@@ -25,13 +19,36 @@
 
     <div class="tree">
       <el-tree :data="orgTree" :expand-on-click-node="false" ref="treeRef" @node-click="nodeClick" node-key="id"
-        :default-expanded-keys="defaultExpandedKeys" :filter-node-method="filterNode">
+        :default-expanded-keys="defaultExpandedKeys" :filter-node-method="filterNode" lazy :load="loadNode">
         <template #default="{ node, data }">
-          <span class="custom-tree-node">
+          <span class="custom-tree-node" @mouseover='onHover(node.id)' @mouseout="onOut">
             <div class="tree-box">
-              <img src="@/assets/img/zuzhijiagou.jpg" class="tree-icon" />
-              <span>{{ data.label }}</span>
-              <!-- <el-tag size="small">{{ data.data.typeName }}</el-tag> -->
+              <img v-if="![1, 2].includes(node.level)" src="@/assets/img/zuzhijiagou.jpg" class="tree-icon" />
+              <span :class="['创建集团', '加入集团'].includes(data.label) ? 'sp_title': ''">{{ data.label }}</span>
+              <span class="sp_10" v-show="node.id === state.flag">
+               <el-popover
+                  placement="right"
+                  :width="100"
+                  trigger="click"
+                >
+                  <template #reference>
+                    <el-icon><Plus /></el-icon>
+                  </template>
+                  <div class="btn-bus" @click="clickBus" :style="{cursor: 'pointer'}" >
+                    <div class="row-btn" v-for="(item,index) in data.btns" :key="item" :data-index="item.id">{{item.name}}</div>
+                  </div>
+                </el-popover>&nbsp;
+                <el-popover
+                  placement="right"
+                  :width="100"
+                  trigger="click"
+                >
+                  <template #reference>
+                    <el-icon><MoreFilled /></el-icon>
+                  </template>
+                  <slot name="more"></slot>
+                </el-popover>
+              </span>
             </div>
           </span>
         </template>
@@ -73,14 +90,47 @@ import $services from '@/services'
 import { ElMessage } from 'element-plus';
 import { Search } from '@element-plus/icons-vue'
 import authority from '@/utils/authority'
+import { useUserStore } from '@/store/user'
+import { resolve } from 'path';
+const store = useUserStore()
 const goBack = () => {
   window.history.go(-1)
 }
 
 const emit = defineEmits(['nodeClick'])
 
+const loadNode = (node: any, resolve: (data: any[]) => void) => {
+  console.log(node);
+  if (node.level === 0) {
+    return resolve(orgTree.value)
+  } else if(node.level === 1 && node.data.label === '创建集团'){
+    return resolve(myGroupList)
+  } else if(node.level === 1 && node.data.label === '加入集团'){
+    return resolve(addGroupList)
+  } else if (node.level === 2) {
+    loadOrgTree(node?.data?.id as string).then((res: any)=> {
+      return resolve(res ?? [])
+    })
+  } else {
+    return resolve([])
+  }
+  
+}
+
+const clickBus = (e:any)=>{
+  // instance?.proxy?.$Bus.emit('clickBus', e.target.dataset.index)
+}
+
+const onHover = (id: string) => {
+  state.flag = id
+}
+const onOut = () => {
+  state.flag = ''
+}
+
 const state = reactive({
   options: [],
+  flag: '', // 是否高亮标记
 })
 let formData = ref<any>({})
 const selectItem = ref<any>();
@@ -107,14 +157,12 @@ const cascaderProps = {
 }
 // 集团树
 let cascaderTree = ref<OrgTreeModel[]>([])
-// 当前选中的集团
-let selectedValue = ref<string>()
 
 // 当前用户的集团
 let groups = reactive([])
 let orgTree = ref<OrgTreeModel[]>([])
 
-let defaultExpandedKeys = ref([])
+let defaultExpandedKeys = ref([1,2])
 
 const filterText = ref('')
 const treeRef = ref<any>()
@@ -124,6 +172,9 @@ const refresh = () => {
   loadOrgTree()
 };
 defineExpose({ refresh,selectItemChange });
+
+let myGroupList: any = []
+let addGroupList: any = []
 
 // 查询集团列表
 const getGroupList = () => {
@@ -137,10 +188,45 @@ const getGroupList = () => {
     .then((res: ResultType) => {
       if (res.data.result && res.data.result.length > 0) {
         groups = res.data.result
+        myGroupList = []
+        addGroupList = []
+        groups.length && groups.forEach((item: any) => {
+          if (item.createUser == store.queryInfo.id) {
+            myGroupList.push({...item, label: item.name, btns: [{
+              name: '创建集团',
+              id: '2000'
+            }]})
+          } else {
+            addGroupList.push({...item, label: item.name, btns: [{
+              name: '加入集团',
+              id: '2000'
+            }]})
+          }
+        })
+        let newObj:any =  [
+          {
+            id: 1,
+            label: "创建集团",
+            btns:[{
+              "name":"创建集团",
+              "id":"2022"
+            }],
+            children: myGroupList
+          },
+          {
+            id: 2,
+            label: "加入集团",
+            btns:[{
+                "name":"加入集团",
+                "id":"2023"
+            }],
+            children: addGroupList
+          }
+        ]
+        orgTree.value = newObj;
         state.options = groups.map(g => {
           return { value: g.id, label: g.name }
         })
-        selectedValue.value = groups[0].name
         loadOrgTree(groups[0].id)
       } else {
         groups = []
@@ -149,6 +235,7 @@ const getGroupList = () => {
 }
 
 const nodeClick = (val: any, nodeAttribute?: any, event?: any) => {
+  if (['创建集团', '加入集团'].includes(val.label)) return
   emit('nodeClick', val)
   formData.value.parentId = val.id
 }
@@ -159,23 +246,20 @@ const filterNode = (value: string, data: any) => {
   return data.label.includes(value)
 }
 
-// 切换集团
-const changeGroupIndex = (id: string) => {
-  loadOrgTree(id)
-}
-
 // 加载集团树
-const loadOrgTree = (id?: string)=>{
-  const group = groups.find(g => g.id == id || g.name == selectedValue.value)
-  $services.company.getGroupTree({
-    data: { id: group.id }
+const loadOrgTree = async (id?: string)=>{
+  let treeData: any = []
+  await $services.company.getGroupTree({
+    data: { id }
   }).then((res: any) => {
-    orgTree.value = []
-    orgTree.value.push(res.data)
-    cascaderTree.value = orgTree.value
+    // orgTree.value = []
+    // orgTree.value.push(newObj)
+    cascaderTree.value = [res.data]
     defaultExpandedKeys.value = [res.data.id]
     nodeClick(res.data)
+    treeData = res.data
   })
+  return treeData?.children
 }
 
 let createGroupDialogVisible = ref<boolean>(false)
@@ -249,7 +333,7 @@ watch(filterText, (val) => {
   justify-content: space-between;
 }
 .tree{
-  padding: 0 20px;
+  padding: 0 10px;
   position: relative;
   height: calc(100vh - 200px);
   overflow-y: auto;
@@ -263,13 +347,24 @@ watch(filterText, (val) => {
     font-size: 12px;
   }
 }
-
+:deep .el-tree-node__content {
+  position: relative;
+}
 .custom-tree-node {
+  width: 280px;
   overflow: hidden;
   text-overflow: ellipsis;
   word-spacing: nowrap;
   display: flex;
   cursor: pointer;
+  .sp_10{
+    position: absolute;
+    right: 8px;
+  }
+  .sp_title {
+    color: #909399;
+    font-size: 13px;
+  }
 }
 
 .tree-icon{
@@ -289,7 +384,7 @@ watch(filterText, (val) => {
   }
 }
 // 去掉el-input自带边框
-:deep .el-input__wrapper {
+:deep .search .el-input__wrapper {
     margin: 15px;
     padding-left: 15px !important;
     box-sizing: border-box;

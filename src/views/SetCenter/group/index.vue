@@ -92,7 +92,6 @@ const dragControllerDiv = () => {
 
         let endX = e.clientX
         let moveLen = resize[i].left + (endX - startX) // （endx-startx）=移动的距离。resize[i].left+移动的距离=左边区域最后的宽度
-        console.log(moveLen)
         let maxT = box[i].clientWidth - resize[i].offsetWidth // 容器宽度 - 左边区域的宽度 = 右边区域的宽度
         if (moveLen < 240) moveLen = 240 // 左边区域的最小宽度为240px
         if (moveLen > 450) moveLen = 450
@@ -100,7 +99,6 @@ const dragControllerDiv = () => {
         for (let j = 0; j < left.length; j++) {
           left[0].style.width = moveLen + 'px'
 
-          console.log('moveLenmoveLen', moveLen)
           unitTree.styleTree = {
             width: moveLen - 45 + 'px'
           }

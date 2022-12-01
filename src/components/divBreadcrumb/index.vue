@@ -190,14 +190,4 @@ watch(
 ::v-deep .el-drawer__body {
   overflow: hidden !important;
 }
-::v-deep .el-input__wrapper {
-  margin: 2px;
-  padding-left: 15px !important;
-  box-sizing: border-box; 
-  border: none !important; 
-  box-shadow: none !important; 
-  padding: 0px; //前边边距去掉 
-  border-radius: 15px; 
-  background: #f2f4f9;
-}
 </style>
