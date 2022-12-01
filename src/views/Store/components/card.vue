@@ -1,133 +1,39 @@
 <template>
   <div class="card-list">
-    <div class="card-item" v-for="(item, index) in 2" :key="index">
+    <div class="card-item" v-for="(item, index) in props.data" :key="index">
       <div class="item-head">
-        <div class="item-img">人</div>
+        <div class="item-img">{{item.name}}</div>
         <div class="item-head-content">
           <p>
-            <span>应用名称 <el-tag class="ml-2" type="success">免费</el-tag></span>
-            <el-dropdown>
-              <span class="el-dropdown-link drop-list"> ··· </span>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item @click="showDiong">打开</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">详情</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">管理</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">上架</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">共享</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">分配</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong">暂存</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
+            <span>{{item.name}}
+               <!-- <el-tag class="ml-2" type="success">免费</el-tag> -->
+            </span>
+            <slot name="slot-menu" :row="item"></slot>
           </p>
-          <p>73MB</p>
+          <!-- <p>73MB</p> -->
         </div>
       </div>
       <div class="item-content">
-        用于维护精益项目提报信息和申请管理，本数据仅限于企业内部进行项目管理时使用根据...
+        {{item.}}
       </div>
       <div class="tag">
         <el-tag class="tag-item" type="info">类型</el-tag>
       </div>
-      <div class="time">创建于 2022-11-02 15:06</div>
+      <div class="time">创建于 {{item?.['name']}}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import diytab from "@/components/diyTable/index.vue";
-import opened from "./components/opened.vue";
-import { ref, reactive, onMounted, nextTick } from "vue";
-const dialogVisible = ref<boolean>(true);
-const diyTable = ref(null);
-// 表格展示数据
-const pageStore = reactive({
-  currentPage: 1,
-  pageSize: 20,
-  total: 0,
-});
-const tableData = ref([
-  {
-    paymentType: "线上",
-    price: "100",
-    status: "200",
-    createTime: "2022-11-01 16:01",
-  },
-]);
-const activeName = ref<string>(); //table tab index
-const tableActiveIndex = ref<string>(); //table nav index
-const handleSelect = () => {
-  console.log("index");
-};
-const handleClick = (key?: any) => {
-  console.log(key);
-};
-
-interface ListItem {
-  code: string;
-  name: string;
-  trueName: string;
-  teamCode: string;
-  remark: string;
-}
-
+import { Obj } from "@popperjs/core";
+import { onMounted } from "vue";
+const props = defineProps({
+  data:{}
+})
 onMounted(() => {
-  remoteMethod();
-});
-const remoteMethod = () => {};
 
-const handleUpdate = (page: any) => {
-  pageStore.currentPage = page.currentPage;
-  pageStore.pageSize = page.pageSize;
-  remoteMethod();
-};
-const checkList = reactive<any>([]);
-const selectionChange = (val: any) => {
-  checkList.value = val;
-};
-
-const tableHead = ref([
-  {
-    prop: "paymentType",
-    label: "付款方式",
-  },
-  {
-    prop: "price",
-    label: "价格",
-    name: "price",
-  },
-  {
-    prop: "status",
-    label: "状态",
-    name: "status",
-  },
-  {
-    prop: "createTime",
-    label: "创建时间",
-    name: "createTime",
-  },
-  {
-    type: "slot",
-    label: "操作",
-    fixed: "right",
-    align: "center",
-    width: "150",
-    name: "operate",
-  },
-]);
-const options = ref<any>({
-  checkBox: false,
-  order: true,
-  selectLimit: 1,
-  defaultSort: { prop: "createTime", order: "descending" },
-  treeProps: {
-    children: "children",
-    hasChildren: "hasChildren",
-  },
 });
-const showDiong = () => {};
-const commontActive = () => {};
+
 </script>
 <style lang="scss">
 .drop-link {
@@ -167,7 +73,7 @@ const commontActive = () => {};
           border-radius: 50%;
           margin-right: 15px;
           font-size: 14px;
-          color: #55b0eb;
+          color: #0C4EFF;
         }
       }
       .item-head-content {
@@ -207,3 +113,112 @@ const commontActive = () => {};
     }
 }
 </style>
+
+
+
+
+
+
+<div class="card-list">
+  <div
+    class="card-item"
+    v-for="(item, index) in state.ownProductList"
+    :key="index"
+  >
+    <div class="item-head">
+      <div class="item-img">{{ item.name.substring(0,1) }}</div>
+      <div class="item-head-content">
+        <p>
+          <span
+            >{{ item.name }}
+            <!-- <el-tag class="ml-2" type="success">免费</el-tag> -->
+          </span>
+            <el-dropdown>
+              <span class="el-dropdown-link drop-list"> ··· </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item
+                    v-if="
+                      scope.row?.['authority'] == '所属权' &&
+                      scope.row?.['belongId'] ==
+                        store.workspaceData.id
+                    "
+                    link
+                    type="primary"
+                    @click="
+                      handleCommand('own', 'putaway', scope.row)
+                    "
+                    >上架</el-dropdown-item
+                  >
+                  <el-dropdown-item
+                    link
+                    type="primary"
+                    v-if="
+                      scope.row?.['belongId'] ==
+                      store.workspaceData.id
+                    "
+                    @click="handleCommand('own', 'share', scope.row)"
+                  >
+                    共享</el-dropdown-item
+                  >
+                  <el-dropdown-item
+                    link
+                    type="primary"
+                    v-if="authority.IsCompanySpace()"
+                    @click="
+                      handleCommand('own', 'distribution', scope.row)
+                    "
+                    >分配
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    link
+                    type="primary"
+                    @click="goDetail(scope.row?.['id'])"
+                  >
+                    查看详情
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    link
+                    type="primary"
+                    @click="deleteApp(scope.row)"
+                    >移除应用</el-dropdown-item
+                  >
+                  <el-dropdown-item
+                    v-if="
+                      scope.row?.['resourcesList'] &&
+                      scope.row?.['resourcesList']?.length > 0
+                    "
+                  >
+                    <el-dropdown trigger="hover" placement="top-end">
+                      流程业务
+                      <template #dropdown>
+                        <el-dropdown-menu
+                          style="padding-left: 10px; min-width: 100px"
+                        >
+                          <el-dropdown-item
+                            v-for="resource in scope.row
+                              .resourcesList"
+                            :key="resource.formId"
+                            @click="enterProcess(resource)"
+                            >{{ resource.business }}</el-dropdown-item
+                          >
+                        </el-dropdown-menu>
+                      </template>
+                    </el-dropdown>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+        </p>
+        <!-- <p>73MB</p> -->
+      </div>
+    </div>
+    <div class="item-content">
+      {{item.name}}
+    </div>
+    <div class="tag">
+      <el-tag class="tag-item" type="info">类型</el-tag>
+    </div>
+    <div class="time">创建于 {{ item.name }}</div>
+  </div>
+</div>

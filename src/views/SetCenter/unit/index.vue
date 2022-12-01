@@ -5,12 +5,16 @@
           <div class="info">
             <Info ref="info" />
           </div>
+          <div class="body">
+            <User ref="user" />
+          </div>
         </div>
       </div>
     </div>
   </template>
   <script lang="ts" setup>
     import Info from './components/info.vue'
+    import User from './components/User.vue'
     import $services from '@/services'
     import { ref, onMounted } from 'vue'
     import { useUserStore } from '@/store/user'
@@ -23,6 +27,7 @@
     const { workspaceData } = storeToRefs(store)
   
     const info = ref(null)
+    const user = ref(null)
     // 加载单位
     const loadOrgTree = () => {
       $services.company.getCompanyTree({}).then((res: any) => {
@@ -33,6 +38,7 @@
     const nodeClick = (selectItem: any) => {
       settingStore.unitInfo = selectItem
       info.value.selectItemChange(selectItem)
+      user.value.selectItemChange(selectItem)
     }
     //获取部门信息
     onMounted(() => {
@@ -60,18 +66,25 @@
     .container {
       width: 100%;
       height: 100%;
-      background: #f0f2f5;
-      padding: 3px 0;
       box-sizing: border-box;
   
       .content {
         height: 100%;
-        background-color: var(--el-bg-color-overlay);
         box-sizing: border-box;
-        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding: 3px 0;
         .info {
           padding: 0 0 3px 0;
           box-sizing: border-box;
+        }
+        .body {
+          height: 100%;
+          background: #fff;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
         }
       }
     }
