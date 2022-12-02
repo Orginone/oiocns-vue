@@ -1,210 +1,178 @@
 <template>
-  <div class="content box">
-    <div class="info" ref="infoWrap">
-      <Info ref="info" />
+  <div class="container mainBox" ref="container">
+    <div class="tree left box">
+      <Tree @nodeClick="nodeClick" ref="unitTree" />
     </div>
-    <div class="body" ref="bodyWrap">
-      <div class="body-tabs">
-        <el-menu
-        :default-active="tableActiveIndex"
-        mode="horizontal"
-      >
-        <el-menu-item index="1">集团成员</el-menu-item>
-        <el-menu-item index="2">杭州电子科技大学</el-menu-item>
-      </el-menu>
-      <hr >
+    <div class="resize" title="收缩侧边栏"> ⋮ </div>
+    <div class="content mid box">
+      <div class="breadcrumb-box">
+        <Breadcrumb></Breadcrumb>
       </div>
-      <diytab
-        :style="{ width: '100%' }"
-        ref="diyTable"
-        :hasTabs="true"
-        :hasTitle="true"
-        :hasTableHead="true"
-        :tableData="tableData"
-        :options="options"
-        @handleUpdate="handleUpdate"
-        @selectionChange="selectionChange"
-        :tableHead="tableHead"
-      >
-        <template #slot-tabs>
-          <h4>浙江省资产年报集团</h4>
-        </template>
-        <template #buttons>
-          <div style="display: flex;align-items: center">
-            <el-button class="btn-check" type="primary" link>岗位设置</el-button><el-divider direction="vertical"/>
-            <el-button class="btn-check" type="primary" link>添加成员</el-button><el-divider direction="vertical"/>
-            <el-button class="btn-check" type="primary" link>查看申请</el-button>
-          </div>
-        </template>
-        <template #operate="scope">
-          <el-dropdown>
-            <span class="el-dropdown-link"> ··· </span>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click="showDiong">调整节点</el-dropdown-item>
-                <el-dropdown-item @click="showDiong">集团岗位</el-dropdown-item>
-                <el-dropdown-item @click="showDiong" style="color: #f67c80">移出集团</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </template>
-        <template #slot-card>
-          <!-- <card></card> -->
-        </template>
-      </diytab>
+      <div class="info" ref="infoWrap">
+        <Info ref="info" @refresh="refresh" />
+      </div>
+      <div class="body" ref="bodyWrap" :style="{height:tabHeight+'px'}">
+        <Body ref="body" :tabHeight='tabHeight' />
+      </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 // @ts-nocheck
-import Info from "./components/info.vue";
-import diytab from "@/components/diyTable/index.vue";
-import { ref, getCurrentInstance } from "vue";
+import Tree from './tree.vue'
+import Info from './info.vue'
+import Body from './body.vue'
+import Breadcrumb from '@/components/divBreadcrumb/index.vue'
 
-const { proxy } = getCurrentInstance()
-
-proxy?.$Bus.on('clickBus', (id) => {
-  console.log(id);
-})
+import { ref, onMounted, watch } from 'vue';
 
 const info = ref(null);
+const body = ref(null);
+const unitTree = ref(null)
 
-// 表格展示数据
-const pageStore = reactive({
-  currentPage: 1,
-  pageSize: 20,
-  total: 0
-})
-const tableActiveIndex = ref<string>('1'); //table nav index
-const tableData = ref([{
-  account:'浙江省财政厅',
-  nickname:'1133000000022482170C',
-  name:'浙江省财政厅',
-  phone:'zjczt',
-  phone2: '财政厅简介'
-}])
-const options = ref<any>({
-  checkBox: false,
-  order: true,
-  selectLimit: 1,
-  defaultSort: { prop: 'createTime', order: 'descending' },
-  treeProps: {
-    children: 'children',
-    hasChildren: 'hasChildren'
-  }
-})
-const tableHead = ref([
-  {
-    prop: 'account',
-    label: '简称',
-  },
-  {
-    prop: 'nickname',
-    label: '信用代码',
-    name: 'nickname'
-  },
-  {
-    prop: 'name',
-    label: '全称',
-    name: 'name'
-  },
-  {
-    prop: 'phone',
-    label: '代码',
-    name: 'createTime'
-  },
-  {
-    prop: 'phone2',
-    label: '简介',
-    name: 'phone2'
-  },
-  {
-    type: 'slot',
-    label: '操作',
-    fixed: 'right',
-    align: 'center',
-    width: '150',
-    name: 'operate'
-  }
-])
-const handleUpdate = (page: any) => {
-  pageStore.currentPage = page.currentPage
-  pageStore.pageSize = page.pageSize
-  remoteMethod()
+const nodeClick = (selectItem: any) => {
+  info.value.selectItemChange(selectItem);
+  body.value.selectItemChange(selectItem);
+  unitTree.value.selectItemChange(selectItem);
+  setTimeout(() => {
+    if (container.value && infoWrap.value) {
+      tabHeight.value = container.value.clientHeight - 62 - infoWrap.value.clientHeight
+    }
+  }, 100);
 }
-const checkList = reactive<any>([])
-const selectionChange = (val: any) => {
-  checkList.value = val
+const goBack = () => {
+  window.history.go(-1)
+}
+const refresh = () => {
+  unitTree.value.refresh();
 }
 
+const screenHeight = ref<number>(0)
+const container = ref(null)
+const infoWrap = ref(null)
+const tabHeight = ref<number>(100)
+const containerHeight = ref<number>(300)
+
+onMounted(() => {
+  if (container.value && infoWrap.value) {
+    containerHeight.value = container.value.clientHeight
+    tabHeight.value = container.value.clientHeight - 62 - infoWrap.value.clientHeight
+  }
+  dragControllerDiv()
+})
+window.addEventListener('resize', function () {
+  if (container.value && infoWrap.value) {
+    tabHeight.value = container.value.clientHeight - 62 - infoWrap.value.clientHeight
+  }
+})
+watch(
+  () => screenHeight.value,
+  (newValue, oldValue) => {
+
+  },
+  { immediate: true }
+)
+// 拖拽移动实现
+const dragControllerDiv = () => {
+
+  let resize = document.getElementsByClassName('resize')
+  let left = document.getElementsByClassName('left')
+  let mid = document.getElementsByClassName('mid')
+  let box = document.getElementsByClassName('mainBox')
+  for (let i = 0; i < resize.length; i++) {
+    // 鼠标按下事件
+    resize[i].onmousedown = function (e) {
+
+      //颜色改变提醒
+      resize[i].style.background = '#818181'
+      let startX = e.clientX
+      resize[i].left = resize[i].offsetLeft - left[i].offsetLeft
+      // 鼠标拖动事件
+      document.onmousemove = function (e) {
+
+        let endX = e.clientX
+        let moveLen = resize[i].left + (endX - startX) // （endx-startx）=移动的距离。resize[i].left+移动的距离=左边区域最后的宽度
+        console.log(moveLen)
+        let maxT = box[i].clientWidth - resize[i].offsetWidth // 容器宽度 - 左边区域的宽度 = 右边区域的宽度
+        if (moveLen < 240) moveLen = 240 // 左边区域的最小宽度为240px
+        if (moveLen > 450) moveLen = 450
+        resize[i].style.left = moveLen // 设置左侧区域的宽度
+        for (let j = 0; j < left.length; j++) {
+          left[0].style.width = moveLen + 'px'
+
+          console.log('moveLenmoveLen', moveLen)
+          unitTree.styleTree = {
+            width: moveLen - 45 + 'px'
+          }
+
+          // mid[0].style.width = (box[i].clientWidth - moveLen - 10) + 'px';
+          tabHeight.value = containerHeight.value - 62 - infoWrap.value.clientHeight
+
+        }
+      }
+      // 鼠标松开事件
+      document.onmouseup = function (evt) {
+        //颜色恢复
+        resize[i].style.background = '#d6d6d6'
+        document.onmousemove = null
+        document.onmouseup = null
+        resize[i].releaseCapture && resize[i].releaseCapture() //当你不在需要继续获得鼠标消息就要应该调用ReleaseCapture()释放掉
+      }
+      resize[i].setCapture && resize[i].setCapture() //该函数在属于当前线程的指定窗口里设置鼠标捕获
+      return false
+    }
+  }
+}
 </script>
 <style lang="scss" scoped>
-  .el-dropdown-link{
-    padding: 2px 10px;
-    cursor: pointer;
-    border-radius: 10px;
+.resize {
+  cursor: col-resize;
+  float: left;
+  position: relative;
+  left: 2px;
+  top: 45%;
+  background-color: #d6d6d6;
+  border-radius: 5px;
+  width: 4px;
+  height: 50px;
+  background-size: cover;
+  background-position: center;
+  /*z-index: 99999;*/
+  font-size: 12px;
+  padding-top: 6px;
+  padding-left: 1px;
+  color: white;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  // background: #f0f2f5;
+  padding: 3px;
+  box-sizing: border-box;
+  display: flex;
+
+  .tree {
+    width: 13%;
   }
-  .el-dropdown-link:hover{
-    background:#1642cb;
-    color: #fff;
-  }
+
   .content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+    width: 87%;
     flex: 1;
-    padding: 3px 0;
+    height: 100%;
+    // padding:0 3px;
     box-sizing: border-box;
+    // background: #f0f2f5;
+    overflow: hidden;
+
     .info {
-      padding: 0 0 3px 0;
+      padding: 3px 0 3px;
       box-sizing: border-box;
     }
+
     .body {
-      height: 100%;
-      background: #fff;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      .btn-check{
-        padding: 8px 16px;
-        color: #154ad8;
-      }
-      .btn-check:hover{
-          background: #154ad8;
-          color: #fff;
-          padding: 8px  16px;
-      }
-      .body-tabs {
-        margin: 0px 20px;
-        margin-top: 10px;
-        position: relative;
-        hr {
-          position: absolute;
-          width: 100%;
-          border-top: none;
-          border-left: none;
-          margin-top: -3px;
-          border-bottom: solid 3px var(--el-menu-border-color);
-        }
-        .el-menu-item {
-          margin-right: 20px;
-          padding: 0;
-        }
-        .el-menu--horizontal{
-          border: 0;
-          // border-bottom: solid 3px var(--el-menu-border-color);
-          height: 40px;
-        }
-        .is-active{
-          background: #fff;
-          z-index: 2;
-          border-bottom: 3px solid var(--el-menu-active-color);
-        }
-        .el-menu--horizontal:hover, .el-menu-item:hover{
-          background: #fff;
-        }
-      }
+      height: 400px;
     }
   }
+}
 </style>

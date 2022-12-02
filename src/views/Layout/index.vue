@@ -6,12 +6,12 @@
     </el-header>
     <el-container>
       <!-- 主导航 -->
-      <div class="menu-list" v-if="showMenu">
+      <div class="menu-list" v-show="showMenu">
         <MenuNav :data="menuArr.state" :titleData="titleArr.state"></MenuNav>
       </div>
       <div class="layout-main" >
           <!-- 面包屑 -->
-        <div class="breadcrumb-box" v-if="showMenu">
+        <div class="breadcrumb-box" v-show="showMenu">
           <Breadcrumb></Breadcrumb>
         </div>
         <!-- main -->
@@ -50,66 +50,45 @@
   import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick} from 'vue'
   import { RouteLocationNormalizedLoaded, useRouter } from 'vue-router';
   import storeJosn from './json/store.json';
-  import settingJosn from './json/setting.json';
+  // import settingJosn from './json/setting.json';
   import setTree from './json/setTree.json';
-  import detailJosn from './json/detail.json';
-  import userJosn from './json/user.json';
+  // import detailJosn from './json/detail.json';
+  // import userJosn from './json/user.json';
   import { chat } from '@/module/chat/orgchat'
   import marketServices from "@/module/store/market"
 
-  import { createAllMenuTree, MenuDataItem } from "./json/MenuData";
+  import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
 
 
   const menuTree = ref(createAllMenuTree());
   const allMenuItems = ref(getAllNodes(menuTree.value));
-  function findMenu(route: RouteLocationNormalizedLoaded) {
-    const id = route.meta.id;
-    if (!id) {
-      console.warn(`路由 ${route.fullPath} 没有id！`);
-      return null;
-    }
-    const matched = allMenuItems.value.find(m => m.id == id);
-    if (!matched) {
-      console.warn(`路由 ${route.fullPath} 没有对应的菜单！`);
-      return null;
-    }
-
-    let current = matched;
-    do {
-      if (!current.parentId) {
-        break;
-      }
-      const parent = allMenuItems.value.find(m => m.id == current.parentId);
-      if (!parent) {
-        console.warn(`找不到菜单 ${current.name} 的父级！`);
-        return null;
-      }
-      current = parent;
-    } while (current);
-
-    if (current.$kind != "header") {
-      console.warn(`找到的顶级菜单 ${current.name} 是子菜单项！`);
-      return null;
-    }
-    return {
-      matched,
-      top: current
-    };
-  }
+  
 
   function getNavData2() {
 
     if(router.currentRoute.value.path.indexOf('setCenter') != -1){
       if (router.currentRoute.value.name === 'department') {
           titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
-          menuArr.state = setCenterStore().departmentInfo
+          setCenterStore().GetDepartmentInfo().then((treeData)=> {
+            menuArr.state = treeData
+          })
           showMenu.value = true;
           return;
-      } else if (router.currentRoute.value.name !== 'unit') {
+      } else if (router.currentRoute.value.name === 'post') {
+          titleArr.state= {icon: 'User',title: '岗位设置',"backFlag": true}
+          setCenterStore().GetIdentities().then((treeData)=> {
+            menuArr.state = treeData
+          })
+          showMenu.value = true;
+          return;
+      }else if (router.currentRoute.value.name === 'group') {
+        showMenu.value = false;
+        return;
+      }else if (router.currentRoute.value.name !== 'unit') {
         let currentRouteName: any = router.currentRoute.value.name
         const jsonData: any = setTree
-        if (['unit', 'post', 'group', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
+        if (['unit', 'group', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
           titleArr.state= jsonData[currentRouteName][0]
           menuArr.state = jsonData[currentRouteName]
           showMenu.value = true;
@@ -117,15 +96,18 @@
         }
       }
     }
-
-    const ret = findMenu(router.currentRoute.value);
+    if(router.currentRoute.value.path.indexOf('store/shop') != -1){
+      getShopList();
+      return
+    }
+    const ret = findMenu(router.currentRoute.value, allMenuItems.value);
     if (!ret) {
       showMenu.value = false;
       return;
     }
     titleArr.state = ret.top;
     menuArr.state = ret.top.children;
-    
+    showMenu.value = true;
   }
 
 
@@ -206,7 +188,11 @@
           {
             "label": "商店(加入)",
             "id": "1",
-            "children":addList
+            "children":addList,
+            "btns":[{
+                "name":"加入商店",
+                "id":"1025"
+            }]
           },
         ]
     }
@@ -217,61 +203,49 @@
     menuArr.state = shopStoreJosn
     
   }
-  // store 路由设置
-  const storeFun =()=>{
-    if(router.currentRoute.value.path.indexOf('store/shop') != -1){
-      console.log('1')
-      getShopList();
-    }else{
-      console.log('2')
-      showMenu.value = true;
-      titleArr.state = storeJosn[0]
-      menuArr.state = storeJosn
-    }
-  }
-  const getNav = ()=>{
-      if(router.currentRoute.value.path.indexOf('store') != -1){    
-        storeFun()
-      }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){
-        showMenu.value = true;
-        if (router.currentRoute.value.name === 'department') {
-            titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
-            setCenterStore().GetDepartmentInfo().then((treeData)=> {
-              menuArr.state = treeData
-            })
-        } else if (router.currentRoute.value.name === 'unit') {
-          titleArr.state= settingJosn[0]
-          menuArr.state = settingJosn
-        } else if (router.currentRoute.value.name === 'post') {
-          titleArr.state= {icon: 'User',title: '岗位设置',"backFlag": true}
-          setCenterStore().GetIdentities().then((treeData)=> {
-            menuArr.state = treeData
-          })
-        } else {
-          let currentRouteName: any = router.currentRoute.value.name
-          const jsonData: any = setTree
-          if (['unit', 'group', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
-            titleArr.state= jsonData[currentRouteName][0]
-            menuArr.state = jsonData[currentRouteName]
-          } else {
-            titleArr.state= settingJosn[0]
-            menuArr.state = settingJosn
-          }
-        }
+  // const getNav = ()=>{
+  //     if(router.currentRoute.value.path.indexOf('store') != -1){    
+  //       storeFun()
+  //     }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){
+  //       showMenu.value = true;
+  //       if (router.currentRoute.value.name === 'department') {
+  //           titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
+  //           setCenterStore().GetDepartmentInfo().then((treeData)=> {
+  //             menuArr.state = treeData
+  //           })
+  //       } else if (router.currentRoute.value.name === 'unit') {
+  //         titleArr.state= settingJosn[0]
+  //         menuArr.state = settingJosn
+  //       } else if (router.currentRoute.value.name === 'post') {
+  //         titleArr.state= {icon: 'User',title: '岗位设置',"backFlag": true}
+  //         setCenterStore().GetIdentities().then((treeData)=> {
+  //           menuArr.state = treeData
+  //         })
+  //       } else {
+  //         let currentRouteName: any = router.currentRoute.value.name
+  //         const jsonData: any = setTree
+  //         if (['unit', 'group', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
+  //           titleArr.state= jsonData[currentRouteName][0]
+  //           menuArr.state = jsonData[currentRouteName]
+  //         } else {
+  //           titleArr.state= settingJosn[0]
+  //           menuArr.state = settingJosn
+  //         }
+  //       }
         
-      } else if (router.currentRoute.value.path.indexOf('mine') != -1) {
-        showMenu.value = true;
-        titleArr.state = userJosn[0]
-        menuArr.state = userJosn
+  //     } else if (router.currentRoute.value.path.indexOf('mine') != -1) {
+  //       showMenu.value = true;
+  //       titleArr.state = userJosn[0]
+  //       menuArr.state = userJosn
         
-      } else if (router.currentRoute.value.path.indexOf('service') != -1){
-        showMenu.value = true;
-        titleArr.state = detailJosn[0]
-        menuArr.state = detailJosn
-      } else {
-        showMenu.value = false;
-      }
-  }
+  //     } else if (router.currentRoute.value.path.indexOf('service') != -1){
+  //       showMenu.value = true;
+  //       titleArr.state = detailJosn[0]
+  //       menuArr.state = detailJosn
+  //     } else {
+  //       showMenu.value = false;
+  //     }
+  // }
   // getNav();
   getNavData2();
 

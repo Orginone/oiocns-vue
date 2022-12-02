@@ -1,5 +1,5 @@
 import API from '@/services'
-import { ElMessageBox } from 'element-plus'
+import { ElMessageBox, ElMessage } from 'element-plus'
 
 /**
  * 文件对象操作
@@ -12,17 +12,19 @@ export default class ObjectLay {
   public DateModified: string
   public IsDirectory: boolean
   public HasSubDirectories: boolean
+  public Meta: any
   private parent: ObjectLay
   public children: ObjectLay[]
   public constructor(data: any = null, parent: ObjectLay = null) {
     this.parent = parent
     this.children = null
     this.Key = data?.key || ''
-    this.Name = data?.name || '主文件夹'
-    this.IsDirectory = data?.isDirectory || true
+    this.Name = data?.name || '我的云盘'
+    this.IsDirectory = data?.isDirectory || false
     this.DateCreated = data?.dateCreated || ''
     this.DateModified = data?.dateModified || ''
-    this.HasSubDirectories = data?.hasSubDirectories || true
+    this.HasSubDirectories = this.Name == '我的云盘' ? true : (data?.hasSubDirectories || false)
+    this.Meta = data || {key: '', name: '我的云盘'}
   }
   /**
    * 是否包含上级目录
@@ -47,9 +49,7 @@ export default class ObjectLay {
    * 获取下级对象数据
    * @returns 下级对象数组
    */
-  public async GetChildren(refresh: boolean = false, key: string) {
-    console.log('获取children', this.children)
-
+  public async GetChildren(refresh: boolean = false) {
     if (!this.children || refresh) {
       let res: ResultType = await API.bucket.bucketObjects({
         params: {
@@ -105,6 +105,8 @@ export default class ObjectLay {
           message: res.msg,
           type: 'error'
         })
+      } else {
+        ElMessage.success( '文件夹创建成功')
       }
     }
   }
@@ -130,6 +132,8 @@ export default class ObjectLay {
           message: res.msg,
           type: 'error'
         })
+      } else {
+        ElMessage.success( '文件重命名成功')
       }
     }
   }
@@ -195,6 +199,8 @@ export default class ObjectLay {
         message: res.msg,
         type: 'error'
       })
+    } else {
+      ElMessage.success( '删除成功')
     }
   }
   /**
@@ -232,11 +238,14 @@ export default class ObjectLay {
    * @returns 格式化后的key
    */
   private formatKey(subName: string = '') {
-    if (!this.Key) {
+    if (!this.Key && !subName) {
       return ''
     }
     try {
-      let keys = [this.Key]
+      let keys = []
+      if(this.Key){
+        keys.push(this.Key)
+      }
       if (subName != '' && subName.length > 0) {
         keys.push(subName)
       }

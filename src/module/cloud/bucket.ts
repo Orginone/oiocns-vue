@@ -1,5 +1,5 @@
 import { ref, Ref } from 'vue'
-import ObjectLay from '../store/objectlay'
+import ObjectLay from './objectlay'
 
 /**
  * 存储桶管理
@@ -18,7 +18,6 @@ class Bucket {
     this.Current = this.Root
     this.refObj = ref<boolean>(true)
   }
-
   /**
    * 获取单例
    * @returns 单例
@@ -33,18 +32,25 @@ class Bucket {
    * 获取左侧目录树
    * @returns 目录树结构
    */
-  public GetLeftTree = async (key: string) => {
+  public GetLeftTree = async (data: any) => {
+    //设置Current
+    this.Current = data
     let children
-    if (this.expand.includes(key)) {
-      children = this.GetExpandTree(key, false)
+    if (this.expand.includes(data.Key)) {
+      children = this.GetExpandTree(false)
     } else {
-      this.expand.push(key)
-      children = this.GetExpandTree(key, true)
+      this.expand.push(data.Key)
+      children = this.GetExpandTree(true)
     }
     return children
   }
-  public GetExpandTree = async (key: string, refresh: boolean) => {
-    let arr = await this.Current.GetChildren(refresh, key)
+  /**
+   * 获取已经展开的树
+   * @param refresh
+   * @constructor
+   */
+  private GetExpandTree = async (refresh: boolean) => {
+    let arr = await this.Current.GetChildren(refresh)
     let children: any[] = []
     arr.forEach((el: any) => {
       if (el.HasSubDirectories) {
@@ -63,11 +69,36 @@ class Bucket {
   public GetTopBar() {}
   /**
    * 获取内容区数据
+   * @param refresh
    * @returns 返回内容区数据
    */
-  public GetContent = async () => {
-    let children = await this.Current.GetChildren()
-    console.log(children)
+  public GetContent = async (refresh: boolean = false) => {
+    await this.Current.GetChildren(refresh)
+  }
+  /**
+   * 打开文件夹目录
+   * @param current
+   * @constructor
+   */
+  public OpenDirectory = async (current: ObjectLay) => {
+    this.Current = current
+    await this.GetContent()
+  }
+  /**
+   * 返回上一层文件夹目录
+   * @constructor
+   */
+  public GoPrevDirectory = async () => {
+    this.Current = this.Current.GetParent()
+    await this.GetContent()
+  }
+  /**
+   * 返回某一层文件夹目录
+   * @constructor
+   */
+  public GoDirectory = async (item: ObjectLay) => {
+    this.Current = item
+    await this.GetContent()
   }
 }
 
