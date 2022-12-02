@@ -40,6 +40,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { getCurrentInstance } from 'vue'
   import CustomHeadr from './components/customHeader.vue'
   import MenuNav    from '@/components/menuItem/index.vue'
   import Breadcrumb from '@/components/divBreadcrumb/index.vue'
@@ -283,6 +284,9 @@
 
   // 页面刷新时 关闭握手
   window.addEventListener('beforeunload', chat.stop)
+  
+  const instance = getCurrentInstance();
+  instance?.proxy?.$Bus.on('refreshNav', () => { getNavData2() })
 </script>
 
 <style lang="scss" scoped>

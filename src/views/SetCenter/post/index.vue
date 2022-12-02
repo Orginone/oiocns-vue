@@ -9,26 +9,26 @@
       </div>
     </div>
   </div>
-  <el-dialog v-model="createIdntityDialog" title="请录入岗位信息" width="40%" center append-to-body @close="dialogHide">
+  <el-dialog v-model="createOrUpdatePostDialog" :title="`${isUpdate ? '修改': '请录入'}岗位信息`" width="40%" center append-to-body @close="dialogHide">
     <div>
       <el-form-item label="岗位名称" style="width: 100%">
         <el-input v-model="formData.name" placeholder="请输入" clearable style="width: 100%" />
       </el-form-item>
       <el-form-item label="岗位编号" style="width: 100%">
-        <el-input v-model="formData.code" placeholder="请输入" clearable style="width: 100%" />
+        <el-input :disabled="isUpdate" v-model="formData.code" placeholder="请输入" clearable style="width: 100%" />
       </el-form-item>
       <el-form-item label="所属角色" style="width: 100%">
-        <el-cascader :props="cascaderProps" :options="cascaderTree" v-model="formData.authId" style="width: 100%"
+        <el-cascader :disabled="isUpdate" :props="cascaderProps" :options="cascaderTree" v-model="formData.authId" style="width: 100%"
           placeholder="请选择" />
       </el-form-item>
       <el-form-item label="岗位简介" style="width: 100%">
-        <el-input v-model="formData.remark" :autosize="{ minRows: 5 }" placeholder="请输入" type="textarea" clearable />
+        <el-input :disabled="isUpdate" v-model="formData.remark" :autosize="{ minRows: 5 }" placeholder="请输入" type="textarea" clearable />
       </el-form-item>
     </div>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogHide">取消</el-button>
-        <el-button type="primary" @click="createIdentity">确认</el-button>
+        <el-button type="primary" @click="submit">确认</el-button>
       </span>
     </template>
   </el-dialog>
@@ -38,21 +38,32 @@
   import adminTable from './components/adminTable.vue'
   import postTable from './components/postTable.vue'
   import { getCurrentInstance, computed } from "vue";
+  import { ElMessage, ElMessageBox } from 'element-plus'
   import { useUserStore } from '@/store/user'
+  import { setCenterStore } from '@/store/setting'
   import identityServices from '@/module/relation/identity'
-
   const IdentityServices = new identityServices()
+  const settingStore = setCenterStore()
   const userStore = useUserStore()
 
+  const isUpdate = ref<boolean>(false)
   const { proxy } = getCurrentInstance()
 
   proxy?.$Bus.on('clickBus', (id) => {
     if(id == '2008') {
-      createIdntityDialog.value = true
+      isUpdate.value = false
+      formData = {}
+      createOrUpdatePostDialog.value = true
+    } else if (id == '2009') {
+      isUpdate.value = true
+      formData = settingStore.currentSelectItme
+      createOrUpdatePostDialog.value = true
+    } else if(id == '2010') {
+      handleDelete()
     }
   })
 
-  const createIdntityDialog = ref<boolean>(false)
+  const createOrUpdatePostDialog = ref<boolean>(false)
   let formData = reactive<any>({})
   const belongId = computed(() => userStore.workspaceData?.id)
   let authorityTree = ref<any[]>([])
@@ -74,8 +85,9 @@
       cascaderTree.value = authorityTree.value
     }
   }
-  // 创建岗位
-  const createIdentity = async () => {
+  // 创建或者更新岗位
+  const submit = async () => {
+    if (isUpdate) return ElMessage.error('待提供接口...')
     let obj =  {
       belongId: belongId.value,
       name: formData.name,
@@ -89,14 +101,44 @@
         message: '创建成功!',
         type: 'success'
       })
+      proxy?.$Bus.emit('refreshNav')
       dialogHide()
       loadIdentities()
     }
   }
 
+  // 删除岗位信息
+  const handleDelete = () => {
+    if (!settingStore.currentSelectItme?.id) {
+      ElMessage.warning('请左侧选择岗位')
+      return
+    }
+    ElMessageBox.confirm(
+      `确定删除 ${settingStore.currentSelectItme?.name} 岗位吗？`,
+      '警告',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    ).then(async () => {
+      const data = await IdentityServices.deleteIdentity(settingStore.currentSelectItme?.id)
+      if (data) {
+        ElMessage({
+          message: '操作成功',
+          type: 'success'
+        })
+        proxy?.$Bus.emit('refreshNav')
+      }
+    })
+      .catch(() => {
+        console.log('取消移除!')
+      })
+  }
+
   const dialogHide = () => {
-    formData.value = {}
-    createIdntityDialog.value = false
+    formData = {}
+    createOrUpdatePostDialog.value = false
   }
 
   onMounted(() => {

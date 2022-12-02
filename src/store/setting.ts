@@ -70,7 +70,14 @@ export const setCenterStore = defineStore({
                 if (res.success) {
                     if (res.data?.result?.length) {
                         this.identityInfo = res.data?.result?.map((element: any) => {
-                            return Object.assign({},element, {label: element.name,structure: true, query: true})
+                            return Object.assign({},element, {label: element.name,structure: true, query: true, btns: [{
+                              id: '2009',
+                              name: '更改岗位名称',
+                            },
+                            {
+                              id: '2010',
+                              name: '删除岗位',
+                            }]})
                         });
                         this.currentSelectItme = this.identityInfo[0]
                     } else {
