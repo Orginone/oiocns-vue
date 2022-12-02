@@ -78,7 +78,22 @@
       } else if (router.currentRoute.value.name === 'post') {
           titleArr.state= {icon: 'User',title: '岗位设置',"backFlag": true}
           setCenterStore().GetIdentities().then((treeData)=> {
-            menuArr.state = treeData
+            let newData: any = [
+              {
+                label: '岗位管理',
+                structure: true,
+                id: 1,
+                query: true,
+                isPenultimate: true,
+                btns:[{
+                  name: '新增岗位',
+                  id: '2008'
+                }],
+                children: treeData
+              }
+            ]
+            
+            menuArr.state = newData
           })
           showMenu.value = true;
           return;
