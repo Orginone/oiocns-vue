@@ -1,5 +1,10 @@
 <template>
   <div class="main">
+    <div class="contentTile">
+      <el-icon class="back" title="返回" @click="goBack"><ArrowLeft/></el-icon>
+      <el-icon class="doc"><Document/></el-icon>
+      <b>文档</b>
+    </div>
     <el-tree
       ref="treeRef"
       :props="defaultProps"
@@ -28,6 +33,7 @@
   import Bucket from '@/module/cloud/bucket'
   import ObjectLay from "@/module/cloud/objectlay";
   import { zipFileName } from '@/utils'
+  import { useRouter } from "vue-router";
   interface Tree {
     label: string
     children?: Tree[]
@@ -35,6 +41,7 @@
   const state = reactive({
     treeData: null
   })
+  const router = useRouter()
   const props = defineProps({})
   const treeRef = ref(null)
   const emit = defineEmits(['clickFileFromTree'])
@@ -43,6 +50,11 @@
     children: 'dirChildren',
     label: 'Name',
     isLeaf: 'isLeaf'
+  }
+
+  // 返回到仓库
+  const goBack = () => {
+    router.push({ path: '/store' })
   }
 
   // 动态加载子目录
@@ -101,21 +113,39 @@
 
   })
 </script>
-<style lang="scss">
-  .main {
-    .cloud-true {
-      width: 100%;
-      height: 100vh;
-      overflow-y: auto;
-    }
-  }
-</style>
-
 <style lang="scss" scoped>
   .main {
     width: 300px;
     height: 100%;
     background-color: #fff;
+    margin-right: 3px;
+
+    .contentTile{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      background-color: #f9fbfe;
+      font-size: 16px;
+      margin-bottom: 10px;
+      .back {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        position: absolute;
+        left: 20px;
+      }
+      .doc {
+        width: 16px;
+        height: 16px;
+        color:#154ad8;
+        margin-right: 10px;
+      }
+      b {
+        font-size: 14px;
+      }
+    }
+
     .tree-head {
       padding: 10px;
       display: flex;

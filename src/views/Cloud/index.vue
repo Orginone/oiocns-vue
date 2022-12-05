@@ -325,7 +325,6 @@
     .cloudMainBox {
       width: 100%;
       height: 100%;
-      border-left: 1px solid #eee;
       background-color: #fff;
     }
     .menuRight {
