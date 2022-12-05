@@ -141,20 +141,15 @@
   })
   onMounted(() => {
   })
-  // 从文件内获取展示数据
-  const getPageDataFromServices = ()=>{
-      state.myAppList = marketServices.marketList
-  }
-
-  const handleClick = (item: any) => {
+  const handleClick = (id: any) => {
     ElMessageBox.confirm(`确认操作吗?`, '提示', {
       confirmButtonText: '确认',
       cancelButtonText: '取消',
       type: 'warning'
     })
     .then(async() => {
-      await marketServices.deleteMarket(item.id);
-      getPageDataFromServices()
+      await marketServices.deleteMarket(id);
+      router.go(0);
     })
     .catch(() => { })
   }
@@ -273,7 +268,7 @@ const buyThings = (item:any) => {
     await appstore.staging(id)
     getAppList()
   }
-  // TODO 暂时去掉跳转详情
+  // 详情弹窗
   const requireItem = (item:Object) => {
     dialogType.infoDialog = true;
     infoDetail.info = item;
@@ -288,6 +283,9 @@ const buyThings = (item:any) => {
 
   // 获取应用列表
   const getAppList: (goFirst?: boolean) => void = async (goFirst = true) => {
+    if(!softShareInfo.value.id){
+      return false;
+    }
     const { result = [], total = 0 } = await appstore.merchandise(
       softShareInfo.value.id,
       pageStore,
@@ -338,6 +336,8 @@ const buyThings = (item:any) => {
       router.push({path:'/store/userManage',query:{data:router.currentRoute.value.query.id}})
     }else if(num == '1023'){
       // dialogType.detailDialog = true;
+    }else if(num == '1024'){
+      handleClick(router.currentRoute.value.query.id)
     }else if(num == '1025'){
       dialogType.addDialog = true;
     }
