@@ -250,40 +250,6 @@
             ]
         }
     ],
-    "data": [
-        {
-            "icon": "HelpFilled",
-            "title": "数据设置",
-            "backFlag": true
-        },
-        {
-            "label": "智慧公物仓",
-            "structure": true,
-            "query": true,
-            "isPenultimate": true,
-            "children": [
-                {
-                    "label": "余杭公务仓",
-                    "isPenultimate": true,
-                    "id": ""
-                }
-            ]
-        },
-        {
-            "label": "资产云数据",
-            "structure": true,
-            "query": true,
-            "isPenultimate": true,
-            "children": []
-        },
-        {
-            "label": "应用使用数据",
-            "structure": true,
-            "query": true,
-            "isPenultimate": true,
-            "children": []
-        }
-    ],
     "resource": [
         {
             "icon": "Histogram",

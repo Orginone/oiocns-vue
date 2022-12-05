@@ -260,17 +260,6 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/setCenter/data',
-        name: 'data',
-        component: () => import('@/views/SetCenter/data/index.vue'),
-        meta: {
-          title: '数据设置',
-          icon: 'Postcard',
-          searchType: '2',
-          id: "setCenter.data"
-        }
-      },
-      {
         path: '/setCenter/resource',
         name: 'resource',
         component: () => import('@/views/SetCenter/resource/index.vue'),

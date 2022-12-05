@@ -4,6 +4,7 @@
       <div class="title">当前{{title}}</div>
       <div class="box-btns">
         <el-button small link type="primary" @click="handleUpdate">编辑信息</el-button>
+        <el-button small link type="primary" @click="handleUpdate">加入集团</el-button>
         <el-button small link type="primary" @click="toAuth">单位认证</el-button>
         <el-button small link type="primary" @click="toIdentity">更多信息</el-button>
       </div>
