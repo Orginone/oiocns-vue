@@ -139,8 +139,6 @@
   const infoDetail:any= reactive({
     info:{}
   })
-  onMounted(() => {
-  })
   const handleClick = (id: any) => {
     ElMessageBox.confirm(`确认操作吗?`, '提示', {
       confirmButtonText: '确认',
@@ -164,6 +162,8 @@
     checkBox: false,
     order: true,
     selectLimit: 1,
+    noPage:false,
+    switchType:true,
     defaultSort: { prop: 'createTime', order: 'descending' },
     treeProps: {
       children: 'children',
@@ -174,7 +174,6 @@
    const closeDialog = (type: string, key: boolean) => {
     dialogType[type] = key;
   };
-  const modeType = ref<'card' | 'list'>('card')
   const router = useRouter()
   const shopcarNum = ref(0)
 
@@ -322,8 +321,10 @@ const buyThings = (item:any) => {
   }
   watch(() => router.currentRoute.value.fullPath, () => {
     if(router.currentRoute.value.query?.id){
+      console.log('aaa')
       getShopData();
     }else{
+      console.log('bbb')
       getAppList()
     }
   })

@@ -527,30 +527,31 @@
   }
   // 获取我的应用列表
   const getProductList = async () => {
-    const res = await appstore.getProductList(pageStore, searchText.value)
-    state[`ownProductList`] = [...res.result]
-    for(let product of state[`ownProductList`]){      
-        const result = await appstore.getResource(product.id)
-        let flowArr:any = []
-        result.filter((element:any)=>element.flows && element.flows.length>0).forEach((element:any) => {
-          console.log(element,'aaaaa')
-          let arr = JSON.parse(element.flows);
-          let itemArr:any = []
-          arr.forEach((el:any) => {
-            el.appId = product.id;
-            el.appName = product.name
-            el.sourceId = element.id;
-            itemArr.push(el)
+    appstore.getProductList(pageStore, searchText.value,(res:any)=>{
+      state[`ownProductList`] = [...res.result]
+      for (let product of state[`ownProductList`]) {
+          appstore.getResource(product.id,(res:any)=>{
+            let flowArr: any = [];
+            var arr = JSON.parse(JSON.stringify(res.result))
+            arr.filter((element: any) => element.flows && element.flows.length > 0)
+              .forEach((element: any) => {
+                let arr = JSON.parse(element.flows);
+                let itemArr: any = [];
+                arr.forEach((el: any) => {
+                  el.appId = product.id;
+                  el.appName = product.name;
+                  el.sourceId = element.id;
+                  itemArr.push(el);
+                });
+                flowArr.push(...itemArr);
+              });
+            product.resourcesList = flowArr;
+            pageStore.total = res.total;
+            diyTable.value.state.page.total = res.total
           });
-          flowArr.push(...itemArr)
-        });
-        
-        product.resourcesList = flowArr
-    }
-    state[`ownTotal`] = res.total
-    pageStore.total = res.total
-    diyTable.value.state.page.total = res.total
-    pageContent.value.state.page.total = res.total
+      }
+    })
+    
   }
 
   // 移除app

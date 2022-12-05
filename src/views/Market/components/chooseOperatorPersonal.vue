@@ -191,7 +191,7 @@
     class: friendNodeClass
   }
   const page = reactive({
-    currentPage: 1,
+    current: 1,
     pageSize: 20
   })
   const handleCurrent: any = computed(() => {
@@ -646,6 +646,8 @@
       } else if (typeof search == 'string') {
         page.currentPage = 1
       }
+      console.log(node, load, search)
+
       switch (radio.value) {
         case '2':
           state.loadID = node
