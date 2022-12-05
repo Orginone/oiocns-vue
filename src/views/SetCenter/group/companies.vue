@@ -15,10 +15,10 @@
             <div style="display: flex;align-items: center">
               <el-button class="btn-check" type="primary" link>岗位设置</el-button>
               <el-divider direction="vertical"/>
-              <el-button class="btn-check" v-if="!allowEdit() && props.selectItem?.typeName == '集团'" small link type="primary" @click="pullCompanysDialog = true">添加单位</el-button>
+              <el-button class="btn-check" v-if="allowEdit() && props.selectItem?.typeName == '集团'" small link type="primary" @click="pullCompanysDialog = true">添加单位</el-button>
               <el-divider v-if="props.selectItem?.typeName == '集团'" direction="vertical"/>
-              <el-button class="btn-check" v-if="!allowEdit() && props.selectItem?.typeName == '集团'" small link type="primary" @click="viewApplication">查看申请</el-button>
-              <el-button class="btn-check" v-if="!allowEdit() && props.selectItem?.typeName == '子集团'" small link type="primary" @click="showAssignDialog">分配单位</el-button>
+              <el-button class="btn-check" v-if="allowEdit() && props.selectItem?.typeName == '集团'" small link type="primary" @click="viewApplication">查看申请</el-button>
+              <el-button class="btn-check" v-if="allowEdit() && props.selectItem?.typeName == '子集团'" small link type="primary" @click="showAssignDialog">分配单位</el-button>
             </div>
           </template>
           <template #operate="scope">
@@ -28,7 +28,7 @@
                 <el-dropdown-menu>
                   <el-dropdown-item @click="removeFrom">调整节点</el-dropdown-item>
                   <el-dropdown-item @click="removeFrom">集团岗位</el-dropdown-item>
-                  <el-dropdown-item v-if="!allowEdit() && scope.row.id !== authority.getSpaceId()" @click="removeFrom(scope.row)" style="color: #f67c80">移出集团</el-dropdown-item>
+                  <el-dropdown-item v-if="allowEdit() && scope.row.id !== authority.getSpaceId()" @click="removeFrom(scope.row)" style="color: #f67c80">移出集团</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>

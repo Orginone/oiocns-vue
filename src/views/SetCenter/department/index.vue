@@ -272,34 +272,32 @@ const createDept = () => {
 }
 
 // 变更部门
-const editDept = ()=>{
-  // $services.company.updateDepartment({
-  //   data: {
-  //     id: currentData.value?.id,
-  //     name: currentData.value?.name,
-  //     code: currentData.value?.code,
-  //     teamName: currentData.value?.team?.name,
-  //     teamCode: currentData.value?.team?.code,
-  //     teamRemark: currentData.value?.team?.remark,
-  //     parentId: formData.value?.parentId
-  //   }
-  // }).then((res: ResultType) => {
-  //   if (res.success) {
-  //     loadOrgTree()
-  //     ElMessage({
-  //       message: res.msg,
-  //       type: 'success'
-  //     })
-  //     dialogHide()
-  //     getUsers(store.currentSelectItme?.data)
-  //     getUsers(store.currentSelectItme?.data)
-  //   } else {
-  //     ElMessage({
-  //       message: res.msg,
-  //       type: 'error'
-  //     })
-  //   }
-  // })
+const editDept = async ()=>{
+  let rowObj = {
+    name:currentData.value?.name,
+    id:currentData.value?.id,
+    typeName:store?.currentSelectItme?.data.typeName
+  }
+  let url: string;
+    if (rowObj.typeName == '部门') {
+      url = 'removeFromDepartment'
+    } else if (rowObj.typeName == '工作组') {
+      url = 'removeFromJob'
+    }
+    const data = await $services.company[url]({
+      data: {
+        id: store?.currentSelectItme?.data.id,
+        targetIds: [rowObj.id]
+      }
+    })
+    if(data){
+      await assignDepartment(formData.value?.parentId, [currentData.value?.id])
+      ElMessage({
+        message: '操作成功',
+        type: 'success'
+      })
+      dialogHide()
+    }
 }
 
 // 加载单位

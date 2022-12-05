@@ -3,10 +3,8 @@
     <div class="header">
       <div class="title">节点信息</div>
       <div class="box-btns">
-        <el-button small link type="primary" v-if="!allowEdit()" @click="handleUpdate">编辑</el-button>
-        <el-button small link type="primary" v-if="!allowEdit()" @click="handleDelete">删除</el-button>
-        <!-- <el-button small link type="primary" v-if="!allowEdit()" @click="toAuth">角色管理</el-button> -->
-        <!-- <el-button small link type="primary" v-if="!allowEdit()" @click="toIdentity">岗位管理</el-button> -->
+        <el-button small link type="primary" v-if="allowEdit()" @click="handleUpdate">编辑</el-button>
+        <el-button small link type="primary" v-if="allowEdit()" @click="handleDelete">删除</el-button>
       </div>
     </div>
     <div class="tab-list">
@@ -93,9 +91,9 @@ const handleDelete = async () => {
     return
   }
   let selectObj = {
-    name:selectItem.value.data.name,
+    name:selectItem.value.name,
     id:selectItem.value.id,
-    typeName:selectItem.value.data.typeName
+    typeName:selectItem.value.typeName
   }
   const data =  await groupServices.deleteGroup(selectObj)
   if(data){
@@ -113,7 +111,6 @@ const handleUpdate = () => {
     ElMessage.warning('请左侧选择部门或者工作组！')
     return
   }
-  console.log(' selectItem.value: ',  selectItem.value);
   formData.value = selectItem.value
   dialogVisible.value = true
 }
@@ -124,7 +121,8 @@ const update = async () => {
   const val =  await groupServices.upDateGroup(data)
   dialogVisible.value = false
   ElMessage.success('信息修改成功!')
-  selectItem.value.data = val
+  selectItem.value = val
+  emit('refresh')
 }
 
 // 跳转至角色管理页面

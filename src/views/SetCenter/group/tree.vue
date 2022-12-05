@@ -6,15 +6,7 @@
       <b style="font-size: 14px;">集团设置</b>
     </div>
     <div class="search-wrap">
-      <el-input class="search" v-model="filterText" placeholder="搜索" :prefix-icon="Search">
-
-      </el-input>
-      <li class="con tree-btns">
-        <div class="title">集团管理</div>
-        <el-icon color="#154ad8" :size="20" v-if="!allowEdit()" @click="createGroupDialogShow">
-          <CirclePlus />
-        </el-icon>
-      </li>
+      <el-input class="search" v-model="filterText" placeholder="搜索" :prefix-icon="Search" />
     </div>
 
     <div class="tree">
@@ -82,16 +74,42 @@
     </template>
   </el-dialog>
 
+  <el-dialog v-model="dialogVisible" title="提示" width="30%">
+    <el-form :model="form" label-width="120px">
+      <el-form-item label="集团名称">
+        <el-input v-model="form.teamName" style="width: 80%" />
+      </el-form-item>
+      <el-form-item label="集团编码">
+        <el-input v-model="form.code" style="width: 80%" />
+      </el-form-item>
+      <el-form-item label="集团简称">
+        <el-input v-model="form.name" style="width: 80%" />
+      </el-form-item>
+      <el-form-item label="集团代码">
+        <el-input v-model="form.teamCode" style="width: 80%" />
+      </el-form-item>
+      <el-form-item label="集团简介">
+        <el-input v-model="form.teamRemark" style="width: 80%" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="save">确认</el-button>
+      </span>
+    </template>
+  </el-dialog>
+  <searchGroup v-if="friendDialog" :serachType="4" @closeDialog="closeDialog"  @checksSearch='checksSearch'></searchGroup>
 </template>
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted, watch } from 'vue'
 import $services from '@/services'
 import { ElMessage } from 'element-plus';
+import searchGroup from '@/components/searchs/index.vue'
 import { Search } from '@element-plus/icons-vue'
 import authority from '@/utils/authority'
 import { useUserStore } from '@/store/user'
-import { resolve } from 'path';
 const store = useUserStore()
 const goBack = () => {
   window.history.go(-1)
@@ -116,9 +134,86 @@ const loadNode = (node: any, resolve: (data: any[]) => void) => {
   }
   
 }
-
+let dialogVisible = ref(false)
+const friendDialog = ref<boolean>(false)
+const form = reactive({
+  name: '',
+  code: '',
+  teamName: '',
+  teamCode: '',
+  teamRemark: ''
+})
 const clickBus = (e:any)=>{
-  // instance?.proxy?.$Bus.emit('clickBus', e.target.dataset.index)
+  let id = e.target.dataset.index
+  if (id === '2101') {
+    dialogVisible.value = true
+  } else if(id === '2102') {
+    friendDialog.value = true;
+  } else if(id === '2103') {
+    createGroupDialogVisible.value = true
+  }
+}
+const save = () => {
+  $services.company
+    .createGroup({
+      data: {
+        name: form.name,
+        code: form.code,
+        belongId: store.workspaceData.id,
+        teamName: form.teamName,
+        teamCode: form.teamCode,
+        teamRemark: form.teamRemark
+      }
+    })
+    .then((res: ResultType) => {
+      if (res.success) {
+        ElMessage({
+          message: '创建成功',
+          type: 'success'
+        })
+        dialogVisible.value = false
+        getGroupList()
+      } else {
+        ElMessage({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    })
+}
+const closeDialog = ()=>{
+  friendDialog.value = false;
+}
+type arrList = {
+  id:string
+}
+const checksSearch=(val:any)=>{
+  if(val.value.length>0){
+    let arr:Array<arrList> =[]
+    val.value.forEach((element:any) => {
+      arr.push(element.id)
+    });
+    addGroupFun(arr)
+  }else{
+    friendDialog.value = false;
+  }
+}
+const addGroupFun = (arr:any) => {
+  $services.company
+    .applyJoinGroup({
+      data: {
+        id: arr.join(',')
+      }
+    })
+    .then((res: ResultType) => {
+      if (res.success) {
+        ElMessage({
+          message: '申请成功',
+          type: 'warning'
+        })
+        friendDialog.value = false
+      }
+    })
 }
 
 const onHover = (id: string) => {
@@ -169,7 +264,7 @@ const treeRef = ref<any>()
 
 // 刷新
 const refresh = () => {
-  loadOrgTree()
+  getGroupList()
 };
 defineExpose({ refresh,selectItemChange });
 
@@ -192,14 +287,14 @@ const getGroupList = () => {
         addGroupList = []
         groups.length && groups.forEach((item: any) => {
           if (item.createUser == store.queryInfo.id) {
-            myGroupList.push({...item, label: item.name, btns: [{
-              name: '创建集团',
-              id: '2000'
+            myGroupList.push({...item, label: item?.team?.name ?? item?.name, btns: [{
+              name: '创建子集团',
+              id: '2103'
             }]})
           } else {
             addGroupList.push({...item, label: item.name, btns: [{
               name: '加入集团',
-              id: '2000'
+              id: '2100'
             }]})
           }
         })
@@ -209,7 +304,7 @@ const getGroupList = () => {
             label: "创建集团",
             btns:[{
               "name":"创建集团",
-              "id":"2022"
+              "id":"2101"
             }],
             children: myGroupList
           },
@@ -218,7 +313,7 @@ const getGroupList = () => {
             label: "加入集团",
             btns:[{
                 "name":"加入集团",
-                "id":"2023"
+                "id":"2102"
             }],
             children: addGroupList
           }
@@ -263,10 +358,6 @@ const loadOrgTree = async (id?: string)=>{
 }
 
 let createGroupDialogVisible = ref<boolean>(false)
-const createGroupDialogShow = () => {
-  createGroupDialogVisible.value = true
-}
-
 
 const createGroupDialogHide = () => {
   createGroupDialogVisible.value = false
@@ -289,7 +380,7 @@ const createGroup = ()=>{
         type: 'success'
       })
       createGroupDialogHide()
-      loadOrgTree()
+      getGroupList()
     } else {
       ElMessage({
         message: res.msg,
@@ -327,11 +418,6 @@ watch(filterText, (val) => {
   padding: 0 !important;
 }
 
-.tree-btns {
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-between;
-}
 .tree{
   padding: 0 10px;
   position: relative;
@@ -347,7 +433,18 @@ watch(filterText, (val) => {
     font-size: 12px;
   }
 }
+.row-btn{
+  text-align: center;
+  line-height: 27px;
+}
+.row-btn:hover{
+  background: #EBEEF5;
+}
+.row-btn:last-child{
+  margin-bottom: 0;
+}
 :deep .el-tree-node__content {
+  height: 40px;
   position: relative;
 }
 .custom-tree-node {
