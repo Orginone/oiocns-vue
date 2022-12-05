@@ -129,7 +129,6 @@ const onOut = () => {
 }
 const init =  () => {
   setTimeout(() => {
-    console.log(props.data)
     state.treeData = props.data.filter((item: any) => {
       return item.structure === true
     })
