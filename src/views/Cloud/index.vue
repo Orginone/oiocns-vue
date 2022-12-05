@@ -266,7 +266,6 @@
     display: flex;
     width: 100%;
     height: 100%;
-    padding: 3px 0;
     position: relative;
 
     :deep(.el-input) {
@@ -293,7 +292,7 @@
       flex-direction: row;
       align-items: center;
       border-bottom: 1px solid #eee;
-      height: 40px;
+      height: 56px;
       box-sizing: border-box;
       .operateBtn {
         cursor: pointer;
