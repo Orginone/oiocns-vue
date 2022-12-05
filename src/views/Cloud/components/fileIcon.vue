@@ -35,12 +35,12 @@
 
   onMounted(() => {
     let fileType = 'file'
-    if(props.fileItem.isDirectory) {
+    if(props.fileItem.IsDirectory) {
       fileType = 'folder'
     } else {
-      let index = props.fileItem.name.lastIndexOf('.')
+      let index = props.fileItem.Name.lastIndexOf('.')
       if (index > -1) {
-        fileType = props.fileItem.name.substring(index + 1, props.fileItem.name.length).toLowerCase()
+        fileType = props.fileItem.Name.substring(index + 1, props.fileItem.Name.length).toLowerCase()
       }
     }
     iconSvg.value = fileIconMap[fileType] || fileIconMap['file']
@@ -48,8 +48,8 @@
 </script>
 <style lang="scss" scoped>
 .file-icon {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   img {
     width: 100%;
     height: 100%;
