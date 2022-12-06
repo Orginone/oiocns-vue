@@ -1,13 +1,13 @@
 <template>
   <el-container class="pages home-wrap">
     <!-- 头 -->
-    <el-header class="page-header">
+    <el-header class="page-header" >
       <CustomHeadr />
     </el-header>
     <el-container>
       <!-- 主导航 -->
       <div class="menu-list" v-show="showMenu">
-        <MenuNav :data="menuArr.state" :titleData="titleArr.state"></MenuNav>
+        <MenuNav :data="menuArr.state" :titleData="titleArr.state" :btnType="btnType"></MenuNav>
       </div>
       <div class="layout-main" >
           <!-- 面包屑 -->
@@ -36,6 +36,18 @@
       </div>
       <!-- </el-container> -->
     </el-container>
+      <el-dialog
+        v-model="addMenuDialog"
+        append-to-body
+        title="新增分类"
+        width="60%"
+      >
+      <el-input v-model="menuText"  placeholder="请输入" />
+      <div class="foot" style="margin-top:20px;display:flex;">
+        <el-button  @click="addMenuDialog = false">取消</el-button>
+        <el-button type="primary" @click="addMenu">确定</el-button>
+      </div>
+    </el-dialog>
   </el-container>
 </template>
 
@@ -47,7 +59,7 @@
   import { useUserStore } from '@/store/user'
   import { setCenterStore } from '@/store/setting'
   import authority from '@/utils/authority'
-  import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick} from 'vue'
+  import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick,getCurrentInstance} from 'vue'
   import { RouteLocationNormalizedLoaded, useRouter } from 'vue-router';
   import storeJosn from './json/store.json';
   // import settingJosn from './json/setting.json';
@@ -60,13 +72,16 @@
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
   import { anystore } from '@/hubs/anystore'
+  const { proxy } = getCurrentInstance()
 
-
+  const btnType = ref<string>('');
+  const addMenuDialog = ref<boolean>(false);
+  const menuText = ref<string>('')
   const menuTree = ref(createAllMenuTree());
   const allMenuItems = ref(getAllNodes(menuTree.value));
   
-
-  function getNavData2() {
+  // 路由控制，单独匹配的话需要增加 showMenu.value = true;
+  function getNavData2() { 
 
     if(router.currentRoute.value.path.indexOf('setCenter') != -1){
       if (router.currentRoute.value.name === 'department') {
@@ -105,14 +120,17 @@
     // end-文档相关
     if(router.currentRoute.value.path.indexOf('store/shop') != -1){
       getShopList();
+      showMenu.value = true;
       return
     }
     if(router.currentRoute.value.path.indexOf('store/appManagement') != -1){
       titleArr.state = storeJosn[0]
       menuArr.state = storeJosn
+      showMenu.value = true;
       return
     }
     if(router.currentRoute.value.path.indexOf('store') != -1){
+      showMenu.value = true;
       getMenu()
       return
     }
@@ -138,7 +156,6 @@
     data:[]
   });
   const dataFilter = (data:any)=>{
-    console.log(data.length)
     if(data.length>0){
       data.forEach((element:any) => {
         element.url = '/store?id='+element.id
@@ -150,18 +167,95 @@
     }else{
       return data;
     }
-      
   };
   // 获取商店分类
   const getMenu = () => {
     anystore.subscribed(`selfAppMenu`, 'user', (data) => {
+      console.log(data?.data)
       let newJSON = JSON.parse(JSON.stringify(storeJosn))
-      menuData.data = data.data;
-      dataFilter(menuData.data)
-      newJSON[2].children = menuData.data;
-      titleArr.state = newJSON[0]
-      menuArr.state = newJSON
+        if(data?.data?.length>0){
+          console.log('data',data.data)
+          menuData.data = data.data;
+          dataFilter(menuData.data)
+          newJSON[2].children = menuData.data;
+        }
+        titleArr.state = newJSON[0]
+        menuArr.state = newJSON
+        btnType.value = 'STORE_USER_MENU'
     })
+  }
+
+  function getUuid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = (Math.random() * 16) | 0,
+        v = c == 'x' ? r : (r & 0x3) | 0x8
+      return v.toString(16)
+    })
+  }
+  const flagId = ref<string>('');
+  proxy?.$Bus.on('storeBus', (id:any) => {
+    let str:string = id;
+    let arr = str.split('_')
+    if(arr[0] == '1'){
+      addMenuDialog.value = true;
+      flagId.value = arr[1];
+    }else{
+      flagId.value = arr[1];
+      deleteMenu();
+    }
+  })
+  const idFindItem = (obj:any,data:any) => {
+    if(data?.length){
+      data.forEach((element:any) => {
+        if(element.id == flagId.value){
+          element.children.push(obj)
+          setMenu();
+        }else{
+          idFindItem(obj,element.children)
+        }
+      });
+    }
+  };
+  const deleteFindItem = (data:any) => {
+    if(data?.length){
+      data.forEach((element:any,index:number) => {
+        if(element.id == flagId.value){
+          data = data.splice(index, 1);
+          setMenu();
+        }else{
+          deleteFindItem(element.children)
+        }
+      });
+    }
+  };
+  const addMenu = ()=>{
+    let id = getUuid();
+    let obj = {
+      children:[] as [],
+      id:id,
+      key:Date.now(),
+      label:menuText.value,
+      title:menuText.value,
+      url:'store?id='+id
+    }
+    if(flagId.value != 'undefined'){
+      idFindItem(obj,menuData.data);
+    } else{
+      menuData.data.push(obj)
+      setMenu();
+    }
+  }
+  const deleteMenu = ()=>{
+    deleteFindItem(menuData.data)
+  }
+  const setMenu = ()=>{
+    anystore.set(`selfAppMenu`,{
+      operation:'replaceAll',
+      data:{
+        data:menuData.data
+      }
+    },'user');
+    addMenuDialog.value = false;
   }
   // 获取我的商店列表
   const getShopList = async ()=>{
