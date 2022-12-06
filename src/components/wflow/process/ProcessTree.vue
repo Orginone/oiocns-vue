@@ -353,7 +353,7 @@
         // ctx.$forceUpdate()
       };
       const insertApprovalNode = (parentNode: any, afterNode: any) => {
-        parentNode.children.name = '审批对象';
+        parentNode.children.name = '';
         parentNode.children.props = deepCopy(DefaultProps.APPROVAL_PROPS);
       };
       const insertCcNode = (parentNode: any) => {

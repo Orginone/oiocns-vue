@@ -13,8 +13,9 @@ type TreeData = {
   type: string
 }
 type PageStore = {
-  tableData?: any[]
+  [x: string]: any
   currentPage: number
+  tableData?: any[]
   pageSize: number
   total?: number
 }
@@ -27,23 +28,16 @@ class appStore {
    * @param pageStore 分页参数
    * @param searchText 查询条件
    */
-  public async getProductList(pageStore: PageStore, searchText: string) {
-    const { data, success } = await API.product['searchOwnProduct']({
+  public  getProductList(pageStore: PageStore, searchText: string,callback:any) {
+     API.product['searchOwnProduct']({
       data: {
-        offset: (pageStore.currentPage - 1) * pageStore.pageSize,
+        offset: pageStore.currentPage,
         limit: pageStore.pageSize,
         filter: searchText
       }
+    }).then((res:any)=>{
+      callback(res.data)
     })
-    if (!success) {
-      return
-    }
-    const { result = [], total = 0 } = data
-    let obj = {
-      result,
-      total
-    }
-    return obj
   }
   /**
    * @desc 删除应用
@@ -142,21 +136,18 @@ class appStore {
    * @param appid 应用id
    * @return 返回应用资源
    */
-  public async getResource(appid: string) {
-    const { data, success } = await API.product.searchResource({
+  public getResource(appid: string,callback:any) {
+     API.product.searchResource({
       data: {
         id: appid,
         offset: 0,
         limit: 1000,
         filter: ''
       }
+    }).then((res)=>{
+      callback(res.data)
     })
-    if (!success) {
-      return
-    }
-    const { result = [], total = 0 } = data
-    let tabs = result
-    return tabs
+    
   }
 
   /**
@@ -294,7 +285,7 @@ class appStore {
     const { success, data } = await API.appstore.merchandise({
       data: {
         id: id,
-        offset: (page.currentPage - 1) * page.pageSize,
+        offset:page.currentPage,
         limit: page.pageSize,
         filter: search
       }
@@ -326,19 +317,17 @@ class appStore {
    * @desc 获取我的应用
    * @return 返回我的应用列表
    */
-  public async searchUsefulProduct() {
-    const { data, success } = await API.product.searchUsefulProduct({
+  public  searchUsefulProduct(callback:any) {
+    API.product.searchUsefulProduct({
       data: {
         offset: 0,
-        limit: 6,
+        limit: 10,
         filter: ''
       }
+    }).then((res)=>{
+      callback(res)
     })
-    if (!success) {
-      return
-    }
-    const { result = [], total = 0 } = data
-    return result
+   
   }
 
   /**
@@ -728,7 +717,7 @@ export class Application {
       data: {
         id: node.id,
         limit: page.pageSize,
-        offset: this.handleCurrent(page),
+        offset: page.current,
         filter: typeof search == 'string' ? search : ''
       }
     })

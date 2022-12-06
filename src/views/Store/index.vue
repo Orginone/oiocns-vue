@@ -305,7 +305,6 @@ import authority from "@/utils/authority";
 import { appstore } from "@/module/store/app";
 import opened from "./components/opened.vue";
 import appDetail from "./components/appDetail.vue";
-import card from "./components/card.vue";
 import ShareComponent from "./components/shareComponents.vue";
 import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
 
@@ -375,6 +374,8 @@ const options = ref<any>({
   checkBox: false,
   order: true,
   selectLimit: 1,
+  noPage:false,
+  switchType:true,
   defaultSort: { prop: "createTime", order: "descending" },
   treeProps: {
     children: "children",
@@ -447,47 +448,49 @@ onMounted(() => {
 });
 
 //列表
-watch([isCard], ([val], [valOld]) => {
-  // 监听 展示方式变化
-  nextTick(() => {
-    if (val) {
-      getProductList();
-    } else {
-      getProductList();
-    }
-  });
-});
+// watch([isCard], ([val], [valOld]) => {
+//   // 监听 展示方式变化
+//   nextTick(() => {
+//     if (val) {
+//       getProductList();
+//     } else {
+//       getProductList();
+//     }
+//   });
+// });
 
 const handleUpdate = (page: any) => {
-  pageStore.currentPage = page.currentPage;
+  pageStore.currentPage = page.current;
   pageStore.pageSize = page.pageSize;
   getProductList();
 };
 // 获取我的应用列表
-const getProductList = async () => {
-  const res = await appstore.getProductList(pageStore, searchText.value);
-  state[`ownProductList`] = [...res.result];
-  for (let product of state[`ownProductList`]) {
-    const result = await appstore.getResource(product.id);
-    let flowArr: any = [];
-    result
-      .filter((element: any) => element.flows && element.flows.length > 0)
-      .forEach((element: any) => {
-        let arr = JSON.parse(element.flows);
-        let itemArr: any = [];
-        arr.forEach((el: any) => {
-          el.appId = product.id;
-          el.appName = product.name;
-          el.sourceId = element.id;
-          itemArr.push(el);
+const getProductList = () => {
+  appstore.getProductList(pageStore, searchText.value,(res:any)=>{
+    state[`ownProductList`] = [...res.result]
+    let resData = JSON.parse(JSON.stringify(state[`ownProductList`]))
+    for (let product of resData) {
+        appstore.getResource(product.id,(res:any)=>{
+          let flowArr: any = [];
+          var arr = JSON.parse(JSON.stringify(res.result))
+          arr.filter((element: any) => element.flows && element.flows.length > 0)
+            .forEach((element: any) => {
+              let arr = JSON.parse(element.flows);
+              let itemArr: any = [];
+              arr.forEach((el: any) => {
+                el.appId = product.id;
+                el.appName = product.name;
+                el.sourceId = element.id;
+                itemArr.push(el);
+              });
+              flowArr.push(...itemArr);
+            });
+          product.resourcesList = flowArr;
+          pageStore.total = res.total;
+          diyTable.value.state.page.total = res.total
         });
-        flowArr.push(...itemArr);
-      });
-
-    product.resourcesList = flowArr;
-  }
-  pageStore.total = res.total;
-  diyTable.value.state.page.total = res.total
+    }
+  })
 };
 
 // 移除app

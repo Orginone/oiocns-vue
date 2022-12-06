@@ -49,7 +49,7 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="requireItem">查看详情</el-dropdown-item>
+                  <el-dropdown-item @click="requireItem(scope.row)">查看详情</el-dropdown-item>
                   <el-dropdown-item @click="joinShopCar(scope.row.id)">加入购物车</el-dropdown-item>
                   <el-dropdown-item @click="buyThings(scope.row)">购买</el-dropdown-item>
                 </el-dropdown-menu>
@@ -73,7 +73,7 @@
                         <el-dropdown>
                           <span class="el-dropdown-link drop-list"> ··· </span>
                           <template #dropdown>
-                            <el-dropdown-item @click="requireItem">查看详情</el-dropdown-item>
+                            <el-dropdown-item @click="requireItem(item)">查看详情</el-dropdown-item>
                             <el-dropdown-item @click="joinShopCar(item.id)">加入购物车</el-dropdown-item>
                             <el-dropdown-item @click="buyThings(item)">购买</el-dropdown-item>
                           </template>
@@ -97,6 +97,7 @@
     </div>
     <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog', false)"/>
     <addShop :addDialog="dialogType.addDialog" @closeDialog="closeDialog('addDialog', false)"/>
+    <appInfo :infoDialog="dialogType.infoDialog" :infoDetail="infoDetail.info" @closeDialog="closeDialog('infoDialog', false)"></appInfo>
   </div>
   
 </template>
@@ -111,6 +112,7 @@
   import createShop from "../components/createShop.vue";
   import addShop from "../components/addShop.vue";
   import marketServices from "@/module/store/market"
+  import appInfo from "./components/appInfo.vue"
   const diyTable = ref(null)
   const valuee = ref<any>('');
   const instance = getCurrentInstance();
@@ -132,32 +134,20 @@
   const dialogType: any = reactive({
     createDialog: false, // 创建商店弹窗状态
     addDialog:false,//加入商店弹窗
-    detailDialog: false, // 基础详情弹窗状态
+    infoDialog:false, // 基础详情弹窗状态
   });
-  interface ListItem {
-    code: string
-    name: string
-    trueName: string
-    teamCode: string
-    remark: string
-  }
-
-  onMounted(() => {
+  const infoDetail:any= reactive({
+    info:{}
   })
-  // 从文件内获取展示数据
-  const getPageDataFromServices = ()=>{
-      state.myAppList = marketServices.marketList
-  }
-
-  const handleClick = (item: any) => {
+  const handleClick = (id: any) => {
     ElMessageBox.confirm(`确认操作吗?`, '提示', {
       confirmButtonText: '确认',
       cancelButtonText: '取消',
       type: 'warning'
     })
     .then(async() => {
-      await marketServices.deleteMarket(item.id);
-      getPageDataFromServices()
+      await marketServices.deleteMarket(id);
+      router.go(0);
     })
     .catch(() => { })
   }
@@ -172,6 +162,8 @@
     checkBox: false,
     order: true,
     selectLimit: 1,
+    noPage:false,
+    switchType:true,
     defaultSort: { prop: 'createTime', order: 'descending' },
     treeProps: {
       children: 'children',
@@ -182,14 +174,13 @@
    const closeDialog = (type: string, key: boolean) => {
     dialogType[type] = key;
   };
-  const modeType = ref<'card' | 'list'>('card')
   const router = useRouter()
   const shopcarNum = ref(0)
 
   // 表格展示数据
   const pageStore = reactive({
     tableData: [],
-    currentPage: 1,
+    currentPage: 0,
     pageSize: 20,
     total: 0
   })
@@ -235,7 +226,7 @@
     }
   ]
   const handleUpdate = (page: any) => {
-    pageStore.currentPage = page.currentPage
+    pageStore.currentPage = page.current
     pageStore.pageSize = page.pageSize
     getAppList()
   }
@@ -276,7 +267,11 @@ const buyThings = (item:any) => {
     await appstore.staging(id)
     getAppList()
   }
-  const requireItem = () => {}
+  // 详情弹窗
+  const requireItem = (item:Object) => {
+    dialogType.infoDialog = true;
+    infoDetail.info = item;
+  }
   // 获取购物车数量
   const getShopcarNum = async () => {
     shopcarNum.value = await appstore.getShopcarNum()
@@ -287,12 +282,16 @@ const buyThings = (item:any) => {
 
   // 获取应用列表
   const getAppList: (goFirst?: boolean) => void = async (goFirst = true) => {
+    if(!softShareInfo.value.id){
+      return false;
+    }
     const { result = [], total = 0 } = await appstore.merchandise(
       softShareInfo.value.id,
       pageStore,
       searchVal.value
     )
     state.myAppList = result || []
+    pageStore.total = total
   }
 
   // 获取共享仓库信息
@@ -304,13 +303,6 @@ const buyThings = (item:any) => {
   const GoPage = (path: string) => {
     router.push(path)
   }
-
-  watch(modeType, (val, valOld) => {
-    // 监听 展示方式变化
-    nextTick(() => {
-      getAppList()
-    })
-  })
   const getShopData = () => {
     $services.appstore
       .merchandise({
@@ -329,8 +321,10 @@ const buyThings = (item:any) => {
   }
   watch(() => router.currentRoute.value.fullPath, () => {
     if(router.currentRoute.value.query?.id){
+      console.log('aaa')
       getShopData();
     }else{
+      console.log('bbb')
       getAppList()
     }
   })
@@ -343,6 +337,8 @@ const buyThings = (item:any) => {
       router.push({path:'/store/userManage',query:{data:router.currentRoute.value.query.id}})
     }else if(num == '1023'){
       // dialogType.detailDialog = true;
+    }else if(num == '1024'){
+      handleClick(router.currentRoute.value.query.id)
     }else if(num == '1025'){
       dialogType.addDialog = true;
     }

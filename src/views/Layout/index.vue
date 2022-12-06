@@ -59,6 +59,7 @@
 
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
+  import { anystore } from '@/hubs/anystore'
 
 
   const menuTree = ref(createAllMenuTree());
@@ -106,6 +107,15 @@
       getShopList();
       return
     }
+    if(router.currentRoute.value.path.indexOf('store/appManagement') != -1){
+      titleArr.state = storeJosn[0]
+      menuArr.state = storeJosn
+      return
+    }
+    if(router.currentRoute.value.path.indexOf('store') != -1){
+      getMenu()
+      return
+    }
     const ret = findMenu(router.currentRoute.value, allMenuItems.value);
     if (!ret) {
       showMenu.value = false;
@@ -115,11 +125,6 @@
     menuArr.state = ret.top.children;
     showMenu.value = true;
   }
-
-
-
-
-
   let router = useRouter()
   console.log(router.currentRoute.value.path);
 
@@ -128,44 +133,52 @@
     state:[]
   });
   const showMenu = ref<boolean>(true);
+  // 商店分类数据
+  const menuData = reactive({
+    data:[]
+  });
+  const dataFilter = (data:any)=>{
+    console.log(data.length)
+    if(data.length>0){
+      data.forEach((element:any) => {
+        element.url = '/store?id='+element.id
+        element.label = element.title
+        if(element.children.length>0){
+          dataFilter(element.children)
+        }
+      });
+    }else{
+      return data;
+    }
+      
+  };
+  // 获取商店分类
+  const getMenu = () => {
+    anystore.subscribed(`selfAppMenu`, 'user', (data) => {
+      let newJSON = JSON.parse(JSON.stringify(storeJosn))
+      menuData.data = data.data;
+      dataFilter(menuData.data)
+      newJSON[2].children = menuData.data;
+      titleArr.state = newJSON[0]
+      menuArr.state = newJSON
+    })
+  }
   // 获取我的商店列表
   const getShopList = async ()=>{
     await marketServices.getMarketList({
       offset: 0,
-      limit: 10,
+      limit: 1000,
       filter: ""
     });
     let myList:any = []
     let addList:any = []
     marketServices.marketList.forEach(element => {
-      if(element.belongId){
-        myList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
-              "name":"删除商店",
-              "id":"1021"
-          },{
-              "name":"用户管理",
-              "id":"1022"
-          }
-          // ,{
-          //     "name":"基础详情",
-          //     "id":"1023"
-          // }
-        ]})
+      if(element.belongId == useUserStore().userInfo.workspaceId){
+        myList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{  "name":"删除商店", "id":"1021" },{  "name":"用户管理",  "id":"1022" }]})
       }else{
         // TODO 暂时文字匹配开放市场，不显示在商店加入列表里
         if(element.name !='开放市场'){
-          addList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
-              "name":"退出商店",
-              "id":"1024"
-          },{
-              "name":"用户管理",
-              "id":"1022"
-          }
-          // ,{
-          //     "name":"基础详情",
-          //     "id":"1023"
-          // }
-        ]})
+          addList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{ "name":"退出商店", "id":"1024" },{ "name":"用户管理",  "id":"1022" }]})
         }
       }
     });
@@ -207,7 +220,6 @@
     shopStoreJosn[2] = newObj
     titleArr.state = shopStoreJosn[0]
     menuArr.state = shopStoreJosn
-    
   }
   // const getNav = ()=>{
   //     if(router.currentRoute.value.path.indexOf('store') != -1){    

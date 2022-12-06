@@ -2,21 +2,6 @@
 <template>
   <div class="thing">
     <div class="content">
-      <!-- <div>
-        <el-menu
-          :default-active="flowActive"
-          class="el-menu"
-          style="height: 40px; padding-left: 20px; margin-bottom: 20px"
-          mode="horizontal"
-          @select="flowSelect"
-        >
-          <el-menu-item index="1">待办</el-menu-item>
-          <el-menu-item index="2">已办</el-menu-item>
-          <el-menu-item index="3">我发起的</el-menu-item>
-          <el-menu-item index="4">抄送我的</el-menu-item>
-        </el-menu>
-      </div> -->
-      
       <div class="tab-list">
         <div>
           <DiyTable
@@ -31,8 +16,8 @@
           <template #slot-tabs>
             <el-tabs v-model="activeName" style="width: 100%" @tabClick="shopClick">
               <el-tab-pane label="加入市场申请" name="first"> </el-tab-pane>
-              <el-tab-pane label="应用上架申请" name="second"> </el-tab-pane>
               <el-tab-pane label="加入市场审批" name="third"> </el-tab-pane>
+              <el-tab-pane label="应用上架申请" name="second"> </el-tab-pane>
               <el-tab-pane label="应用上架审批" name="four"> </el-tab-pane>
             </el-tabs>
           </template>
@@ -100,6 +85,7 @@
     expandAll: false,
     checkBox: false,
     order: true,
+    switchType:false,
     noPage: true,
     selectLimit: 0
   }
@@ -327,10 +313,11 @@
   // }
   .content {
     flex: 1;
-    height: 100%;
+    height: calc(100% - 3px);
     padding: 20px;
     box-sizing: border-box;
     background: var(--el-bg-color-overlay);
+    margin-top: 3px;
     .search {
       background: #fff;
       padding: 20px;
@@ -351,7 +338,7 @@
       right: 20px;
     }
     .tab-list {
-      height: calc(100% - 40px);
+      height: 100%;
       overflow: hidden;
       box-sizing: border-box;
 

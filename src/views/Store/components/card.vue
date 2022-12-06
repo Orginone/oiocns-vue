@@ -1,35 +1,13 @@
 <template>
   <div class="card-list">
-    <div class="card-item" v-for="(item, index) in props.data" :key="index">
-      <div class="item-head">
-        <div class="item-img">{{item.name}}</div>
-        <div class="item-head-content">
-          <p>
-            <span>{{item.name}}
-               <!-- <el-tag class="ml-2" type="success">免费</el-tag> -->
-            </span>
-            <slot name="slot-menu" :row="item"></slot>
-          </p>
-          <!-- <p>73MB</p> -->
-        </div>
-      </div>
-      <div class="item-content">
-        {{item.}}
-      </div>
-      <div class="tag">
-        <el-tag class="tag-item" type="info">类型</el-tag>
-      </div>
-      <div class="time">创建于 {{item?.['name']}}</div>
-    </div>
+   
   </div>
 </template>
 
 <script setup lang="ts">
 import { Obj } from "@popperjs/core";
 import { onMounted } from "vue";
-const props = defineProps({
-  data:{}
-})
+
 onMounted(() => {
 
 });
@@ -114,111 +92,3 @@ onMounted(() => {
 }
 </style>
 
-
-
-
-
-
-<div class="card-list">
-  <div
-    class="card-item"
-    v-for="(item, index) in state.ownProductList"
-    :key="index"
-  >
-    <div class="item-head">
-      <div class="item-img">{{ item.name.substring(0,1) }}</div>
-      <div class="item-head-content">
-        <p>
-          <span
-            >{{ item.name }}
-            <!-- <el-tag class="ml-2" type="success">免费</el-tag> -->
-          </span>
-            <el-dropdown>
-              <span class="el-dropdown-link drop-list"> ··· </span>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item
-                    v-if="
-                      scope.row?.['authority'] == '所属权' &&
-                      scope.row?.['belongId'] ==
-                        store.workspaceData.id
-                    "
-                    link
-                    type="primary"
-                    @click="
-                      handleCommand('own', 'putaway', scope.row)
-                    "
-                    >上架</el-dropdown-item
-                  >
-                  <el-dropdown-item
-                    link
-                    type="primary"
-                    v-if="
-                      scope.row?.['belongId'] ==
-                      store.workspaceData.id
-                    "
-                    @click="handleCommand('own', 'share', scope.row)"
-                  >
-                    共享</el-dropdown-item
-                  >
-                  <el-dropdown-item
-                    link
-                    type="primary"
-                    v-if="authority.IsCompanySpace()"
-                    @click="
-                      handleCommand('own', 'distribution', scope.row)
-                    "
-                    >分配
-                  </el-dropdown-item>
-                  <el-dropdown-item
-                    link
-                    type="primary"
-                    @click="goDetail(scope.row?.['id'])"
-                  >
-                    查看详情
-                  </el-dropdown-item>
-                  <el-dropdown-item
-                    link
-                    type="primary"
-                    @click="deleteApp(scope.row)"
-                    >移除应用</el-dropdown-item
-                  >
-                  <el-dropdown-item
-                    v-if="
-                      scope.row?.['resourcesList'] &&
-                      scope.row?.['resourcesList']?.length > 0
-                    "
-                  >
-                    <el-dropdown trigger="hover" placement="top-end">
-                      流程业务
-                      <template #dropdown>
-                        <el-dropdown-menu
-                          style="padding-left: 10px; min-width: 100px"
-                        >
-                          <el-dropdown-item
-                            v-for="resource in scope.row
-                              .resourcesList"
-                            :key="resource.formId"
-                            @click="enterProcess(resource)"
-                            >{{ resource.business }}</el-dropdown-item
-                          >
-                        </el-dropdown-menu>
-                      </template>
-                    </el-dropdown>
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-        </p>
-        <!-- <p>73MB</p> -->
-      </div>
-    </div>
-    <div class="item-content">
-      {{item.name}}
-    </div>
-    <div class="tag">
-      <el-tag class="tag-item" type="info">类型</el-tag>
-    </div>
-    <div class="time">创建于 {{ item.name }}</div>
-  </div>
-</div>
