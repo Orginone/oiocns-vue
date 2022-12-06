@@ -1,6 +1,6 @@
 <template>
   <div class="cloud">
-<!--    <NavList ref="navRef" :menuList="state.cloudMenu"></NavList>-->
+    <NavList ref="navRef" @clickFileFromTree="clickFile"></NavList>
     <div class="cloudMainBox" @click="onContent">
       <div class="cloudBar" v-if="state.currentLay">
         <el-space size="default">
@@ -44,7 +44,7 @@
               @contextmenu.prevent.stop="fileRightClick($event, item, index)"
           >
             <file-icon :file-item="item"></file-icon>
-            <div class="elUpload-text" :title="item.Name">{{ zipFileName(item.Name) }}</div>
+            <div class="elUpload-text" :title="item.Name">{{ doZipFileName(item.Name) }}</div>
           </div>
         </div>
         <el-empty v-else description="没有文件" :image-size="100"/>
@@ -81,8 +81,8 @@
     <!-- 文件操作菜单 -->
     <el-card v-show="showFileMenu" class="fileMenu" :style="{ left: menuLeft + 'px', top: menuTop + 'px' }">
       <div class="text fileMenu-item" @click="openEditFileDialog">重命名</div>
-<!--      <div class="text fileMenu-item">复制</div>-->
-<!--      <div class="text fileMenu-item">移动</div>-->
+      <!--<div class="text fileMenu-item">复制</div>-->
+      <!--<div class="text fileMenu-item">移动</div>-->
       <div class="text fileMenu-item" @click="deleteFile">删除文件</div>
     </el-card>
   </div>
@@ -96,13 +96,12 @@
   import FileIcon from './components/fileIcon.vue'
   import {ElMessageBox, ElMessage, UploadProps} from "element-plus";
   import {useUserStore} from "@store/user";
+  import { zipFileName } from '@/utils'
+  import ObjectLay from "@/module/cloud/objectlay";
   const store = useUserStore()
 
-  const navRef = ref()
+  const navRef = ref(null)
   const state = reactive({
-    cloudMenu: [],
-    keyArr: [],
-    currentLocation: '',
     currentLay: null,
     uploadHeaders: {
       Authorization: store.userToken
@@ -146,18 +145,17 @@
     }
     await Bucket.OpenDirectory(item)
     state.currentLay = Bucket.Current
+    navRef.value.checkedNode(item)
   }
 
   // 返回上一层
   const goBackOneStep = async () => {
-    await Bucket.GoPrevDirectory()
-    state.currentLay = Bucket.Current
+    await clickFile(Bucket.Current.GetParent())
   }
 
   // 返回到某一层
   const goBack = async (item: Objectlay, index: number) => {
-    await Bucket.GoDirectory(item)
-    state.currentLay = Bucket.Current
+    await clickFile(item)
   }
   
   // 文件上传成功
@@ -188,6 +186,13 @@
     }
     createFileDialog.value = false
     await Bucket.Current.Create(state.fileName)
+    // 追加节点
+    const dataLay = new Objectlay({}, state.currentLay)
+    dataLay.Key = state.currentLay.Key != ObjectLay.rootKey ? `${state.currentLay.Key}/${state.fileName}` : state.fileName
+    dataLay.Name = state.fileName
+    dataLay.IsDirectory = true
+    dataLay.HasSubDirectories = false
+    navRef.value.appendNode(dataLay, state.currentLay)
     await refreshCurrent()
   }
 
@@ -214,6 +219,10 @@
           type: 'warning',
         }
     ).then(async () => {
+      // 同时删除节点
+      if(state.operateItem.IsDirectory) {
+        navRef.value.removeNode(state.operateItem)
+      }
       await state.operateItem.Delete()
       await refreshCurrent()
       onContent()
@@ -238,18 +247,12 @@
   }
 
   // 文本展示工具函数
-  const zipFileName = (name: string) => {
-    if(name.length > 10) {
-      const rp = name.substring(2, name.length - 6);
-      return rp != name ? name.replace(rp, "..") : name
-    } else {
-      return name
-    }
+  const doZipFileName = (name: string) => {
+    return zipFileName(name, 10, 2, 6)
   }
 
   onMounted(async () => {
-    await Bucket.GetContent()
-    state.currentLay = Bucket.Current
+    await clickFile(Bucket.Current)
   })
 </script>
 <style lang="scss">
@@ -263,7 +266,6 @@
     display: flex;
     width: 100%;
     height: 100%;
-    padding: 3px 0;
     position: relative;
 
     :deep(.el-input) {
@@ -290,7 +292,7 @@
       flex-direction: row;
       align-items: center;
       border-bottom: 1px solid #eee;
-      height: 40px;
+      height: 56px;
       box-sizing: border-box;
       .operateBtn {
         cursor: pointer;
@@ -322,7 +324,6 @@
     .cloudMainBox {
       width: 100%;
       height: 100%;
-      border-left: 1px solid #eee;
       background-color: #fff;
     }
     .menuRight {
