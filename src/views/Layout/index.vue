@@ -255,6 +255,7 @@
         data:menuData.data
       }
     },'user');
+    menuText.value = '';
     addMenuDialog.value = false;
   }
   // 获取我的商店列表
