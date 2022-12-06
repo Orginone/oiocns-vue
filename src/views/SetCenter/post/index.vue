@@ -103,7 +103,6 @@
       })
       proxy?.$Bus.emit('refreshNav')
       dialogHide()
-      loadIdentities()
     }
   }
 

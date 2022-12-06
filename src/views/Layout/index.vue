@@ -72,7 +72,21 @@
       if (router.currentRoute.value.name === 'department') {
           titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
           setCenterStore().GetDepartmentInfo().then((treeData)=> {
-            menuArr.state = treeData
+            let newData: any = [
+              {
+                label: '部门管理',
+                structure: true,
+                id: 1,
+                query: true,
+                isPenultimate: true,
+                btns:[{
+                  name: '新增部门',
+                  id: '2203'
+                }],
+                children: treeData
+              }
+            ]
+            menuArr.state = newData
           })
           showMenu.value = true;
           return;
@@ -93,7 +107,6 @@
                 children: treeData
               }
             ]
-            
             menuArr.state = newData
           })
           showMenu.value = true;

@@ -214,6 +214,7 @@ const subscribe = store.$subscribe(
       *
       * */
     // 在此处监听store中值的变化，当变化为某个值的时候，做一些业务操作
+    if(state.currentSelectItme.label === '部门管理') return
     getUsers(state.currentSelectItme?.data)
   },
   { detached: false }
@@ -244,6 +245,7 @@ const dialogHide = () => {
   personDialogVisible.value = false
   createDeptDialogVisible.value = false
 }
+let isUnit = ref<boolean>(true)
 // 创建部门
 const createDept = () => {
   $services.company.createDepartment({
@@ -251,7 +253,7 @@ const createDept = () => {
       id: formData.value.id,
       code: formData.value.code,
       name: formData.value.name,
-      parentId: store.currentSelectItme?.id,
+      parentId: isUnit.value ? store.unitInfo?.id : store.currentSelectItme?.id,
       teamName: formData.value.name,
       teamRemark: formData.value.remark
     }
@@ -262,6 +264,7 @@ const createDept = () => {
         message: res.msg,
         type: 'success'
       })
+      proxy?.$Bus.emit('refreshNav')
     } else {
       ElMessage({
         message: res.msg,
@@ -335,6 +338,7 @@ const createJob = () => {
         message: res.msg,
         type: 'success'
       })
+      proxy?.$Bus.emit('refreshNav')
     } else {
       ElMessage({
         message: res.msg,
@@ -474,14 +478,17 @@ const removeFrom = async (row: any) => {
   }
 }
 
-
 const { proxy } = getCurrentInstance()
 
 proxy?.$Bus.on('clickBus', (id) => {
-  if(id === '105') {
+  if(id === '2201') { // 部门创建子部门
+    isUnit.value = false
     deptDialogVisible.value = true
-  } else if(id === '106') {
+  } else if(id === '2202') { // 创建工作组
     jobDialogVisible.value = true
+  } else if(id === '2203') {  // 单位创建部门
+    isUnit.value = true
+    deptDialogVisible.value = true
   }
 })
 

@@ -98,16 +98,16 @@ export const setCenterStore = defineStore({
                 const btns = node.data?.typeName === '工作组' ?  [
                     {
                         name: "新增工作组",
-                        id: "106"
+                        id: "2202"
                     }
                 ] : [
                     {
                         name: "新增部门",
-                        id: "105"
+                        id: "2201"
                     },
                     {
                         name: "新增工作组",
-                        id: "106"
+                        id: "2202"
                     }
                 ]
                 return Object.assign({}, node, {structure: true, query: true, btns})
