@@ -97,6 +97,12 @@
         }
       }
     }
+    // start-文档相关
+    if (router.currentRoute.value.name === 'cloud') {
+      showMenu.value = false;
+      return;
+    }
+    // end-文档相关
     if(router.currentRoute.value.path.indexOf('store/shop') != -1){
       getShopList();
       return
