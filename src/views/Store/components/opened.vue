@@ -55,17 +55,20 @@ const handleChooseItem = async (app: any) => {
   const { link } = result[0]
   let data = { type: '', appInfo: app, icon: img1, link, path: '/online' }
   data.type = 'app'
-  commonStore.iframeLink = data?.link
+  commonStore.iframeLink = data.link
+  commonStore.appInfo = data.appInfo
   router.push(data.path)
 }
 const jumpDetail = (item:any)=>{
   router.push('/store/appManagement?id='+item.id)
 }
 const getAppList = async () => {
-  const result = await appstore.searchUsefulProduct()
-  appList.value = result.map((item: any) => {
-    return { ...item, icon: img1 }
+  appstore.searchUsefulProduct((res:any)=>{
+    appList.value = res.data.result.map((item: any) => {
+      return { ...item, icon: img1 }
+    })
   })
+ 
 }
 onMounted(() => {
   getAppList()

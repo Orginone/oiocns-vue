@@ -525,15 +525,6 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/market/userApply',
-        name: 'userApply',
-        component: () => import('@/views/Market/JoinMarketApproval/starter.vue'),
-        meta: {
-          title: '加入商店申请列表',
-          id: "marketold.apply-user"
-        }
-      },
-      {
         path: '/market/appApply',
         name: 'appApply',
         component: () => import('@/views/Market/AppShelves/apply.vue'),
@@ -578,33 +569,6 @@ const mainRouter: RouteRecordRaw[] = [
           id: "marketold.marketDetail"
         }
       },
-      {
-        path: '/market/managerApply',
-        name: 'managerApply',
-        component: () => import('@/views/Market/JoinMarketApproval/manager.vue'),
-        meta: {
-          title: '加入商店审批列表',
-          id: "marketold.managerApply"
-        }
-      },
-      {
-        path: '/market/managerApproval',
-        name: 'managerApproval',
-        component: () => import('@/views/Market/JoinMarketApproval/index.vue'),
-        meta: {
-          title: '申请审批',
-          id: "marketold.managerApproval"
-        }
-      },
-      {
-        path: '/market/appShelvesApproval',
-        name: 'appShelvesApproval',
-        component: () => import('@/views/Market/AppShelves/approval.vue'),
-        meta: {
-          title: '应用上架审批列表',
-          id: "marketold.appShelvesApproval"
-        }
-      }
     ]
   },
   {
@@ -677,7 +641,7 @@ const mainRouter: RouteRecordRaw[] = [
         name: 'storeAppManagement',
         component: () => import('@/views/Store/appManagement/index.vue'),
         meta: {
-          title: '应用设置',
+          title: '应用详情',
           id: "store.storeAppManagement"
         }
       },

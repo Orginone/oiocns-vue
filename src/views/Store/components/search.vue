@@ -35,9 +35,6 @@
       type: Object
     }
   })
-  const closeDialog = () => {
-    emit('closeDialog', props.dialogShow)
-  }
   const createDialog = ref(false) // 创建商店
   interface fromType {
     name:string,

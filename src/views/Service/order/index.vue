@@ -4,63 +4,142 @@
     <div class="content">
       <div>
         <el-menu
-          :default-active="flowActive"
+          :default-active="'1'"
           class="el-menu"
           style="height: 40px; padding-left: 20px; margin-bottom: 20px"
           mode="horizontal"
-          @select="flowSelect"
+          @select="switchCheck"
         >
-          <el-menu-item index="1">待处理</el-menu-item>
-          <el-menu-item index="2">已完成</el-menu-item>
-          <el-menu-item index="3">我的请求</el-menu-item>
+          <el-menu-item index="1">采购订单</el-menu-item>
+          <el-menu-item index="2">售卖订单</el-menu-item>
         </el-menu>
       </div>
       <div class="btnStyle">
-        <el-button type="primary">加好友</el-button>
-        <el-button type="primary">审核</el-button>
-        <el-button type="primary">退回</el-button>
+        <el-select
+          v-model="statusvalue"
+          filterable
+          placeholder="订单状态"
+          clearable
+          @change="getTableList(searchType)"
+          style="margin: 5px 5px 5px 15px"
+        >
+          <el-option
+            v-for="item in statusoptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
       </div>
        <div class="tab-list">
-        <DiyTable
-          class="diytable"
-          ref="diyTable"
-          :hasTableHead="false"
-          :tableData="tableData"
-          :options="options"
-          :tableHead="tableHead"
-        >
-          <template #productId="scope">
-            {{chat.getName(scope.row?.flowInstance?.flowRelation?.productId||scope.row?.flowTask?.flowInstance?.flowRelation?.productId||scope.row?.flowRelation?.productId)}}
-          </template>
-          <template #target.name="scope">
-            {{chat.getName(scope.row.createUser)}}
-          </template>
-          <template #content="scope">
-            {{scope.row?.flowInstance?.content || scope?.row?.flowTask?.flowInstance?.content || scope?.row?.content}}
-          </template>
-          <template #status="scope">
-            <div v-if="scope.row.status >= 0 && scope.row.status < 100">待批</div>
-            <div v-else-if="scope.row.status >= 100 && scope.row.status < 200">
-              <div v-if="scope.row?.flowTask?.flowNode?.nodeType=='审批'">已通过</div>
-              <div v-else-if="scope.row?.flowTask?.flowNode?.nodeType=='抄送'">已查阅</div>
-              <div v-else>已通过</div>
-            </div>
-            <div v-else>已拒绝</div>
-          </template>
-          <template #option="scope">
-            <el-dropdown>
-              <span class="el-dropdown-link">
-                ···
-              </span>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item v-if="flowActive == '1'">审核申请</el-dropdown-item>
-                  <el-dropdown-item v-if="flowActive == '3'">退回申请</el-dropdown-item>
-                </el-dropdown-menu>
+        <div class="container">
+          <div class="limit_table_height">
+            <!-- 采购订单 -->
+            <DiyTable
+              v-show="switchType ==1"
+              ref="diyTable"
+              :tableData="state.orderMessage.list"
+              :tableHead="state.tableHeadBuy"
+              :total="state.orderMessage.total"
+              @handleUpdate="handleUpdate"
+              :options="options"
+            >
+              <template #expand="props">
+                <div style="margin-left: 50px">
+                  <DiyTable
+                    ref="diyTableDetail"
+                    :tableData="props.row.details"
+                    :tableHead="state.tableHeadBuyDetail"
+                    :options="options"
+                  >
+                    <template #merchandiseStatus="scope">
+                      <el-tag v-show="scope.row.merchandise">在售</el-tag>
+                      <el-tag class="ml-2" type="danger" v-show="!scope.row.merchandise">已下架</el-tag>
+                    </template>
+
+                    <template #operate="scope">
+                      <el-button link type="primary" @click="showPayList(scope.row)">支付记录</el-button>
+                      <el-button
+                        link
+                        small
+                        type="danger"
+                        class="btn"
+                        v-show="scope.row.status < 102"
+                        @click="cancelOrder('buy', scope.row.id)"
+                      >
+                        取消订单
+                      </el-button>
+                      <el-button
+                        link
+                        small
+                        type="primary"
+                        class="btn"
+                        v-show="scope.row.status == 102"
+                        @click="reject(scope.row.id)"
+                      >
+                        退货退款
+                      </el-button>
+                    </template>
+                  </DiyTable>
+                </div>
               </template>
-            </el-dropdown>
-          </template>
-        </DiyTable>
+              <template #operate="scope">
+                <el-button
+                  link
+                  small
+                  type="danger"
+                  class="btn"
+                  @click="cancelOrder('main', scope.row.id)"
+                >
+                  取消订单
+                </el-button>
+              </template>
+            </DiyTable>
+            <!--售卖订单 -->
+            <DiyTable
+              v-show ='(switchType ==2)'
+              ref="diyTable"
+              :hasTitle="true"
+              :tableData="state.orderMessage.list"
+              :tableHead="state.tableHeadSell"
+              :total="state.orderMessage.total"
+              @handleUpdate="searchSellList"
+              :options="options"
+            >
+              <template #merchandiseStatus="scope">
+                <el-tag v-show="scope.row.merchandise">在售</el-tag>
+                <el-tag class="ml-2" type="danger" v-show="!scope.row.merchandise">已下架</el-tag>
+              </template>
+
+              <template #operate="scope">
+                <el-space>
+                  <el-button link type="success" @click="showPayList(scope.row)">支付记录</el-button>
+
+                  <el-button
+                    link
+                    small
+                    type="primary"
+                    v-show="scope.row.status < 102 && scope.row.merchandise"
+                    @click="delivery(scope.row.id)"
+                  >
+                    确认交付
+                  </el-button>
+                  <el-button
+                    link
+                    small
+                    type="danger"
+                    v-show="scope.row.status < 102"
+                    @click="cancelOrder('sell', scope.row.id)"
+                  >
+                    取消订单
+                  </el-button>
+                </el-space>
+              </template>
+            </DiyTable>
+            <payView v-if="payDialog.show" :order="payDialog.data" @close="closePay"></payView>
+            <payList v-if="payListDialog.show" :selectLimit="0" @closeDialog="closePayList" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -75,154 +154,501 @@
   import DiyTable from '@/components/diyTable/index.vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { TabsPaneContext } from 'element-plus'
+  import moment from 'moment'
   import { chat } from '@/module/chat/orgchat'
-  
-  import thingServices from '@/module/flow/thing'
+  import { ElTable } from 'element-plus'
+  import OrderSevice from '@/module/store/order'
+  import type { OrderListType, CancelType } from './order'
+  import renderDict from '@/services/dict'
+  import type { ListProps } from '@/module/store/order'
+  import payView from './components/pay.vue'
+  import payList from './components/list.vue'
 
-  const ThingServices  = new thingServices()
-  const instance = getCurrentInstance()
-  const route = useRoute()
-  const router = useRouter()
-  const dialogVisible = ref<boolean>(false)
-  const store = useUserStore()
-  const { workspaceData } = storeToRefs(store)
-  var tableData = ref<any>([{id:123,flowInstance:{}}])
-  const diyTable = ref(null)
-  const tableHead =ref<any>(ThingServices.orderHead) ;
-  const options = {
-    expandAll: false,
-    checkBox: false,
-    order: true,
-    noPage: true,
-    selectLimit: 0
-  }
-  // 表格展示数据
   const pageStore = reactive({
     tableData: [],
-    currentPage: 1,
-    pageSize: 20,
     total: 0
   })
+  const router = useRouter()
+  const route = useRoute()
+  const switchType = ref<number>(1);
+  const searchType = ref<OrderListType>('buy')
+  const payDialog = reactive({ show: false, data: {} })
+  const payListDialog = reactive({ show: false, data: {} })
 
-  // const showDetail = async (row: any,type:number) => {
-  //   if(type == 4){
-  //     $services.wflow.approvalTask({data:{id: row.id,status: 100,}}).then(async (res: ResultType) => {
-  //       ElMessage({
-  //         message: res.msg,
-  //         type: 'success'
-  //       })
-  //       ThingServices.whiteList = [];
-  //       await ThingServices.queryTask()
-  //       tableHead.value = ThingServices.flowHead;
-  //       tableData.value = ThingServices.copyList
-  //     })
-      
-  //   }else if(type ==3){
-  //     $services.wflow.deleteInstance({data:{id: row.id}}).then(async (res: ResultType) => {
-  //       ElMessage({
-  //         message: res.msg,
-  //         type: 'success'
-  //       })
-  //       ThingServices.whiteList = [];
-  //       await ThingServices.queryInstance()
-  //       tableHead.value = ThingServices.queryInstanceHead;
-  //       tableData.value =ThingServices.queryInstanceList
-  //     })
-     
-  //   }else{
-  //     let instanceId:string;
-  //     if(flowActive.value == '1'){
-  //       instanceId = row?.instanceId
-  //     }else if(flowActive.value == '2'){
-  //       instanceId = row?.flowTask?.instanceId
-  //     }else if(flowActive.value == '3'){
-  //       instanceId = row?.id
-  //     }else{
-  //       instanceId = row?.instanceId
-  //     }
-  //     router.push({ path: '/work/process', query: {id:row.id,type:flowActive.value,instanceId:instanceId}});
-  //   }
-  // }
-
-  const activeIndex = ref<string>('1')
-  const flowActive = ref<string>('1')
-  const activeId = ref<string>('0')
-  const elmenus = ref(null);
-  const activeName = ref('first') //商店tab
-
-  const handleClose = (index:any) => {
-    elmenus.value.open(index)
-    handleSelect(activeIndex.value, [])
+  const orderTableRef = ref<InstanceType<typeof ElTable>>()
+  //点击行触发，选中或不选中复选框
+  const handleRowClick = (row: any) => {
+    orderTableRef.value!.toggleRowSelection(row, undefined)
   }
-  
-  const getWflow =async () => {
-    await ThingServices.queryTask()
-    tableHead.value = ThingServices.orderHead;
-    tableData.value =ThingServices.taskList
-    
-  }
-
-  const flowSelect = (key: string) => {
-    flowActive.value = key
-    flowSwitch(key)
-  }
-  const flowSwitch  = async (key: string) => {
-    if(key == '1'){
-      await ThingServices.queryTask()
-      tableData.value =ThingServices.taskList
-    }else if(key =='2'){
-      await ThingServices.queryRecord()
-      tableData.value =ThingServices.recordList
-    }else if(key =='3'){
-      await ThingServices.queryInstance()
-      tableData.value =ThingServices.queryInstanceList
-    }else if(key =='4'){
-      tableData.value = ThingServices.copyList
-    }
-  }
-  
-  const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
-  const handleSelect = (key: any, keyPath: string[]) => {
-    tableData.value = []
-    // diyTable.value.state.page.total = 0
-    activeIndex.value = key;
-    ThingServices.whiteList = [];
-    if (whiteList.includes(key)) {
-      // if(key == '1-1'){
-      //   getList()
-      //   tableHead.value = ThingServices.examineHead;
-      // }else if (key == '1-2'){  
-      //   getApplyList()
-      //   tableHead.value = ThingServices.examineHead;
-      // }else if (key == '1-3'){
-      //   searchJoinApply()
-      // }
+  const statusvalue = ref('')
+  const statusoptions = [
+    { label: '全部', value: '' },
+    { label: '待交付', value: 1 },
+    //包含第三方监管和卖方的审核状态
+    { label: '已发货', value: 102 },
+    //后续可能有物流状态接入
+    { label: '买方取消订单', value: 220 },
+    { label: '卖方取消订单', value: 221 },
+    { label: '已退货', value: 222 }
+  ]
+  const switchCheck = (key:any)=>{
+    switchType.value = key
+    if (switchType.value ==1) {
+      getTableList('buy')
     } else {
-      getWflow();
-     
+      getTableList('sell')
     }
   }
 
   onMounted(() => {
-    // ThingServices.whiteList = [];
-    // const route = useRouter();
-    // const selectType = route.currentRoute.value.query.type?'1-1':'2-1';
-    // let id = route.currentRoute.value.query.id;
-    // activeIndex.value = '1-1';
-    // if (Array.isArray(id)) {
-    //   activeId.value = id[0];
-    // } else {
-    //   activeId.value = id
-    // }
-    
-    // handleSelect(selectType, [])
-  });
-
-  instance?.proxy?.$Bus.on('selectBtn', (num) => {
-    if(num === '1-4') {
-      handleSelect(num, [])
+    if (switchType.value ==1) {
+      getTableList('buy')
+    } else {
+      getTableList('sell')
     }
   })
+  interface ListItem {
+    value: string
+    label: string
+  }
+  const options = {
+    expandAll: false,
+    checkBox: false,
+    order: true,
+    switchType:false,
+    noPage: true,
+    selectLimit: 0
+  }
+  const handleUpdate = (page: any) => {
+    getTableList(searchType.value)
+  }
+  const state = reactive({
+    qunList: [],
+    orderMessage: {
+      list: [],
+      total: 0,
+      pageSize: 20,
+      current: 0
+    },
+    orderList: [],
+    tableHeadBuy: [
+      {
+        type: 'expand',
+        name: 'expand'
+      },
+      {
+        prop: 'code',
+        label: '订单号'
+      },
+      {
+        prop: 'name',
+        label: '应用名称'
+      },
+      {
+        prop: 'createTime',
+        label: '创建时间',
+        formatter: (row: any, column: any) => moment(row.createTime).format('YYYY/MM/DD HH:mm:ss')
+      },
+      {
+        type: 'slot',
+        label: '操作',
+        fixed: 'right',
+        width: '320',
+        name: 'operate'
+      }
+    ],
+    tableHeadBuyDetail: [
+      {
+        prop: 'caption',
+        label: '应用名称',
+        minWidth: '220'
+      },
+      {
+        prop: 'sellAuth',
+        label: '售卖权属'
+      },
+      {
+        prop: 'days',
+        label: '使用期限',
+        width: '120',
+        formatter: (row: any, column: any) => {
+          return row.days || '永久'
+        }
+      },
+      {
+        prop: 'price',
+        label: '价格'
+      },
+      {
+        prop: 'marketId',
+        label: '市场名称',
+        formatter: (row: any, column: any) => {
+          return row.marketId ? chat.getName(row.marketId) : null
+        }
+      },
+      {
+        prop: 'sellerId',
+        label: '卖方名称',
+        formatter: (row: any, column: any) => {
+          return row.sellerId ? chat.getName(row.sellerId) : null
+        }
+      },
+      {
+        prop: 'status',
+        label: '状态',
+        formatter: (row: any, column: any) => renderDict(row, column, 'OrderStatus')
+      },
+      {
+        prop: 'createTime',
+        label: '创建时间',
+        minWidth: '100',
+        formatter: (row: any, column: any) => moment(row.createTime).format('YYYY/MM/DD HH:mm:ss')
+      },
+
+      {
+        type: 'slot',
+        label: '商品状态',
+        fixed: 'right',
+        align: 'center',
+        width: '150',
+        name: 'merchandiseStatus'
+      },
+      {
+        type: 'slot',
+        label: '操作',
+        fixed: 'right',
+        minWidth: '220',
+        name: 'operate'
+      }
+    ],
+    tableHeadSell: [
+      {
+        prop: 'code',
+        label: '订单号',
+        minWidth: '150'
+      },
+      {
+        prop: 'caption',
+        label: '名称',
+        minWidth: '120'
+      },
+      {
+        prop: 'marketId',
+        label: '市场名称',
+        minWidth: '120',
+        formatter: (row: any, column: any) => {
+          return row.marketId ? chat.getName(row.marketId) : '-'
+        }
+      },
+      {
+        prop: 'belongId',
+        label: '买方名称',
+        minWidth: '200',
+        formatter: (row: any, column: any) => chat.getName(row.belongId)
+      },
+      {
+        prop: 'sellAuth',
+        label: '售卖权属',
+        width: '100'
+      },
+      {
+        prop: 'days',
+        label: '使用期限',
+        width: '120',
+        formatter: (row: any, column: any) => {
+          return row.days || '永久'
+        }
+      },
+      {
+        prop: 'price',
+        label: '价格',
+        width: '120'
+      },
+      {
+        prop: 'status',
+        label: '状态',
+        width: '120',
+        formatter: (row: any, column: any) => renderDict(row, column, 'OrderStatus')
+      },
+      {
+        prop: 'createTime',
+        label: '创建时间',
+        width: '160',
+        formatter: (row: any, column: any) => moment(row.createTime).format('YYYY/MM/DD HH:mm:ss')
+      },
+
+      {
+        type: 'slot',
+        label: '商品状态',
+        fixed: 'right',
+        width: '100',
+        name: 'merchandiseStatus'
+      },
+      {
+        type: 'slot',
+        label: '操作',
+        fixed: 'right',
+        align: 'left',
+        minWidth: '200',
+        name: 'operate'
+      }
+    ]
+  })
+  //查询
+  const getTableList = async (type: OrderListType) => {
+    searchType.value = type
+    switch (type) {
+      case 'buy':
+        searchBuyList({ current: 0, pageSize: 20 })
+        break
+      case 'sell':
+        searchSellList({ current: 0, pageSize: 20 })
+        break
+    }
+  }
+  // //查询所有订单
+  // const searchAllOrderList = async () => { }
+
+  // //查询出售 待审批/确认交易内容的订单
+  // const searchPreSellList = async () => {
+  //   await $services.order
+  //     .searchSellList({
+  //       data: {
+  //         offset: (pagination.current - 1) * pagination.limit,
+  //         limit: pagination.limit,
+  //         status: 1,
+  //         filter: ''
+  //       }
+  //     })
+  //     .then((res: ResultType) => {
+  //       const { result = [], total = 0 } = res.data
+  //       pageStore.total = total
+  //       state.orderList = result?.map((item: { market: { remark: any; code: any; name: any } }) => {
+  //         return {
+  //           ...item,
+  //           // remark: item.market.remark,
+  //           // marketCode: item.market.code,
+  //           // marketName: item.market.name
+  //         }
+  //       })
+  //     })
+  // }
+  //查询已出售订单
+  const searchSellList = async (params: ListProps) => {
+    state.orderList = []
+    const { data, total } = await OrderSevice.getSellList({
+      ...params,
+      filter: '',
+      status: statusvalue.value ? statusvalue.value : 0 //后续改成-1
+    })
+    state.orderMessage.total = total
+    state.orderMessage.list = data
+  }
+  //查询已购入订单
+  const searchBuyList = async (params: ListProps) => {
+    // state.orderMessage.list = [];
+    const { data, total } = await OrderSevice.geBuyList({
+      ...params,
+      filter: '',
+      status: statusvalue.value ? statusvalue.value : 0 //后续改成-1
+    })
+    state.orderMessage.total = total
+    state.orderMessage.list = data
+  }
+  //确认开始交易
+  const sureContent = async (id: string) => {
+    await $services.order
+      .updateDetail({
+        data: {
+          id: id,
+          status: 100
+        }
+      })
+      .then((res: ResultType) => {
+        if (res.code == 200) {
+          getTableList(searchType.value)
+          ElMessage({
+            message: '确认开始交易',
+            type: 'success'
+          })
+        }
+      })
+  }
+  //查询支付列表
+  const showPayList = async (data: any) => {
+    payListDialog.data = data
+    payListDialog.show = true
+  }
+  //支付
+  const showPay = async (data: any) => {
+    payDialog.data = data
+    payDialog.show = true
+  }
+  //关闭支付
+  const closePay = async () => {
+    payDialog.show = false
+  }
+  //关闭支付记录列表
+  const closePayList = async () => {
+    payListDialog.show = false
+  }
+
+  // const pay = async (id: string, price: number, paymentType: string) => {
+  //   await $services.order
+  //     .createPay({
+  //       data: {
+  //         orderId: parseInt(id),
+  //         price: price,
+  //         paymentType: paymentType
+  //       }
+  //     })
+  //     .then((res: ResultType) => {res.code == 200
+  //       if (res.code == 200) {
+  //         getTableList(searchType.value)
+  //         ElMessage({
+  //           message: '支付成功',
+  //           type: 'warning'
+  //         })
+  //       } else {
+  //         ElMessage({
+  //           message: res.msg,
+  //           type: 'warning'
+  //         })
+  //       }
+  //     })
+  // }
+  //退货退款
+  const reject = async (id: string) => {
+    const { code } = await OrderSevice.rejectOrder({
+      id: id,
+      status: 222
+    })
+
+    if (code == 200) {
+      getTableList(searchType.value)
+      ElMessage({
+        message: '退货成功',
+        type: 'success'
+      })
+    }
+  }
+
+  // 取消订单
+  const cancelOrder = async (type: CancelType, id: string) => {
+    ElMessageBox.prompt('请输入原因', '确认取消订单?', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
+    })
+      .then(async ({ value }) => {
+        const { code } = await OrderSevice.cancelOrder(type, {
+          id: id,
+          status: type === 'sell' ? 221 : 220
+        })
+        if (code == 200) {
+          getTableList(searchType.value)
+          ElMessage({
+            message: '取消订单成功',
+            type: 'success'
+          })
+        }
+      })
+      .catch(() => {})
+  }
+
+  // //买方取消订单详情
+  // const cancelBuy = async (id: string) => {
+  //   ElMessageBox.prompt('请输入原因', '确认取消订单?', {
+  //     confirmButtonText: '确定',
+  //     cancelButtonText: '取消'
+  //   })
+  //     .then(({ value }) => {
+  //       $services.order
+  //         .cancelBuy({
+  //           data: {
+  //             id: id,
+  //             status: 220
+  //           }
+  //         })
+  //         .then((res: ResultType) => {
+  //           if (res.code == 200) {
+  //             getTableList(searchType.value)
+  //             ElMessage({
+  //               message: '取消订单成功',
+  //               type: 'success'
+  //             })
+  //           }
+  //         })
+  //     })
+  //     .catch(() => {})
+  // }
+
+  // //卖方取消订单详情
+  // const cancelSell = async (id: string) => {
+  //   ElMessageBox.prompt('请输入原因', '确认取消订单?', {
+  //     confirmButtonText: '确定',
+  //     cancelButtonText: '取消'
+  //   })
+  //     .then(({ value }) => {
+  //       $services.order
+  //         .cancelSell({
+  //           data: {
+  //             id: id,
+  //             status: 221
+  //           }
+  //         })
+  //         .then((res: ResultType) => {
+  //           if (res.code == 200) {
+  //             getTableList(searchType.value)
+  //             ElMessage({
+  //               message: '取消订单成功',
+  //               type: 'success'
+  //             })
+  //           }
+  //         })
+  //     })
+  //     .catch(() => {})
+  // }
+
+  // //取消订单详情  由删除更改为中止
+  // const cancelOrderDetail = async (id: string,status:number,reason:string) => {
+  //   ElMessageBox.prompt('请输入原因', '确认取消订单?', {
+  //     confirmButtonText: '确定',
+  //     cancelButtonText: '取消',
+  //   })
+  //   .then(({ value }) => {
+  //     $services.order
+  //     .orderConfirm({
+  //       data: {
+  //         id: id,
+  //         status: status
+  //       }
+  //     })
+  //     .then((res: ResultType) => {
+  //       if (res.code == 200) {
+  //         getTableList(searchType.value)
+  //         ElMessage({
+  //           message: '取消订单成功',
+  //           type: 'success'
+  //         })
+  //       }
+  //     })
+  //   })
+  //   .catch(() => {})
+  // }
+  //确认交付
+  const delivery = async (id: string) => {
+    const { code } = await OrderSevice.deliverMerchandise({
+      id: id,
+      status: 102
+    })
+    if (code == 200) {
+      getTableList(searchType.value)
+      ElMessage({
+        message: '交付成功',
+        type: 'success'
+      })
+    }
+  }
 </script>
 
 
@@ -273,10 +699,11 @@
   // }
   .content {
     flex: 1;
-    height: 100%;
+    height: calc(100vh - 108px);
     padding: 20px;
     box-sizing: border-box;
     background: var(--el-bg-color-overlay);
+    margin-top: 3px;
     .btnStyle{
       position: absolute;
       right: 30px;
@@ -306,7 +733,7 @@
     }
     .tab-list {
       height: calc(100% - 40px);
-      overflow: hidden;
+      overflow-y:auto;
       box-sizing: border-box;
 
       background: var(--el-bg-color-overlay);

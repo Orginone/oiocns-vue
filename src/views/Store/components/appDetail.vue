@@ -56,9 +56,6 @@
     console.log('aaa')
     emit('closeDialog', type)
   }
-  const createShop = () =>{
-
-  }
 
   const activeIndex = ref('1')
 

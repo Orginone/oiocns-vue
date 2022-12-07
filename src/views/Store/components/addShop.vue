@@ -7,6 +7,26 @@
     width="60%"
   >
     <el-input v-model="value" @input="remoteMethod" placeholder="请输入" />
+    <!-- <div class="content">
+      <div class="list">
+        <el-checkbox-group v-model="checkList">
+        <div class="list-item">
+          <div class="row">
+            <div class="left">
+              <div class="img"></div>
+              <span>杭商城</span>
+            </div>
+            <div class="right">
+              <el-checkbox />
+            </div>
+          </div>
+          <div class="row">
+            此处为模板介绍
+          </div>
+        </div>
+        </el-checkbox-group>
+      </div>
+    </div> -->
     <diytab
       :style="{height:300+'px'}"
       ref="diyTable"
@@ -133,7 +153,6 @@
             type: 'warning'
           })
         }
-        // diyTable.value.state.loading = false
       })
   }
 
@@ -154,92 +173,7 @@
     emit('closeDialog', type)
   }
   const tableHead = ref([])
-  const tableHead1 = ref([
-    {
-      prop: 'code',
-      label: '账号',
-      // width: '100'
-    },
-    {
-      prop: 'name',
-      label: '昵称',
-      // width: '100',
-      name: 'name'
-    },
-    {
-      prop: 'trueName',
-      label: '姓名',
-      // width: '150',
-      name: 'trueName'
-    },
-    {
-      prop: 'teamCode',
-      label: '手机号',
-      // width: '150',
-      name: 'teamCode'
-    },
-    {
-      type:'slot',
-      width: '200',
-      prop: 'remark',
-      label: '座右铭',
-      name: 'remark'
-    }
-  ])
-  const tableHead2 = ref([
-    {
-      prop: 'trueName',
-      label: '群名称',
-      // width: '200',
-      name: 'trueName'
-    },
-    {
-      prop: 'teamCode',
-      label: '群编号',
-      // width: '150',
-      name: 'teamCode'
-    },
-    {
-      type:'slot',
-      prop: 'remark',
-      label: '群简介',
-      name: 'remark'
-    }
-  ])
-  const tableHead3 = ref([
-    {
-      prop: 'name',
-      label: '单位名称',
-      width: '200',
-      name: 'name'
-    },
-    {
-      prop: 'code',
-      label: '统一社会信用代码',
-      width: '200',
-      name: 'code'
-    },
-    {
-      type:'slot',
-      prop: 'remark',
-      label: '单位简介',
-      name: 'remark'
-    },
-  ])
-  const tableHead4 = ref([
-    {
-      prop: 'name',
-      label: '单位名称',
-      width: '300',
-      name: 'name'
-    },
-    {
-      type:'slot',
-      prop: 'remark',
-      label: '集团简介',
-      name: 'remark'
-    },
-  ])
+
   const tableHead5 = ref([
     {
       prop: 'name',
@@ -296,6 +230,32 @@
     cursor: pointer;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  .list{
+    flex-wrap: wrap;
+    margin-top: 20px;
+    .list-item{
+      display: flex;
+      width: 200px;
+      margin-top: 5px;
+      margin-right: 10px;
+      padding: 10px 18px;
+      border: 1px solid #E9ECF3;
+      border-radius: 3px;
+      flex-direction: column;
+      .row{
+        display: flex;
+        span{
+          color: #333;
+        }
+        .left{
+          display: flex;
+        }
+      }
+    }
+    .list-item:nth-child(2n){
+      margin-right: 0;
+    }
   }
   .tooltip-text{
     width: 400px;

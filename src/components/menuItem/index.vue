@@ -47,17 +47,25 @@
               placement="right"
               :width="100"
               trigger="click"
+              :teleported="false"
             >
               <template #reference>
                 <el-icon><Plus /></el-icon>
               </template>
-              <div class="btn-bus" @click="clickBus" :style="{cursor: 'pointer'}" >
+              <div v-if="btnType=='STORE_USER_MENU'">
+                <div class="btn-bus" :style="{cursor: 'pointer'}" >
+                  <div class="row-btn" @click="storeBus(1,$event)"  :data-index="node.key">创建分类</div>
+                  <div class="row-btn" @click="storeBus(2,$event)" :data-index="node.key">删除分类</div>
+                </div>
+              </div>  
+              <div v-else class="btn-bus" @click="clickBus" :style="{cursor: 'pointer'}" >
                 <div class="row-btn" v-for="(item,index) in data.btns" :key="item" :data-index="item.id">{{item.name}}</div>
               </div>
             </el-popover>&nbsp;
             <el-popover
               placement="right"
               :width="100"
+              :append-to-body="false"
               trigger="click"
             >
               <template #reference>
@@ -82,6 +90,9 @@ import { setCenterStore } from '@/store/setting'
 const props = defineProps({
   data: {
     type: Array,
+  },
+  btnType:{
+    type:String
   },
   titleData: {
     type: Object
@@ -159,6 +170,9 @@ watch(filterText, (val) => {
 const instance = getCurrentInstance();
 const clickBus = (e:any)=>{
   instance?.proxy?.$Bus.emit('clickBus', e.target.dataset.index)
+}
+const storeBus = (type:number,e:any)=>{
+  instance?.proxy?.$Bus.emit('storeBus', (type+'_'+e.target.dataset.index))
 }
 const filterNode = (value: string, data: any) => {
   if (!value) return true
