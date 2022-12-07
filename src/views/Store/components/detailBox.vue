@@ -5,11 +5,11 @@
             <div class="main-wrap">
                 <img class="app-logo" src="@/assets/img/whatsapp.png" alt="" />
                 <div class="content">
-                    <div class="title">应用名称1</div>
-                    <div class="describe">描述描述描述描述描述描述描述描述描述描述</div>
+                    <div class="title">{{router.currentRoute.value.query.name}}</div>
+                    <!-- <div class="describe">描述描述描述描述描述描述描述描述描述描述</div> -->
                     <div class="content-foot">
                         <div class="vision">版本号 2.6.6</div>
-                        <div class="end-time">订阅到期时间：2022-06-12</div>
+                        <!-- <div class="end-time">订阅到期时间：2022-06-12</div> -->
                         <div class="help">遇到问题？联系运维</div>
                     </div>
                 </div>
@@ -37,6 +37,7 @@
   import { onMounted, reactive, ref } from 'vue'
 
   const router = useRouter()
+  console.log('router',)
   const goback = () => {
     router.go(-1)
   }
