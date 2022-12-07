@@ -16,8 +16,8 @@
           <template #slot-tabs>
             <el-tabs v-model="activeName" style="width: 100%" @tabClick="shopClick">
               <el-tab-pane label="加入市场申请" name="first"> </el-tab-pane>
-              <el-tab-pane label="加入市场审批" name="third"> </el-tab-pane>
               <el-tab-pane label="应用上架申请" name="second"> </el-tab-pane>
+              <el-tab-pane label="加入市场审批" name="third"> </el-tab-pane>
               <el-tab-pane label="应用上架审批" name="four"> </el-tab-pane>
             </el-tabs>
           </template>
