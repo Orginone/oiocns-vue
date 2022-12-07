@@ -52,7 +52,6 @@
 </template>
 
 <script lang="ts" setup>
-  import { getCurrentInstance } from 'vue'
   import CustomHeadr from './components/customHeader.vue'
   import MenuNav    from '@/components/menuItem/index.vue'
   import Breadcrumb from '@/components/divBreadcrumb/index.vue'
