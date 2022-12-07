@@ -27,6 +27,14 @@
               "children": []
           },
           {
+            "id": "service.group",
+              "name": "集团审核",
+              "type":"5",
+              "uid":"1-5",
+              "url":"/service/group",
+              "children": []
+          },
+          {
             "id": "service.shop",
               "name": "商店审核",
               "type":"3",

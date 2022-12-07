@@ -165,6 +165,15 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
+        path: '/service/group',
+        name: 'group',
+        component: () => import('@/views/Service/group/index.vue'),
+        meta: {
+          title: '集团审核',
+          id: "service.group"
+        }
+      },
+      {
         path: '/service/shop',
         name: 'shop',
         component: () => import('@/views/Service/shop/index.vue'),
@@ -257,17 +266,6 @@ const mainRouter: RouteRecordRaw[] = [
           icon: 'Postcard',
           searchType: '2',
           id: "setCenter.unitMain"
-        }
-      },
-      {
-        path: '/setCenter/data',
-        name: 'data',
-        component: () => import('@/views/SetCenter/data/index.vue'),
-        meta: {
-          title: '数据设置',
-          icon: 'Postcard',
-          searchType: '2',
-          id: "setCenter.data"
         }
       },
       {

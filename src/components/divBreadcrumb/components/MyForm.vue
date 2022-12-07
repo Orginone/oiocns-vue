@@ -102,7 +102,7 @@ defineExpose({ submitForm, resetForm })
 </script>
 
 <style lang="scss" scoped>
-::v-deep .serchInput .el-input__wrapper {
+:deep .serchInput .el-input__wrapper {
   padding-left: 15px !important;
   box-sizing: border-box; 
   border: none !important; 

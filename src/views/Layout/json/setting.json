@@ -71,15 +71,6 @@
                 "children": []
             },
             {
-                "id": "setCenter.data",
-                "name": "数据设置",
-                "type": "7",
-                "icon": "HelpFilled",
-                "uid": "1-1",
-                "url": "/setCenter/data",
-                "children": []
-            },
-            {
                 "id": "setCenter.resource",
                 "name": "资源设置",
                 "type": "8",
