@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <detailBox></detailBox>
+    <!-- <detailBox></detailBox> -->
     <el-form
       ref="formRef"
       :model="formLabelAlign"

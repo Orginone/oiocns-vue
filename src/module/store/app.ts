@@ -306,11 +306,11 @@ class appStore {
    * @return 返回仓库信息
    */
   public async getMarketInfo() {
-    const { data, success } = await API.market.getSoftShareInfo()
+    const { data, success } = await API.market.getSoftShareInfo({})
     if (!success) {
       return
     }
-    return data
+    return data.result[0]
   }
 
   /**

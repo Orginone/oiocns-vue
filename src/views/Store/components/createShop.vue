@@ -49,11 +49,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, nextTick } from "vue";
+import { ref, reactive, onMounted, nextTick ,getCurrentInstance} from "vue";
 import type { FormInstance } from 'element-plus'
 import { useUserStore } from '@/store/user'
 import { storeToRefs } from 'pinia'
 import marketServices from "@/module/store/market"
+const instance = getCurrentInstance();
+
 const props = defineProps({
   createDialog: {
     type:Boolean
@@ -103,7 +105,10 @@ const createShop = async (formEl: FormInstance | undefined) =>{
       remark: form.remark,
       public: form.public
   });
+  closeDialog(false)
+  instance?.proxy?.$Bus.emit('clickBus',1050)
 }
+
 onMounted(() => {
   remoteMethod();
 });

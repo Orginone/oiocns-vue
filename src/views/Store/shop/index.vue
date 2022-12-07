@@ -96,7 +96,7 @@
       </div>
     </div>
     <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog', false)"/>
-    <addShop :addDialog="dialogType.addDialog" @closeDialog="closeDialog('addDialog', false)"/>
+    <addShop :addDialog="dialogType.addDialog" @checksSearch="checksSearch" @closeDialog="closeDialog('addDialog', false)"/>
     <appInfo :infoDialog="dialogType.infoDialog" :infoDetail="infoDetail.info" @closeDialog="closeDialog('infoDialog', false)"></appInfo>
   </div>
   
@@ -266,6 +266,30 @@ const buyThings = (item:any) => {
   const joinShopCar = async (id: any) => {
     await appstore.staging(id)
     getAppList()
+  }
+  // 加入商店
+  const checksSearch = (val:any)=>{
+    let selectId: any[] = []
+    console.log('selectId',val)
+
+    val.value.forEach((el: { id: any }) => {
+      selectId.push(el.id)
+    })
+    $services.appstore
+    .applyJoin({
+      data: {
+        id: selectId[0]
+      }
+    })
+    .then((res: ResultType) => {
+      if (res.success) {
+        ElMessage({
+          message: '加入成功',
+          type: 'success'
+        })
+        closeDialog('addDialog',false)
+      }
+    })
   }
   // 详情弹窗
   const requireItem = (item:Object) => {
