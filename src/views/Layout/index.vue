@@ -204,6 +204,11 @@
       deleteMenu();
     }
   })
+  proxy?.$Bus.on("clickBus", (num) => {
+    if(num ==1050){ //刷新导航
+      getShopList();
+    }
+  });
   const idFindItem = (obj:any,data:any) => {
     if(data?.length){
       data.forEach((element:any) => {
@@ -258,6 +263,7 @@
     menuText.value = '';
     addMenuDialog.value = false;
   }
+  
   // 获取我的商店列表
   const getShopList = async ()=>{
     await marketServices.getMarketList({
