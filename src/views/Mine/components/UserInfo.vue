@@ -63,32 +63,32 @@ const { queryInfo } = storeToRefs(store);
 // #region 展示信息
 const btns = reactive<BtnItem[]>([
   { name: "修改密码", event: changePass },
-  { name: "重置密码", event: resetPass },
+  // { name: "重置密码", event: resetPass },
 ]);
 const isExpan = ref<boolean>(false);
 // 显示配置
 const showDetail = reactive<ShowDetailRow[][]>([
   [{ label: "姓名", field: "team.name" }],
-  [
-    { label: "性别", field: "name" },
-    { label: "邮箱", field: "name" },
-    { label: "联系方式", field: "name" },
-  ],
-  [{ label: "地址", field: "name", width: "100%" }],
+  // [
+  //   { label: "性别", field: "name" },
+  //   { label: "邮箱", field: "name" },
+  //   { label: "联系方式", field: "name" },
+  // ],
+  // [{ label: "地址", field: "name", width: "100%" }],
 ]);
 const expanDetail = reactive<ShowDetailRow[][]>([
-  [
-    { label: "职位", field: "team.name" },
-    { label: "级别", field: "team.name" },
-  ],
-  [
-    { label: "其他信息", field: "name" },
-    { label: "其他信息", field: "name" },
-  ],
-  [
-    { label: "其他信息", field: "name" },
-    { label: "其他信息", field: "name" },
-  ],
+  // [
+  //   { label: "职位", field: "team.name" },
+  //   { label: "级别", field: "team.name" },
+  // ],
+  // [
+  //   { label: "其他信息", field: "name" },
+  //   { label: "其他信息", field: "name" },
+  // ],
+  // [
+  //   { label: "其他信息", field: "name" },
+  //   { label: "其他信息", field: "name" },
+  // ],
 ]);
 
 // #endregion
@@ -112,6 +112,10 @@ onMounted(() => {
   background: #fff;
   border-radius: 5px;
   padding: 20px;
+
+  :deep(.titleBox) {
+    flex-direction: unset;
+  }
   .userInfoBox {
     padding: 0 37px;
     color: #606266;
