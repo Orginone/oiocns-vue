@@ -1,5 +1,5 @@
 import { ref, Ref } from 'vue'
-import ObjectLay from '../store/objectlay'
+import ObjectLay from './objectlay'
 
 /**
  * 存储桶管理
@@ -18,7 +18,6 @@ class Bucket {
     this.Current = this.Root
     this.refObj = ref<boolean>(true)
   }
-
   /**
    * 获取单例
    * @returns 单例
@@ -34,28 +33,23 @@ class Bucket {
    * @returns 目录树结构
    */
   public GetLeftTree = async (data: any) => {
-    //设置Current
-    this.Current = data
     let children
-    if (this.expand.includes(data.Key)) {
-      children = this.GetExpandTree(false)
-    } else {
-      this.expand.push(data.Key)
-      children = this.GetExpandTree(true)
-    }
-    return children
+    children = await this.GetExpandTree(data, !data.children)
+    data.dirChildren = children
   }
-  public GetExpandTree = async (refresh: boolean) => {
-    let arr = await this.Current.GetChildren(refresh)
+  /**
+   * 获取已经展开的树
+   * @param refresh
+   * @constructor
+   */
+  private GetExpandTree = async (data: ObjectLay, refresh: boolean) => {
+    let arr = await data.GetChildren(refresh)
     let children: any[] = []
-    arr.forEach((el: any) => {
-      if (el.HasSubDirectories) {
-        el.children = [{} as ObjectLay]
-      }
+    for (const el of arr) {
       if (el.IsDirectory) {
         children.push(el)
       }
-    })
+    }
     return children.length > 0 ? children : []
   }
   /**
@@ -65,10 +59,20 @@ class Bucket {
   public GetTopBar() {}
   /**
    * 获取内容区数据
+   * @param refresh
    * @returns 返回内容区数据
    */
-  public GetContent = async () => {
-    let children = await this.Current.GetChildren()
+  public GetContent = async (refresh: boolean = false) => {
+    await this.Current.GetChildren(refresh)
+  }
+  /**
+   * 打开文件夹目录
+   * @param current
+   * @constructor
+   */
+  public OpenDirectory = async (current: ObjectLay) => {
+    this.Current = current
+    await this.GetContent()
   }
 }
 

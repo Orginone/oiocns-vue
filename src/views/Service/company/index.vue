@@ -149,6 +149,8 @@
     total: 0
   })
 
+  
+
   // const showDetail = async (row: any,type:number) => {
   //   if(type == 4){
   //     $services.wflow.approvalTask({data:{id: row.id,status: 100,}}).then(async (res: ResultType) => {
@@ -201,33 +203,33 @@
   }
 
   var getApplyList = async () => {
-    await ThingServices.getAllApply()
-    tableData.value = ThingServices.applyList
+    await ThingServices.getAllApproval('0')
+    tableData.value = ThingServices.approvalList
   }
 
-  const getWflow =async () => {
-    await ThingServices.queryTask()
-    tableHead.value = ThingServices.companyHead;
-    tableData.value =ThingServices.taskList
-  }
+  // const getWflow =async () => {
+  //   await ThingServices.queryTask()
+  //   tableHead.value = ThingServices.companyHead;
+  //   tableData.value =ThingServices.taskList
+  // }
 
   const flowSelect = (key: string) => {
     flowActive.value = key
     flowSwitch(key)
   }
   const flowSwitch  = async (key: string) => {
-    if(key == '1'){
-      await ThingServices.queryTask()
-      tableData.value =ThingServices.taskList
-    }else if(key =='2'){
-      await ThingServices.queryRecord()
-      tableData.value =ThingServices.recordList
-    }else if(key =='3'){
-      await ThingServices.queryInstance()
-      tableData.value =ThingServices.queryInstanceList
-    }else if(key =='4'){
-      tableData.value = ThingServices.copyList
-    }
+    // if(key == '1'){
+    //   await ThingServices.queryTask()
+    //   tableData.value =ThingServices.taskList
+    // }else if(key =='2'){
+    //   await ThingServices.queryRecord()
+    //   tableData.value =ThingServices.recordList
+    // }else if(key =='3'){
+    //   await ThingServices.queryInstance()
+    //   tableData.value =ThingServices.queryInstanceList
+    // }else if(key =='4'){
+    //   tableData.value = ThingServices.copyList
+    // }
   }
 
   const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
@@ -239,9 +241,10 @@
     if (whiteList.includes(key)) {
       getApplyList()
       tableHead.value = ThingServices.companyHead;
-    } else {
-      getWflow();
     }
+    //  else {
+    //   getWflow();
+    // }
   }
 
   onMounted(() => {
@@ -255,7 +258,7 @@
     // } else {
     //   activeId.value = id
     // }
-    // handleSelect(selectType, [])
+    handleSelect('1-2', [])
   });
 
   instance?.proxy?.$Bus.on('selectBtn', (num) => {

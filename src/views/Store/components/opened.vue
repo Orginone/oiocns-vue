@@ -63,10 +63,12 @@ const jumpDetail = (item:any)=>{
   router.push('/store/appManagement?id='+item.id)
 }
 const getAppList = async () => {
-  const result = await appstore.searchUsefulProduct()
-  appList.value = result.map((item: any) => {
-    return { ...item, icon: img1 }
+  appstore.searchUsefulProduct((res:any)=>{
+    appList.value = res.data.result.map((item: any) => {
+      return { ...item, icon: img1 }
+    })
   })
+ 
 }
 onMounted(() => {
   getAppList()

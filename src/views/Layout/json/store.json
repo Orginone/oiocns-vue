@@ -54,29 +54,7 @@
             "id":"102"
         }],
         "children": [
-          {
-            "label": "应用名",
-            "isPenultimate": true,
-            "id": "",
-            "children": [{
-                "label": "应用分类",
-                "id": "3",
-                "url":"/store?id=1",
-                "children": []
-            }]
-          },
-          {
-            "label": "应用名",
-            "id": "1",
-            "url":"/store?id=1",
-            "children": []
-          },
-          {
-            "label": "应用名",
-            "id": "2",
-            "url":"/store?id=1",
-            "children": []
-          }
+        
         ]
     }
 ]

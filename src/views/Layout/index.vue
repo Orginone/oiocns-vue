@@ -1,13 +1,13 @@
 <template>
   <el-container class="pages home-wrap">
     <!-- 头 -->
-    <el-header class="page-header">
+    <el-header class="page-header" >
       <CustomHeadr />
     </el-header>
     <el-container>
       <!-- 主导航 -->
       <div class="menu-list" v-show="showMenu">
-        <MenuNav :data="menuArr.state" :titleData="titleArr.state"></MenuNav>
+        <MenuNav :data="menuArr.state" :titleData="titleArr.state" :btnType="btnType"></MenuNav>
       </div>
       <div class="layout-main" >
           <!-- 面包屑 -->
@@ -36,6 +36,18 @@
       </div>
       <!-- </el-container> -->
     </el-container>
+      <el-dialog
+        v-model="addMenuDialog"
+        append-to-body
+        title="新增分类"
+        width="60%"
+      >
+      <el-input v-model="menuText"  placeholder="请输入" />
+      <div class="foot" style="margin-top:20px;display:flex;">
+        <el-button  @click="addMenuDialog = false">取消</el-button>
+        <el-button type="primary" @click="addMenu">确定</el-button>
+      </div>
+    </el-dialog>
   </el-container>
 </template>
 
@@ -48,7 +60,7 @@
   import { useUserStore } from '@/store/user'
   import { setCenterStore } from '@/store/setting'
   import authority from '@/utils/authority'
-  import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick} from 'vue'
+  import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick,getCurrentInstance} from 'vue'
   import { RouteLocationNormalizedLoaded, useRouter } from 'vue-router';
   import storeJosn from './json/store.json';
   // import settingJosn from './json/setting.json';
@@ -60,13 +72,17 @@
 
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
+  import { anystore } from '@/hubs/anystore'
+  const { proxy } = getCurrentInstance()
 
-
+  const btnType = ref<string>('');
+  const addMenuDialog = ref<boolean>(false);
+  const menuText = ref<string>('')
   const menuTree = ref(createAllMenuTree());
   const allMenuItems = ref(getAllNodes(menuTree.value));
   
-
-  function getNavData2() {
+  // 路由控制，单独匹配的话需要增加 showMenu.value = true;
+  function getNavData2() { 
 
     if(router.currentRoute.value.path.indexOf('setCenter') != -1){
       if (router.currentRoute.value.name === 'department') {
@@ -125,8 +141,26 @@
         }
       }
     }
+    // start-文档相关
+    if (router.currentRoute.value.name === 'cloud') {
+      showMenu.value = false;
+      return;
+    }
+    // end-文档相关
     if(router.currentRoute.value.path.indexOf('store/shop') != -1){
       getShopList();
+      showMenu.value = true;
+      return
+    }
+    if(router.currentRoute.value.path.indexOf('store/appManagement') != -1){
+      titleArr.state = storeJosn[0]
+      menuArr.state = storeJosn
+      showMenu.value = true;
+      return
+    }
+    if(router.currentRoute.value.path.indexOf('store') != -1){
+      showMenu.value = true;
+      getMenu()
       return
     }
     const ret = findMenu(router.currentRoute.value, allMenuItems.value);
@@ -138,11 +172,6 @@
     menuArr.state = ret.top.children;
     showMenu.value = true;
   }
-
-
-
-
-
   let router = useRouter()
   console.log(router.currentRoute.value.path);
 
@@ -151,44 +180,135 @@
     state:[]
   });
   const showMenu = ref<boolean>(true);
+  // 商店分类数据
+  const menuData = reactive({
+    data:[]
+  });
+  const dataFilter = (data:any)=>{
+    if(data.length>0){
+      data.forEach((element:any) => {
+        element.url = '/store?id='+element.id
+        element.label = element.title
+        if(element.children.length>0){
+          dataFilter(element.children)
+        }
+      });
+    }else{
+      return data;
+    }
+  };
+  // 获取商店分类
+  const getMenu = () => {
+    anystore.subscribed(`selfAppMenu`, 'user', (data) => {
+      console.log(data?.data)
+      let newJSON = JSON.parse(JSON.stringify(storeJosn))
+        if(data?.data?.length>0){
+          console.log('data',data.data)
+          menuData.data = data.data;
+          dataFilter(menuData.data)
+          newJSON[2].children = menuData.data;
+        }
+        titleArr.state = newJSON[0]
+        menuArr.state = newJSON
+        btnType.value = 'STORE_USER_MENU'
+    })
+  }
+
+  function getUuid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = (Math.random() * 16) | 0,
+        v = c == 'x' ? r : (r & 0x3) | 0x8
+      return v.toString(16)
+    })
+  }
+  const flagId = ref<string>('');
+  proxy?.$Bus.on('storeBus', (id:any) => {
+    let str:string = id;
+    let arr = str.split('_')
+    if(arr[0] == '1'){
+      addMenuDialog.value = true;
+      flagId.value = arr[1];
+    }else{
+      flagId.value = arr[1];
+      deleteMenu();
+    }
+  })
+  proxy?.$Bus.on("clickBus", (num) => {
+    if(num ==1050){ //刷新导航
+      getShopList();
+    }
+  });
+  const idFindItem = (obj:any,data:any) => {
+    if(data?.length){
+      data.forEach((element:any) => {
+        if(element.id == flagId.value){
+          element.children.push(obj)
+          setMenu();
+        }else{
+          idFindItem(obj,element.children)
+        }
+      });
+    }
+  };
+  const deleteFindItem = (data:any) => {
+    if(data?.length){
+      data.forEach((element:any,index:number) => {
+        if(element.id == flagId.value){
+          data = data.splice(index, 1);
+          setMenu();
+        }else{
+          deleteFindItem(element.children)
+        }
+      });
+    }
+  };
+  const addMenu = ()=>{
+    let id = getUuid();
+    let obj = {
+      children:[] as [],
+      id:id,
+      key:Date.now(),
+      label:menuText.value,
+      title:menuText.value,
+      url:'store?id='+id
+    }
+    if(flagId.value != 'undefined'){
+      idFindItem(obj,menuData.data);
+    } else{
+      menuData.data.push(obj)
+      setMenu();
+    }
+  }
+  const deleteMenu = ()=>{
+    deleteFindItem(menuData.data)
+  }
+  const setMenu = ()=>{
+    anystore.set(`selfAppMenu`,{
+      operation:'replaceAll',
+      data:{
+        data:menuData.data
+      }
+    },'user');
+    menuText.value = '';
+    addMenuDialog.value = false;
+  }
+  
   // 获取我的商店列表
   const getShopList = async ()=>{
     await marketServices.getMarketList({
       offset: 0,
-      limit: 10,
+      limit: 1000,
       filter: ""
     });
     let myList:any = []
     let addList:any = []
     marketServices.marketList.forEach(element => {
-      if(element.belongId){
-        myList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
-              "name":"删除商店",
-              "id":"1021"
-          },{
-              "name":"用户管理",
-              "id":"1022"
-          }
-          // ,{
-          //     "name":"基础详情",
-          //     "id":"1023"
-          // }
-        ]})
+      if(element.belongId == useUserStore().userInfo.workspaceId){
+        myList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{  "name":"删除商店", "id":"1021" },{  "name":"用户管理",  "id":"1022" }]})
       }else{
         // TODO 暂时文字匹配开放市场，不显示在商店加入列表里
         if(element.name !='开放市场'){
-          addList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{
-              "name":"退出商店",
-              "id":"1024"
-          },{
-              "name":"用户管理",
-              "id":"1022"
-          }
-          // ,{
-          //     "name":"基础详情",
-          //     "id":"1023"
-          // }
-        ]})
+          addList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{ "name":"退出商店", "id":"1024" },{ "name":"用户管理",  "id":"1022" }]})
         }
       }
     });
@@ -230,7 +350,6 @@
     shopStoreJosn[2] = newObj
     titleArr.state = shopStoreJosn[0]
     menuArr.state = shopStoreJosn
-    
   }
   // const getNav = ()=>{
   //     if(router.currentRoute.value.path.indexOf('store') != -1){    

@@ -104,9 +104,9 @@
       </div>
     </div>
     <div class="diy-table-footer">
-      <div class="footer-left">
-          <i :class="showType ==1?'switch-active':''"  class="type-list iconfonts icons-table-icon2" @click="checkSwitchType(1)"></i>
-          <i :class="showType ==2?'switch-active':''"  class="type-card iconfonts icons-suolvetuqiehuan"  @click="checkSwitchType(2)"></i>
+      <div class="footer-left" >
+          <i :class="showType ==1?'switch-active':''" v-if="options.switchType"  class="type-list iconfonts icons-table-icon2" @click="checkSwitchType(1)"></i>
+          <i :class="showType ==2?'switch-active':''" v-if="options.switchType" class="type-card iconfonts icons-suolvetuqiehuan"  @click="checkSwitchType(2)"></i>
       </div>
       <div class="footer-pagination" v-if="!options.noPage">
         <div class="pagination">
@@ -161,6 +161,7 @@
       checkBox?: any //选中的
       order?: any //是否显示序号
       noPage?: boolean  //是否显示页码
+      switchType?:boolean //是否显示切换单位
       selectLimit?: number //限制选择个数，默认20
     }
     batchOperate?: any[] 
@@ -186,6 +187,7 @@
         checkBox: false,
         order: true,
         noPage: false,
+        switchType:true,
         selectLimit: 0
       }
     },
@@ -448,7 +450,13 @@
     }
   }
 </script>
-
+<style lang="scss">
+  .diy-table{
+    .el-table__placeholder{
+      display: none;
+    }
+  }
+</style>
 <style lang="scss" scoped>
   .diy-table {
     width: 100%;
@@ -456,7 +464,7 @@
     display: flex;
     flex-direction: column;
     padding: 18px;
-
+   
     &__header {
       display: flex;
       flex-direction: row;

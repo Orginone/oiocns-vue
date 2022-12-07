@@ -41,9 +41,9 @@ class thingServices {
  
   public friendHead :Array<Object> = [
      {
-        prop: 'flowInstance.flowRelation.productId',
+        prop: 'target.typeName',
         label: '事项',
-        name: 'productId',
+        name: 'target.typeName',
         type: 'slot',
      },
      {

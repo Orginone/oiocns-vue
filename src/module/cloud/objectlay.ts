@@ -1,5 +1,5 @@
 import API from '@/services'
-import { ElMessageBox } from 'element-plus'
+import { ElMessageBox, ElMessage } from 'element-plus'
 
 /**
  * 文件对象操作
@@ -12,19 +12,22 @@ export default class ObjectLay {
   public DateModified: string
   public IsDirectory: boolean
   public HasSubDirectories: boolean
-  public Meta: any
   private parent: ObjectLay
   public children: ObjectLay[]
+  public dirChildren: ObjectLay[]
+  public isLeaf: boolean
+  static rootKey: string = 'root'
   public constructor(data: any = null, parent: ObjectLay = null) {
     this.parent = parent
     this.children = null
-    this.Key = data?.key || ''
+    this.dirChildren = null
+    this.Key = data?.key || ObjectLay.rootKey
     this.Name = data?.name || '我的云盘'
-    this.IsDirectory = data?.isDirectory || false
+    this.IsDirectory = !this.parent ? true : data?.isDirectory || false
     this.DateCreated = data?.dateCreated || ''
     this.DateModified = data?.dateModified || ''
-    this.HasSubDirectories = this.Name == '我的云盘' ? true : (data?.hasSubDirectories || false)
-    this.Meta = data || {key: '', name: '我的云盘'}
+    this.HasSubDirectories = !this.parent ? true : (data?.hasSubDirectories || false)
+    this.isLeaf = !this.HasSubDirectories
   }
   /**
    * 是否包含上级目录
@@ -105,6 +108,8 @@ export default class ObjectLay {
           message: res.msg,
           type: 'error'
         })
+      } else {
+        ElMessage.success( '文件夹创建成功')
       }
     }
   }
@@ -130,6 +135,8 @@ export default class ObjectLay {
           message: res.msg,
           type: 'error'
         })
+      } else {
+        ElMessage.success( '文件重命名成功')
       }
     }
   }
@@ -195,6 +202,8 @@ export default class ObjectLay {
         message: res.msg,
         type: 'error'
       })
+    } else {
+      ElMessage.success( '删除成功')
     }
   }
   /**
@@ -232,11 +241,14 @@ export default class ObjectLay {
    * @returns 格式化后的key
    */
   private formatKey(subName: string = '') {
-    if (!this.Key) {
+    if (this.Key == ObjectLay.rootKey && !subName) {
       return ''
     }
     try {
-      let keys = [this.Key]
+      let keys = []
+      if(this.Key != ObjectLay.rootKey){
+        keys.push(this.Key)
+      }
       if (subName != '' && subName.length > 0) {
         keys.push(subName)
       }
