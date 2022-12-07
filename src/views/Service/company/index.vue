@@ -64,6 +64,13 @@
       </div>
     </div>
   </div>
+  <searchCompany
+    v-if="searchDialog"
+    :serachType="3"
+    @closeDialog="closeDialog"
+    @checksSearch="checksSearch"
+  >
+  </searchCompany>
 </template>
 
 <script lang="ts" setup>
@@ -75,12 +82,46 @@
   import DiyTable from '@/components/diyTable/index.vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { TabsPaneContext } from 'element-plus'
+  import searchCompany from '@/components/searchs/index.vue'
   import { chat } from '@/module/chat/orgchat'
   
   import thingServices from '@/module/flow/thing'
 
+  const searchDialog = ref<boolean>(false)
   const friendShow = () => {
     searchDialog.value = true
+  }
+  const closeDialog = (key: string) => {
+    searchDialog.value = false
+  }
+  const checksSearch = (val: any) => {
+    if (val.value.length > 0) {
+      let arr: Array<arrList> = []
+      val.value.forEach((element: any) => {
+        arr.push(element.id)
+      })
+      console.log('val', arr)
+      joinSubmit(arr)
+    } else {
+      searchDialog.value = false
+    }
+  }
+  const joinSubmit = (arr: any) => {
+    $services.company
+      .applyJoin({
+        data: {
+          id: arr.join('')
+        }
+      })
+      .then((res: ResultType) => {
+        if (res.code == 200) {
+          searchDialog.value = false
+          ElMessage({
+            message: '申请成功',
+            type: 'success'
+          })
+        }
+      })
   }
 
   const ThingServices  = new thingServices()
