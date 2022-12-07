@@ -16,7 +16,7 @@
         </el-menu>
       </div>
       <div class="btnStyle">
-        <el-button @click="friendShow" type="primary">新增</el-button>
+        <el-button type="primary">新增</el-button>
         <el-button type="primary">审核</el-button>
         <el-button type="primary">退回</el-button>
       </div>
@@ -78,10 +78,6 @@
   import { chat } from '@/module/chat/orgchat'
   
   import thingServices from '@/module/flow/thing'
-
-  const friendShow = () => {
-    searchDialog.value = true
-  }
 
   const ThingServices  = new thingServices()
   const instance = getCurrentInstance()
@@ -154,54 +150,54 @@
   const elmenus = ref(null);
   const activeName = ref('first') //商店tab
 
-  const handleClose = (index:any) => {
-    elmenus.value.open(index)
-    handleSelect(activeIndex.value, [])
-  }
+  // const handleClose = (index:any) => {
+  //   elmenus.value.open(index)
+  //   handleSelect(activeIndex.value, [])
+  // }
 
-  var getApplyList = async () => {
-    await ThingServices.getAllApply()
-    tableData.value = ThingServices.applyList
-  }
+  // var getApplyList = async () => {
+  //   await ThingServices.getAllApply()
+  //   tableData.value = ThingServices.applyList
+  // }
 
-  const getWflow =async () => {
-    await ThingServices.queryTask()
-    tableHead.value = ThingServices.companyHead;
-    tableData.value =ThingServices.taskList
-  }
+  // const getWflow =async () => {
+  //   await ThingServices.queryTask()
+  //   tableHead.value = ThingServices.companyHead;
+  //   tableData.value =ThingServices.taskList
+  // }
 
-  const flowSelect = (key: string) => {
-    flowActive.value = key
-    flowSwitch(key)
-  }
-  const flowSwitch  = async (key: string) => {
-    if(key == '1'){
-      await ThingServices.queryTask()
-      tableData.value =ThingServices.taskList
-    }else if(key =='2'){
-      await ThingServices.queryRecord()
-      tableData.value =ThingServices.recordList
-    }else if(key =='3'){
-      await ThingServices.queryInstance()
-      tableData.value =ThingServices.queryInstanceList
-    }else if(key =='4'){
-      tableData.value = ThingServices.copyList
-    }
-  }
+  // const flowSelect = (key: string) => {
+  //   flowActive.value = key
+  //   flowSwitch(key)
+  // }
+  // const flowSwitch  = async (key: string) => {
+  //   if(key == '1'){
+  //     await ThingServices.queryTask()
+  //     tableData.value =ThingServices.taskList
+  //   }else if(key =='2'){
+  //     await ThingServices.queryRecord()
+  //     tableData.value =ThingServices.recordList
+  //   }else if(key =='3'){
+  //     await ThingServices.queryInstance()
+  //     tableData.value =ThingServices.queryInstanceList
+  //   }else if(key =='4'){
+  //     tableData.value = ThingServices.copyList
+  //   }
+  // }
 
-  const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
-  const handleSelect = (key: any, keyPath: string[]) => {
-    tableData.value = []
-    // diyTable.value.state.page.total = 0
-    activeIndex.value = key;
-    ThingServices.whiteList = [];
-    if (whiteList.includes(key)) {
-      getApplyList()
-      tableHead.value = ThingServices.companyHead;
-    } else {
-      getWflow();
-    }
-  }
+  // const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
+  // const handleSelect = (key: any, keyPath: string[]) => {
+  //   tableData.value = []
+  //   // diyTable.value.state.page.total = 0
+  //   activeIndex.value = key;
+  //   ThingServices.whiteList = [];
+  //   if (whiteList.includes(key)) {
+  //     getApplyList()
+  //     tableHead.value = ThingServices.companyHead;
+  //   } else {
+  //     getWflow();
+  //   }
+  // }
 
   onMounted(() => {
     // ThingServices.whiteList = [];
@@ -225,8 +221,6 @@
 
 </script>
 
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
   .thing {
     width: 100%;

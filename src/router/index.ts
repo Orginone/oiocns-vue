@@ -165,6 +165,15 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
+        path: '/service/group',
+        name: 'group',
+        component: () => import('@/views/Service/group/index.vue'),
+        meta: {
+          title: '集团审核',
+          id: "service.group"
+        }
+      },
+      {
         path: '/service/shop',
         name: 'shop',
         component: () => import('@/views/Service/shop/index.vue'),
