@@ -13,7 +13,7 @@ export interface MenuDataItem extends TreeNodeBase {
     url?: string;
     isPenultimate?: boolean;
     structure?: boolean;
-
+    num?:number;
     children?: MenuDataItem[];
     [key: string]: any;
 }
@@ -22,7 +22,7 @@ export type MenuData = [HeaderData, ...MenuDataItem[]];
 
 import storeJosn from './store.json';
 import settingJosn from './setting.json';
-import detailJosn from './detail.json';
+import serviceJosn from './service.json';
 import userJosn from './user.json';
 import _ from "lodash";
 import { RouteLocationNormalizedLoaded } from "vue-router";
@@ -31,7 +31,7 @@ import { RouteLocationNormalizedLoaded } from "vue-router";
 const allJson: Record<string ,MenuData> = {
   storeJosn,
   settingJosn,
-  detailJosn,
+  serviceJosn,
   userJosn
  } as any;
 
