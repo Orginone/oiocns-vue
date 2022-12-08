@@ -166,7 +166,7 @@ const mainRouter: RouteRecordRaw[] = [
       },
       {
         path: '/service/group',
-        name: 'group',
+        name: 'group2',
         component: () => import('@/views/Service/group/index.vue'),
         meta: {
           title: '集团审核',

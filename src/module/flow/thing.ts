@@ -72,21 +72,21 @@ class thingServices {
   ]
   public companyHead :Array<Object> = [
     {
-      prop: 'flowInstance.flowRelation.productId',
+      prop: 'content',
       label: '事项',
-      name: 'productId',
+      name: 'content',
       type: 'slot',
    },
    {
       type: 'slot',
-      prop: 'content',
-      label: '说明',
-      name: 'content'
+      prop: 'status',
+      label: '状态',
+      name: 'status'
     },
     {
-      prop: 'target.name',
+      prop: 'targetName',
       label: '发起人',
-      name: 'target.name',
+      name: 'targetName',
       type: 'slot',
     },
     {
