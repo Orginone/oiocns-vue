@@ -63,35 +63,35 @@
         "children": [
             {
                 "name": "地址管理",
-                "type": "1",
+                "type": "11",
                 "uid": "1-1",
                 "url": "/mine/certificate",
                 "children": []
             },
             {
                 "name": "证书管理",
-                "type": "2",
+                "type": "12",
                 "uid": "1-1",
                 "url": "/mine/certificate",
                 "children": []
             },
             {
                 "name": "安全管理",
-                "type": "3",
+                "type": "13",
                 "uid": "1-1",
                 "url": "/mine/certificate",
                 "children": []
             },
             {
                 "name": "消息设置",
-                "type": "4",
+                "type": "14",
                 "uid": "1-1",
                 "url": "/mine/certificate",
                 "children": []
             },
             {
                 "name": "主题设置",
-                "type": "5",
+                "type": "15",
                 "uid": "1-1",
                 "url": "/mine/certificate",
                 "children": []
