@@ -164,7 +164,7 @@
   const showFileMenu = ref<boolean>(false)
   const menuLeft = ref<number>(0)
   const menuTop = ref<number>(0)
-  const showType = ref<number>(1)
+  const showType = ref<number>(2)
 
   // @ts-ignore
   state.breadcrumb = computed<any[]>(() => {
