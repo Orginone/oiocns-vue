@@ -38,122 +38,95 @@ class thingServices {
     searchManagerPublishApplyList:[],
     searchManagerPublishApplyHead:[],
   }
- 
-  public friendHead :Array<Object> = [
-     {
-        prop: 'target.typeName',
-        label: '事项',
-        name: 'target.typeName',
-        type: 'slot',
+  public flowHead :Array<Object> = [
+    {
+       prop: 'flowInstance.flowRelation.productId',
+       label: '应用ID',
+       name: 'productId',
+       type: 'slot',
+    },
+    {
+       prop: 'flowInstance.title',
+       label: '流程名称',
+       name: 'flowInstance.title',
+       type: 'content',
      },
      {
-        type: 'slot',
-        prop: 'remark',
-        label: '说明',
-        name: 'remark'
-      },
-      {
-        prop: 'target.name',
-        label: '发起人',
-        name: 'target.name',
-        type: 'slot',
-      },
-      {
-        prop: 'createTime',
-        label: '过期时间',
-        name: 'createTime'
-      },
-      {
-        type: 'slot',
-        prop: 'option',
-        label: '操作',
-        name: 'option'
-      }
+       prop: 'flowInstance.flowRelation.functionCode',
+       label: '业务名称',
+       name: 'flowInstance.flowRelation.functionCode',
+       type: 'content',
+     },
+     {
+       prop: 'target.name',
+       label: '申请人',
+       name: 'target.name',
+       type: 'slot',
+     },
+     {
+       type: 'slot',
+       prop: 'content',
+       label: '内容',
+       name: 'content'
+     },
+     {
+       type: 'slot',
+       prop: 'status',
+       label: '状态',
+       name: 'status'
+     },
+     {
+       prop: 'createTime',
+       label: '发送时间',
+       name: 'createTime'
+     },
+     {
+       type: 'slot',
+       prop: 'option',
+       label: '操作',
+       name: 'option'
+     }
   ]
-  public companyHead :Array<Object> = [
+  public queryInstanceHead :Array<Object> =[
     {
-      prop: 'content',
-      label: '事项',
-      name: 'content',
-      type: 'slot',
-   },
-   {
-      type: 'slot',
-      prop: 'status',
-      label: '状态',
-      name: 'status'
-    },
-    {
-      prop: 'targetName',
-      label: '发起人',
-      name: 'targetName',
-      type: 'slot',
-    },
-    {
-      prop: 'createTime',
-      label: '发起时间',
-      name: 'createTime'
-    },
-    {
-      type: 'slot',
-      prop: 'option',
-      label: '操作',
-      name: 'option'
-    }
-  ]
-  public shopHead :Array<Object> =[
-    {
-      prop: 'flowInstance.flowRelation.productId',
-      label: '事项',
+      prop: 'flowRelation.productId',
+      label: '应用ID',
       name: 'productId',
       type: 'slot',
-   },
-   {
-      type: 'slot',
-      prop: 'content',
-      label: '说明',
-      name: 'content'
-    },
-    {
-      prop: 'target.name',
-      label: '发起人',
-      name: 'target.name',
-      type: 'slot',
-    },
-    {
-      prop: 'createTime',
-      label: '过期时间',
-      name: 'createTime'
-    },
-    {
-      type: 'slot',
-      prop: 'option',
-      label: '操作',
-      name: 'option'
-    }
-  ]
-  public orderHead :Array<Object> = [
+     },
+     {
+        prop: 'title',
+        label: '流程名称',
+        name: 'title',
+        type: 'content',
+      },
+      {
+        prop: 'flowRelation.functionCode',
+        label: '业务名称',
+        name: 'flowRelation.functionCode',
+        type: 'content',
+      },
       {
         prop: 'target.name',
-        label: '订单号',
+        label: '申请人',
         name: 'target.name',
         type: 'slot',
       },
       {
         type: 'slot',
         prop: 'content',
-        label: '订单说明',
+        label: '内容',
         name: 'content'
       },
       {
         type: 'slot',
         prop: 'status',
-        label: '发起人',
+        label: '状态',
         name: 'status'
       },
       {
         prop: 'createTime',
-        label: '过期时间',
+        label: '发送时间',
         name: 'createTime'
       },
       {
@@ -163,6 +136,55 @@ class thingServices {
         name: 'option'
       }
   ]
+  public recordHead :Array<Object> = [
+    {
+     prop: 'flowTask.flowInstance.flowRelation.productId',
+     label: '应用ID',
+     name: 'productId',
+     type: 'slot',
+    },
+    {
+       prop: 'flowTask.flowInstance.title',
+       label: '流程名称',
+       name: 'flowTask.flowInstance.title',
+       type: 'content',
+     },
+     {
+       prop: 'flowTask.flowInstance.flowRelation.functionCode',
+       label: '业务名称',
+       name: 'flowTask.flowInstance.flowRelation.functionCode',
+       type: 'content',
+     },
+     {
+       prop: 'target.name',
+       label: '申请人',
+       name: 'target.name',
+       type: 'slot',
+     },
+     {
+       type: 'slot',
+       prop: 'content',
+       label: '内容',
+       name: 'content'
+     },
+     {
+       type: 'slot',
+       prop: 'status',
+       label: '状态',
+       name: 'status'
+     },
+     {
+       prop: 'createTime',
+       label: '发送时间',
+       name: 'createTime'
+     },
+     {
+       type: 'slot',
+       prop: 'option',
+       label: '操作',
+       name: 'option'
+     }
+ ]
      /**
    * @description: 列表数据
    */  
