@@ -55,7 +55,7 @@
         <el-link
           title="首页"
           :underline="false"
-          @click="() => router.push('/home')"
+          @click="() => router.push('/workHome')"
         >
            <img class="logo" src="./../../../assets/img/logo.png" alt="">
         </el-link>
@@ -193,6 +193,7 @@
     currentPage = (current.value - 1) * 10 + 1
     await store.getCompanyList(currentPage, workspaceData.id, true)
   }
+  
   const dialogShow = reactive([
     {
       key: 'unit',

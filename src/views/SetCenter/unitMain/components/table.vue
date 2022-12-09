@@ -14,18 +14,19 @@
           :tableHead="tableHead"
         >
           <template #slot-tabs>
-            <h4>布局方案</h4>
+            <h4>单位首页配置</h4>
           </template>
           <template #buttons>
-            <el-button class="btn-check" type="primary" link>添加方案</el-button>
+            <el-button class="btn-check" type="primary" link @click="dialogFormVisible = true">添加方案</el-button>
           </template>
           <template #operate="scope">
             <el-dropdown>
               <span class="el-dropdown-link"> ··· </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="showDiong">自定义排版</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong" style="color: #f67c80">删除方案</el-dropdown-item>
+                  <el-dropdown-item @click="customBtn">自定义排版</el-dropdown-item>
+                  <el-dropdown-item @click="shareBtn">分享</el-dropdown-item>
+                  <el-dropdown-item @click="deleteBtn" style="color: #f67c80">删除方案</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -34,6 +35,24 @@
             <!-- <card></card> -->
           </template>
         </diytab>
+        <el-dialog v-model="dialogFormVisible" title="添加方案">
+          <el-form :model="form">
+            <el-form-item label="方案名称" :label-width="formLabelWidth">
+              <el-input v-model="form.name"/>
+            </el-form-item>
+            <el-form-item label="备注" :label-width="formLabelWidth">
+              <el-input type="textarea" v-model="form.remarks"/>
+            </el-form-item>
+          </el-form>
+          <template #footer>
+            <span class="dialog-footer">
+              <el-button @click="dialogFormVisible = false">取消</el-button>
+              <el-button type="primary" @click="dialogFormVisible = false">
+                确认
+              </el-button>
+            </span>
+          </template>
+        </el-dialog>
       </div>
     </div>
   </template>
@@ -41,7 +60,16 @@
   // @ts-nocheck
   import diytab from "@/components/diyTable/index.vue";
   import { ref } from "vue";
-  
+  import { useRouter } from 'vue-router'
+
+  const router = useRouter()
+  const dialogFormVisible = ref(false)
+  const formLabelWidth = '140px'
+
+  const form = reactive({
+    name: '',
+    remarks: '',
+  })
   // 表格展示数据
   const pageStore = reactive({
     currentPage: 1,
@@ -98,6 +126,14 @@
     pageStore.currentPage = page.currentPage
     pageStore.pageSize = page.pageSize
     remoteMethod()
+  }
+  const customBtn = () => {
+    router.push({
+        path: '/work',
+        query: {
+          onValue: 0
+        }
+      })
   }
   const checkList = reactive<any>([])
   const selectionChange = (val: any) => {

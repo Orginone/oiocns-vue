@@ -76,6 +76,7 @@
   const IdentityServices = new identityServices()
   store.$subscribe(
   (_, state) => {
+    if(state.currentSelectItme.label === '岗位管理') return
     getUsers(state.currentSelectItme)
   },
   { detached: false }

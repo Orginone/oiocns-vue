@@ -74,6 +74,8 @@
   import type { TabsPaneContext } from 'element-plus'
   import { chat } from '@/module/chat/orgchat'
   import searchFriend from '@/components/searchs/index.vue'
+  import FriendServices from '@/module/relation/friend'
+  const friendServices  = new FriendServices()
   
   import thingServices from '@/module/flow/thing'
 
@@ -101,6 +103,9 @@
     pageSize: 20,
     total: 0
   })
+  type arrList = {
+    id: string
+  }
   const checkList = reactive<any>([])
   const selectionChange = (val: any) => {
     checkList.value = val
@@ -150,6 +155,7 @@
   const flowActive = ref<string>('1')
   const activeId = ref<string>('0')
   const elmenus = ref(null);
+  const searchDialog = ref<boolean>(false)
   const activeName = ref('first') //商店tab
 
   const labor = async (index:any) => {
@@ -167,16 +173,36 @@
       }
     }
   }
+  const addFriends = (arr: Array<arrList>) => {
+    const data =  friendServices.applyJoin(arr)
+     if(data){
+      ElMessage({
+        message: '申请成功',
+        type: 'warning'
+      })
+      getList()
+      dialogVisible.value = false
+     }
+  }
+
+  const checksSearch = (val: any) => {
+    if (val.value.length > 0) {
+      let arr: Array<arrList> = []
+      val.value.forEach((element: any) => {
+        arr.push(element.id)
+      })
+      addFriends(arr)
+    } else {
+      dialogVisible.value = false
+    }
+  }
 
   const handleClose = (index:any) => {
     elmenus.value.open(index)
     handleSelect(activeIndex.value, [])
   }
-  var getList = async () => {
+  const getList = async () => {
     await ThingServices.getAllApply()
-    // const personnelData = ThingServices.approvalList.filter(item => {
-    //   return item.team.target.typeName === '人员'
-    // })
     tableData.value = ThingServices.applyList
   }
 
@@ -206,7 +232,6 @@
   const handleSelect = (key: any, keyPath: string[]) => {
     tableData.value = []
     // diyTable.value.state.page.total = 0
-    
     activeIndex.value = key;
     ThingServices.whiteList = [];
     if (whiteList.includes(key)) {
@@ -229,7 +254,7 @@
     // } else {
     //   activeId.value = id
     // }
-    
+    getList()
     handleSelect('1-1', [])
   });
 

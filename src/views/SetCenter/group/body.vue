@@ -23,7 +23,7 @@ const props = defineProps<{
 }>()
 // 获取单位树点击的信息
 const selectItemChange = (data: any) => {
-  selectItem.value = data;
+  selectItem.value = data?.data ? data.data : data;;
 };
 defineExpose({ selectItemChange });
 const tabs = ref(null)
@@ -55,8 +55,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  // background-color: #fff;
-  padding: 18px;
+  padding: 10px;
   :deep(.el-tabs__content){
     height: calc(100% - 55px);
   }

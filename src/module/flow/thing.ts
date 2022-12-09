@@ -91,7 +91,7 @@ class thingServices {
     },
     {
       prop: 'createTime',
-      label: '过期时间',
+      label: '发起时间',
       name: 'createTime'
     },
     {

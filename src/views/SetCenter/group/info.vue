@@ -1,31 +1,29 @@
 <template>
   <div class="info">
     <div class="header">
-      <div class="title">集团信息</div>
+      <div class="title">节点信息</div>
       <div class="box-btns">
         <el-button small link type="primary" v-if="allowEdit()" @click="handleUpdate">编辑</el-button>
         <el-button small link type="primary" v-if="allowEdit()" @click="handleDelete">删除</el-button>
-        <el-button small link type="primary" v-if="allowEdit()" @click="toAuth">角色管理</el-button>
-        <el-button small link type="primary" v-if="allowEdit()" @click="toIdentity">岗位管理</el-button>
       </div>
     </div>
     <div class="tab-list">
       <el-descriptions :column="2" border>
         <el-descriptions-item width="150px" :label="'集团名称'" label-align="center" align="center"
-          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.team.name}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{selectItem?.team?.name}}</el-descriptions-item>
         <el-descriptions-item width="150px" :label="'集团编码'" label-align="center" align="center"
-          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.code}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{selectItem?.code}}</el-descriptions-item>
         <el-descriptions-item :label="'我的岗位'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{authority.GetTargetIdentitys(selectItem?.data?.id)}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{authority.GetTargetIdentitys(selectItem?.id)}}</el-descriptions-item>
         <el-descriptions-item :label="'团队编码'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.team.code}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{selectItem?.team?.code}}</el-descriptions-item>
         <el-descriptions-item :label="'创建人'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{chat.getName(selectItem?.data?.createUser)}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{chat.getName(selectItem?.createUser)}}</el-descriptions-item>
         <el-descriptions-item :label="'创建时间'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.createTime}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{selectItem?.createTime}}</el-descriptions-item>
         <el-descriptions-item label="描述" :span="2" label-align="center" align="center">
           <div class="text-remark">
-            {{selectItem?.data?.team.remark}}
+            {{selectItem?.team?.remark}}
           </div>
         </el-descriptions-item>
       </el-descriptions>
@@ -69,7 +67,7 @@ let formData: any = ref({})
 
 // 获取单位树点击的信息
 const selectItemChange = (data: any) => {
-  selectItem.value = data;
+  selectItem.value = data?.data ? data.data : data;
 };
 defineExpose({ selectItemChange });
 
@@ -81,7 +79,7 @@ const allowEdit = () => {
   if(selectItem.value && selectItem.value.id){
     return authority.IsRelationAdmin([
       selectItem.value.id,
-      selectItem.value.data.belongId
+      selectItem.value?.belongId
     ])
   }
   return false
@@ -93,9 +91,9 @@ const handleDelete = async () => {
     return
   }
   let selectObj = {
-    name:selectItem.value.data.name,
+    name:selectItem.value.name,
     id:selectItem.value.id,
-    typeName:selectItem.value.data.typeName
+    typeName:selectItem.value.typeName
   }
   const data =  await groupServices.deleteGroup(selectObj)
   if(data){
@@ -113,17 +111,18 @@ const handleUpdate = () => {
     ElMessage.warning('请左侧选择部门或者工作组！')
     return
   }
-  formData.value = selectItem.value.data
+  formData.value = selectItem.value
   dialogVisible.value = true
 }
 
 // 保存
 const update = async () => {
-  const data = { ...formData.value, ...selectItem.value.data };
+  const data = { ...formData.value, ...selectItem.value };
   const val =  await groupServices.upDateGroup(data)
   dialogVisible.value = false
   ElMessage.success('信息修改成功!')
-  selectItem.value.data = val
+  selectItem.value = val
+  emit('refresh')
 }
 
 // 跳转至角色管理页面
