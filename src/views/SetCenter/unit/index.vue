@@ -5,9 +5,9 @@
           <div class="info">
             <Info ref="info" />
           </div>
-          <div class="body">
+          <!-- <div class="body">
             <User ref="user" />
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -77,6 +77,7 @@
         padding: 3px 0;
         .info {
           padding: 0 0 3px 0;
+          height: 100%;
           box-sizing: border-box;
         }
         .body {

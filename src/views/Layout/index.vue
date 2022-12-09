@@ -87,14 +87,42 @@
       if (router.currentRoute.value.name === 'department') {
           titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
           setCenterStore().GetDepartmentInfo().then((treeData)=> {
-            menuArr.state = treeData
+            let newData: any = [
+              {
+                label: '部门管理',
+                structure: true,
+                id: 1,
+                query: true,
+                isPenultimate: true,
+                btns:[{
+                  name: '新增部门',
+                  id: '2203'
+                }],
+                children: treeData
+              }
+            ]
+            menuArr.state = newData
           })
           showMenu.value = true;
           return;
       } else if (router.currentRoute.value.name === 'post') {
           titleArr.state= {icon: 'User',title: '岗位设置',"backFlag": true}
           setCenterStore().GetIdentities().then((treeData)=> {
-            menuArr.state = treeData
+            let newData: any = [
+              {
+                label: '岗位管理',
+                structure: true,
+                id: 1,
+                query: true,
+                isPenultimate: true,
+                btns:[{
+                  name: '新增岗位',
+                  id: '2008'
+                }],
+                children: treeData
+              }
+            ]
+            menuArr.state = newData
           })
           showMenu.value = true;
           return;
@@ -387,6 +415,9 @@
 
   // 页面刷新时 关闭握手
   window.addEventListener('beforeunload', chat.stop)
+  
+  const instance = getCurrentInstance();
+  instance?.proxy?.$Bus.on('refreshNav', () => { getNavData2() })
 </script>
 
 <style lang="scss" scoped>

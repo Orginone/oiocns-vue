@@ -9,23 +9,24 @@
     </div>
   </template>
   <script setup lang="ts">
-  import { reactive, ref, onMounted, computed } from 'vue';
+  import { reactive, ref, onMounted, computed, Ref } from 'vue';
   import DiyTable from "@/components/diyTable/index.vue";
   import { useUserStore } from "@/store/user";
   import { storeToRefs } from "pinia";
+  import { chat } from '@/module/chat/orgchat'
+import _ from 'lodash';
+import { useAsyncComputed } from '@/hooks/useAsyncComputed';
 
   const store = useUserStore();
   const { queryInfo } = storeToRefs(store);
-  const tableData = computed(() => queryInfo.value.identitys)
-//   onMounted(async () => {
-//     const res = await $services.company.getAssignedDepartments({
-//       data: {
-//         offset: 0,
-//         limit: 20
-//       }
-//     });
-//     tableData.value = res.data.result || [];
-//   })
+  const tableData = ref<any[]>([])
+  onMounted(() => {
+    tableData.value = _.cloneDeep(queryInfo.value.identitys);
+    const rows: Ref<any>[] = tableData.value.map(d => ref(d));
+    for (const row of rows) {
+      useAsyncComputed(row, "belongId", "belongName", v => chat.getNameAsync(v))
+    }
+  })
   
   const options = ref<any>({
     checkBox: true,
@@ -47,7 +48,7 @@
       label: '岗位名称',
     },
     {
-      prop: 'belongId',
+      prop: 'belongName',
       label: '归属',
     },
     {
