@@ -19,8 +19,11 @@
     >
       <template #default="{ node, data }">
         <div class="folder-node">
-          <el-icon><FolderOpened v-if="node.expanded"/><Folder v-else/></el-icon>
-          <span>{{ doZipFileName(node.label) }}</span>
+          <div class="node-label">
+            <el-icon><FolderOpened v-if="node.expanded"/><Folder v-else/></el-icon>
+            <span>{{ doZipFileName(node.label) }}</span>
+          </div>
+          <el-icon class="node-dots" @click.stop="showNodeBtns"><MoreFilled /></el-icon>
         </div>
       </template>
     </el-tree>
@@ -85,7 +88,7 @@
       if(node && !node.expanded) {
         node.expand()
       }
-      node.childNodes && node.childNodes.map((child: any) => {
+      node && node.childNodes && node.childNodes.map((child: any) => {
         if(child.expanded){
           child.collapse()
         }
@@ -107,12 +110,22 @@
     })
   }
 
+  // 显示节点操作
+  const showNodeBtns = () => {
+    console.log('点击显示节点操作栏')
+  }
+
   defineExpose({ checkedNode, removeNode, appendNode })
 
   onMounted(async () => {
 
   })
 </script>
+<style lang="scss">
+  .el-tree-node__label {
+    width: 100%;
+  }
+</style>
 <style lang="scss" scoped>
   .main {
     width: 300px;
@@ -159,8 +172,20 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      span {
-        margin-left: 5px;
+      padding-right: 10px;
+      justify-content: space-between;
+      .node-label {
+        span {
+          margin-left: 5px;
+        }
+      }
+      .node-dots {
+        display: none;
+      }
+      &:hover {
+        .node-dots {
+          display: block;
+        }
       }
     }
   }

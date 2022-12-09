@@ -1,5 +1,6 @@
 import API from '@/services'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import {formatDate} from "@/utils";
 
 /**
  * 文件对象操作
@@ -24,8 +25,8 @@ export default class ObjectLay {
     this.Key = data?.key || ObjectLay.rootKey
     this.Name = data?.name || '我的云盘'
     this.IsDirectory = !this.parent ? true : data?.isDirectory || false
-    this.DateCreated = data?.dateCreated || ''
-    this.DateModified = data?.dateModified || ''
+    this.DateCreated = formatDate(data?.dateCreated, 'yyyy-MM-dd hh:mm:ss') || ''
+    this.DateModified = formatDate(data?.dateModified, 'yyyy-MM-dd hh:mm:ss') || ''
     this.HasSubDirectories = !this.parent ? true : (data?.hasSubDirectories || false)
     this.isLeaf = !this.HasSubDirectories
   }

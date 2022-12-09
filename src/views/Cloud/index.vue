@@ -34,20 +34,69 @@
         </div>
       </div>
       <div class="cloudFiles" v-if="state.currentLay">
-        <div class="content" v-if="state.currentLay.children.length > 0">
-          <div
-              class="content-box"
-              v-for="(item, index) in state.currentLay.children"
-              :key="item.formatKey()"
-              :class="{checked: state.operateItem && state.operateItem.formatKey() === item.formatKey()}"
-              @click.stop="clickFile(item)"
-              @contextmenu.prevent.stop="fileRightClick($event, item, index)"
-          >
-            <file-icon :file-item="item"></file-icon>
-            <div class="elUpload-text" :title="item.Name">{{ doZipFileName(item.Name) }}</div>
+        <template v-if="state.currentLay.children.length > 0">
+          <!-- 列表模式 -->
+          <div class="content" v-if="showType == 1">
+            <el-table
+                ref="diyTable"
+                header-cell-class-name="headerCell"
+                row-class-name="rowCommon"
+                :data="state.currentLay.children"
+                row-key="Key"
+                :tree-props="{children: 'none'}"
+                @row-click="(row, column, event) => { clickFile(row) }"
+            >
+              <el-table-column prop="Name" label="名称" width="800">
+                <template #default="scope">
+                  <div class="fileName">
+                    <file-icon :file-item="scope.row" :size="25"></file-icon>
+                    <span>{{scope.row.Name}}</span>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="size" label="大小"/>
+              <el-table-column prop="DateCreated" label="创建时间"/>
+              <el-table-column prop="DateModified" label="更新时间"/>
+              <el-table-column label="操作" width="80">
+                <template #default="scope">
+                  <div class="operateBtn">
+                    <el-dropdown size="small" @visible-change="(show) => { if(show) {state.operateItem = scope.row}}">
+                      <el-icon @click.stop="() => {return false}"><MoreFilled /></el-icon>
+                      <template #dropdown>
+                        <el-dropdown-menu>
+                          <el-dropdown-item @click="openEditFileDialog">重命名</el-dropdown-item>
+                          <el-dropdown-item @click="deleteFile">删除文件</el-dropdown-item>
+                        </el-dropdown-menu>
+                      </template>
+                    </el-dropdown>
+                  </div>
+                </template>
+              </el-table-column>
+            </el-table>
           </div>
-        </div>
+          <!-- 平铺模式 -->
+          <div class="content" v-if="showType == 2">
+            <div
+                class="content-box"
+                v-for="(item, index) in state.currentLay.children"
+                :key="item.formatKey()"
+                :class="{checked: state.operateItem && state.operateItem.formatKey() === item.formatKey()}"
+                @click.stop="clickFile(item)"
+                @contextmenu.prevent.stop="fileRightClick($event, item, index)"
+            >
+              <file-icon :file-item="item" :size="80"></file-icon>
+              <div class="elUpload-text" :title="item.Name">{{ doZipFileName(item.Name) }}</div>
+            </div>
+          </div>
+        </template>
         <el-empty v-else description="没有文件" :image-size="100"/>
+      </div>
+      <!-- 底部操作区域 -->
+      <div class="diy-table-footer">
+        <div class="footer-left" >
+          <i :class="{'switch-active': showType == 1}" class="type-list iconfonts icons-table-icon2" @click="checkSwitchType(1)"></i>
+          <i :class="{'switch-active': showType == 2}" class="type-card iconfonts icons-suolvetuqiehuan"  @click="checkSwitchType(2)"></i>
+        </div>
       </div>
     </div>
     <!-- 创建文件夹对话框 -->
@@ -115,6 +164,7 @@
   const showFileMenu = ref<boolean>(false)
   const menuLeft = ref<number>(0)
   const menuTop = ref<number>(0)
+  const showType = ref<number>(1)
 
   // @ts-ignore
   state.breadcrumb = computed<any[]>(() => {
@@ -122,6 +172,11 @@
     pushBreadcrumb(breadcrumb, state.currentLay)
     return breadcrumb
   })
+
+  //切换显示方式
+  const checkSwitchType = (type: number) => {
+    showType.value = type
+  }
 
   //面包屑递归
   const pushBreadcrumb = (breadcrumb: any[], item: any) => {
@@ -233,8 +288,8 @@
   const fileRightClick = (event: any, item: Objectlay, index: number) => {
     state.operateItem = item
     showFileMenu.value = false
-    menuLeft.value = event.pageX - 180
-    menuTop.value = event.pageY - 80
+    menuLeft.value = event.pageX
+    menuTop.value = event.pageY - 40
     setTimeout(() => {
       showFileMenu.value = true
     }, 200)
@@ -259,6 +314,19 @@
   .el-card__body {
     padding: 0;
     width: 100%;
+  }
+  .el-table__inner-wrapper:before {
+    content: none;
+  }
+  .headerCell {
+    background: var(--el-color-primary-light-9)!important;
+    color: var(--el-text-color-primary)!important;
+    height: 36px!important;
+    padding: 2px 0!important;
+  }
+  .rowCommon {
+    height: 44px!important;
+    cursor: pointer;
   }
 </style>
 <style lang="scss" scoped>
@@ -325,6 +393,31 @@
       width: 100%;
       height: 100%;
       background-color: #fff;
+      position: relative;
+
+      .diy-table-footer {
+        position: absolute;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+        bottom: 0;
+        height: 56px;
+        margin-bottom: 20px;
+        .switch-active{
+          background: #154ad8;
+          color: #fff;
+          border-radius: 15px;
+        }
+        .footer-left{
+          .type-list,.type-card{
+            font-size: 16px;
+            color: #c0c4cc;
+            padding: 3px 15px;
+            cursor: pointer;
+          }
+        }
+      }
     }
     .menuRight {
       width: 100px;
@@ -398,6 +491,18 @@
           &.checked {
             background-color: #f8f7f9;
           }
+        }
+        .fileName {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          span {
+            margin-left: 8px;
+          }
+        }
+        .operateBtn {
+          display: flex;
+          align-items: center;
         }
       }
     }
