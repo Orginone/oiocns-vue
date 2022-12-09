@@ -106,6 +106,11 @@ const tableHead = ref([
     label: '简介',
     name: 'teamCode'
   },
+   {
+    prop: '',
+    label: '所属集团',
+    name: ''
+  },
   {
     type: 'slot',
     label: '操作',
@@ -179,7 +184,7 @@ const pullCompanys = async (arr: any) => {
 
 //查看申请
 const viewApplication = (row: any) => {
-  router.push({ path: '/cardDetail', query: { type: 1, id: props.selectItem.id } })
+  router.push({ path: '/service/group', query: { type: 1, id: props.selectItem.id } })
 }
 
 // 移除n

@@ -43,7 +43,7 @@
           </div>
         </template>
         <template #buttons>
-          <el-button class="btn-check" type="primary" link>岗位设置</el-button>
+          <el-button v-if="checkList.length" @click="setPost('', 1)" class="btn-check" type="primary" link>岗位设置</el-button>
           <el-button class="btn-check" type="primary" link @click="showAssignDialog">添加成员</el-button>
           <el-button class="btn-check" type="primary" link @click="viewApplication">查看申请</el-button>
         </template>
@@ -54,8 +54,7 @@
               <el-dropdown-menu>
                 <el-dropdown-item @click="reviseInfo(scope.row)">修改信息</el-dropdown-item>
                 <el-dropdown-item @click="changeDepartment(scope.row)">变更部门</el-dropdown-item>
-                <el-dropdown-item @click="showDiong">岗位设置</el-dropdown-item>
-                <el-dropdown-item @click="showDiong">部门设置</el-dropdown-item>
+                <el-dropdown-item @click="setPost(scope.row, 2)">岗位设置</el-dropdown-item>
                 <el-dropdown-item @click="showDiong">停用</el-dropdown-item>
                 <el-dropdown-item @click="removeFrom(scope.row)" style="color: #f67c80">移出成员</el-dropdown-item>
               </el-dropdown-menu>
@@ -162,7 +161,10 @@
       label-width="100px"
       :model="personFormData"
     >
-      <el-form-item label="部门" style="width: 100%">
+      <el-form-item label="人员名称" style="width: 100%">
+        <el-input disabled v-model="currentData.team.name" />
+      </el-form-item>
+      <el-form-item label="所属部门" style="width: 100%">
         <el-cascader
           :props="cascaderProps"
           :options="cascaderTree"
@@ -179,6 +181,40 @@
       </span>
     </template>
   </el-dialog>
+  <el-dialog
+    v-model="setPostDialogVisible"
+    title="岗位设置"
+    width="40%"
+    append-to-body
+    @close="dialogHide"
+  >
+    <el-form
+      label-position="top"
+      label-width="100px"
+      :model="personFormData"
+    >
+      <el-form-item label="岗位" style="width: 100%">
+        <el-select
+          v-model="postValue"
+          placeholder="请选择岗位"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="item in postOptions"
+            :key="item.id"
+            :label="item.label"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogHide">取消</el-button>
+        <el-button type="primary" @click="addPost">确认</el-button>
+      </span>
+    </template>
+  </el-dialog>
   <AssignedPerson v-if="assignDialog" :checkList='tableData' :id="company.id" :selectLimit='0' :serachType='5'
     @closeDialog="hideAssignDialog" @checksSearch='checksCompanySearch' />
 </template>
@@ -188,18 +224,21 @@ import Info from "./components/info.vue";
 import diytab from "@/components/diyTable/index.vue";
 import $services from '@/services'
 import { ref, onMounted, getCurrentInstance, onBeforeMount } from "vue";
-import { setCenterStore } from '@/store/setting'
+import { useRouter } from 'vue-router'
 import AssignedPerson from '@/components/searchs/index.vue'
+import { setCenterStore } from '@/store/setting'
 const store = setCenterStore()
 import DepartmentServices from '@/module/relation/department'
 const departmentServices = new DepartmentServices()
-
+import identityServices from '@/module/relation/identity'
+const IdentityServices = new identityServices()
 const cascaderProps = {
   checkStrictly: true,
   value: 'id',
   emitPath: false,
 }
 let cascaderTree = ref<OrgTreeModel[]>([])
+const router = useRouter()
 
 const subscribe = store.$subscribe(
   (mutation, state) => {
@@ -226,6 +265,7 @@ let deptDialogVisible = ref<boolean>(false)
 let jobDialogVisible = ref<boolean>(false)
 let personDialogVisible = ref<boolean>(false)
 let createDeptDialogVisible = ref<boolean>(false)
+let setPostDialogVisible = ref<boolean>(false)
 let formData = ref<any>({})
 let personFormData = ref<any>({
   id: '',
@@ -244,6 +284,7 @@ const dialogHide = () => {
   jobDialogVisible.value = false
   personDialogVisible.value = false
   createDeptDialogVisible.value = false
+  setPostDialogVisible.value = false
 }
 let isUnit = ref<boolean>(true)
 // 创建部门
@@ -272,6 +313,42 @@ const createDept = () => {
       })
     }
   })
+}
+
+// 岗位设置
+const postOptions = ref([])
+const postValue = ref('')
+const getPostList = () => {
+  setCenterStore().GetIdentities().then((treeData)=> {
+    postOptions.value = treeData ?? []
+    console.log('treeData: ', treeData);
+  })
+}
+// 设置岗位type 1：多选设置岗位  2：人员列表设置岗位
+const setPostType = ref(1)
+// 设置岗位
+const setPost = (row: any, type: number) => {
+  setPostType.value = type
+  formData.value = { parentId: store.currentSelectItme?.id }
+  if(type==2) currentData.value = row
+  setPostDialogVisible.value = true
+}
+// 给人员岗位
+const addPost = async () => {
+  let userIds = []
+  if(setPostType.value === 1) {
+    userIds = checkList.value.map((u: any) => u.id)
+  } else {
+    userIds = [currentData?.value?.id]
+  }
+  const data = await IdentityServices.giveIdentity(postValue.value, userIds)
+  if (data) {
+    ElMessage({
+      message: '分配成功',
+      type: 'success'
+    })
+    dialogHide()
+  }
 }
 
 // 变更部门
@@ -440,7 +517,7 @@ const getUsers = async (currentData?) => {
 
 //查看申请
 const viewApplication = (row: any) => {
-  router.push({ path: '/cardDetail', query: { type: 1, id: store.currentSelectItme?.id } })
+  router.push({ path: '/service/company', query: { type: 1, id: store.currentSelectItme?.id } })
 }
 // 修改信息
 const reviseInfo = (row: any) => {
@@ -506,12 +583,7 @@ const tableData = ref([])
 const options = ref<any>({
   checkBox: true,
   order: true,
-  selectLimit: 1,
   defaultSort: { prop: 'createTime', order: 'descending' },
-  treeProps: {
-    children: 'children',
-    hasChildren: 'hasChildren'
-  }
 })
 const tableHead = ref([
   {
@@ -547,12 +619,13 @@ const handleUpdate = (page: any) => {
   pageStore.pageSize = page.pageSize
   remoteMethod()
 }
-const checkList = reactive<any>([])
+const checkList = ref<any>([])
 const selectionChange = (val: any) => {
   checkList.value = val
 }
 //获取单位信息
 onMounted(() => {
+  getPostList()
   loadOrgTree()
 })
 // 获取单位信息
