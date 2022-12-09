@@ -77,7 +77,7 @@ class GroupServices {
   }
   /**
    * @description: 获取人员列表
-   * @param selectItem.data.typeName  获取人员列表的类型
+   * @param selectItem.typeName  获取人员列表的类型
    * @return backData.result list
    * @return backData.total  总数
    */  
@@ -85,9 +85,9 @@ class GroupServices {
   public getCompanies = async (selectItem:paramsDataType) => {
     if (selectItem) {
       let url = ''
-      if (selectItem.data.typeName == '集团') {
+      if (selectItem.typeName == '集团') {
         url = 'getGroupCompanies'
-      } else if (selectItem.data.typeName == '子集团') {
+      } else if (selectItem.typeName == '子集团') {
         url = 'getSubgroupCompanies'
       }
       let { data , success } = await API.company[url]({

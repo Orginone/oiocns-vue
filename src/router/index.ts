@@ -40,16 +40,6 @@ const mainRouter: RouteRecordRaw[] = [
     }
   },
   {
-    component: () => import('@/views/Thing/index.vue'),
-    name: 'Thing',
-    path: '/Thing',
-    meta: {
-      keepAlive: false,
-      title: '元数据',
-      id: "thing"
-    }
-  },
-  {
     component: () => import('@/views/Chat/index.vue'),
     name: 'chat',
     path: '/chat',
@@ -165,6 +155,15 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
+        path: '/service/group',
+        name: 'group2',
+        component: () => import('@/views/Service/group/index.vue'),
+        meta: {
+          title: '集团审核',
+          id: "service.group"
+        }
+      },
+      {
         path: '/service/shop',
         name: 'shop',
         component: () => import('@/views/Service/shop/index.vue'),
@@ -180,6 +179,15 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '订单审核',
           id: "service.order"
+        }
+      },
+      {
+        path: '/service/todo',
+        name: 'todo',
+        component: () => import('@/views/Service/todo/index.vue'),
+        meta: {
+          title: '应用待办',
+          id: "service.todo"
         }
       }
     ]
@@ -257,17 +265,6 @@ const mainRouter: RouteRecordRaw[] = [
           icon: 'Postcard',
           searchType: '2',
           id: "setCenter.unitMain"
-        }
-      },
-      {
-        path: '/setCenter/data',
-        name: 'data',
-        component: () => import('@/views/SetCenter/data/index.vue'),
-        meta: {
-          title: '数据设置',
-          icon: 'Postcard',
-          searchType: '2',
-          id: "setCenter.data"
         }
       },
       {
@@ -404,172 +401,6 @@ const mainRouter: RouteRecordRaw[] = [
       title: '外部应用',
       id: "foreignApp"
     }
-  },
-  // 应用市场 路由信息
-  {
-    path: '/market',
-    meta: {
-      keepAlive: false,
-      title: '我的应用',
-      id: "marketold"
-    },
-    // component: () => import('@/views/Layout/msgLayout/layout.vue'),
-    children: [
-      {
-        path: '/market',
-        name: 'market',
-        component: () => import('@/views/Market/index.vue'),
-        meta: {
-          title: '应用中心',
-          id: "marketold.index"
-        }
-      },
-      {
-        path: '/market/group',
-        name: 'marketGroup',
-        component: () => import('@/views/Market/AppShare/group.vue'),
-        meta: {
-          title: '共享集团',
-          id: "marketold.group"
-        }
-      },
-      {
-        path: '/market/unit',
-        name: 'marketUnit',
-        component: () => import('@/views/Market/AppShare/unit.vue'),
-        meta: {
-          title: '共享单位',
-          id: "marketold.unit"
-        }
-      },
-      {
-        path: '/market/marketList',
-        name: 'marketList',
-        component: () => import('@/views/Market/MarketList/index.vue'),
-        meta: {
-          title: '商店列表',
-          id: "marketold.list"
-        }
-      },
-      {
-        path: '/market/appList',
-        name: 'marketAppList',
-        component: () => import('@/views/Market/MarketList/appList.vue'),
-        meta: {
-          title: '应用列表',
-          id: "marketold.appList"
-        }
-      },
-      {
-        path: '/market/register',
-        name: 'marketAppRegister',
-        component: () => import('@/views/Market/AppRegister/index.vue'),
-        meta: {
-          title: '应用注册',
-          id: "marketold.register"
-        }
-      },
-      // 可使用应用 信息展示页面
-      {
-        path: '/market/detail/:id',
-        name: 'marketAppDetail',
-        component: () => import('@/views/Market/AppInfo/index.vue'),
-        meta: {
-          title: '应用信息',
-          id: "marketold.detail"
-        }
-      },
-      {
-        path: '/market/softShare',
-        name: 'softShare',
-        component: () => import('@/views/Market/SoftShare/index.vue'),
-        meta: {
-          title: '开放市场',
-          id: "marketold.share"
-        }
-      },
-      {
-        path: '/market/userManage',
-        name: 'marketUserManage',
-        component: () => import('@/views/Market/MarketList/userManage.vue'),
-        meta: {
-          title: '用户管理',
-          id: "marketold.user"
-        }
-      },
-      {
-        path: '/market/order/buy',
-        name: 'marketOrderBuy',
-        component: () => import('@/views/Market/Order/index.vue'),
-        meta: {
-          title: '采购订单',
-          id: "marketold.order-buy"
-        }
-      },
-      {
-        path: '/market/order/sell',
-        name: 'marketOrderSell',
-        component: () => import('@/views/Market/Order/index.vue'),
-        meta: {
-          title: '售卖订单',
-          id: "marketold.order-sell"
-        }
-      },
-      {
-        path: '/market/shopCar',
-        name: 'userShopCar',
-        component: () => import('@/views/Market/ShopCar/index.vue'),
-        meta: {
-          title: '购物车',
-          id: "marketold.shopCar"
-        }
-      },
-      {
-        path: '/market/appApply',
-        name: 'appApply',
-        component: () => import('@/views/Market/AppShelves/apply.vue'),
-        meta: {
-          title: '应用上架申请列表',
-          id: "marketold.apply-app"
-        }
-      },
-      {
-        path: '/market/appDetail',
-        name: 'appDetail',
-        component: () => import('@/views/Market/AppDetail/index.vue'),
-        meta: {
-          title: '应用详情',
-          id: "marketold.appDetail"
-        }
-      },
-      {
-        path: '/market/publishList',
-        name: 'publishList',
-        component: () => import('@/views/Market/AppDetail/publishList.vue'),
-        meta: {
-          title: '应用上架列表',
-          id: "marketold.publishList"
-        }
-      },
-      {
-        path: '/market/merchandiseDetail',
-        name: 'merchandiseDetail',
-        component: () => import('@/views/Market/MerchandiseDetail/index.vue'),
-        meta: {
-          title: '商品详情',
-          id: "marketold.merchandiseDetail"
-        }
-      },
-      {
-        path: '/market/marketDetail',
-        name: 'marketDetail',
-        component: () => import('@/views/Market/MarketDetail/index.vue'),
-        meta: {
-          title: '商店详情',
-          id: "marketold.marketDetail"
-        }
-      },
-    ]
   },
   {
     path: '/company',
@@ -719,15 +550,6 @@ const mainRouter: RouteRecordRaw[] = [
       },
     ]
   },
-  {
-    component: () => import('@/views/Test/index.vue'),
-    name: 'test',
-    path: '/test',
-    meta: {
-      keepAlive: false,
-      title: '仓库'
-    }
-  }
 ]
 
 // 整合路由

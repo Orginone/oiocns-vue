@@ -13,7 +13,7 @@
           @selectionChange="selectionChange"
           :tableHead="tableHead">
           <template #buttons>
-            <el-button small link type="primary" @click="friendDialog = true">添加成员</el-button>
+            <el-button class="btn-check" small link type="primary" @click="friendDialog = true">添加成员</el-button>
           </template>
           <template #operate="scope">
             <el-dropdown>
@@ -313,6 +313,15 @@ watch(()=> selectItem.value, (newValue)=> {
   .search {
     width: 50%;
   }
+  .btn-check{
+    padding: 8px 16px;
+    color: #154ad8;
+  }
+  .btn-check:hover{
+      background: #154ad8;
+      color: #fff;
+      padding: 8px  16px;
+  }
 }
 .el-dropdown-link{
   padding: 2px 10px;
@@ -322,15 +331,6 @@ watch(()=> selectItem.value, (newValue)=> {
   .el-dropdown-link:hover{
   background:#1642cb;
   color: #fff;
-  }
-  .btn-check{
-    padding: 8px 16px;
-    color: #154ad8;
-  }
-  .btn-check:hover{
-      background: #154ad8;
-      color: #fff;
-      padding: 8px  16px;
   }
 .table-tabs{
   width: 500px;

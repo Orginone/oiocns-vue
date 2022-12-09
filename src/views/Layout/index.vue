@@ -61,10 +61,10 @@
   import authority from '@/utils/authority'
   import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick,getCurrentInstance} from 'vue'
   import { RouteLocationNormalizedLoaded, useRouter } from 'vue-router';
-  import storeJosn from './json/store.json';
+  import storeJson from './json/store.json';
   // import settingJosn from './json/setting.json';
   import setTree from './json/setTree.json';
-  // import detailJosn from './json/detail.json';
+  import serviceJson from './json/service.json';
   // import userJosn from './json/user.json';
   import { chat } from '@/module/chat/orgchat'
   import marketServices from "@/module/store/market"
@@ -87,14 +87,42 @@
       if (router.currentRoute.value.name === 'department') {
           titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
           setCenterStore().GetDepartmentInfo().then((treeData)=> {
-            menuArr.state = treeData
+            let newData: any = [
+              {
+                label: '部门管理',
+                structure: true,
+                id: 1,
+                query: true,
+                isPenultimate: true,
+                btns:[{
+                  name: '新增部门',
+                  id: '2203'
+                }],
+                children: treeData
+              }
+            ]
+            menuArr.state = newData
           })
           showMenu.value = true;
           return;
       } else if (router.currentRoute.value.name === 'post') {
           titleArr.state= {icon: 'User',title: '岗位设置',"backFlag": true}
           setCenterStore().GetIdentities().then((treeData)=> {
-            menuArr.state = treeData
+            let newData: any = [
+              {
+                label: '岗位管理',
+                structure: true,
+                id: 1,
+                query: true,
+                isPenultimate: true,
+                btns:[{
+                  name: '新增岗位',
+                  id: '2008'
+                }],
+                children: treeData
+              }
+            ]
+            menuArr.state = newData
           })
           showMenu.value = true;
           return;
@@ -124,14 +152,24 @@
       return
     }
     if(router.currentRoute.value.path.indexOf('store/appManagement') != -1){
-      titleArr.state = storeJosn[0]
-      menuArr.state = storeJosn
+      titleArr.state = storeJson[0]
+      menuArr.state = storeJson
       showMenu.value = true;
       return
     }
     if(router.currentRoute.value.path.indexOf('store') != -1){
       showMenu.value = true;
       getMenu()
+      return
+    }
+    if(router.currentRoute.value.path.indexOf('service') != -1){
+      serviceJson[1].children.forEach((element:any,index:any) => {
+        // element?.num = index
+      });
+      showMenu.value = true;
+      titleArr.state = serviceJson[0]
+     
+      menuArr.state = serviceJson
       return
     }
     const ret = findMenu(router.currentRoute.value, allMenuItems.value);
@@ -172,7 +210,7 @@
   const getMenu = () => {
     anystore.subscribed(`selfAppMenu`, 'user', (data) => {
       console.log(data?.data)
-      let newJSON = JSON.parse(JSON.stringify(storeJosn))
+      let newJSON = JSON.parse(JSON.stringify(storeJson))
         if(data?.data?.length>0){
           console.log('data',data.data)
           menuData.data = data.data;
@@ -316,11 +354,11 @@
           },
         ]
     }
-    let shopStoreJosn = JSON.parse(JSON.stringify(storeJosn))
+    let shopstoreJson = JSON.parse(JSON.stringify(storeJson))
     showMenu.value = true;
-    shopStoreJosn[2] = newObj
-    titleArr.state = shopStoreJosn[0]
-    menuArr.state = shopStoreJosn
+    shopstoreJson[2] = newObj
+    titleArr.state = shopstoreJson[0]
+    menuArr.state = shopstoreJson
   }
   // const getNav = ()=>{
   //     if(router.currentRoute.value.path.indexOf('store') != -1){    
@@ -387,6 +425,9 @@
 
   // 页面刷新时 关闭握手
   window.addEventListener('beforeunload', chat.stop)
+  
+  const instance = getCurrentInstance();
+  instance?.proxy?.$Bus.on('refreshNav', () => { getNavData2() })
 </script>
 
 <style lang="scss" scoped>

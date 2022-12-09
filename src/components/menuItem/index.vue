@@ -23,7 +23,10 @@
           @click="jump(val)"
         >
           <component :is="val.icon" style="width: 16px;height: 16px;" :style="{color: state.flag1 === val.type ? '#1642cb' : '#c7ccdc' }" ></component>&nbsp;
-          <span style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#a5a8ba' }" >{{ val.name }}</span>
+          <span style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#a5a8ba' }" >{{ val.name }} 
+          </span>
+          <div class="tips" v-if="(item.num>0)"></div>
+
         </el-menu-item>
       </el-sub-menu>
     </el-menu>
@@ -259,6 +262,18 @@ const handleSelect = (key: any) => {
     padding: 0px; //前边边距去掉
     border-radius: 15px;
     background: #f2f4f9;
+  }
+  .tips{
+    margin-left: 10px;
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    line-height: 15px;
+    background: #ec5b56;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    border-radius: 50%;
   }
 </style>
 
