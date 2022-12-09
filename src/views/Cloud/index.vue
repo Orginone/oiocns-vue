@@ -176,6 +176,7 @@
   //切换显示方式
   const checkSwitchType = (type: number) => {
     showType.value = type
+    Bucket.ListMode = type
   }
 
   //面包屑递归
@@ -308,6 +309,7 @@
 
   onMounted(async () => {
     await clickFile(Bucket.Current)
+    showType.value = Bucket.ListMode
   })
 </script>
 <style lang="scss">

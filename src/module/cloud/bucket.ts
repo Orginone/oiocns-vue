@@ -9,6 +9,7 @@ class Bucket {
   private refObj: Ref<boolean>
   public Root: ObjectLay
   public Current: ObjectLay
+  public ListMode: number
   private static instance: Bucket
   /**
    * 私有构造方法，禁止外部实例化
@@ -17,6 +18,7 @@ class Bucket {
     this.Root = new ObjectLay()
     this.Current = this.Root
     this.refObj = ref<boolean>(true)
+    this.ListMode = 2
   }
   /**
    * 获取单例
