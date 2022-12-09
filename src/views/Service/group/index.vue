@@ -16,7 +16,7 @@
         </el-menu>
       </div>
       <div class="btnStyle">
-        <el-button type="primary">新增</el-button>
+        <el-button @click="joinGroup()" type="primary">加入集团</el-button>
         <el-button type="primary">审核</el-button>
         <el-button type="primary">退回</el-button>
       </div>
@@ -64,6 +64,7 @@
       </div>
     </div>
   </div>
+  <searchGroup v-if="friendDialog" :serachType="4" @closeDialog="closeDialog"  @checksSearch='checksSearch'></searchGroup>
 </template>
 
 <script lang="ts" setup>
@@ -73,6 +74,7 @@
   import { useUserStore } from '@/store/user'
   import { useRoute,useRouter } from 'vue-router'
   import DiyTable from '@/components/diyTable/index.vue'
+  import searchGroup from '@/components/searchs/index.vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { TabsPaneContext } from 'element-plus'
   import { chat } from '@/module/chat/orgchat'
@@ -103,6 +105,42 @@
     pageSize: 20,
     total: 0
   })
+
+  const friendDialog = ref<boolean>(false)
+  const joinGroup = ()=> {
+    friendDialog.value = true;
+  }
+  const closeDialog = ()=>{
+    friendDialog.value = false;
+  }
+  const checksSearch=(val:any)=>{
+    if(val.value.length>0){
+      let arr:Array<arrList> =[]
+      val.value.forEach((element:any) => {
+        arr.push(element.id)
+      });
+      addGroupFun(arr)
+    }else{
+      friendDialog.value = false;
+    }
+  }
+  const addGroupFun = (arr:any) => {
+    $services.company
+      .applyJoinGroup({
+        data: {
+          id: arr.join(',')
+        }
+      })
+      .then((res: ResultType) => {
+        if (res.success) {
+          ElMessage({
+            message: '申请成功',
+            type: 'warning'
+          })
+          friendDialog.value = false
+        }
+      })
+  }
 
   // const showDetail = async (row: any,type:number) => {
   //   if(type == 4){
@@ -150,67 +188,64 @@
   const elmenus = ref(null);
   const activeName = ref('first') //商店tab
 
-  // const handleClose = (index:any) => {
-  //   elmenus.value.open(index)
-  //   handleSelect(activeIndex.value, [])
-  // }
+  const handleClose = (index:any) => {
+    elmenus.value.open(index)
+    handleSelect(activeIndex.value, [])
+  }
 
-  // var getApplyList = async () => {
-  //   await ThingServices.getAllApply()
-  //   tableData.value = ThingServices.applyList
-  // }
+  // 查询我的申请
+  var getApplyList = async () => {
+    await ThingServices.getAllApply()
+    tableData.value = ThingServices.applyList
+  }
 
-  // const getWflow =async () => {
-  //   await ThingServices.queryTask()
-  //   tableHead.value = ThingServices.companyHead;
-  //   tableData.value =ThingServices.taskList
-  // }
+  // 查询我的审批
+  var getAllApprovalList = async () => {
+    await ThingServices.getAllApproval('0')
+    tableData.value = ThingServices.approvalList.length && ThingServices.approvalList.filter(i => i?.team?.target?.typeName === '集团')
+  }
 
-  // const flowSelect = (key: string) => {
-  //   flowActive.value = key
-  //   flowSwitch(key)
-  // }
-  // const flowSwitch  = async (key: string) => {
-  //   if(key == '1'){
-  //     await ThingServices.queryTask()
-  //     tableData.value =ThingServices.taskList
-  //   }else if(key =='2'){
-  //     await ThingServices.queryRecord()
-  //     tableData.value =ThingServices.recordList
-  //   }else if(key =='3'){
-  //     await ThingServices.queryInstance()
-  //     tableData.value =ThingServices.queryInstanceList
-  //   }else if(key =='4'){
-  //     tableData.value = ThingServices.copyList
-  //   }
-  // }
+  const getWflow =async () => {
+    await ThingServices.queryTask()
+    tableHead.value = ThingServices.companyHead;
+    tableData.value =ThingServices.taskList
+  }
 
-  // const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
-  // const handleSelect = (key: any, keyPath: string[]) => {
-  //   tableData.value = []
-  //   // diyTable.value.state.page.total = 0
-  //   activeIndex.value = key;
-  //   ThingServices.whiteList = [];
-  //   if (whiteList.includes(key)) {
-  //     getApplyList()
-  //     tableHead.value = ThingServices.companyHead;
-  //   } else {
-  //     getWflow();
-  //   }
-  // }
+  const flowSelect = (key: string) => {
+    flowActive.value = key
+    flowSwitch(key)
+  }
+  const flowSwitch  = async (key: string) => {
+    if(key == '1'){
+      await ThingServices.queryTask()
+      tableData.value =ThingServices.taskList
+    }else if(key =='2'){
+      await ThingServices.queryRecord()
+      tableData.value =ThingServices.recordList
+    }else if(key =='3'){
+      await ThingServices.queryInstance()
+      tableData.value =ThingServices.queryInstanceList
+    }else if(key =='4'){
+      tableData.value = ThingServices.copyList
+    }
+  }
+
+  const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
+  const handleSelect = (key: any, keyPath: string[]) => {
+    tableData.value = []
+    // diyTable.value.state.page.total = 0
+    activeIndex.value = key;
+    ThingServices.whiteList = [];
+    if (whiteList.includes(key)) {
+      getApplyList()
+      tableHead.value = ThingServices.companyHead;
+    } else {
+      getWflow();
+    }
+  }
 
   onMounted(() => {
-    // ThingServices.whiteList = [];
-    // const route = useRouter();
-    // const selectType = route.currentRoute.value.query.type?'1-1':'2-1';
-    // let id = route.currentRoute.value.query.id;
-    // activeIndex.value = '1-1';
-    // if (Array.isArray(id)) {
-    //   activeId.value = id[0];
-    // } else {
-    //   activeId.value = id
-    // }
-    // handleSelect(selectType, [])
+    getAllApprovalList()
   });
 
   instance?.proxy?.$Bus.on('selectBtn', (num) => {
@@ -249,22 +284,6 @@
       }
     }
   }
-  // .thing-head {
-  //   // padding: 30px;
-  //   // background: #fff;
-  //   .thing-type {
-  //     font-size: 16px;
-  //     color: #8d8d8d;
-  //     margin-bottom: 15px;
-  //   }
-  //   .thing-mian {
-  //     font-size: 24px;
-  //     font-weight: bold;
-  //     color: #333;
-  //     display: flex;
-  //     justify-content: space-between;
-  //   }
-  // }
   .content {
     flex: 1;
     height: 100%;

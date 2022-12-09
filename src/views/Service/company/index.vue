@@ -16,7 +16,7 @@
         </el-menu>
       </div>
       <div class="btnStyle">
-        <el-button @click="friendShow" type="primary">新增</el-button>
+        <el-button @click="joinCompany" type="primary">加入单位</el-button>
         <el-button type="primary">审核</el-button>
         <el-button type="primary">退回</el-button>
       </div>
@@ -29,14 +29,11 @@
           :options="options"
           :tableHead="tableHead"
         >
-          <template #productId="scope">
-            {{chat.getName(scope.row?.flowInstance?.flowRelation?.productId||scope.row?.flowTask?.flowInstance?.flowRelation?.productId||scope.row?.flowRelation?.productId)}}
-          </template>
-          <template #target.name="scope">
-            {{chat.getName(scope.row.createUser)}}
-          </template>
           <template #content="scope">
-            {{scope.row?.flowInstance?.content || scope?.row?.flowTask?.flowInstance?.content || scope?.row?.content}}
+            {{ scope.row.target.name }}申请加入{{ scope.row.team.name }}
+          </template>
+          <template #targetName="scope">
+            {{chat.getName(scope.row.createUser)}}
           </template>
           <template #status="scope">
             <div v-if="scope.row.status >= 0 && scope.row.status < 100">待批</div>
@@ -48,17 +45,24 @@
             <div v-else>已拒绝</div>
           </template>
           <template #option="scope">
-            <el-dropdown>
-              <span class="el-dropdown-link">
-                ···
-              </span>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item v-if="flowActive == '1'">审核申请</el-dropdown-item>
-                  <el-dropdown-item v-if="flowActive == '3'">退回申请</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
+            <el-button
+              v-if="flowActive == '1'"
+              link
+              @click="joinSuccess(scope.row)"
+              type="primary"
+              >通过</el-button>
+            <el-button
+              v-if="flowActive == '1'"
+              link
+              @click="joinRefse(scope.row)"
+              type="warning"
+              >拒绝</el-button>
+            <el-button
+              v-if="flowActive == '3'"
+              link
+              @click="cancelJoin(scope.row)"
+              type="warning"
+              >取消申请</el-button>
           </template>
         </DiyTable>
       </div>
@@ -87,13 +91,16 @@
   
   import thingServices from '@/module/flow/thing'
 
+  // 申请加入单位弹窗控制
   const searchDialog = ref<boolean>(false)
-  const friendShow = () => {
+  const joinCompany = () => {
     searchDialog.value = true
   }
+  // 关闭弹窗
   const closeDialog = (key: string) => {
     searchDialog.value = false
   }
+  // 加入单位方法
   const checksSearch = (val: any) => {
     if (val.value.length > 0) {
       let arr: Array<arrList> = []
@@ -149,70 +156,30 @@
     total: 0
   })
 
-  
-
-  // const showDetail = async (row: any,type:number) => {
-  //   if(type == 4){
-  //     $services.wflow.approvalTask({data:{id: row.id,status: 100,}}).then(async (res: ResultType) => {
-  //       ElMessage({
-  //         message: res.msg,
-  //         type: 'success'
-  //       })
-  //       ThingServices.whiteList = [];
-  //       await ThingServices.queryTask()
-  //       tableHead.value = ThingServices.flowHead;
-  //       tableData.value = ThingServices.copyList
-  //     })
-      
-  //   }else if(type ==3){
-  //     $services.wflow.deleteInstance({data:{id: row.id}}).then(async (res: ResultType) => {
-  //       ElMessage({
-  //         message: res.msg,
-  //         type: 'success'
-  //       })
-  //       ThingServices.whiteList = [];
-  //       await ThingServices.queryInstance()
-  //       tableHead.value = ThingServices.queryInstanceHead;
-  //       tableData.value =ThingServices.queryInstanceList
-  //     })
-     
-  //   }else{
-  //     let instanceId:string;
-  //     if(flowActive.value == '1'){
-  //       instanceId = row?.instanceId
-  //     }else if(flowActive.value == '2'){
-  //       instanceId = row?.flowTask?.instanceId
-  //     }else if(flowActive.value == '3'){
-  //       instanceId = row?.id
-  //     }else{
-  //       instanceId = row?.instanceId
-  //     }
-  //     router.push({ path: '/work/process', query: {id:row.id,type:flowActive.value,instanceId:instanceId}});
-  //   }
-  // }
-
   const activeIndex = ref<string>('1')
-  const flowActive = ref<string>('1')
   const activeId = ref<string>('0')
   const elmenus = ref(null);
-  const activeName = ref('first') //商店tab
 
   const handleClose = (index:any) => {
     elmenus.value.open(index)
     handleSelect(activeIndex.value, [])
   }
 
-  var getApplyList = async () => {
+  // 查询我的审批
+  var getAllApprovalList = async () => {
     await ThingServices.getAllApproval('0')
-    tableData.value = ThingServices.approvalList
+    tableData.value = ThingServices.approvalList.length && ThingServices.approvalList.filter(i => i?.team?.target?.typeName === '单位')
   }
 
-  // const getWflow =async () => {
-  //   await ThingServices.queryTask()
-  //   tableHead.value = ThingServices.companyHead;
-  //   tableData.value =ThingServices.taskList
-  // }
+  // 查询我的申请
+  var getApplyList = async () => {
+    await ThingServices.getAllApply()
+    tableData.value = ThingServices.applyList
+  }
 
+  // 当前menu默认active
+  const flowActive = ref<string>('1')
+  // menu 切换方法
   const flowSelect = (key: string) => {
     flowActive.value = key
     flowSwitch(key)
@@ -242,23 +209,11 @@
       getApplyList()
       tableHead.value = ThingServices.companyHead;
     }
-    //  else {
-    //   getWflow();
-    // }
   }
 
   onMounted(() => {
-    // ThingServices.whiteList = [];
-    // const route = useRouter();
-    // const selectType = route.currentRoute.value.query.type?'1-1':'2-1';
-    // let id = route.currentRoute.value.query.id;
-    // activeIndex.value = '1-1';
-    // if (Array.isArray(id)) {
-    //   activeId.value = id[0];
-    // } else {
-    //   activeId.value = id
-    // }
     handleSelect('1-2', [])
+    getAllApprovalList()
   });
 
   instance?.proxy?.$Bus.on('selectBtn', (num) => {
@@ -299,22 +254,6 @@
       }
     }
   }
-  // .thing-head {
-  //   // padding: 30px;
-  //   // background: #fff;
-  //   .thing-type {
-  //     font-size: 16px;
-  //     color: #8d8d8d;
-  //     margin-bottom: 15px;
-  //   }
-  //   .thing-mian {
-  //     font-size: 24px;
-  //     font-weight: bold;
-  //     color: #333;
-  //     display: flex;
-  //     justify-content: space-between;
-  //   }
-  // }
   .content {
     flex: 1;
     height: 100%;

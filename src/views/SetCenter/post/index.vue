@@ -10,21 +10,21 @@
     </div>
   </div>
   <el-dialog v-model="createOrUpdatePostDialog" :title="`${isUpdate ? '修改': '请录入'}岗位信息`" width="40%" center append-to-body @close="dialogHide">
-    <div>
-      <el-form-item label="岗位名称" style="width: 100%">
+    <el-form ref="ruleFormRef" :model="formData">
+      <el-form-item label="岗位名称" style="width: 100%" prop="name">
         <el-input v-model="formData.name" placeholder="请输入" clearable style="width: 100%" />
       </el-form-item>
-      <el-form-item label="岗位编号" style="width: 100%">
+      <el-form-item label="岗位编号" style="width: 100%" prop="code">
         <el-input :disabled="isUpdate" v-model="formData.code" placeholder="请输入" clearable style="width: 100%" />
       </el-form-item>
-      <el-form-item label="所属角色" style="width: 100%">
+      <el-form-item label="所属角色" style="width: 100%" prop="authId">
         <el-cascader :disabled="isUpdate" :props="cascaderProps" :options="cascaderTree" v-model="formData.authId" style="width: 100%"
           placeholder="请选择" />
       </el-form-item>
-      <el-form-item label="岗位简介" style="width: 100%">
+      <el-form-item label="岗位简介" style="width: 100%" prop="remark">
         <el-input :disabled="isUpdate" v-model="formData.remark" :autosize="{ minRows: 5 }" placeholder="请输入" type="textarea" clearable />
       </el-form-item>
-    </div>
+    </el-form>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogHide">取消</el-button>
@@ -49,10 +49,19 @@
   const isUpdate = ref<boolean>(false)
   const { proxy } = getCurrentInstance()
 
+  let formData = reactive<any>({
+    name: '',
+    code: '',
+    authId: '',
+    remark: ''
+  })
+  const ruleFormRef = ref()
   proxy?.$Bus.on('clickBus', (id) => {
     if(id == '2008') {
       isUpdate.value = false
-      formData = {}
+      if (ruleFormRef.value) {
+        ruleFormRef.value.resetFields()
+      }
       createOrUpdatePostDialog.value = true
     } else if (id == '2009') {
       isUpdate.value = true
@@ -64,7 +73,6 @@
   })
 
   const createOrUpdatePostDialog = ref<boolean>(false)
-  let formData = reactive<any>({})
   const belongId = computed(() => userStore.workspaceData?.id)
   let authorityTree = ref<any[]>([])
   let cascaderTree = ref<any[]>([])
@@ -87,7 +95,7 @@
   }
   // 创建或者更新岗位
   const submit = async () => {
-    if (isUpdate) return ElMessage.error('待提供接口...')
+    if (isUpdate.value) return ElMessage.error('待提供接口...')
     let obj =  {
       belongId: belongId.value,
       name: formData.name,
@@ -136,7 +144,9 @@
   }
 
   const dialogHide = () => {
-    formData = {}
+    if (ruleFormRef.value) {
+      ruleFormRef.value.resetFields()
+    }
     createOrUpdatePostDialog.value = false
   }
 
