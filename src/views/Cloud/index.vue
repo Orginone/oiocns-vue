@@ -75,6 +75,8 @@
                       <template #dropdown>
                         <el-dropdown-menu>
                           <el-dropdown-item @click="openEditFileDialog">重命名</el-dropdown-item>
+                          <el-dropdown-item @click="openCopyFileDialog">复制到</el-dropdown-item>
+                          <el-dropdown-item @click="openMoveFileDialog">移动到</el-dropdown-item>
                           <el-dropdown-item @click="deleteFile">删除文件</el-dropdown-item>
                         </el-dropdown-menu>
                       </template>
@@ -137,11 +139,31 @@
         </span>
       </template>
     </el-dialog>
+    <!-- 文件复制对话框 -->
+    <el-dialog v-model="copyFileDialog" :title="`${state.operateItem && state.operateItem.name} 复制到`" :width="600">
+      <NavList :onlySelect="true" @selectTreeNode="selectTargetItem"></NavList>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="copyFileDialog = false">取消</el-button>
+          <el-button type="primary" @click="confirmCopyFile">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <!-- 文件移动对话框 -->
+    <el-dialog v-model="moveFileDialog" :title="`${state.operateItem && state.operateItem.name} 移动到`" :width="600">
+      <NavList :onlySelect="true" @selectTreeNode="selectTargetItem"></NavList>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="moveFileDialog = false">取消</el-button>
+          <el-button type="primary" @click="confirmMoveFile">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
     <!-- 文件操作菜单 -->
     <el-card v-show="showFileMenu" class="fileMenu" :style="{ left: menuLeft + 'px', top: menuTop + 'px' }">
       <div class="text fileMenu-item" @click="openEditFileDialog">重命名</div>
-      <!--<div class="text fileMenu-item">复制</div>-->
-      <!--<div class="text fileMenu-item">移动</div>-->
+      <div class="text fileMenu-item" @click="openCopyFileDialog">复制到</div>
+      <div class="text fileMenu-item" @click="openMoveFileDialog">移动到</div>
       <div class="text fileMenu-item" @click="deleteFile">删除文件</div>
     </el-card>
   </div>
@@ -162,10 +184,13 @@
     currentLay: null,
     breadcrumb: [],
     fileName: '',
-    operateItem: null
+    operateItem: null,
+    targetItem: null
   })
   const createFileDialog = ref<boolean>(false)
   const editFileDialog = ref<boolean>(false)
+  const copyFileDialog = ref<boolean>(false)
+  const moveFileDialog = ref<boolean>(false)
   const showFileMenu = ref<boolean>(false)
   const menuLeft = ref<number>(0)
   const menuTop = ref<number>(0)
@@ -206,6 +231,11 @@
     navRef.value.checkedNode(item)
   }
 
+  // 选中一个文件夹
+  const selectTargetItem = (item: any) => {
+    state.targetItem = item
+  }
+
   // 返回上一层
   const goBackOneStep = async () => {
     await clickFile(state.currentLay.parent)
@@ -237,6 +267,16 @@
   const openEditFileDialog = () => {
     editFileDialog.value = true
     state.fileName = state.operateItem.name
+  }
+
+  // 打开文件复制对话框
+  const openCopyFileDialog = () => {
+    copyFileDialog.value = true
+  }
+
+  // 打开文件移动对话框
+  const openMoveFileDialog = () => {
+    moveFileDialog.value = true
   }
 
   // 确认创建文件夹
@@ -281,9 +321,30 @@
         navRef.value.removeNode(state.operateItem)
       }
       await state.operateItem.delete()
+      ElMessage.success('删除成功')
       await refreshCurrent()
       onContent()
     }).catch(() => {})
+  }
+
+  // 确认复制文件
+  const confirmCopyFile = async () => {
+    copyFileDialog.value = false
+    await state.operateItem.copy(state.targetItem)
+    await clickFile(state.targetItem)
+    ElMessage.success('复制成功')
+    onContent()
+    state.operateItem = null
+  }
+
+  // 确认移动文件
+  const confirmMoveFile = async () => {
+    moveFileDialog.value = false
+    await state.operateItem.move(state.targetItem)
+    await clickFile(state.targetItem)
+    ElMessage.success('移动成功')
+    onContent()
+    state.operateItem = null
   }
 
   // 右键展开文件操作栏

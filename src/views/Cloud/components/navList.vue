@@ -1,6 +1,6 @@
 <template>
-  <div class="main">
-    <div class="contentTile">
+  <div class="main" :class="{autoWidth: props.onlySelect}">
+    <div class="contentTile" v-if="!props.onlySelect">
       <el-icon class="back" title="返回" @click="goBack"><ArrowLeft/></el-icon>
       <el-icon class="doc"><Document/></el-icon>
       <b>文档</b>
@@ -22,7 +22,7 @@
             <el-icon><FolderOpened v-if="node.expanded"/><Folder v-else/></el-icon>
             <span>{{ doZipFileName(node.label) }}</span>
           </div>
-          <el-icon class="node-dots" @click.stop="showNodeBtns"><MoreFilled /></el-icon>
+          <el-icon class="node-dots" @click.stop="showNodeBtns" v-if="!props.onlySelect"><MoreFilled /></el-icon>
         </div>
       </template>
     </el-tree>
@@ -37,9 +37,14 @@
   import { useRouter } from "vue-router";
 
   const router = useRouter()
-  const props = defineProps({})
+  const props = defineProps({
+    onlySelect: {
+      type: Boolean,
+      default: false
+    }
+  })
   const treeRef = ref(null)
-  const emit = defineEmits(['clickFileFromTree'])
+  const emit = defineEmits(['clickFileFromTree', 'selectTreeNode'])
 
   const defaultProps = {
     children: 'dirChildren',
@@ -64,7 +69,11 @@
 
   // 点击节点目录
   const nodeClick = (data: any, item: any, treenode: any, event: any) => {
-    emit('clickFileFromTree', data)
+    if(props.onlySelect) {
+      emit('selectTreeNode', data)
+    } else {
+      emit('clickFileFromTree', data)
+    }
   }
 
   // 文本展示工具函数
@@ -111,7 +120,10 @@
   defineExpose({ checkedNode, removeNode, appendNode })
 
   onMounted(async () => {
-
+    if(props.onlySelect) {
+      checkedNode(Bucket.DocModel.root)
+      emit('selectTreeNode', Bucket.DocModel.root)
+    }
   })
 </script>
 <style lang="scss">
@@ -125,6 +137,10 @@
     height: 100%;
     background-color: #fff;
     margin-right: 3px;
+
+    &.autoWidth {
+      width: 100%;
+    }
 
     .contentTile{
       display: flex;
