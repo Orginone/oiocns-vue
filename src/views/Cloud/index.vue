@@ -4,16 +4,14 @@
     <div class="cloudMainBox" @click="onContent">
       <div class="cloudBar" v-if="state.currentLay">
         <el-space size="default">
-          <el-icon title="后退" class="operateBtn" :class="{disabled: !state.currentLay.HasParent}" @click="goBackOneStep"><Back /></el-icon>
+          <el-icon title="后退" class="operateBtn" :class="{disabled: !state.currentLay.parent}" @click="goBackOneStep"><Back /></el-icon>
           <el-icon title="刷新" class="operateBtn" @click="refreshCurrent"><Refresh /></el-icon>
           <el-upload class="upload-demo"
-                     :action="`/orginone/anydata/Bucket/Upload?shareDomain=user&prefix=${state.currentLay.formatKey()}`"
                      multiple
                      ref="uploadRef"
                      :show-file-list="false"
-                     :headers="state.uploadHeaders"
-                     :on-success="handleSuccess"
                      :limit="3"
+                     :http-request="customUpload"
           >
             <el-icon title="上传文件" class="operateBtn"><UploadFilled /></el-icon>
           </el-upload>
@@ -28,7 +26,7 @@
                 :key="index"
                 @click="goBack(item, index)"
             >
-              {{ item.Name }}
+              {{ item.name }}
             </el-breadcrumb-item>
           </el-breadcrumb>
         </div>
@@ -42,7 +40,7 @@
                 header-cell-class-name="headerCell"
                 row-class-name="rowCommon"
                 :data="state.currentLay.children"
-                row-key="Key"
+                row-key="key"
                 :tree-props="{children: 'none'}"
                 @row-click="(row, column, event) => { clickFile(row) }"
             >
@@ -50,13 +48,25 @@
                 <template #default="scope">
                   <div class="fileName">
                     <file-icon :file-item="scope.row" :size="25"></file-icon>
-                    <span>{{scope.row.Name}}</span>
+                    <span>{{scope.row.name}}</span>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="size" label="大小"/>
-              <el-table-column prop="DateCreated" label="创建时间"/>
-              <el-table-column prop="DateModified" label="更新时间"/>
+              <el-table-column prop="target.size" label="大小">
+                <template #default="scope">
+                  <span>{{ scope.row.target.isDirectory ? '--' : formatFileSize(scope.row.target.size) }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="target.dateCreated" label="创建时间">
+                <template #default="scope">
+                  <span>{{ formatDateString(scope.row.target.dateCreated) }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="target.dateModified" label="更新时间">
+                <template #default="scope">
+                  <span>{{ formatDateString(scope.row.target.dateModified) }}</span>
+                </template>
+              </el-table-column>
               <el-table-column label="操作" width="80">
                 <template #default="scope">
                   <div class="operateBtn">
@@ -79,13 +89,13 @@
             <div
                 class="content-box"
                 v-for="(item, index) in state.currentLay.children"
-                :key="item.formatKey()"
-                :class="{checked: state.operateItem && state.operateItem.formatKey() === item.formatKey()}"
+                :key="item.key"
+                :class="{checked: state.operateItem && state.operateItem.key === item.key}"
                 @click.stop="clickFile(item)"
                 @contextmenu.prevent.stop="fileRightClick($event, item, index)"
             >
               <file-icon :file-item="item" :size="80"></file-icon>
-              <div class="elUpload-text" :title="item.Name">{{ doZipFileName(item.Name) }}</div>
+              <div class="elUpload-text" :title="item.name">{{ doZipFileName(item.name) }}</div>
             </div>
           </div>
         </template>
@@ -140,21 +150,16 @@
 <script lang="ts" setup>
   import NavList from './components/navList.vue'
   import Bucket from '@/module/cloud/bucket'
-  import Objectlay from '@/module/cloud/objectlay'
   import { onMounted, reactive, ref, nextTick, computed } from 'vue'
   import FileIcon from './components/fileIcon.vue'
-  import {ElMessageBox, ElMessage, UploadProps} from "element-plus";
+  import {ElMessageBox, ElMessage, UploadProps, UploadRequestOptions} from "element-plus";
   import {useUserStore} from "@store/user";
-  import { zipFileName } from '@/utils'
-  import ObjectLay from "@/module/cloud/objectlay";
+  import {formatBytes, formatDate, zipFileName} from '@/utils'
   const store = useUserStore()
 
   const navRef = ref(null)
   const state = reactive({
     currentLay: null,
-    uploadHeaders: {
-      Authorization: store.userToken
-    },
     breadcrumb: [],
     fileName: '',
     operateItem: null
@@ -190,36 +195,36 @@
   // 刷新当前目录
   const refreshCurrent = async () => {
     state.currentLay = null
-    await Bucket.GetContent(true)
-    state.currentLay = Bucket.Current
+    await Bucket.DocModel.current.loadChildren(true)
+    state.currentLay = Bucket.DocModel.current
   }
 
   // 打开文件
-  const clickFile = async (item: Objectlay) => {
-    if(!item.IsDirectory) { //TODO 文件后续提供预览
-      return false
-    }
-    await Bucket.OpenDirectory(item)
-    state.currentLay = Bucket.Current
+  const clickFile = async (item: any) => {
+    await Bucket.DocModel.open(item.key)
+    state.currentLay = Bucket.DocModel.current
     navRef.value.checkedNode(item)
   }
 
   // 返回上一层
   const goBackOneStep = async () => {
-    await clickFile(Bucket.Current.GetParent())
+    await clickFile(state.currentLay.parent)
   }
 
   // 返回到某一层
-  const goBack = async (item: Objectlay, index: number) => {
+  const goBack = async (item: any, index: number) => {
     await clickFile(item)
   }
-  
-  // 文件上传成功
-  const handleSuccess: UploadProps['onSuccess'] = async (response, uploadFile) => {
-    if(response.success) {
-      ElMessage.success('文件上传成功')
-      await refreshCurrent()
-    }
+
+  // 自定义文件上传
+  const customUpload = async (options: UploadRequestOptions) => {
+    const file = options.file as File
+    await Bucket.DocModel.upload(state.currentLay.key, file.name, file, async (res) => {
+      if(res.finished == res.size) {
+        ElMessage.success('上传成功')
+        await refreshCurrent()
+      }
+    })
   }
 
   // 打开创建文件夹对话框
@@ -231,7 +236,7 @@
   // 打开文件重命名对话框
   const openEditFileDialog = () => {
     editFileDialog.value = true
-    state.fileName = state.operateItem.Name
+    state.fileName = state.operateItem.name
   }
 
   // 确认创建文件夹
@@ -241,14 +246,10 @@
       return false
     }
     createFileDialog.value = false
-    await Bucket.Current.Create(state.fileName)
+    const addLay = await Bucket.DocModel.current.create(state.fileName)
+    ElMessage.success('创建成功')
     // 追加节点
-    const dataLay = new Objectlay({}, state.currentLay)
-    dataLay.Key = state.currentLay.Key != ObjectLay.rootKey ? `${state.currentLay.Key}/${state.fileName}` : state.fileName
-    dataLay.Name = state.fileName
-    dataLay.IsDirectory = true
-    dataLay.HasSubDirectories = false
-    navRef.value.appendNode(dataLay, state.currentLay)
+    navRef.value.appendNode(addLay, state.currentLay)
     await refreshCurrent()
   }
 
@@ -259,15 +260,15 @@
       return false
     }
     editFileDialog.value = false
-    await state.operateItem.Rename(state.fileName)
-    await refreshCurrent()
+    await state.operateItem.rename(state.fileName)
+    ElMessage.success('修改成功')
     onContent()
   }
 
   // 删除文件
   const deleteFile = async () => {
     ElMessageBox.confirm(
-        `确定要删除 "${state.operateItem.Name}" 吗？`,
+        `确定要删除 "${state.operateItem.name}" 吗？`,
         '温馨提示',
         {
           confirmButtonText: '确定',
@@ -276,17 +277,17 @@
         }
     ).then(async () => {
       // 同时删除节点
-      if(state.operateItem.IsDirectory) {
+      if(state.operateItem.target.isDirectory) {
         navRef.value.removeNode(state.operateItem)
       }
-      await state.operateItem.Delete()
+      await state.operateItem.delete()
       await refreshCurrent()
       onContent()
     }).catch(() => {})
   }
 
   // 右键展开文件操作栏
-  const fileRightClick = (event: any, item: Objectlay, index: number) => {
+  const fileRightClick = (event: any, item: any, index: number) => {
     state.operateItem = item
     showFileMenu.value = false
     menuLeft.value = event.pageX
@@ -307,8 +308,18 @@
     return zipFileName(name, 10, 2, 6)
   }
 
+  // 日期展示工具函数
+  const formatDateString = (date: string) => {
+    return formatDate(date, 'yyyy-MM-dd hh:mm:ss')
+  }
+
+  // 文件大小展示工具函数
+  const formatFileSize = (size: number) => {
+    return formatBytes(size, 2)
+  }
+
   onMounted(async () => {
-    await clickFile(Bucket.Current)
+    await clickFile(Bucket.DocModel.current)
     showType.value = Bucket.ListMode
   })
 </script>

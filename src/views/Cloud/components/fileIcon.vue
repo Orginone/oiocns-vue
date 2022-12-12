@@ -40,13 +40,10 @@
 
   onMounted(() => {
     let fileType = 'file'
-    if(props.fileItem.IsDirectory) {
+    if(props.fileItem.target.isDirectory) {
       fileType = 'folder'
     } else {
-      let index = props.fileItem.Name.lastIndexOf('.')
-      if (index > -1) {
-        fileType = props.fileItem.Name.substring(index + 1, props.fileItem.Name.length).toLowerCase()
-      }
+      fileType = props.fileItem.target.extension.replace('.', '')
     }
     iconSvg.value = fileIconMap[fileType] || fileIconMap['file']
   })

@@ -8,9 +8,8 @@
     <el-tree
       ref="treeRef"
       :props="defaultProps"
-      :node-key="'Key'"
+      :node-key="'key'"
       :expand-on-click-node="true"
-      :default-expanded-keys="[ObjectLay.rootKey]"
       :highlight-current="true"
       :lazy="true"
       :load="loadNode"
@@ -34,16 +33,9 @@
   import type Node from 'element-plus/es/components/tree/src/model/node'
   import { ref, onMounted, watch, reactive, nextTick } from 'vue'
   import Bucket from '@/module/cloud/bucket'
-  import ObjectLay from "@/module/cloud/objectlay";
   import { zipFileName } from '@/utils'
   import { useRouter } from "vue-router";
-  interface Tree {
-    label: string
-    children?: Tree[]
-  }
-  const state = reactive({
-    treeData: null
-  })
+
   const router = useRouter()
   const props = defineProps({})
   const treeRef = ref(null)
@@ -51,7 +43,7 @@
 
   const defaultProps = {
     children: 'dirChildren',
-    label: 'Name',
+    label: 'name',
     isLeaf: 'isLeaf'
   }
 
@@ -63,7 +55,7 @@
   // 动态加载子目录
   const loadNode = async (node: Node, resolve: (data: any[]) => void) => {
     if(node.level == 0) {
-      resolve([Bucket.Root])
+      resolve([Bucket.DocModel.root])
     } else {
       await Bucket.GetLeftTree(node.data)
       resolve(node.data.dirChildren)
@@ -71,7 +63,7 @@
   }
 
   // 点击节点目录
-  const nodeClick = (data: ObjectLay, item: any, treenode: any, event: any) => {
+  const nodeClick = (data: any, item: any, treenode: any, event: any) => {
     emit('clickFileFromTree', data)
   }
 
@@ -81,10 +73,10 @@
   }
 
   // 选中某个节点
-  const checkedNode = (data: ObjectLay) => {
+  const checkedNode = (data: any) => {
     nextTick(() => {
-      treeRef.value.setCurrentKey(data.Key, true)
-      const node = treeRef.value.getNode(data.Key)
+      treeRef.value.setCurrentKey(data.key, true)
+      const node = treeRef.value.getNode(data.key)
       if(node && !node.expanded) {
         node.expand()
       }
@@ -97,16 +89,17 @@
   }
 
   // 添加节点
-  const appendNode = (data: ObjectLay, parent: ObjectLay) => {
+  const appendNode = (data: any, parent: any) => {
     nextTick(() => {
-      treeRef.value.append(data, parent.Key)
+      data.isLeaf = true
+      treeRef.value.append(data, parent.key || parent)
     })
   }
 
   // 删除节点
-  const removeNode = (data: ObjectLay) => {
+  const removeNode = (data: any) => {
     nextTick(() => {
-      treeRef.value.remove(data.Key)
+      treeRef.value.remove(data.key)
     })
   }
 
@@ -175,6 +168,8 @@
       padding-right: 10px;
       justify-content: space-between;
       .node-label {
+        display: flex;
+        align-items: center;
         span {
           margin-left: 5px;
         }
