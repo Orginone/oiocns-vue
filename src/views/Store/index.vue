@@ -307,6 +307,7 @@ import opened from "./components/opened.vue";
 import appDetail from "./components/appDetail.vue";
 import ShareComponent from "./components/shareComponents.vue";
 import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
+import {StoreModel} from "@/ts/store";
 
 const goCreate = () => {
   router.push({ path: "/store/appRegister" });
@@ -445,6 +446,7 @@ const title = ref<string>("");
 onMounted(() => {
   // 获取列表
   getProductList();
+  console.log('StoreModel',StoreModel.getAppSubModel())
 });
 
 //列表

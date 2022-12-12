@@ -55,25 +55,11 @@
   {
       "label": "应用待办",
       "structure": true,
-      "isPenultimate": true,
+      "url":"/service/todo",
+      "isPenultimate": false,
       "id": 1,
       "children": [
-        {
-          "label": "公益仓",
-          "isPenultimate": true,
-          "id": "",
-          "children": []
-        },
-        {
-          "label": "办公OA",
-          "id": "1",
-          "children": []
-        },
-        {
-          "label": "资产管理",
-          "id": "2",
-          "children": []
-        }
+        
       ]
   }
 ]

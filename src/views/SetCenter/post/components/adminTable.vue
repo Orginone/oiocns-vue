@@ -14,7 +14,7 @@
           :tableHead="tableHead"
         >
           <template #slot-tabs>
-            <h4>单位资产管理员</h4>
+            <h4>关联角色</h4>
           </template>
           <template #buttons>
             <el-button class="btn-check" type="primary" link>
@@ -27,7 +27,7 @@
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item @click="showDiong">修改</el-dropdown-item>
-                  <el-dropdown-item @click="showDiong" style="color: #f67c80">删除</el-dropdown-item>
+                  <el-dropdown-item @click="showDiong" style="color: #f67c80">移除角色</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
