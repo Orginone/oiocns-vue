@@ -91,7 +91,7 @@
   
   import thingServices from '@/module/flow/thing'
 
-  import {WorkModel} from "@/ts/core";
+  import {WorkModel} from "@orginone/oiocns-ts";
 
   // 申请加入单位弹窗控制
   const searchDialog = ref<boolean>(false)
@@ -105,7 +105,7 @@
   // 加入单位方法
   const checksSearch = (val: any) => {
     if (val.value.length > 0) {
-      let arr: Array<arrList> = []
+      let arr: Array<any> = []
       val.value.forEach((element: any) => {
         arr.push(element.id)
       })
