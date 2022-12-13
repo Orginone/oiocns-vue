@@ -18,6 +18,7 @@
   import { storeToRefs } from 'pinia'
   import { ElMessage } from 'element-plus'
   import { setCenterStore } from '@/store/setting'
+  import { PersonalModel } from '@/ts/personal'
   const settingStore = setCenterStore()
 
   const store = useUserStore()
@@ -27,6 +28,10 @@
   const user = ref(null)
   // 加载单位
   const loadOrgTree = () => {
+    PersonalModel.Company.getDepartments(false).then(res => {
+      console.log('res: ', res);
+    })
+    
     $services.company.getCompanyTree({}).then((res: any) => {
       nodeClick(res.data)
     })
