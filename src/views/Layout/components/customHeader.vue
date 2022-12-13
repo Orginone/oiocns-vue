@@ -145,6 +145,7 @@
   import headImg from '@/components/headImg.vue'
   import { useDark } from '@vueuse/core'
   import { chat } from '@/module/chat/orgchat'
+  import { USERCTRL ,TargetType} from '@/ts/coreIndex'
 
   const isDark = useDark()
   const store = useUserStore()
@@ -167,7 +168,7 @@
 
   const state = reactive({
     mainMenus: [
-      { name: '待办', icon: 'icon-message', path: '/chat' },
+      { name: '沟通', icon: 'icon-message', path: '/chat' },
       { name: '办事', icon: 'icon-todo', path: '/service' },
       { name: '仓库', icon: 'icon-store', path: '/store' },
       { name: '设置', icon: 'icon-setting', path: '/setCenter' },  
@@ -231,14 +232,10 @@
     searchDialog.value = true
   }
   const joinSubmit = (arr: any) => {
-    $services.company
-      .applyJoin({
-        data: {
-          id: arr.join('')
-        }
-      })
-      .then((res: ResultType) => {
-        if (res.code == 200) {
+    USERCTRL.user
+      .applyJoinCompany(arr.join(''), TargetType.Company)
+      .then((isSuc:boolean) => {
+        if (isSuc) {
           searchDialog.value = false
           ElMessage({
             message: '申请成功',
@@ -284,6 +281,7 @@
   }
 
   const switchCreateCompany = (data: { id: string }) => {
+    USERCTRL.setCurSpace(data.id)
     $services.person
       .changeWorkspace({
         data: {
@@ -307,6 +305,7 @@
       })
   }
   const switchCompany = (data: { id: string }) => {
+    USERCTRL.setCurSpace(data.id)
     $services.person
       .changeWorkspace({
         data: {
