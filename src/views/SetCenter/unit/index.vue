@@ -18,7 +18,7 @@
   import { storeToRefs } from 'pinia'
   import { ElMessage } from 'element-plus'
   import { setCenterStore } from '@/store/setting'
-  import { PersonalModel } from '@/ts/personal'
+  import { PersonalModel } from '@/ts/core'
   const settingStore = setCenterStore()
 
   const store = useUserStore()
