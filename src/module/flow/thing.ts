@@ -184,6 +184,37 @@ class thingServices {
        label: '操作',
        name: 'option'
      }
+    ]
+  public companyHead :Array<Object> = [
+     {
+       prop: 'target.name',
+       label: '申请人',
+       name: 'target.name',
+       type: 'slot',
+     },
+     {
+       type: 'slot',
+       prop: 'content',
+       label: '内容',
+       name: 'content'
+     },
+     {
+       type: 'slot',
+       prop: 'status',
+       label: '状态',
+       name: 'status'
+     },
+     {
+       prop: 'createTime',
+       label: '发送时间',
+       name: 'createTime'
+     },
+     {
+       type: 'slot',
+       prop: 'option',
+       label: '操作',
+       name: 'option'
+     }
  ]
      /**
    * @description: 列表数据

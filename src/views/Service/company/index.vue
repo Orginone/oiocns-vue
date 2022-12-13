@@ -54,7 +54,7 @@
             <el-button
               v-if="flowActive == '1'"
               link
-              @click="joinRefse(scope.row)"
+              @click="joinReject(scope.row)"
               type="warning"
               >拒绝</el-button>
             <el-button
@@ -91,6 +91,8 @@
   
   import thingServices from '@/module/flow/thing'
 
+  import {WorkModel} from "@orginone/oiocns-ts";
+
   // 申请加入单位弹窗控制
   const searchDialog = ref<boolean>(false)
   const joinCompany = () => {
@@ -103,7 +105,7 @@
   // 加入单位方法
   const checksSearch = (val: any) => {
     if (val.value.length > 0) {
-      let arr: Array<arrList> = []
+      let arr: Array<any> = []
       val.value.forEach((element: any) => {
         arr.push(element.id)
       })
@@ -167,8 +169,14 @@
 
   // 查询我的审批
   var getAllApprovalList = async () => {
-    await ThingServices.getAllApproval('0')
-    tableData.value = ThingServices.approvalList.length && ThingServices.approvalList.filter(i => i?.team?.target?.typeName === '单位')
+    // await ThingServices.getAllApproval('0')
+    // tableData.value = ThingServices.approvalList.length && ThingServices.approvalList.filter(i => i?.team?.target?.typeName === '单位')
+    const res = await WorkModel.OrgTodo.getTodoList(true);
+    tableData.value = res.map(d => {
+      d.Data.pass = d.pass;
+      d.Data.reject = d.reject;
+      return d.Data;
+    });
   }
 
   // 查询我的申请
@@ -197,6 +205,15 @@
     // }else if(key =='4'){
     //   tableData.value = ThingServices.copyList
     // }
+  }
+
+  async function joinSuccess(row: { pass: (status: any) => Promise<any> }) {
+    await row.pass(114);
+    ElMessage.success('通过成功')
+  }
+  async function joinReject(row: { reject: (status: any) => Promise<any> }) {
+    await row.reject(514);
+    ElMessage.success('拒绝成功')
   }
 
   const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
