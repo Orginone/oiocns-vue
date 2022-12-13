@@ -1,5 +1,5 @@
 <template>
-  <div class="file-icon">
+  <div class="file-icon" :style="{width: props.size + 'px', height: props.size + 'px'}">
     <img :src="iconSvg">
   </div>
 </template>
@@ -12,9 +12,13 @@
   import file_type_image from '@/icons/svg/file_type_image.svg'
   import file_type_excel from '@/icons/svg/file_type_excel.svg'
   import file_type_word from '@/icons/svg/file_type_word.svg'
+  import file_type_html from '@/icons/svg/file_type_html.svg'
   const props = defineProps({
     fileItem: {
       type: Object
+    },
+    size: {
+      type: Number
     }
   })
   const iconSvg = ref('')
@@ -31,25 +35,21 @@
     'csv': file_type_excel,
     'doc': file_type_word,
     'docx': file_type_word,
+    'html': file_type_html
   }
 
   onMounted(() => {
     let fileType = 'file'
-    if(props.fileItem.IsDirectory) {
+    if(props.fileItem.target.isDirectory) {
       fileType = 'folder'
     } else {
-      let index = props.fileItem.Name.lastIndexOf('.')
-      if (index > -1) {
-        fileType = props.fileItem.Name.substring(index + 1, props.fileItem.Name.length).toLowerCase()
-      }
+      fileType = props.fileItem.target.extension.replace('.', '')
     }
     iconSvg.value = fileIconMap[fileType] || fileIconMap['file']
   })
 </script>
 <style lang="scss" scoped>
 .file-icon {
-  width: 80px;
-  height: 80px;
   img {
     width: 100%;
     height: 100%;
