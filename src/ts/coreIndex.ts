@@ -1,3 +1,5 @@
-import {WorkModel,PersonalModel} from "@orginone/oiocns-ts"
+import {WorkModel} from "@orginone/oiocns-ts"
 
-export {WorkModel,PersonalModel}
+import USERCTRL from '@/ts/controller/setting/userCtrl'
+
+export {WorkModel,USERCTRL}
