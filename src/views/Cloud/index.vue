@@ -171,7 +171,7 @@
 
 <script lang="ts" setup>
   import NavList from './components/navList.vue'
-  import Bucket from '@/module/cloud/bucket'
+  import Cloud from '@/ts/cloud'
   import { onMounted, reactive, ref, nextTick, computed } from 'vue'
   import FileIcon from './components/fileIcon.vue'
   import {ElMessageBox, ElMessage, UploadProps, UploadRequestOptions} from "element-plus";
@@ -206,7 +206,7 @@
   //切换显示方式
   const checkSwitchType = (type: number) => {
     showType.value = type
-    Bucket.ListMode = type
+    Cloud.ListMode = type
   }
 
   //面包屑递归
@@ -220,14 +220,14 @@
   // 刷新当前目录
   const refreshCurrent = async () => {
     state.currentLay = null
-    await Bucket.DocModel.current.loadChildren(true)
-    state.currentLay = Bucket.DocModel.current
+    await Cloud.DocModel.current.loadChildren(true)
+    state.currentLay = Cloud.DocModel.current
   }
 
   // 打开文件
   const clickFile = async (item: any) => {
-    await Bucket.DocModel.open(item.key)
-    state.currentLay = Bucket.DocModel.current
+    await Cloud.DocModel.open(item.key)
+    state.currentLay = Cloud.DocModel.current
     navRef.value.checkedNode(item)
   }
 
@@ -249,7 +249,7 @@
   // 自定义文件上传
   const customUpload = async (options: UploadRequestOptions) => {
     const file = options.file as File
-    await Bucket.DocModel.upload(state.currentLay.key, file.name, file, async (res) => {
+    await Cloud.DocModel.upload(state.currentLay.key, file.name, file, async (res) => {
       if(res.finished == res.size) {
         ElMessage.success('上传成功')
         await refreshCurrent()
@@ -286,7 +286,7 @@
       return false
     }
     createFileDialog.value = false
-    const addLay = await Bucket.DocModel.current.create(state.fileName)
+    const addLay = await Cloud.DocModel.current.create(state.fileName)
     ElMessage.success('创建成功')
     // 追加节点
     navRef.value.appendNode(addLay, state.currentLay)
@@ -380,8 +380,8 @@
   }
 
   onMounted(async () => {
-    await clickFile(Bucket.DocModel.current)
-    showType.value = Bucket.ListMode
+    await clickFile(Cloud.DocModel.current)
+    showType.value = Cloud.ListMode
   })
 </script>
 <style lang="scss">
