@@ -91,7 +91,7 @@
   
   import thingServices from '@/module/flow/thing'
 
-  import {WorkModel} from "@orginone/oiocns-ts";
+  import {WorkModel} from "@/oiocns-ts";
 
   // 申请加入单位弹窗控制
   const searchDialog = ref<boolean>(false)
