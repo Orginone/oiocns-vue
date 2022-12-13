@@ -204,6 +204,17 @@ function zipFileName(name: string, limit: number, start: number, end: number) {
 }
 
 /**
+ * 文件大小单位转换
+ * @param a 容量大小，单位字节
+ * @param b 保留小数点后几位
+ */
+function formatBytes(a: number, b: number) {
+  if(0 == a) return '0 B'
+  const c = 1024, d = b || 2, e = ['B', 'KB', 'MB', 'GB', 'TB'], f = Math.floor(Math.log(a) / Math.log(c))
+  return parseFloat((a / Math.pow(c, f)).toFixed(d)) + ' ' + e[f]
+}
+
+/**
  * 过滤对象中为空的属性
  *
  * @param obj
@@ -226,4 +237,4 @@ function filterEmptyPropObj(obj: any) {
   return obj
 }
 
-export { getQueryString, formatDate, formatTimeAgo, isEmoji, isSpecialChar, zipFileName, filterEmptyPropObj }
+export { getQueryString, formatDate, formatTimeAgo, isEmoji, isSpecialChar, zipFileName, formatBytes, filterEmptyPropObj }

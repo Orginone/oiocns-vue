@@ -13,6 +13,8 @@
         >
           <template #buttons>
             <div style="display: flex;align-items: center">
+              <el-button v-if="allowEdit() && props.selectItem?.typeName == '集团'" class="btn-check" type="primary" link @click="handleShare()">分享集团</el-button>
+              <el-divider v-if="props.selectItem?.typeName == '集团'" direction="vertical"/>
               <el-button class="btn-check" type="primary" link>岗位设置</el-button>
               <el-divider direction="vertical"/>
               <el-button class="btn-check" v-if="allowEdit() && props.selectItem?.typeName == '集团'" small link type="primary" @click="pullCompanysDialog = true">添加单位</el-button>
@@ -41,6 +43,19 @@
     @closeDialog="closeDialog" @checksSearch="checksSearch" />
   <searchCompany v-if="assignDialog" :checkList="companies" :id="rootGroup.id" :selectLimit="0" :serachType="6"
     @closeDialog="hideAssignDialog" @checksSearch="checksCompanySearch" />
+  <el-dialog customClass="QrDialog" v-model="dialogVisible" title="邀请加入集团" width="30%">
+    <p>方式一：分享二维码，邀请加入集团</p>
+    <div class="QrDiv" :key="props.selectItem?.id">
+      <QrCodeCustom :qrText="props.selectItem?.label ?? props.selectItem?.name" />
+    </div>
+    <p>方式二：分享到群组，邀请加入集团</p>
+    <div class="share-link">分享到群组...</div>
+    <template #footer>
+      <span>
+        <el-button type="primary" @click="dialogVisible = false">确认</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
 import $services from '@/services'
@@ -51,6 +66,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import searchCompany from '@/components/searchs/index.vue'
 import authority from '@/utils/authority'
 import GroupServices from '@/module/relation/group'
+import QrCodeCustom from '@/components/qrCode/index.vue'
 const groupServices = new GroupServices()
 const props = defineProps<{
   selectItem: any // 节点数据
@@ -237,6 +253,12 @@ onMounted(() => {
   getCompanies()
 })
 
+// 分享集团
+const dialogVisible = ref(false)
+const handleShare = () => {
+  dialogVisible.value = true
+}
+
 watch(props, () => {
   pageStore.currentPage = 1;
   getCompanies()
@@ -261,6 +283,15 @@ watch(props.tabHeight, () => {
 .el-dropdown-link:hover{
   background:#1642cb;
   color: #fff;
+}
+.QrDialog {
+  .txt {
+    margin: 0 0 10px 15px;
+    text-align: center;
+  }
+  .QrDiv {
+    text-align: center;
+  }
 }
 
 .card {
