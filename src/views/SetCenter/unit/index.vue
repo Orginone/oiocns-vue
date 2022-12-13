@@ -28,9 +28,11 @@
   const user = ref(null)
   // 加载单位
   const loadOrgTree = () => {
-    PersonalModel.Company.getDepartments(false).then(res => {
-      console.log('res: ', res);
-    })
+    // console.log(PersonalModel.Company);
+    
+    // PersonalModel.Company.getDepartments().then(res => {
+    //   console.log('res: ', res);
+    // })
     
     $services.company.getCompanyTree({}).then((res: any) => {
       nodeClick(res.data)
