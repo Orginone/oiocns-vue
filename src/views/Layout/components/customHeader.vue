@@ -281,51 +281,53 @@
   }
 
   const switchCreateCompany = (data: { id: string }) => {
+    btnType.value = false
     USERCTRL.setCurSpace(data.id)
-    $services.person
-      .changeWorkspace({
-        data: {
-          id: data.id
-        }
-      })
-      .then(async (res: ResultType) => {
-        if (res.code == 200) {
-          sessionStorage.setItem('TOKEN', res.data.accessToken)
-          await store.getQueryInfo(res.data.accessToken)
-          current.value = 0
-          store.createUnit(res.data).then(() => {
-            location.href = '/'
-          })
-        } else {
-          ElMessage({
-            message: res.msg,
-            type: 'warning'
-          })
-        }
-      })
+    // $services.person
+    //   .changeWorkspace({
+    //     data: {
+    //       id: data.id
+    //     }
+    //   })
+    //   .then(async (res: ResultType) => {
+    //     if (res.code == 200) {
+    //       sessionStorage.setItem('TOKEN', res.data.accessToken)
+    //       await store.getQueryInfo(res.data.accessToken)
+    //       current.value = 0
+    //       store.createUnit(res.data).then(() => {
+    //         location.href = '/'
+    //       })
+    //     } else {
+    //       ElMessage({
+    //         message: res.msg,
+    //         type: 'warning'
+    //       })
+    //     }
+    //   })
   }
   const switchCompany = (data: { id: string }) => {
+    handleClose();
     USERCTRL.setCurSpace(data.id)
-    $services.person
-      .changeWorkspace({
-        data: {
-          id: data.id
-        }
-      })
-      .then(async (res: ResultType) => {
-        if (res.code == 200) {
-          sessionStorage.setItem('TOKEN', res.data.accessToken)
-          await store.getQueryInfo(res.data.accessToken)
-          store.getWorkspaceData(res.data.workspaceId, true).then(() => {
-            location.href = '/'
-          })
-        } else {
-          ElMessage({
-            message: res.msg,
-            type: 'warning'
-          })
-        }
-      })
+    // $services.person
+    //   .changeWorkspace({
+    //     data: {
+    //       id: data.id
+    //     }
+    //   })
+    //   .then(async (res: ResultType) => {
+    //     if (res.code == 200) {
+    //       sessionStorage.setItem('TOKEN', res.data.accessToken)
+    //       await store.getQueryInfo(res.data.accessToken)
+    //       store.getWorkspaceData(res.data.workspaceId, true).then(() => {
+    //         location.href = '/'
+    //       })
+    //     } else {
+    //       ElMessage({
+    //         message: res.msg,
+    //         type: 'warning'
+    //       })
+    //     }
+    //   })
   }
   const toWork = () => {
     router.push('/workHome')
