@@ -1,3 +1,3 @@
-import {WorkModel} from "@orginone/oiocns-ts"
+import {WorkModel,PersonalModel} from "@orginone/oiocns-ts"
 
-export {WorkModel}
+export {WorkModel,PersonalModel}
