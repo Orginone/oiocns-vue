@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import $services from '@/services'
 import { ElMessage } from 'element-plus'
+import {PersonalModel} from '@/ts/core'
 import { type } from 'os'
 
 type QueryInfoType = {
@@ -53,12 +54,8 @@ export const useUserStore = defineStore({
   actions: {
     async updateUserInfo(data: { username: string; password: string }) {
       // 获取用户登录信息
-      const res: ResultType = await $services.person.login({
-        data: {
-          account: data.username,
-          password: data.password
-        }
-      })
+      const res: ResultType = await PersonalModel.login(data.username, data.password)
+      debugger;
       if (res.success) {
         this.userInfo = res.data
         this.userToken = res.data.accessToken
@@ -67,7 +64,7 @@ export const useUserStore = defineStore({
           name: res.data.workspaceName
         }
         // this.userCompanys = [this.workspaceData]
-        await this.getQueryInfo(this.userToken)
+        // await this.getQueryInfo(this.userToken)
         return this.workspaceData
       } else {
         ElMessage({

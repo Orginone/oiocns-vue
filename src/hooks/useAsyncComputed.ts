@@ -16,7 +16,7 @@ export function useAsyncComputed<T extends {}, P extends keyof T, P1 extends str
     voKey: P1,
     asyncGetter: (v: T[P]) => Promise<V>
 ) {
-    const resultRef: Ref<T & { P1: V }> = objRef as any;
+    const resultRef: Ref<T & { [K in P1]: V }> = objRef as any;
 
     const fieldRef: Ref<T[P]> = toRef(objRef.value, key);
     const voRef = computedAsync(
