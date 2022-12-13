@@ -7,6 +7,7 @@
       ></appDetail>
       <opened></opened>
       <div class="table">
+        {{state.ownProductList}}
         <DiyTable
           :style="{ width: '100%' }"
           ref="diyTable"
@@ -158,7 +159,6 @@
                     <p>
                       <span
                         >{{ item.name }}
-                        <!-- <el-tag class="ml-2" type="success">免费</el-tag> -->
                       </span>
                         <el-dropdown>
                           <span class="el-dropdown-link drop-list"> ··· </span>
@@ -307,8 +307,9 @@ import opened from "./components/opened.vue";
 import appDetail from "./components/appDetail.vue";
 import ShareComponent from "./components/shareComponents.vue";
 import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
-import {StoreModel} from "@/ts/store";
-
+import {MarketModel} from "@/ts/market";
+// import {StoreModel} from "@/ts/store";
+// import {PersonalModel} from '@/ts/personal'
 const goCreate = () => {
   router.push({ path: "/store/appRegister" });
 };
@@ -383,6 +384,7 @@ const options = ref<any>({
     hasChildren: "hasChildren",
   },
 });
+const lista = ref<any>([])
 const state: StateType = reactive({
   ownProductList: [],
   ownTotal: 0,
@@ -446,7 +448,10 @@ const title = ref<string>("");
 onMounted(() => {
   // 获取列表
   getProductList();
-  console.log('StoreModel',StoreModel.getAppSubModel())
+    // PersonalModel.user.getJoinedCompanys(false).then((res)=>{
+    //   console.log('aa',res)
+    // });
+    
 });
 
 //列表
@@ -468,30 +473,36 @@ const handleUpdate = (page: any) => {
 };
 // 获取我的应用列表
 const getProductList = () => {
-  appstore.getProductList(pageStore, searchText.value,(res:any)=>{
-    state[`ownProductList`] = [...res.result]
-    let resData = JSON.parse(JSON.stringify(state[`ownProductList`]))
-    for (let product of resData) {
-        appstore.getResource(product.id,(res:any)=>{
-          let flowArr: any = [];
-          var arr = JSON.parse(JSON.stringify(res.result))
-          arr.filter((element: any) => element.flows && element.flows.length > 0)
-            .forEach((element: any) => {
-              let arr = JSON.parse(element.flows);
-              let itemArr: any = [];
-              arr.forEach((el: any) => {
-                el.appId = product.id;
-                el.appName = product.name;
-                el.sourceId = element.id;
-                itemArr.push(el);
-              });
-              flowArr.push(...itemArr);
-            });
-          product.resourcesList = flowArr;
-          pageStore.total = res.total;
-          diyTable.value.state.page.total = res.total
-        });
-    }
+  // appstore.getProductList(pageStore, searchText.value,(res:any)=>{
+  //   state[`ownProductList`] = [...res.result]
+  //   let resData = JSON.parse(JSON.stringify(state[`ownProductList`]))
+  //   for (let product of resData) {
+  //       appstore.getResource(product.id,(res:any)=>{
+  //         let flowArr: any = [];
+  //         var arr = JSON.parse(JSON.stringify(res.result))
+  //         arr.filter((element: any) => element.flows && element.flows.length > 0)
+  //           .forEach((element: any) => {
+  //             let arr = JSON.parse(element.flows);
+  //             let itemArr: any = [];
+  //             arr.forEach((el: any) => {
+  //               el.appId = product.id;
+  //               el.appName = product.name;
+  //               el.sourceId = element.id;
+  //               itemArr.push(el);
+  //             });
+  //             flowArr.push(...itemArr);
+  //           });
+  //         product.resourcesList = flowArr;
+  //         pageStore.total = res.total;
+  //         diyTable.value.state.page.total = res.total
+  //       });
+  //   }
+  // })
+  MarketModel.Market.getOwnProducts(false).then((res)=>{
+   
+    state[`ownProductList`] = res;
+    console.log('state',state.ownProductList)
+
   })
 };
 
