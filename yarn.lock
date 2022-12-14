@@ -349,9 +349,9 @@
     "fastq" "^1.6.0"
 
 "@orginone/oiocns-ts@^1.1.0":
-  "integrity" "sha512-jNnw4ctRJWAnuZ/Dcrt4wWuJGenIGC3KDJ6M0PK1q4hNP6ip6RY+QJYyuYWRXpurZj4bUz+RFMpkckgtiyVJqg=="
-  "resolved" "https://registry.npmmirror.com/@orginone/oiocns-ts/-/oiocns-ts-1.1.2.tgz"
-  "version" "1.1.2"
+  "integrity" "sha512-uJqSYwl/syyEylQC0KsPqZ47WIzn/d0578P/fbuu9qyGWULdnQ/iAkOf/cY5n+wY823uzF7P5q8AJp1Eo3TcDA=="
+  "resolved" "https://registry.npmmirror.com/@orginone/oiocns-ts/-/oiocns-ts-1.1.3.tgz"
+  "version" "1.1.3"
 
 "@popperjs/core@npm:@sxzz/popperjs-es@^2.11.7":
   "integrity" "sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ=="
