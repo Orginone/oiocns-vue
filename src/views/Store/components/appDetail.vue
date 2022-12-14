@@ -53,7 +53,6 @@
   ])
 
   const closeDialog = (type:boolean)=>{
-    console.log('aaa')
     emit('closeDialog', type)
   }
 

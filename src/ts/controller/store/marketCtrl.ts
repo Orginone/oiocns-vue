@@ -1,8 +1,8 @@
-import { IMTarget, emitter, DomainTypes } from '@/ts/core';
+import { IMTarget, emitter, DomainTypes } from '@/ts/core/index';
 import { kernel } from '@/ts/base';
 import { myColumns, marketColumns } from './config';
 import { JOIN_SHOPING_CAR, USER_MANAGEMENT } from '@/constants/const';
-import { message } from 'antd';
+// import { message } from 'antd';
 import { Emitter } from '@/ts/base/common';
 import userCtrl from '../setting/userCtrl';
 
@@ -102,13 +102,13 @@ class MarketController extends Emitter {
   public joinApply = async (data: any) => {
     if (this._shopinglist.length === 0) {
       this._shopinglist.push(data);
-      message.success('已加入购物车');
+      // message.success('已加入购物车');
     } else if (this._shopinglist.some((item) => item.id === data?.id)) {
-      message.warning('您已添加该商品，请勿重复添加');
+      // message.warning('您已添加该商品，请勿重复添加');
       return;
     } else {
       this._shopinglist.push(data);
-      message.success('已加入购物车');
+      // message.success('已加入购物车');
     }
     this.cacheJoinOrDeleShopingCar(this._shopinglist);
   };
@@ -124,7 +124,7 @@ class MarketController extends Emitter {
         (item) => !data.some((ele: any) => ele.id === item.id),
       );
       this._shopinglist = arrs;
-      message.success('移出成功');
+      // message.success('移出成功');
       this.cacheJoinOrDeleShopingCar(this._shopinglist);
     }
   };
@@ -152,7 +152,7 @@ class MarketController extends Emitter {
       );
       this._shopinglist = arrs;
       this.cacheJoinOrDeleShopingCar(this._shopinglist);
-      message.success('下单成功');
+      // message.success('下单成功');
     }
   };
 
