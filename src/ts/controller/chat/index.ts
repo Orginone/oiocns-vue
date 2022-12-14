@@ -1,6 +1,6 @@
 import { kernel } from '@/ts/base';
 import { XImMsg } from '@/ts/base/schema';
-import { emitter, IChat, IChatGroup, LoadChats } from '@/ts/core';
+import { emitter, IChat, IChatGroup, LoadChats } from '@/ts/core/index';
 import userCtrl from '../setting/userCtrl';
 import { DomainTypes, TargetType } from '@/ts/core/enum';
 import { Emitter } from '@/ts/base/common';
