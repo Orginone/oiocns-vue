@@ -156,16 +156,16 @@
   const modelIsShow = ref(true)
   const showSearch = ref(false)
   const btnType = ref(false)
-  const { queryInfo } = storeToRefs(store)
-  const workspaceData = store.workspaceData
+  const { queryInfo,workspaceData } = storeToRefs(store)
+  // const workspaceData = store.workspaceData
   const dropdown = ref()
   const workHead = () => {
-    if (workspaceData?.name == '个人空间') {
+    if (workspaceData.value?.name == '个人空间') {
       return '我'
     }
-    return workspaceData?.name[0] || ''
+    return workspaceData.value?.name[0] || ''
   }
-  const isUnitWork = ref<boolean>(workspaceData.id != queryInfo.value.id)
+  const isUnitWork = ref<boolean>(workspaceData.value.id != queryInfo.value.id)
 
   const state = reactive({
     mainMenus: [
@@ -193,7 +193,7 @@
     let currentPage = 0
     current.value = current.value + 1
     currentPage = (current.value - 1) * 10 + 1
-    await store.getCompanyList(currentPage, workspaceData.id, true)
+    await store.getCompanyList(currentPage, workspaceData.value.id, true)
   }
   
   const dialogShow = reactive([
@@ -223,7 +223,6 @@
       val.value.forEach((element: any) => {
         arr.push(element.id)
       })
-      console.log('val', arr)
       joinSubmit(arr)
     } else {
       searchDialog.value = false
@@ -249,9 +248,8 @@
   const onClickUnit = async () => {
     btnType.value = !btnType.value
     modelIsShow.value = true;
-    debugger;
     if (!store.userCompanys || store.userCompanys.length == 0) {
-      await store.getCompanyList(0, workspaceData.id, false)
+      await store.getCompanyList(0, workspaceData.value.id, false)
     }
   }
   const handleClose = () => {
@@ -259,7 +257,6 @@
   }
   const handleOpen = () => {
     btnType.value = true
-    console.log("btnType=>",btnType.value);
   }
   const createCompany = () => {
     dialogShow.map((el) => {
@@ -280,14 +277,14 @@
   const onClickDrop = async () => {
     if (store.userCompanys.length == 0) {
       current.value = 0
-      await store.getCompanyList(current.value, workspaceData.id, false)
+      await store.getCompanyList(current.value, workspaceData.value.id, false)
     }
   }
 
   const switchCreateCompany = (data: { id: string }) => {
     btnType.value = false
     modelIsShow.value = false
-    USERCTRL.setCurSpace(data.id)
+    store.setCurSpace(data.id)
     // $services.person
     //   .changeWorkspace({
     //     data: {
@@ -313,7 +310,7 @@
   const switchCompany = (data: { id: string }) => {
     handleClose();
     modelIsShow.value = false
-    USERCTRL.setCurSpace(data.id)
+    store.setCurSpace(data.id)
     // $services.person
     //   .changeWorkspace({
     //     data: {
