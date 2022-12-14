@@ -43,6 +43,7 @@
           </div>
         </template>
         <template #buttons>
+          <el-button class="btn-check" type="primary" link @click="handleShare()">分享部门</el-button>
           <el-button v-if="checkList.length" @click="setPost('', 1)" class="btn-check" type="primary" link>岗位设置</el-button>
           <el-button class="btn-check" type="primary" link @click="showAssignDialog">添加成员</el-button>
           <el-button class="btn-check" type="primary" link @click="viewApplication">查看申请</el-button>
@@ -215,6 +216,19 @@
       </span>
     </template>
   </el-dialog>
+  <el-dialog customClass="QrDialog" v-model="dialogVisible" title="邀请加入部门" width="30%">
+    <p>方式一：分享二维码，邀请加入部门</p>
+    <div class="QrDiv" :key="store?.currentSelectItme?.id">
+      <QrCodeCustom :qrText="store?.currentSelectItme?.label ?? ''" />
+    </div>
+    <p>方式二：分享到群组，邀请加入部门</p>
+    <div class="share-link">分享到群组...</div>
+    <template #footer>
+      <span>
+        <el-button type="primary" @click="dialogVisible = false">确认</el-button>
+      </span>
+    </template>
+  </el-dialog>
   <AssignedPerson v-if="assignDialog" :checkList='tableData' :id="company.id" :selectLimit='0' :serachType='5'
     @closeDialog="hideAssignDialog" @checksSearch='checksCompanySearch' />
 </template>
@@ -232,6 +246,7 @@ import DepartmentServices from '@/module/relation/department'
 const departmentServices = new DepartmentServices()
 import identityServices from '@/module/relation/identity'
 const IdentityServices = new identityServices()
+import QrCodeCustom from '@/components/qrCode/index.vue'
 const cascaderProps = {
   checkStrictly: true,
   value: 'id',
@@ -313,6 +328,12 @@ const createDept = () => {
       })
     }
   })
+}
+
+// 分享集团
+const dialogVisible = ref(false)
+const handleShare = () => {
+  dialogVisible.value = true
 }
 
 // 岗位设置
@@ -634,6 +655,15 @@ onBeforeMount(()=> {
 })
 </script>
 <style lang="scss" scoped>
+  .QrDialog {
+    .txt {
+      margin: 0 0 10px 15px;
+      text-align: center;
+    }
+    .QrDiv {
+      text-align: center;
+    }
+  }
   .el-dropdown-link{
     padding: 2px 10px;
     cursor: pointer;

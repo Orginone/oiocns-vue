@@ -1,4 +1,4 @@
 
-import {StoreModel} from "@orginone/oiocns-ts"
+import {StoreModel} from "@/oiocns-ts"
 
 export {StoreModel}

@@ -97,7 +97,7 @@
     </div>
     <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog', false)"/>
     <addShop :addDialog="dialogType.addDialog" @checksSearch="checksSearch" @closeDialog="closeDialog('addDialog', false)"/>
-    <appInfo :infoDialog="dialogType.infoDialog" :infoDetail="infoDetail.info" @closeDialog="closeDialog('infoDialog', false)"></appInfo>
+    <!-- <appInfo :infoDialog="dialogType.infoDialog" :infoDetail="infoDetail.info" @closeDialog="closeDialog('infoDialog', false)"></appInfo> -->
   </div>
   
 </template>
@@ -113,6 +113,9 @@
   import addShop from "../components/addShop.vue";
   import marketServices from "@/module/store/market"
   import appInfo from "./components/appInfo.vue"
+  import marketCtrl from '@/ts/controller/store/marketCtrl';
+  // import {MarketModel} from "@/ts/market";
+
   const diyTable = ref(null)
   const valuee = ref<any>('');
   const instance = getCurrentInstance();
@@ -228,7 +231,7 @@
   const handleUpdate = (page: any) => {
     pageStore.currentPage = page.current
     pageStore.pageSize = page.pageSize
-    getAppList()
+    // getAppList()
   }
   //立即购买回调
 const buyThings = (item:any) => {
@@ -265,7 +268,6 @@ const buyThings = (item:any) => {
   //加入购物车
   const joinShopCar = async (id: any) => {
     await appstore.staging(id)
-    getAppList()
   }
   // 加入商店
   const checksSearch = (val:any)=>{
@@ -305,23 +307,19 @@ const buyThings = (item:any) => {
   const searchVal = ref<string>('') // 搜索关键词
 
   // 获取应用列表
-  const getAppList: (goFirst?: boolean) => void = async (goFirst = true) => {
-    if(!softShareInfo.value.id){
-      return false;
-    }
-    const { result = [], total = 0 } = await appstore.merchandise(
-      softShareInfo.value.id,
-      pageStore,
-      searchVal.value
-    )
-    state.myAppList = result || []
-    pageStore.total = total
+  const getAppList = (id:string) =>{
+    const markets = marketCtrl.Market.joinedMarkets;
+    // MarketModel.Market.getMerchandise({"id":"358266491960954880","page":{"filter":"","limit":10,"offset":0}}).then((res)=>{
+    //   console.log('resss',res)
+    // })
   }
 
   // 获取共享仓库信息
   const getMarketInfo = async () => {
-    softShareInfo.value = await appstore.getMarketInfo()
-    getAppList()
+    // softShareInfo.value = await appstore.getMarketInfo()
+    // MarketModel.Market.getJoinMarkets().then((res)=>{
+    //   getAppList(res[0].market.id)
+    // })
   }
 
   const GoPage = (path: string) => {
@@ -345,11 +343,10 @@ const buyThings = (item:any) => {
   }
   watch(() => router.currentRoute.value.fullPath, () => {
     if(router.currentRoute.value.query?.id){
-      console.log('aaa')
       getShopData();
     }else{
-      console.log('bbb')
-      getAppList()
+      let id = router.currentRoute.value.query.id as string
+      getAppList(id) 
     }
   })
   instance?.proxy?.$Bus.on("clickBus", (num) => {
