@@ -3,6 +3,7 @@ import $services from '@/services'
 import { ElMessage } from 'element-plus'
 import {USERCTRL} from '@/ts/coreIndex'
 import { type } from 'os'
+import { ICompany } from '@/ts/core/target/itarget';
 
 type QueryInfoType = {
   id: string
@@ -89,22 +90,18 @@ export const useUserStore = defineStore({
       }
     },
     async getCompanyList(current: number, workspaceId: string, lazyLoad: boolean) {
-      await $services.company
-        .getJoinedCompany({
-          data: {
-            offset: current,
-            limit: 100
-          }
-        })
-        .then((res: ResultType) => {
+      await USERCTRL.user
+      .getJoinedCompanys()
+        .then((res: ICompany[]) => {
           console.log(res)
-          if (res.code == 200) {
+          // if (res == 200) {
             // if (lazyLoad) {
             //   this.userCompanys = this.userCompanys.concat(res.data.result ? res.data.result : [])
             // } else {
             //   this.userCompanys = res.data.result ? res.data.result : []
             // }
-            if (!res.data.result) {
+            debugger;
+            if (!res) {
               console.log(workspaceId, this.userInfo)
               this.getWorkspaceData(workspaceId, false)
               return
@@ -115,7 +112,7 @@ export const useUserStore = defineStore({
                 name: this.userInfo.workspaceName,
                 type: 1
               },
-              ...(res.data.result || [])
+              ...(res || [])
             ]
             this.copyCompanys = JSON.parse(JSON.stringify(this.userCompanys))
             if (workspaceId) {
@@ -123,12 +120,12 @@ export const useUserStore = defineStore({
             } else {
               this.getWorkspaceData(this.userInfo.workspaceId, false)
             }
-          } else {
-            ElMessage({
-              message: res.msg,
-              type: 'warning'
-            })
-          }
+          // } else {
+          //   ElMessage({
+          //     message: res.msg,
+          //     type: 'warning'
+          //   })
+          // }
         })
     },
 

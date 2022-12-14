@@ -21,7 +21,7 @@
           </div>
         </div>
 
-        <div @mouseover="handleOpen()" class="select-drop" :style="getDropMenuStyle">
+        <div v-if="modelIsShow" @mouseover="handleOpen()" class="select-drop" :style="getDropMenuStyle">
           <div class="select-box" v-infinite-scroll="load" infinite-scroll-immediate>
             <div
               class="seletc-drop__box"
@@ -153,6 +153,7 @@
   const router = useRouter()
   let current = ref(1)
   const visible = ref(false)
+  const modelIsShow = ref(true)
   const showSearch = ref(false)
   const btnType = ref(false)
   const { queryInfo } = storeToRefs(store)
@@ -247,6 +248,8 @@
 
   const onClickUnit = async () => {
     btnType.value = !btnType.value
+    modelIsShow.value = true;
+    debugger;
     if (!store.userCompanys || store.userCompanys.length == 0) {
       await store.getCompanyList(0, workspaceData.id, false)
     }
@@ -256,6 +259,7 @@
   }
   const handleOpen = () => {
     btnType.value = true
+    console.log("btnType=>",btnType.value);
   }
   const createCompany = () => {
     dialogShow.map((el) => {
@@ -282,6 +286,7 @@
 
   const switchCreateCompany = (data: { id: string }) => {
     btnType.value = false
+    modelIsShow.value = false
     USERCTRL.setCurSpace(data.id)
     // $services.person
     //   .changeWorkspace({
@@ -307,6 +312,7 @@
   }
   const switchCompany = (data: { id: string }) => {
     handleClose();
+    modelIsShow.value = false
     USERCTRL.setCurSpace(data.id)
     // $services.person
     //   .changeWorkspace({
