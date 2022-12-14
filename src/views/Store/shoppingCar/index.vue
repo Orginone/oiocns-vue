@@ -146,7 +146,6 @@
         }
       })
       .then((res: ResultType) => {
-        console.log('aaaaa',res)
         var { result = [], total = 0 } = res.data
         pageStore.total = total
         result.forEach((item: any) => {
