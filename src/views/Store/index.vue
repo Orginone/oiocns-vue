@@ -158,7 +158,6 @@
                     <p>
                       <span
                         >{{ item.name }}
-                        <!-- <el-tag class="ml-2" type="success">免费</el-tag> -->
                       </span>
                         <el-dropdown>
                           <span class="el-dropdown-link drop-list"> ··· </span>
@@ -307,7 +306,10 @@ import opened from "./components/opened.vue";
 import appDetail from "./components/appDetail.vue";
 import ShareComponent from "./components/shareComponents.vue";
 import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
-import {StoreModel} from "@/ts/store";
+// import {MarketModel} from "@/ts/market";
+// import {StoreModel} from "@/ts/store";
+// import {PersonalModel} from '@/ts/personal'
+import marketCtrl from '@/ts/controller/store/marketCtrl';
 
 const goCreate = () => {
   router.push({ path: "/store/appRegister" });
@@ -383,6 +385,7 @@ const options = ref<any>({
     hasChildren: "hasChildren",
   },
 });
+const lista = ref<any>([])
 const state: StateType = reactive({
   ownProductList: [],
   ownTotal: 0,
@@ -445,21 +448,9 @@ const state: StateType = reactive({
 const title = ref<string>("");
 onMounted(() => {
   // 获取列表
-  getProductList();
-  console.log('StoreModel',StoreModel.getAppSubModel())
+  getProductList(); 
+    
 });
-
-//列表
-// watch([isCard], ([val], [valOld]) => {
-//   // 监听 展示方式变化
-//   nextTick(() => {
-//     if (val) {
-//       getProductList();
-//     } else {
-//       getProductList();
-//     }
-//   });
-// });
 
 const handleUpdate = (page: any) => {
   pageStore.currentPage = page.current;
@@ -468,30 +459,50 @@ const handleUpdate = (page: any) => {
 };
 // 获取我的应用列表
 const getProductList = () => {
-  appstore.getProductList(pageStore, searchText.value,(res:any)=>{
-    state[`ownProductList`] = [...res.result]
-    let resData = JSON.parse(JSON.stringify(state[`ownProductList`]))
-    for (let product of resData) {
-        appstore.getResource(product.id,(res:any)=>{
-          let flowArr: any = [];
-          var arr = JSON.parse(JSON.stringify(res.result))
-          arr.filter((element: any) => element.flows && element.flows.length > 0)
-            .forEach((element: any) => {
-              let arr = JSON.parse(element.flows);
-              let itemArr: any = [];
-              arr.forEach((el: any) => {
-                el.appId = product.id;
-                el.appName = product.name;
-                el.sourceId = element.id;
-                itemArr.push(el);
-              });
-              flowArr.push(...itemArr);
-            });
-          product.resourcesList = flowArr;
-          pageStore.total = res.total;
-          diyTable.value.state.page.total = res.total
-        });
-    }
+  // appstore.getProductList(pageStore, searchText.value,(res:any)=>{
+  //   state[`ownProductList`] = [...res.result]
+  //   let resData = JSON.parse(JSON.stringify(state[`ownProductList`]))
+  //   for (let product of resData) {
+  //       appstore.getResource(product.id,(res:any)=>{
+  //         let flowArr: any = [];
+  //         var arr = JSON.parse(JSON.stringify(res.result))
+  //         arr.filter((element: any) => element.flows && element.flows.length > 0)
+  //           .forEach((element: any) => {
+  //             let arr = JSON.parse(element.flows);
+  //             let itemArr: any = [];
+  //             arr.forEach((el: any) => {
+  //               el.appId = product.id;
+  //               el.appName = product.name;
+  //               el.sourceId = element.id;
+  //               itemArr.push(el);
+  //             });
+  //             flowArr.push(...itemArr);
+  //           });
+  //         product.resourcesList = flowArr;
+  //         pageStore.total = res.total;
+  //         diyTable.value.state.page.total = res.total
+  //       });
+  //   }
+  // })
+  marketCtrl.Market.getOwnProducts(false).then((res:any)=>{
+    let arr:any = []
+    res.forEach((element:any) => {
+      let obj = {
+        name: element.prod.name,
+        updateTime:element.prod.updateTime,
+        createTime:element.prod.createTime,
+        typeName:element.prod.typeName,
+        updateUser:element.prod.updateUser,
+        authority:element.prod.authority,
+        belongId:element.prod.belongId,
+        code:element.prod.code,
+        source:element.prod.source
+      }
+      arr.push(obj)
+    });
+    state[`ownProductList`] = arr;
+    console.log('state',state.ownProductList)
+
   })
 };
 

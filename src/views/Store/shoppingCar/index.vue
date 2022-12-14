@@ -11,7 +11,6 @@
             :hasTableHead="true"
             :tableData="pageStore.tableData"
             :options="options"
-            @handleUpdate="handleUpdate"
             @selectionChange="selectionChange"
             :tableHead="pageStore.tableHead"
           >
@@ -22,8 +21,8 @@
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="deleteStaging(scope.row.id)">删除</el-dropdown-item>
-                    <el-dropdown-item @click="createOrderByStaging(scope.row.id)">购买</el-dropdown-item>
+                    <el-dropdown-item @click="deleteStaging(scope.row)">删除</el-dropdown-item>
+                    <el-dropdown-item @click="createOrderByStaging(scope.row)">购买</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -41,6 +40,7 @@
     import { ref, reactive, onMounted, nextTick } from 'vue'
     import { ElMessage, ElMessageBox } from 'element-plus'
     import { PAGE_SIZES, PAGE_NUM } from '@/constant'
+    import marketCtrl from '@/ts/controller/store/marketCtrl';
 
     const dialogVisible = ref<boolean>(true)
     const diyTable = ref(null)
@@ -81,12 +81,16 @@
     })
   
     onMounted(() => {
-      getTableList()
-    })
-    const handleUpdate = (page: any) => {
-      getTableList()
+      pageStore.tableData = marketCtrl.shopinglist
+      if(marketCtrl.shopinglist.length ==0){
+        setTimeout(() => {
+          pageStore.tableData = marketCtrl.shopinglist
+        },2000);
+      }
+      console.log('marketCtrl',)
 
-    }
+      // getTableList()
+    })
     const checkList = reactive<any>([])
     const selectionChange = (val: any) => {
       checkList.value = val
@@ -133,107 +137,21 @@
     })
   // 表格分页数据
   const pagination: { current: number; limit: number } = reactive({ current: 1, limit: PAGE_NUM })
-  //查询
-  const getTableList = async () => {
-    pageStore.tableData = []
-    await $services.market
-      .searchStaging({
-        data: {
-          id: 0, //市场id （需删除）
-          offset: (pagination.current - 1) * pagination.limit,
-          limit: pagination.limit,
-          filter: ''
-        }
-      })
-      .then((res: ResultType) => {
-        console.log('aaaaa',res)
-        var { result = [], total = 0 } = res.data
-        pageStore.total = total
-        result.forEach((item: any) => {
-          item.ordertype = 'sell'
-          item.checked = false
-          return item
-        })
-        pageStore.tableData = result?.map(
-          (item: {
-            market: { remark: any; code: any; name: any }
-            merchandise: { caption: any; information: any; sellAuth: any; days: any; price: any }
-          }) => {
-            if (!item.merchandise) { item.merchandise = { caption: null, information: null, sellAuth: null, days: null, price: null } }
-            return {
-              ...item,
-              caption: item.merchandise.caption,
-              information: item.merchandise.information,
-              sellAuth: item.merchandise.sellAuth,
-              days: item.merchandise.days,
-              price: item.merchandise.price,
-              marketName: item.market.name,
-              marketCode: item.market.code
-            }
-          }
-        )
-        // isRouterAlive.value = true
-      })
-  }
+
   //从购物车移除
-  const deleteStaging = async (id: string) => {
-    console.log(id)
-    await $services.market
-      .deleteStaging({
-        data: {
-          id: id
-        }
-      })
-      .then((res: ResultType) => {
-        if (res.code == 200) {
-          getTableList()
-          ElMessage({
-            message: '移除成功',
-            type: 'warning'
-          })
-        }
-      })
+  const deleteStaging = async (item: any) => {
+    await marketCtrl.deleApply([item]);
+    pageStore.tableData = marketCtrl.shopinglist
   }
   //创建订单(批量)
-  const createOrderByStaging = async (checkedId?: string) => {
-    var checkedStagIds: any[] = []
-    if (checkedId) {
-      checkedStagIds = [checkedId]
-    } else {
-      checkedStagIds = pageStore.tableData.filter((item: any) => item.checked).map((item: any) => item.id)
-    }
-    console.log(checkedStagIds)
-    var checkedStages = pageStore.tableData.filter((item: any) => checkedStagIds.includes(item.id))
+  const createOrderByStaging = async (item:Object) => {
     ElMessageBox.confirm('此操作将生成交易订单。是否确认?', '确认订单', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'success'
-    }).then(() => {
-      setTimeout(
-        async (ids) => {
-          await $services.market
-            .createOrderByStaging({
-              data: {
-                code: new Date().getTime().toString().substring(0, 13),
-                name:
-                  checkedStages[0].merchandise.caption +
-                  (checkedStages.length > 1 ? `...等${checkedStages.length}件商品` : ''),
-                stagIds: checkedStagIds
-              }
-            })
-            .then((res: ResultType) => {
-              if (res.code == 200) {
-                getTableList()
-                ElMessage({
-                  message: '创建订单成功',
-                  type: 'success'
-                })
-              }
-            })
-        },
-        1,
-        checkedStagIds
-      )
+    }).then(async () => {
+      await marketCtrl.buyShoping([item]);
+      pageStore.tableData = marketCtrl.shopinglist
     }).catch(()=>{})
   }
     
