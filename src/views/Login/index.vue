@@ -132,12 +132,11 @@
     btnLoading.value = true
     store.updateUserInfo(data).then((res) => {
       btnLoading.value = false
-      if (data.remind) {
-        setCookie(data.username, data.password, 7)
-      } else {
-        setCookie('', '', -1)
-      }
-
+      // if (data.remind) {
+      //   setCookie(data.username, data.password, 7)
+      // } else {
+      //   setCookie('', '', -1)
+      // }
       router.push({ path: 'workHome' })
     })
   }

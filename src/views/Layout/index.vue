@@ -72,6 +72,8 @@
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
   import { anystore } from '@/hubs/anystore'
+  // import {MarketModel} from "@/ts/market";
+
   const { proxy } = getCurrentInstance()
 
   const btnType = ref<string>('');
@@ -209,7 +211,6 @@
   // 获取商店分类
   const getMenu = () => {
     anystore.subscribed(`selfAppMenu`, 'user', (data) => {
-      console.log(data?.data)
       let newJSON = JSON.parse(JSON.stringify(storeJson))
         if(data?.data?.length>0){
           console.log('data',data.data)
@@ -304,61 +305,38 @@
   
   // 获取我的商店列表
   const getShopList = async ()=>{
-    await marketServices.getMarketList({
-      offset: 0,
-      limit: 1000,
-      filter: ""
-    });
-    let myList:any = []
-    let addList:any = []
-    marketServices.marketList.forEach(element => {
-      if(element.belongId == useUserStore().userInfo.workspaceId){
-        myList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{  "name":"删除商店", "id":"1021" },{  "name":"用户管理",  "id":"1022" }]})
-      }else{
-        // TODO 暂时文字匹配开放市场，不显示在商店加入列表里
-        if(element.name !='开放市场'){
-          addList.push({...element,label:element.name,url:'/store/shop?id='+element.id,btns:[{ "name":"退出商店", "id":"1024" },{ "name":"用户管理",  "id":"1022" }]})
-        }
-      }
-    });
-    let newObj:any =  {
-        label: "商城",
-        structure: true,
-        "isPenultimate": true,
-        "btns":[] as string[],
-        "children": [
-          {
-            "label": "开放市场",
-            "isPenultimate": true,
-            "url":'/store/shop',
-            "id": ""
-          },
-          {
-            "label": "商店(自建)",
-            "isPenultimate": true,
-            "id": "",
-            "btns":[{
-              "name":"创建商店",
-              "id":"1020"
-            }],
-            "children": myList
-          },
-          {
-            "label": "商店(加入)",
-            "id": "1",
-            "children":addList,
-            "btns":[{
-                "name":"加入商店",
-                "id":"1025"
-            }]
-          },
-        ]
-    }
-    let shopstoreJson = JSON.parse(JSON.stringify(storeJson))
-    showMenu.value = true;
-    shopstoreJson[2] = newObj
-    titleArr.state = shopstoreJson[0]
-    menuArr.state = shopstoreJson
+    return
+    // let myList:any = []
+    // MarketModel.Market.getJoinMarkets().then((res)=>{
+    //   res.forEach(element => {
+    //       let obj:any= {
+    //         ...element.market,
+    //         label:element.market.name,
+    //         url:'/store/shop?id='+element.market.id,
+    //         btns:[{  "name":"删除商店", "id":"1021" },{  "name":"用户管理",  "id":"1022"}]
+    //       }
+    //       myList.push(obj)
+    //   })
+    //   let newObj:any =  {
+    //     label: "商城分类",
+    //     structure: true,
+    //     isPenultimate: true,
+    //     btns:[{
+    //       "name":"创建商店",
+    //       "id":"1020"
+    //     },{
+    //         "name":"加入商店",
+    //         "id":"1025"
+    //     }],
+    //     "children": myList
+    // }
+    // let shopstoreJson = JSON.parse(JSON.stringify(storeJson))
+    // showMenu.value = true;
+    // shopstoreJson[2] = newObj
+    // titleArr.state = shopstoreJson[0]
+    // menuArr.state = shopstoreJson
+    // })
+    
   }
   // const getNav = ()=>{
   //     if(router.currentRoute.value.path.indexOf('store') != -1){    
