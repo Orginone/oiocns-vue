@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import $services from '@/services'
 import { ElMessage } from 'element-plus'
-import {PersonalModel} from '@/ts/core'
+import {PersonalModel} from '@/ts/cores'
 import { type } from 'os'
 
 type QueryInfoType = {
