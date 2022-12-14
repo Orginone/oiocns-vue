@@ -153,7 +153,7 @@
   <el-dialog
     v-model="createDeptDialogVisible"
     title="变更部门"
-    width="40%"
+    width="30%"
     append-to-body
     @close="dialogHide"
   >
@@ -166,12 +166,14 @@
         <el-input disabled v-model="currentData.team.name" />
       </el-form-item>
       <el-form-item label="所属部门" style="width: 100%">
-        <el-cascader
-          :props="cascaderProps"
-          :options="cascaderTree"
+        <el-tree-select
           v-model="formData.parentId"
+          :data="cascaderTree"
+          check-strictly
+          @node-click="handleSelectTree(_, $event)"
+          :render-after-expand="false"
           style="width: 100%"
-          placeholder="请选择"
+          :default-expand-all="true"
         />
       </el-form-item>
     </el-form>
@@ -248,11 +250,8 @@ import identityServices from '@/module/relation/identity'
 const IdentityServices = new identityServices()
 import QrCodeCustom from '@/components/qrCode/index.vue'
 import { PersonalModel } from '@/ts/core'
-const cascaderProps = {
-  checkStrictly: true,
-  value: 'id',
-  emitPath: false,
-}
+import { TargetType } from '@/module/enums'
+
 let cascaderTree = ref<OrgTreeModel[]>([])
 const router = useRouter()
 
@@ -270,7 +269,7 @@ const subscribe = store.$subscribe(
       * */
     // 在此处监听store中值的变化，当变化为某个值的时候，做一些业务操作
     if(state.currentSelectItme.label === '部门管理') return
-    getUsers(state.currentSelectItme?.data)
+    getUsers(store.currentSelectItme?.intans)
   },
   { detached: false }
     // detached:布尔值，默认是 false，正常情况下，当订阅所在的组件被卸载时，订阅将被停止删除，
@@ -373,33 +372,54 @@ const addPost = async () => {
   }
 }
 
+let newDept = ref()
+
+const handleSelectTree = (_: any, info: {intans: any}) => {
+  newDept.value = info?.intans
+}
 // 变更部门
-const editDept = async ()=>{
-  let rowObj = {
-    name:currentData.value?.name,
-    id:currentData.value?.id,
-    typeName:store?.currentSelectItme?.data.typeName
+const editDept = async ()=> {
+  if(formData.value?.parentId === store.currentSelectItme?.value) {
+    dialogHide()
+    return
   }
-  let url: string;
-    if (rowObj.typeName == '部门') {
-      url = 'removeFromDepartment'
-    } else if (rowObj.typeName == '工作组') {
-      url = 'removeFromJob'
-    }
-    const data = await $services.company[url]({
-      data: {
-        id: store?.currentSelectItme?.data.id,
-        targetIds: [rowObj.id]
+  if (newDept.value) {
+    if (await store.currentSelectItme.intans?.removeMember(currentData.value)) {
+      if (await newDept.value.pullMember(currentData.value)) {
+        ElMessage({ message: '操作成功',type: 'success' })
+        getUsers(store.currentSelectItme?.intans)
+        dialogHide()
+      } else {
+        return false;
       }
-    })
-    if(data){
-      await assignDepartment(formData.value?.parentId, [currentData.value?.id])
-      ElMessage({
-        message: '操作成功',
-        type: 'success'
-      })
-      dialogHide()
     }
+  }
+
+  // let rowObj = {
+  //   name:currentData.value?.name,
+  //   id:currentData.value?.id,
+  //   typeName:store?.currentSelectItme?.data.typeName
+  // }
+  // let url: string;
+  //   if (rowObj.typeName == '部门') {
+  //     url = 'removeFromDepartment'
+  //   } else if (rowObj.typeName == '工作组') {
+  //     url = 'removeFromJob'
+  //   }
+  //   const data = await $services.company[url]({
+  //     data: {
+  //       id: store?.currentSelectItme?.data.id,
+  //       targetIds: [rowObj.id]
+  //     }
+  //   })
+  //   if(data){
+  //     await assignDepartment(formData.value?.parentId, [currentData.value?.id])
+  //     ElMessage({
+  //       message: '操作成功',
+  //       type: 'success'
+  //     })
+  //     dialogHide()
+  //   }
 }
 
 // 加载单位
@@ -407,7 +427,12 @@ const loadOrgTree = () => {
   $services.company.getCompanyTree({}).then((res: any)=>{
     const orgTree = []
     orgTree.push(res.data)
-    cascaderTree.value = filter(JSON.parse(JSON.stringify(orgTree)))
+  })
+}
+
+function getSelectTree() {
+  store.loadTreeData(false).then((res: any[]) => {
+    cascaderTree.value = res
   })
 }
 
@@ -455,7 +480,7 @@ const personUpdate = () => {
     .then((res: ResultType) => {
       if (res.success) {
         dialogHide()
-        getUsers(store.currentSelectItme?.data)
+        getUsers(store.currentSelectItme?.intans)
         ElMessage({
           message: '更新成功',
           type: 'success'
@@ -477,56 +502,69 @@ const showAssignDialog = () => {
   assignDialog.value = true
 }
 
-const checksCompanySearch = (val: any) => {
+const checksCompanySearch = async(val: any) => {
   if (val.value.length > 0) {
     let arr: Array<arrList> = []
     val.value.forEach((element: any) => {
       arr.push(element.id)
     });
-    assign(arr)
+    // assign(arr)
+    const current = store.currentSelectItme?.intans
+    if (await current.pullMembers(arr, TargetType.Person)) {
+       ElMessage({
+        message: '分配成功',
+        type: 'success'
+      })
+      hideAssignDialog()
+      getUsers(store.currentSelectItme?.intans)
+    }
   } else {
     assignDialog.value = false;
   }
 }
 
-// 分配人员
-const assign = (arr: any) => {
-  const userIds = arr
-  if (store.currentSelectItme?.data.typeName == '部门') {
-    assignDepartment(store.currentSelectItme.id, userIds)
-  } else if (store.currentSelectItme?.data.typeName == '工作组') {
-    assignJob(store.currentSelectItme.id, userIds)
-  }
-}
-//分配部门
-const assignDepartment =  async (id:string, targetIds: string[]) => {
-  const data = await departmentServices.assignDepartment(id,targetIds)
-  if(data){
-    ElMessage({
-      message: '分配成功',
-      type: 'success'
-    })
-    hideAssignDialog()
-    getUsers(store.currentSelectItme?.data)
-  }
-}
-//分配工作组
-const assignJob = async (id: string, targetIds: string[]) => {
-  const data = await departmentServices.assignJob(id,targetIds)
-  if(data){
-    ElMessage({
-      message: '分配成功',
-      type: 'success'
-    })
-    hideAssignDialog()
-    getUsers(store.currentSelectItme?.data)
-  }
-}
+// // 分配人员
+// const assign = (arr: any) => {
+//   const userIds = arr
+//   if (store.currentSelectItme?.data.typeName == '部门') {
+//     assignDepartment(store.currentSelectItme.id, userIds)
+//   } else if (store.currentSelectItme?.data.typeName == '工作组') {
+//     assignJob(store.currentSelectItme.id, userIds)
+//   }
+// }
+// //分配部门
+// const assignDepartment =  async (id:string, targetIds: string[]) => {
+//   const data = await departmentServices.assignDepartment(id,targetIds)
+//   if(data){
+//     ElMessage({
+//       message: '分配成功',
+//       type: 'success'
+//     })
+//     hideAssignDialog()
+//     getUsers(store.currentSelectItme?.data)
+//   }
+// }
+// //分配工作组
+// const assignJob = async (id: string, targetIds: string[]) => {
+//   const data = await departmentServices.assignJob(id,targetIds)
+//   if(data){
+//     ElMessage({
+//       message: '分配成功',
+//       type: 'success'
+//     })
+//     hideAssignDialog()
+//     getUsers(store.currentSelectItme?.data)
+//   }
+// }
 
 // 加载用户
-const getUsers = async (currentData?) => {
+const getUsers = async (currentData?: any) => {
   if(currentData){
-    const backData =  await departmentServices.getUser(currentData)
+    const backData =  await currentData?.loadMembers({
+      filter: "",
+      limit: 20,
+      offset: 0
+  })
     if(backData.result){
       tableData.value =backData.result;
       pageStore.total = backData.total
@@ -555,7 +593,7 @@ const reviseInfo = (row: any) => {
 
 // 变更部门
 const changeDepartment = (row: any) => {
-  formData.value = { parentId: store.currentSelectItme?.id }
+  formData.value = { parentId: store.currentSelectItme?.value }
   currentData.value = row
   createDeptDialogVisible.value = true
 }
@@ -649,6 +687,7 @@ const selectionChange = (val: any) => {
 onMounted(() => {
   getPostList()
   loadOrgTree()
+  getSelectTree()
 })
 // 获取单位信息
 onBeforeMount(()=> {

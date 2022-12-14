@@ -14,22 +14,22 @@
     <div class="tab-list">
       <el-descriptions :column="2" border>
         <el-descriptions-item :label="`${title}名称`" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{currentData?.data?.team.name}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{currentData?.name}}</el-descriptions-item>
         <el-descriptions-item :label="`${title}编码`" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{currentData?.data?.code}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{currentData?.code || ''}}</el-descriptions-item>
         <el-descriptions-item :label="'我的岗位'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{authority.GetTargetIdentitys(currentData?.data?.id)}}
+          label-class-name="my-label" class-name="my-content">{{authority.GetTargetIdentitys(currentData?.id) || ''}}
         </el-descriptions-item>
         <el-descriptions-item :label="'团队编码'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{currentData?.data?.team.code}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{currentData?.team.code}}</el-descriptions-item>
         <el-descriptions-item :label="'创建人'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{chat.getName(currentData?.data?.createUser)}}
+          label-class-name="my-label" class-name="my-content">{{chat.getName(currentData?.createUser) || ''}}
         </el-descriptions-item>
         <el-descriptions-item :label="'创建时间'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{currentData?.data?.createTime}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{currentData?.createTime || ''}}</el-descriptions-item>
         <el-descriptions-item label="描述" width="150px" :span="2" label-align="center" align="center">
           <div class="text-remark">
-            {{currentData?.data?.team.remark}}
+            {{currentData?.team.remark}}
           </div>
         </el-descriptions-item>
       </el-descriptions>
@@ -37,7 +37,7 @@
     </div>
   </div>
 
-  <el-dialog v-model="dialogVisible" :title="'请编辑' + title + '信息'" width="50%">
+  <el-dialog v-model="dialogVisible" :title="'请编辑' + title + '信息'" width="30%">
     <el-form-item :label="title + '名称'">
       <el-input v-model="formData.name" :placeholder="'请输入' + title + '名称'" clearable />
     </el-form-item>
@@ -78,8 +78,8 @@ let dialogVisible = ref<boolean>(false)
 let formData: any = ref({})
 const service  = new DepartmentServices()
 
-const currentData = computed(() => store.currentSelectItme)
-const title = computed(() => currentData.value.data?.typeName ?? '部门')
+const currentData = computed(() => store.currentSelectItme?.intans?.target)
+const title = computed(() => currentData.value?.typeName ?? '部门')
 
 // 获取单位
 const selectItemChange = (data: any) => {
@@ -93,13 +93,13 @@ const handleUpdate = () => {
     ElMessage.warning('请左侧选择部门或者工作组！')
     return
   }
-  formData.value = currentData.value.data
+  formData.value = { teamRemark: currentData.value.team?.remark, ...currentData.value }
   dialogVisible.value = true
 }
 
 // 保存
 const update = async () => {
-  const data = { ...formData.value, ...currentData.value.data, parentId:  store.unitInfo?.id };
+  const data = { ...formData.value, ...currentData.value, parentId:  store.unitInfo?.id };
   const val =  await service.upDateDempartment(data)
   dialogVisible.value = false
   ElMessage.success('信息修改成功!')

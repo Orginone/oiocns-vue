@@ -145,6 +145,7 @@
   import headImg from '@/components/headImg.vue'
   import { useDark } from '@vueuse/core'
   import { chat } from '@/module/chat/orgchat'
+  import userCtrl from '@/ts/controller/setting/userCtrl';
 
   const isDark = useDark()
   const store = useUserStore()
@@ -307,6 +308,7 @@
       })
   }
   const switchCompany = (data: { id: string }) => {
+    userCtrl.setCurSpace(data?.id);
     $services.person
       .changeWorkspace({
         data: {

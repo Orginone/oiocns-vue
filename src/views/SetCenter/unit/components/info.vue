@@ -1,11 +1,17 @@
 <template>
   <div class="info">
     <div class="header">
-      <div class="title">当前{{title}}</div>
+      <div class="title">当前{{ title }}</div>
       <div class="box-btns">
-        <el-button small link type="primary" @click="handleUpdate">编辑信息</el-button>
-        <el-button small link type="primary" @click="toAuth">单位认证</el-button>
-        <el-button small link type="primary" @click="toIdentity">更多信息</el-button>
+        <el-button small link type="primary" @click="handleUpdate"
+          >编辑信息</el-button
+        >
+        <el-button small link type="primary" @click="toAuth"
+          >单位认证</el-button
+        >
+        <el-button small link type="primary" @click="toIdentity"
+          >更多信息</el-button
+        >
       </div>
     </div>
     <!-- <div class="tab-list">
@@ -13,34 +19,98 @@
     </div> -->
     <div class="tab-list">
       <el-descriptions :column="2" border>
-        <el-descriptions-item :label="title+'名称'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.name}}</el-descriptions-item>
-          <el-descriptions-item :label="'单位法人'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{chat.getName(selectItem?.data?.createUser)}}
+        <el-descriptions-item
+          :label="title + '名称'"
+          label-align="center"
+          align="center"
+          width="150px"
+          label-class-name="my-label"
+          class-name="my-content"
+          ><strong>{{ info?.name }}</strong></el-descriptions-item
+        >
+        <el-descriptions-item
+          :label="'单位法人'"
+          label-align="center"
+          align="center"
+          width="150px"
+          label-class-name="my-label"
+          class-name="my-content"
+          >{{ chat.getName(info?.belongId) }}
         </el-descriptions-item>
-        <el-descriptions-item :label="'社会统一信用代码'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.code}}</el-descriptions-item>
-        <el-descriptions-item :label="'团队简称'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.team.name}}</el-descriptions-item>
-        <el-descriptions-item label="单位简介" width="150px" :span="2" label-align="center" align="center">
+        <el-descriptions-item
+          :label="'社会统一信用代码'"
+          label-align="center"
+          align="center"
+          width="150px"
+          label-class-name="my-label"
+          class-name="my-content"
+          >{{ info?.code }}</el-descriptions-item
+        >
+        <el-descriptions-item
+          :label="'团队简称'"
+          label-align="center"
+          align="center"
+          width="150px"
+          label-class-name="my-label"
+          class-name="my-content"
+          >{{ info.team?.name }}</el-descriptions-item
+        >
+        <el-descriptions-item
+          label="单位简介"
+          width="150px"
+          :span="2"
+          label-align="center"
+          align="center"
+        >
           <div class="text-remark">
-            {{selectItem?.data?.team.remark}}
+            {{ info.team?.remark }}
           </div>
         </el-descriptions-item>
       </el-descriptions>
     </div>
   </div>
 
-  <el-dialog v-model="dialogVisible" :title="'请编辑' + title + '信息'" width="50%">
-    <el-form-item :label="title + '名称'">
-      <el-input v-model="formData.name" :placeholder="'请输入' + title + '名称'" clearable />
+  <el-dialog
+    v-model="dialogVisible"
+    :title="'请编辑' + title + '信息'"
+    width="30%"
+  >
+    <el-form-item label="单位名称">
+      <el-input
+        v-model="formData.teamName"
+        :placeholder="'请输入' + title + '名称'"
+        clearable
+      />
+    </el-form-item>
+    <el-form-item label="单位简称">
+      <el-input
+        v-model="formData.name"
+        :placeholder="'请输入' + title + '简称'"
+        clearable
+      />
     </el-form-item>
     <el-form-item :label="title + '编号'">
-      <el-input v-model="formData.code" :placeholder="'请输入' + title + '描述'" clearable />
+      <el-input
+        v-model="formData.code"
+        :placeholder="'请输入' + title + '编号'"
+        clearable
+      />
+    </el-form-item>
+    <el-form-item :label="title + '标识'">
+      <el-input
+        v-model="formData.teamCode"
+        :placeholder="'请输入' + title + '标识'"
+        clearable
+      />
     </el-form-item>
     <el-form-item :label="title + '描述'">
-      <el-input v-model="formData.teamRemark" :placeholder="'请输入' + title + '描述'" :autosize="{ minRows: 5 }"
-        type="textarea" clearable />
+      <el-input
+        v-model="formData.teamRemark"
+        :placeholder="'请输入' + title + '描述'"
+        :autosize="{ minRows: 5 }"
+        type="textarea"
+        clearable
+      />
     </el-form-item>
     <template #footer>
       <span class="dialog-footer">
@@ -58,6 +128,10 @@ import router from '@/router';
 import {chat} from '@/module/chat/orgchat'
 import authority from '@/utils/authority'
 import DepartmentServices from '@/module/relation/department'
+import userCtrl from '@/ts/controller/setting/userCtrl'
+
+const info = computed(()=> userCtrl.company?.target)
+
 const allowEdit = () => {
   return selectItem.value.id &&
     authority.IsRelationAdmin([
@@ -85,18 +159,25 @@ defineExpose({ selectItemChange });
 
 // 修改信息
 const handleUpdate = () => {
-  if (!selectItem.value.id) {
-    ElMessage.warning('请左侧选择部门或者工作组！')
-    return
+  formData.value = {
+    name: info.value.name,
+    teamName: info.value.team?.name,
+    teamCode: info.value.team?.code,
+    code: info.value?.code,
+    teamRemark: info.value.team?.remark
   }
-  formData.value = selectItem.value.data
   dialogVisible.value = true
 }
 
 // 保存
 const update = async () => {
-  const data = { ...formData.value, ...selectItem.value.data };
-  const val =  await service.upDateDempartment(data)
+  const data = { 
+    avatar:undefined,
+    typeName:"单位",
+    ...formData.value
+  };
+  const val =  await userCtrl.company.update(data)
+  userCtrl.changCallback();
   dialogVisible.value = false
   ElMessage.success('信息修改成功!')
   selectItem.value.data = val
@@ -126,7 +207,6 @@ const toIdentity = () => {
     }
   })
 }
-
 </script>
 
 <style lang="scss" scoped>
