@@ -7,7 +7,6 @@
       ></appDetail>
       <opened></opened>
       <div class="table">
-        {{state.ownProductList}}
         <DiyTable
           :style="{ width: '100%' }"
           ref="diyTable"
@@ -307,9 +306,11 @@ import opened from "./components/opened.vue";
 import appDetail from "./components/appDetail.vue";
 import ShareComponent from "./components/shareComponents.vue";
 import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
-import {MarketModel} from "@/ts/market";
+// import {MarketModel} from "@/ts/market";
 // import {StoreModel} from "@/ts/store";
 // import {PersonalModel} from '@/ts/personal'
+import marketCtrl from '@/ts/controller/store/marketCtrl';
+
 const goCreate = () => {
   router.push({ path: "/store/appRegister" });
 };
@@ -447,24 +448,9 @@ const state: StateType = reactive({
 const title = ref<string>("");
 onMounted(() => {
   // 获取列表
-  getProductList();
-    // PersonalModel.user.getJoinedCompanys(false).then((res)=>{
-    //   console.log('aa',res)
-    // });
+  getProductList(); 
     
 });
-
-//列表
-// watch([isCard], ([val], [valOld]) => {
-//   // 监听 展示方式变化
-//   nextTick(() => {
-//     if (val) {
-//       getProductList();
-//     } else {
-//       getProductList();
-//     }
-//   });
-// });
 
 const handleUpdate = (page: any) => {
   pageStore.currentPage = page.current;
@@ -498,9 +484,23 @@ const getProductList = () => {
   //       });
   //   }
   // })
-  MarketModel.Market.getOwnProducts(false).then((res)=>{
-   
-    state[`ownProductList`] = res;
+  marketCtrl.Market.getOwnProducts(false).then((res:any)=>{
+    let arr:any = []
+    res.forEach((element:any) => {
+      let obj = {
+        name: element.prod.name,
+        updateTime:element.prod.updateTime,
+        createTime:element.prod.createTime,
+        typeName:element.prod.typeName,
+        updateUser:element.prod.updateUser,
+        authority:element.prod.authority,
+        belongId:element.prod.belongId,
+        code:element.prod.code,
+        source:element.prod.source
+      }
+      arr.push(obj)
+    });
+    state[`ownProductList`] = arr;
     console.log('state',state.ownProductList)
 
   })

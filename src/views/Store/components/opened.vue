@@ -40,6 +40,8 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useCommonStore } from '@store/common'
 import img1 from '@/assets/img/group22.png'
+// import {MarketModel} from "@/ts/market";
+
 const emit = defineEmits(['joinFriend'])
 const router = useRouter()
 const appList = ref<ProductType[]>([])
@@ -63,11 +65,26 @@ const jumpDetail = (item:any)=>{
   router.push('/store/appManagement?id='+item.id)
 }
 const getAppList = async () => {
-  appstore.searchUsefulProduct((res:any)=>{
-    appList.value = res.data.result.map((item: any) => {
-      return { ...item, icon: img1 }
-    })
-  })
+  // MarketModel.Market.getOwnProducts(false).then((res)=>{
+  //   console.log('res',res)
+  //   let arr:any = []
+  //   res.forEach(element => {
+  //     let obj = {
+  //       name: element.prod.name,
+  //       updateTime:element.prod.updateTime,
+  //       createTime:element.prod.createTime,
+  //       typeName:element.prod.typeName,
+  //       updateUser:element.prod.updateUser,
+  //       authority:element.prod.authority,
+  //       belongId:element.prod.belongId,
+  //       code:element.prod.code,
+  //       source:element.prod.source,
+  //       icon:img1
+  //     }
+  //     arr.push(obj)
+  //   });
+  //   appList.value = arr;
+  // })
  
 }
 onMounted(() => {
