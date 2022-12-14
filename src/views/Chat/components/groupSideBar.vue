@@ -11,19 +11,47 @@
     </ul>
     <searchFriend v-if="dialogVisible" @closeDialog="dialogVisible = false" :serachType="1" @checksSearch="checksSearch" />
     <div class="group-side-bar-wrap" @contextmenu.prevent="mousePosition.isShowContext = false">
-      <ul class="group-con" v-for="item in showList" :key="item.id">
-        <li class="group-con-item">
-          <!-- 分组标题 -->
-          <div class="con-title flex justify-between" :class="[openIdArr.includes(item.id) ? 'active' : '']"
-            @click="handleOpenSpace(item.id)">
-            <span>{{ item.name }}({{ item?.chats?.length ?? 0 }}) </span>
-          </div>
-          <!-- 展开的分组下的人员 -->
-          <div v-show="openIdArr?.includes(item.id)">
-            <div class="con-body" :class="{
-                'top-session': item.id === 'toping',
-                'active':chat.curChat.value?.spaceId === item.id && chat.curChat.value?.id === child.id
-            }" v-for="child in item.chats" :key="child.id"
+      <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+      <el-tab-pane v-for="val in tabData" :label="val.label" :name="val.name" :key="val.id">
+        <ul class="group-con" v-for="item in showList" :key="item.id">
+          <li class="group-con-item">
+            <!-- 分组标题 -->
+            <div class="con-title flex justify-between" :class="[openIdArr.includes(item.id) ? 'active' : '']"
+              @click="handleOpenSpace(item.id)">
+              <span>{{ item.name }}({{ item?.chats?.length ?? 0 }}) </span>
+            </div>
+            <!-- 展开的分组下的人员 -->
+            <div v-show="openIdArr?.includes(item.id)">
+              <div class="con-body" :class="{
+                  'top-session': item.id === 'toping',
+                  'active':chat.curChat.value?.spaceId === item.id && chat.curChat.value?.id === child.id
+              }" v-for="child in item.chats" :key="child.id"
+                @contextmenu.prevent.stop="(e: MouseEvent) => handleContextClick(e, child)">
+                <HeadImg :name="child.name" :label="child.label" />
+                <div class="group-con-dot" v-if="child.noRead > 0">
+                  <span>{{ child.noRead }}</span>
+                </div>
+                <div class="group-con-show" @click="openChanged(child)">
+                  <el-tooltip class="box-item" :disabled="child.name.length < 10" :content="child.name"
+                    placement="right-start">
+                    <p class="group-con-show-name">
+                      <span class="group-con-show-name-label">{{ child.name }}</span>
+                      <span class="group-con-show-name-time">{{ handleFormatDate(child.msgTime) }}
+                      </span>
+                    </p>
+                  </el-tooltip>
+                  <p class="group-con-show-msg">{{ child.showTxt }}</p>
+                </div>
+              </div>
+            </div>
+            <!-- 如果该分组没有被打开 但是有未读消息 则把未读消息会话显示出来 -->
+            <div :class="[
+              'con-body',
+              chat.curChat.value?.spaceId === item.id && chat.curChat.value?.id === child.id
+                ? 'active'
+                : ''
+            ]" v-for="child in item.chats.filter((v) => v.noRead > 0)" :key="child.id + child.name"
+              v-show="!openIdArr?.includes(item.id)"
               @contextmenu.prevent.stop="(e: MouseEvent) => handleContextClick(e, child)">
               <HeadImg :name="child.name" :label="child.label" />
               <div class="group-con-dot" v-if="child.noRead > 0">
@@ -41,34 +69,10 @@
                 <p class="group-con-show-msg">{{ child.showTxt }}</p>
               </div>
             </div>
-          </div>
-          <!-- 如果该分组没有被打开 但是有未读消息 则把未读消息会话显示出来 -->
-          <div :class="[
-            'con-body',
-            chat.curChat.value?.spaceId === item.id && chat.curChat.value?.id === child.id
-              ? 'active'
-              : ''
-          ]" v-for="child in item.chats.filter((v) => v.noRead > 0)" :key="child.id + child.name"
-            v-show="!openIdArr?.includes(item.id)"
-            @contextmenu.prevent.stop="(e: MouseEvent) => handleContextClick(e, child)">
-            <HeadImg :name="child.name" :label="child.label" />
-            <div class="group-con-dot" v-if="child.noRead > 0">
-              <span>{{ child.noRead }}</span>
-            </div>
-            <div class="group-con-show" @click="openChanged(child)">
-              <el-tooltip class="box-item" :disabled="child.name.length < 10" :content="child.name"
-                placement="right-start">
-                <p class="group-con-show-name">
-                  <span class="group-con-show-name-label">{{ child.name }}</span>
-                  <span class="group-con-show-name-time">{{ handleFormatDate(child.msgTime) }}
-                  </span>
-                </p>
-              </el-tooltip>
-              <p class="group-con-show-msg">{{ child.showTxt }}</p>
-            </div>
-          </div>
-        </li>
-      </ul>
+          </li>
+        </ul>
+      </el-tab-pane>
+    </el-tabs>
       <!-- 鼠标右键 -->
       <ul class="context-text-wrap" v-show="mousePosition.isShowContext"
         :style="{ left: `${mousePosition.left}px`, top: `${mousePosition.top}px` }">
@@ -89,12 +93,26 @@ import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import searchFriend from '@/components/searchs/index.vue'
 import FriendServices from '@/module/relation/friend'
+
 const routerParams = useRoute().params
 const friendServices = new FriendServices()
+
+const groupChats = ref([])
+const friendsChats = ref([])
+const companyChats = ref([])
+const tabData = ref([
+  {label:'会话',name:'first'},
+  {label:'群组',name:'second'},
+  {label:'单位',name:'third'},
+  {label:'好友',name:'fourth'},
+])
+const chatsValue = ref<string>('')
 
 const emit = defineEmits(['openChanged'])
 // 会话列表搜索关键字
 const searchValue = ref<string>('')
+
+const activeName = ref('first')
 
 // 是否已加载--判断是否需要默认打开
 const isMounted = ref<boolean>(false)
@@ -111,6 +129,10 @@ const isMoreClose = ()=>{
   setTimeout(()=>{
     isMore.value = false
   },200)
+}
+
+const handleClick = (tab: any, event: Event) => {
+  chatsValue.value = tab.props.label
 }
 
 const openChanged = async (child: ImMsgChildType) => {
@@ -136,10 +158,20 @@ const showList = computed((): ImMsgType[] => {
       }
       return matched && !item.isTop
     })
+    groupChats.value = chats.filter(item => {
+      return item.label === '群组'
+    })
+    friendsChats.value = chats.filter(item => {
+      return item.label === '好友'
+    })
+    companyChats.value = chats.filter(item => {
+      return item.label === '单位'
+    })
+    
     return {
       id: child.id,
       name: child.name,
-      chats: chats
+      chats: chatsValue.value === '会话' ? chats : chatsValue.value === '群组' ? groupChats.value : chatsValue.value === '好友' ? friendsChats.value : chatsValue.value === '单位' ? companyChats.value : chats
     }
   })
   // 首次进入页面默认打开第一个分组
