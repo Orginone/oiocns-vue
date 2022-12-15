@@ -14,15 +14,15 @@
     <div class="tab-list">
       <el-descriptions :column="2" border>
         <el-descriptions-item :label="title+'名称'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.team.name}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.name}}</el-descriptions-item>
           <el-descriptions-item :label="'单位法人'" label-align="center" align="center" width="150px"
           label-class-name="my-label" class-name="my-content">{{chat.getName(selectItem?.data?.createUser)}}
         </el-descriptions-item>
         <el-descriptions-item :label="'社会统一信用代码'" label-align="center" align="center" width="150px"
           label-class-name="my-label" class-name="my-content">{{selectItem?.data?.code}}</el-descriptions-item>
-        <el-descriptions-item :label="'联系方式'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.team.code}}</el-descriptions-item>
-        <el-descriptions-item label="单位地址" width="150px" :span="2" label-align="center" align="center">
+        <el-descriptions-item :label="'团队简称'" label-align="center" align="center" width="150px"
+          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.team.name}}</el-descriptions-item>
+        <el-descriptions-item label="单位简介" width="150px" :span="2" label-align="center" align="center">
           <div class="text-remark">
             {{selectItem?.data?.team.remark}}
           </div>
