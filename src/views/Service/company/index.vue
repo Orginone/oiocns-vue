@@ -32,9 +32,9 @@
           <template #content="scope">
             {{ scope.row.target.name }}申请加入{{ scope.row.team.name }}
           </template>
-          <template #targetName="scope">
+          <!-- <template #targetName="scope">
             {{chat.getName(scope.row.createUser)}}
-          </template>
+          </template> -->
           <template #status="scope">
             <div v-if="scope.row.status >= 0 && scope.row.status < 100">待批</div>
             <div v-else-if="scope.row.status >= 100 && scope.row.status < 200">
@@ -87,7 +87,7 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { TabsPaneContext } from 'element-plus'
   import searchCompany from '@/components/searchs/index.vue'
-  import { chat } from '@/module/chat/orgchat'
+  // import { chat } from '@/module/chat/orgchat'
   
   // import thingServices from '@/module/flow/thing'
 
