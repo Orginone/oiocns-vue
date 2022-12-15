@@ -65,8 +65,8 @@
 
 <script setup lang="ts">
   import TheHome from '../Home/index.vue'
-  import TheSandBox from '@/components/sandBox/index.vue'
-  import TheComponentList from '@/components/protal/index.vue'
+  // import TheSandBox from '@/components/sandBox/index.vue'
+  // import TheComponentList from '@/components/protal/index.vue'
   import { ElMessage, TabPanelName, ElMessageBox } from 'element-plus'
   import { onMounted, reactive, ref, onBeforeUnmount } from 'vue'
   import { useRouter } from 'vue-router'
