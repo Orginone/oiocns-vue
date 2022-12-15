@@ -13,7 +13,7 @@
     <div class="group-side-bar-wrap" @contextmenu.prevent="mousePosition.isShowContext = false">
       <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
       <el-tab-pane v-for="val in tabData" :label="val.label" :name="val.name" :key="val.id">
-        <ul class="group-con" v-for="item in showList" :key="item.id">
+        <ul class="group-con" v-for="item in showList" :key="item.id" v-show="val.name !== 'zero'">
           <li class="group-con-item">
             <!-- 分组标题 -->
             <div class="con-title flex justify-between" :class="[openIdArr.includes(item.id) ? 'active' : '']"
@@ -26,7 +26,7 @@
                   'top-session': item.id === 'toping',
                   'active':chat.curChat.value?.spaceId === item.id && chat.curChat.value?.id === child.id
               }" v-for="child in item.chats" :key="child.id"
-                @contextmenu.prevent.stop="(e: MouseEvent) => handleContextClick(e, child)">
+                @contextmenu.prevent.stop="(e: MouseEvent) => handleContextClick(e, child)"  @click="personnelContent(child)">
                 <HeadImg :name="child.name" :label="child.label" />
                 <div class="group-con-dot" v-if="child.noRead > 0">
                   <span>{{ child.noRead }}</span>
@@ -45,7 +45,7 @@
               </div>
             </div>
             <!-- 如果该分组没有被打开 但是有未读消息 则把未读消息会话显示出来 -->
-            <div :class="[
+            <!-- <div :class="[
               'con-body',
               chat.curChat.value?.spaceId === item.id && chat.curChat.value?.id === child.id
                 ? 'active'
@@ -67,6 +67,33 @@
                   </p>
                 </el-tooltip>
                 <p class="group-con-show-msg">{{ child.showTxt }}</p>
+              </div>
+            </div> -->
+          </li>
+        </ul>
+        <ul class="group-con" v-for="item in showList" :key="item.id" v-show="val.name === 'zero'">
+          <li class="group-con-item">
+            <div v-show="['370224204936777729']?.includes(item.id)">
+              <div class="con-body" :class="{
+                  'top-session': item.id === 'toping',
+                  'active':chat.curChat.value?.spaceId === item.id && chat.curChat.value?.id === child.id
+              }" v-for="child in item.chats" :key="child.id"
+                @contextmenu.prevent.stop="(e: MouseEvent) => handleContextClick(e, child)"  @click="personnelContent(child)">
+                <HeadImg :name="child.name" :label="child.label" />
+                <div class="group-con-dot" v-if="child.noRead > 0">
+                  <span>{{ child.noRead }}</span>
+                </div>
+                <div class="group-con-show" @click="openChanged(child)">
+                  <el-tooltip class="box-item" :disabled="child.name.length < 10" :content="child.name"
+                    placement="right-start">
+                    <p class="group-con-show-name">
+                      <span class="group-con-show-name-label">{{ child.name }}</span>
+                      <span class="group-con-show-name-time">{{ handleFormatDate(child.msgTime) }}
+                      </span>
+                    </p>
+                  </el-tooltip>
+                  <p class="group-con-show-msg">{{ child.showTxt }}</p>
+                </div>
               </div>
             </div>
           </li>
@@ -100,8 +127,10 @@ const friendServices = new FriendServices()
 const groupChats = ref([])
 const friendsChats = ref([])
 const companyChats = ref([])
+const conversationChats = ref([])
 const tabData = ref([
-  {label:'会话',name:'first'},
+  {label:'会话',name:'zero'},
+  {label:'通讯录',name:'first'},
   {label:'群组',name:'second'},
   {label:'单位',name:'third'},
   {label:'好友',name:'fourth'},
@@ -135,10 +164,23 @@ const handleClick = (tab: any, event: Event) => {
   chatsValue.value = tab.props.label
 }
 
+const personnelContent = (val) => {
+  conversationChats.value.push(val)
+  conversationChats.value = [...new Set(conversationChats.value)]
+  activeName.value = 'zero'
+  chatsValue.value = '会话'
+  showList.value.forEach(item => {
+    if(chatsValue.value === '会话') {
+      item.chats = conversationChats.value
+    }
+  })
+}
+
 const openChanged = async (child: ImMsgChildType) => {
   await chat.setCurrent(child)
   emit('openChanged', child)
 }
+
 
 //根据搜索条件-输出展示列表
 const showList = computed((): ImMsgType[] => {
@@ -167,11 +209,14 @@ const showList = computed((): ImMsgType[] => {
     companyChats.value = chats.filter(item => {
       return item.label === '单位'
     })
-    
     return {
       id: child.id,
       name: child.name,
-      chats: chatsValue.value === '会话' ? chats : chatsValue.value === '群组' ? groupChats.value : chatsValue.value === '好友' ? friendsChats.value : chatsValue.value === '单位' ? companyChats.value : chats
+      chats: chatsValue.value === '会话' ?
+      conversationChats.value : chatsValue.value === '群组' ? 
+      groupChats.value : chatsValue.value === '好友' ? 
+      friendsChats.value : chatsValue.value === '单位' ? 
+      companyChats.value : chats
     }
   })
   // 首次进入页面默认打开第一个分组
@@ -221,6 +266,7 @@ const menuList: MenuItemType[] = [
 type arrList = {
   id: string
 }
+
 const addFriends = (arr: Array<arrList>) => {
   friendServices.applyJoin(arr)
   dialogVisible.value = false
