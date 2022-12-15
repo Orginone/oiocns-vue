@@ -1,6 +1,7 @@
 <template>
   <div class="file-icon" :style="{width: props.size + 'px', height: props.size + 'px'}">
-    <img :src="iconSvg">
+    <el-image v-if="props.fileItem.target.thumbnail" :src="props.fileItem.target.thumbnail" fit="contain" :preview-teleported="true" :hide-on-click-modal="true" :preview-src-list="[`/orginone/anydata/bucket/load/${props.fileItem.target.shareLink}`]"></el-image>
+    <img v-else :src="iconSvg">
   </div>
 </template>
 
@@ -50,6 +51,8 @@
 </script>
 <style lang="scss" scoped>
 .file-icon {
+  display: flex;
+  justify-content: center;
   img {
     width: 100%;
     height: 100%;

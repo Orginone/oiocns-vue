@@ -21,7 +21,7 @@
           </div>
         </div>
 
-        <div @mouseover="handleOpen()" class="select-drop" :style="getDropMenuStyle">
+        <div v-if="modelIsShow" @mouseover="handleOpen()" class="select-drop" :style="getDropMenuStyle">
           <div class="select-box" v-infinite-scroll="load" infinite-scroll-immediate>
             <div
               class="seletc-drop__box"
@@ -145,6 +145,7 @@
   import headImg from '@/components/headImg.vue'
   import { useDark } from '@vueuse/core'
   import { chat } from '@/module/chat/orgchat'
+  import { USERCTRL ,TargetType} from '@/ts/coreIndex'
 
   const isDark = useDark()
   const store = useUserStore()
@@ -152,22 +153,23 @@
   const router = useRouter()
   let current = ref(1)
   const visible = ref(false)
+  const modelIsShow = ref(true)
   const showSearch = ref(false)
   const btnType = ref(false)
-  const { queryInfo } = storeToRefs(store)
-  const workspaceData = store.workspaceData
+  const { queryInfo,workspaceData } = storeToRefs(store)
+  // const workspaceData = store.workspaceData
   const dropdown = ref()
   const workHead = () => {
-    if (workspaceData?.name == '个人空间') {
+    if (workspaceData.value?.name == '个人空间') {
       return '我'
     }
-    return workspaceData?.name[0] || ''
+    return workspaceData.value?.name[0] || ''
   }
-  const isUnitWork = ref<boolean>(workspaceData.id != queryInfo.value.id)
+  const isUnitWork = ref<boolean>(workspaceData.value.id != queryInfo.value.id)
 
   const state = reactive({
     mainMenus: [
-      { name: '待办', icon: 'icon-message', path: '/chat' },
+      { name: '沟通', icon: 'icon-message', path: '/chat' },
       { name: '办事', icon: 'icon-todo', path: '/service' },
       { name: '仓库', icon: 'icon-store', path: '/store' },
       { name: '设置', icon: 'icon-setting', path: '/setCenter' },  
@@ -191,7 +193,7 @@
     let currentPage = 0
     current.value = current.value + 1
     currentPage = (current.value - 1) * 10 + 1
-    await store.getCompanyList(currentPage, workspaceData.id, true)
+    await store.getCompanyList(currentPage, workspaceData.value.id, true)
   }
   
   const dialogShow = reactive([
@@ -221,7 +223,6 @@
       val.value.forEach((element: any) => {
         arr.push(element.id)
       })
-      console.log('val', arr)
       joinSubmit(arr)
     } else {
       searchDialog.value = false
@@ -231,14 +232,10 @@
     searchDialog.value = true
   }
   const joinSubmit = (arr: any) => {
-    $services.company
-      .applyJoin({
-        data: {
-          id: arr.join('')
-        }
-      })
-      .then((res: ResultType) => {
-        if (res.code == 200) {
+    USERCTRL.user
+      .applyJoinCompany(arr.join(''), TargetType.Company)
+      .then((isSuc:boolean) => {
+        if (isSuc) {
           searchDialog.value = false
           ElMessage({
             message: '申请成功',
@@ -250,8 +247,9 @@
 
   const onClickUnit = async () => {
     btnType.value = !btnType.value
+    modelIsShow.value = true;
     if (!store.userCompanys || store.userCompanys.length == 0) {
-      await store.getCompanyList(0, workspaceData.id, false)
+      await store.getCompanyList(0, workspaceData.value.id, false)
     }
   }
   const handleClose = () => {
@@ -279,54 +277,60 @@
   const onClickDrop = async () => {
     if (store.userCompanys.length == 0) {
       current.value = 0
-      await store.getCompanyList(current.value, workspaceData.id, false)
+      await store.getCompanyList(current.value, workspaceData.value.id, false)
     }
   }
 
   const switchCreateCompany = (data: { id: string }) => {
-    $services.person
-      .changeWorkspace({
-        data: {
-          id: data.id
-        }
-      })
-      .then(async (res: ResultType) => {
-        if (res.code == 200) {
-          sessionStorage.setItem('TOKEN', res.data.accessToken)
-          await store.getQueryInfo(res.data.accessToken)
-          current.value = 0
-          store.createUnit(res.data).then(() => {
-            location.href = '/'
-          })
-        } else {
-          ElMessage({
-            message: res.msg,
-            type: 'warning'
-          })
-        }
-      })
+    btnType.value = false
+    modelIsShow.value = false
+    store.setCurSpace(data.id)
+    // $services.person
+    //   .changeWorkspace({
+    //     data: {
+    //       id: data.id
+    //     }
+    //   })
+    //   .then(async (res: ResultType) => {
+    //     if (res.code == 200) {
+    //       sessionStorage.setItem('TOKEN', res.data.accessToken)
+    //       await store.getQueryInfo(res.data.accessToken)
+    //       current.value = 0
+    //       store.createUnit(res.data).then(() => {
+    //         location.href = '/'
+    //       })
+    //     } else {
+    //       ElMessage({
+    //         message: res.msg,
+    //         type: 'warning'
+    //       })
+    //     }
+    //   })
   }
   const switchCompany = (data: { id: string }) => {
-    $services.person
-      .changeWorkspace({
-        data: {
-          id: data.id
-        }
-      })
-      .then(async (res: ResultType) => {
-        if (res.code == 200) {
-          sessionStorage.setItem('TOKEN', res.data.accessToken)
-          await store.getQueryInfo(res.data.accessToken)
-          store.getWorkspaceData(res.data.workspaceId, true).then(() => {
-            location.href = '/'
-          })
-        } else {
-          ElMessage({
-            message: res.msg,
-            type: 'warning'
-          })
-        }
-      })
+    handleClose();
+    modelIsShow.value = false
+    store.setCurSpace(data.id)
+    // $services.person
+    //   .changeWorkspace({
+    //     data: {
+    //       id: data.id
+    //     }
+    //   })
+    //   .then(async (res: ResultType) => {
+    //     if (res.code == 200) {
+    //       sessionStorage.setItem('TOKEN', res.data.accessToken)
+    //       await store.getQueryInfo(res.data.accessToken)
+    //       store.getWorkspaceData(res.data.workspaceId, true).then(() => {
+    //         location.href = '/'
+    //       })
+    //     } else {
+    //       ElMessage({
+    //         message: res.msg,
+    //         type: 'warning'
+    //       })
+    //     }
+    //   })
   }
   const toWork = () => {
     router.push('/workHome')

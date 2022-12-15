@@ -32,7 +32,7 @@
 <script lang="ts" setup>
   import type Node from 'element-plus/es/components/tree/src/model/node'
   import { ref, onMounted, watch, reactive, nextTick } from 'vue'
-  import Bucket from '@/module/cloud/bucket'
+  import Cloud from '@/ts/cloud'
   import { zipFileName } from '@/utils'
   import { useRouter } from "vue-router";
 
@@ -60,9 +60,9 @@
   // 动态加载子目录
   const loadNode = async (node: Node, resolve: (data: any[]) => void) => {
     if(node.level == 0) {
-      resolve([Bucket.DocModel.root])
+      resolve([Cloud.DocModel.root])
     } else {
-      await Bucket.GetLeftTree(node.data)
+      await Cloud.GetLeftTree(node.data)
       resolve(node.data.dirChildren)
     }
   }
@@ -121,8 +121,8 @@
 
   onMounted(async () => {
     if(props.onlySelect) {
-      checkedNode(Bucket.DocModel.root)
-      emit('selectTreeNode', Bucket.DocModel.root)
+      checkedNode(Cloud.DocModel.root)
+      emit('selectTreeNode', Cloud.DocModel.root)
     }
   })
 </script>

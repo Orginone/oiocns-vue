@@ -1,5 +1,5 @@
 <template>
-    <el-dialog append-to-body v-model="infoDialog" title="应用详情" width="40%" >
+    <el-dialog append-to-body v-model="props.infoDialog" :close-on-click-modal="false" title="应用详情" width="40%" >
       <el-descriptions class="margin-top" label-align="right" :column="2" border>
         <el-descriptions-item :span="2">
           <template #label>
@@ -77,7 +77,7 @@
   
     const props = defineProps({
       infoDialog:{
-        type:Boolean
+        type:Boolean,
       },
       infoDetail: {
         type: Object

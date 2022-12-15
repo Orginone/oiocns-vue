@@ -73,6 +73,7 @@
   import { getAllNodes } from '@/utils/tree'
   import { anystore } from '@/hubs/anystore'
   // import {MarketModel} from "@/ts/market";
+  import marketCtrl from '@/ts/controller/store/marketCtrl';
 
   const { proxy } = getCurrentInstance()
 
@@ -305,37 +306,36 @@
   
   // 获取我的商店列表
   const getShopList = async ()=>{
-    return
-    // let myList:any = []
-    // MarketModel.Market.getJoinMarkets().then((res)=>{
-    //   res.forEach(element => {
-    //       let obj:any= {
-    //         ...element.market,
-    //         label:element.market.name,
-    //         url:'/store/shop?id='+element.market.id,
-    //         btns:[{  "name":"删除商店", "id":"1021" },{  "name":"用户管理",  "id":"1022"}]
-    //       }
-    //       myList.push(obj)
-    //   })
-    //   let newObj:any =  {
-    //     label: "商城分类",
-    //     structure: true,
-    //     isPenultimate: true,
-    //     btns:[{
-    //       "name":"创建商店",
-    //       "id":"1020"
-    //     },{
-    //         "name":"加入商店",
-    //         "id":"1025"
-    //     }],
-    //     "children": myList
-    // }
-    // let shopstoreJson = JSON.parse(JSON.stringify(storeJson))
-    // showMenu.value = true;
-    // shopstoreJson[2] = newObj
-    // titleArr.state = shopstoreJson[0]
-    // menuArr.state = shopstoreJson
-    // })
+    let myList:any = []
+    marketCtrl.Market.getJoinMarkets().then((res)=>{
+      res.forEach(element => {
+          let obj:any= {
+            ...element.market,
+            label:element.market.name,
+            url:'/store/shop?id='+element.market.id,
+            btns:[{  "name":"删除商店", "id":"1021" },{  "name":"用户管理",  "id":"1022"}]
+          }
+          myList.push(obj)
+      })
+      let newObj:any =  {
+        label: "商城分类",
+        structure: true,
+        isPenultimate: true,
+        btns:[{
+          "name":"创建商店",
+          "id":"1020"
+        },{
+            "name":"加入商店",
+            "id":"1025"
+        }],
+        "children": myList
+    }
+    let shopstoreJson = JSON.parse(JSON.stringify(storeJson))
+    showMenu.value = true;
+    shopstoreJson[2] = newObj
+    titleArr.state = shopstoreJson[0]
+    menuArr.state = shopstoreJson
+    })
     
   }
   // const getNav = ()=>{

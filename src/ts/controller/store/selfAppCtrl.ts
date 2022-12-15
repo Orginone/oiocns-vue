@@ -2,12 +2,12 @@ import { ProductModel } from '@/ts/base/model';
 import { DomainTypes, emitter, IMTarget, IProduct } from '@/ts/core';
 import { kernel } from '@/ts/base';
 import { marketColumns, myColumns, shareInfoColumns } from './config';
-import { message, Modal } from 'antd';
+// import { message, Modal } from 'antd';
 import { Emitter } from '@/ts/base/common';
 import userCtrl from '../setting/userCtrl';
 import { STORE_USER_MENU } from '@/constants/const';
 const RecentlyApps = 'RecentlyApps';
-const { confirm } = Modal;
+// const { confirm } = Modal;
 
 const defaultCustomMenu: TreeType[] = [
   {
@@ -221,13 +221,13 @@ class SelfAppController extends Emitter {
    */
   public async querySelfApps(reload = false) {
     const list = await this._curSpace.getOwnProducts(reload);
-    const arr = list.map((v) => {
-      v['source'] = v.prod?.belongId === userCtrl.user!.target.id ? '创建的' : '分享的';
-      return v;
-    });
-    this.selfAppsData = arr;
-    this.changCallbackPart(SelfCallBackTypes.TableData);
-    return arr;
+    // const arr = list.map((v) => {
+    //   v['source'] = v.prod?.belongId === userCtrl.user!.target.id ? '创建的' : '分享的';
+    //   return v;
+    // });
+    // this.selfAppsData = arr;
+    // this.changCallbackPart(SelfCallBackTypes.TableData);
+    // return arr;
   }
 
   /**
@@ -278,7 +278,7 @@ class SelfAppController extends Emitter {
    */
   public async ShareProduct(teamId: string, destIds: string[], destType: string) {
     if (await this._curProduct!.createExtend(teamId, destIds, destType)) {
-      message.success('共享成功');
+      // message.success('共享成功');
     }
   }
   /**
@@ -286,20 +286,20 @@ class SelfAppController extends Emitter {
    * @return {*}
    */
   public async handleDeleteApp() {
-    confirm({
-      content: `确认移除《 ${this._curProduct!.prod.name} 》?`,
-      onOk: async () => {
-        if (await this._curSpace.deleteProduct(this._curProduct!.prod.id)) {
-          await this.querySelfApps(true);
-          this.selfAppsData = this.selfAppsData.filter((v) => {
-            return v.prod.id !== this._curProduct!.prod.id;
-          });
-          this.changCallbackPart(SelfCallBackTypes.TableData);
-          message.success('移除成功');
-        }
-      },
-      onCancel() {},
-    });
+    // confirm({
+    //   content: `确认移除《 ${this._curProduct!.prod.name} 》?`,
+    //   onOk: async () => {
+    //     if (await this._curSpace.deleteProduct(this._curProduct!.prod.id)) {
+    //       await this.querySelfApps(true);
+    //       this.selfAppsData = this.selfAppsData.filter((v) => {
+    //         return v.prod.id !== this._curProduct!.prod.id;
+    //       });
+    //       this.changCallbackPart(SelfCallBackTypes.TableData);
+    //       message.success('移除成功');
+    //     }
+    //   },
+    //   onCancel() {},
+    // });
   }
 }
 
