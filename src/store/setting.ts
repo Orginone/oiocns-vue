@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import $services from '@/services'
 import { ElMessage } from 'element-plus'
-import userCtrl from '@/ts/controller/setting/userCtrl';
+import {USERCTRL} from '@/ts/coreIndex';
 
 type SettingStoreType = {
   unitInfo: any,
@@ -58,34 +58,27 @@ export const setCenterStore = defineStore({
       return this.departmentInfo
     },
     async GetIdentities() {
-      // 加载岗位
-      await $services.cohort.getIdentitys({ data: { id: this.unitInfo?.id, offset: 0, limit: 1000 } }).then((res: any) => {
-        if (res.success) {
-          if (res.data?.result?.length) {
-            this.identityInfo = res.data?.result?.map((element: any) => {
-              return Object.assign({}, element, {
-                label: element.name, structure: true, query: true, btns: [{
-                  id: '2009',
-                  name: '更改岗位名称',
-                },
-                {
-                  id: '2010',
-                  name: '删除岗位',
-                }]
-              })
-            });
-            this.currentSelectItme = this.identityInfo[0]
-          } else {
-            this.identityInfo = []
-            this.currentSelectItme = []
-          }
-        } else {
-          ElMessage({
-            message: res.msg,
-            type: 'warning'
-          })
-        }
-      })
+      const stations = await USERCTRL.company.getStations(false);
+      let data: { label: string; key: string; object: any, [key: string]: any }[] = [];
+      stations.forEach((a) => {
+        data.push({
+          label: a.name,
+          key: a.id,
+          object: a,
+          structure: true,
+          query: true,
+          btns: [{
+            id: '2009',
+            name: '更改岗位名称',
+          },
+          {
+            id: '2010',
+            name: '删除岗位',
+          }]
+        });
+      });
+      this.identityInfo = [...data]
+      this.currentSelectItme = this.identityInfo[0]
       return this.identityInfo
     },
     // 获取所有部门
@@ -108,7 +101,7 @@ export const setCenterStore = defineStore({
         }
         return result;
       };
-      const depts = await userCtrl.company.loadSubTeam(reload);
+      const depts = await USERCTRL.company.loadSubTeam(reload);
       const data = [];
       if (depts.length > 0) {
         for (const child of depts) {

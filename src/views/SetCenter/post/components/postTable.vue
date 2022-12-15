@@ -77,7 +77,7 @@ const IdentityServices = new identityServices()
 store.$subscribe(
 (_, state) => {
   if(state.currentSelectItme.label === '岗位管理') return
-  getUsers(state.currentSelectItme)
+  getUsers(store.currentSelectItme?.object)
 },
 { detached: false }
 )
@@ -139,9 +139,13 @@ const selectionChange = (val: any) => {
 }
 
 // 加载岗位下的用户
-const getUsers = async (currentData = store.currentSelectItme) => {
+const getUsers = async (currentData = store.currentSelectItme.object) => {
   if(currentData){
-    const backData =  await IdentityServices.getIdentityPerson(currentData?.id)
+    const backData =  await currentData?.loadMembers({
+      filter: "",
+      limit: 20,
+      offset: 0
+  })
     if(backData.result){
       tableData.value =backData.result;
       pageStore.total = backData.total

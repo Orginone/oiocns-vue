@@ -127,7 +127,6 @@ import { ElMessage } from 'element-plus'
 import router from '@/router';
 import {chat} from '@/module/chat/orgchat'
 import authority from '@/utils/authority'
-import DepartmentServices from '@/module/relation/department'
 import userCtrl from '@/ts/controller/setting/userCtrl'
 
 const info = computed(()=> userCtrl.company?.target)
@@ -143,7 +142,6 @@ let title = ref<string>('单位')
 let selectItem = ref<any>({})
 let dialogVisible = ref<boolean>(false)
 let formData: any = ref({})
-const service  = new DepartmentServices()
 
 // 获取单位树点击的信息
 const selectItemChange = (data: any) => {

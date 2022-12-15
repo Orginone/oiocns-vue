@@ -49,8 +49,8 @@ import { Search } from '@element-plus/icons-vue'
 import searchFriend from '@/components/searchs/index.vue'
 import AssignedPerson from '@/components/searchs/index.vue'
 import authority from '@/utils/authority'
-import DepartmentServices from '@/module/relation/department'
-const departmentServices = new DepartmentServices()
+// import DepartmentServices from '@/module/relation/department'
+// const departmentServices = new DepartmentServices()
 
 let selectItem = ref<any>({})
 // 获取单位树点击的信息
@@ -146,7 +146,7 @@ const diyTable = ref(null)
 const getUsers = async () => {
   if(selectItem.value?.data){
     const data = selectItem.value?.data
-    const backData =  await departmentServices.getUser(data)
+    // const backData =  await departmentServices.getUser(data)
     if(backData.result){
       users.value =backData.result;
       diyTable.value.state.page.total = backData.total
@@ -189,7 +189,7 @@ const checksCompanySearch = (val: any) => {
 
 //邀请加入单位
 const pullPerson = async (arr: any) => {
-  const data =  await departmentServices.pullPerson(selectItem.value.id,arr)
+  // const data =  await departmentServices.pullPerson(selectItem.value.id,arr)
   if (data) {
     ElMessage({
       message: '添加成功',
@@ -217,7 +217,7 @@ const removeFrom = async (row: any) => {
     id:row.id,
     typeName:selectItem.value.data.typeName
   }
-  const data =  await departmentServices.removePerson(rowObj,selectItem.value.data.id)
+  // const data =  await departmentServices.removePerson(rowObj,selectItem.value.data.id)
   if(data){
     ElMessage({
       message: '操作成功',
@@ -250,7 +250,7 @@ const assign = (arr: any) => {
 
 //分配部门
 const assignDepartment =  async (id:string, targetIds: string[]) => {
-  const data = await departmentServices.assignDepartment(id,targetIds)
+  // const data = await departmentServices.assignDepartment(id,targetIds)
   if(data){
     ElMessage({
       message: '分配成功',
@@ -262,7 +262,7 @@ const assignDepartment =  async (id:string, targetIds: string[]) => {
 }
 //分配工作组
 const assignJob = async (id: string, targetIds: string[]) => {
-  const data = await departmentServices.assignJob(id,targetIds)
+  // const data = await departmentServices.assignJob(id,targetIds)
   if(data){
     ElMessage({
       message: '分配成功',

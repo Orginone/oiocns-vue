@@ -62,7 +62,6 @@ import { ElMessage } from 'element-plus'
 import router from '@/router';
 import {chat} from '@/module/chat/orgchat'
 import authority from '@/utils/authority'
-import DepartmentServices from '@/module/relation/department'
 const allowEdit = () => {
   return selectItem.value.id &&
     authority.IsRelationAdmin([
@@ -74,7 +73,6 @@ let title = ref<string>('集团')
 let selectItem = ref<any>({})
 let dialogVisible = ref<boolean>(false)
 let formData: any = ref({})
-const service  = new DepartmentServices()
 
 // 获取单位树点击的信息
 const selectItemChange = (data: any) => {
