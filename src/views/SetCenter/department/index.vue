@@ -247,6 +247,7 @@ const departmentServices = new DepartmentServices()
 import identityServices from '@/module/relation/identity'
 const IdentityServices = new identityServices()
 import QrCodeCustom from '@/components/qrCode/index.vue'
+
 import {USERCTRL} from '@/ts/coreIndex'
 const cascaderProps = {
   checkStrictly: true,

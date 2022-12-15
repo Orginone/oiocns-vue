@@ -1,6 +1,6 @@
 import { kernel } from '@/ts/base';
 import { Emitter } from '@/ts/base/common';
-import { DomainTypes, emitter, IMTarget, IProduct } from '@/ts/core';
+import { DomainTypes, emitter, IMTarget, IProduct } from '@/ts/core/index';
 import userCtrl from '../setting/userCtrl';
 const AppStoreName = 'AppStore';
 
@@ -68,9 +68,9 @@ class AppController extends Emitter {
 
   get spacies(): TreeType[] {
     if (this._caches.species) {
-      if (this._caches.species[userCtrl.space.target.id]) {
-        return this._caches.species[userCtrl.space.target.id];
-      }
+      // if (this._caches.species[userCtrl.space.target.id]) {
+      //   return this._caches.species[userCtrl.space.target.id];
+      // }
     }
     return [];
   }
