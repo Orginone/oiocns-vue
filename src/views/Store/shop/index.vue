@@ -50,7 +50,7 @@
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item @click="requireItem(scope.row)">查看详情</el-dropdown-item>
-                  <el-dropdown-item @click="joinShopCar(scope.row.id)">加入购物车</el-dropdown-item>
+                  <el-dropdown-item @click="joinShopCar(scope.row)">加入购物车</el-dropdown-item>
                   <el-dropdown-item @click="buyThings(scope.row)">购买</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -74,7 +74,7 @@
                           <span class="el-dropdown-link drop-list"> ··· </span>
                           <template #dropdown>
                             <el-dropdown-item @click="requireItem(item)">查看详情</el-dropdown-item>
-                            <el-dropdown-item @click="joinShopCar(item.id)">加入购物车</el-dropdown-item>
+                            <el-dropdown-item @click="joinShopCar(item)">加入购物车</el-dropdown-item>
                             <el-dropdown-item @click="buyThings(item)">购买</el-dropdown-item>
                           </template>
                         </el-dropdown>
@@ -97,7 +97,7 @@
     </div>
     <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog', false)"/>
     <addShop :addDialog="dialogType.addDialog" @checksSearch="checksSearch" @closeDialog="closeDialog('addDialog', false)"/>
-    <!-- <appInfo :infoDialog="dialogType.infoDialog" :infoDetail="infoDetail.info" @closeDialog="closeDialog('infoDialog', false)"></appInfo> -->
+    <appInfo :infoDialog="dialogType.infoDialog" :infoDetail="infoDetail.info" @closeDialog="closeDialog('infoDialog', false)"></appInfo>
   </div>
   
 </template>
@@ -115,6 +115,7 @@
   import appInfo from "./components/appInfo.vue"
   import marketCtrl from '@/ts/controller/store/marketCtrl';
   // import {MarketModel} from "@/ts/market";
+  import { IMarket } from '@/ts/core';
 
   const diyTable = ref(null)
   const valuee = ref<any>('');
@@ -173,6 +174,7 @@
       hasChildren: 'hasChildren'
     }
   })
+  const storeList = ref<any>([]);
    // 关闭弹窗
    const closeDialog = (type: string, key: boolean) => {
     dialogType[type] = key;
@@ -242,22 +244,7 @@ const buyThings = (item:any) => {
   }).then(() => {
     
     setTimeout(async () => {
-      await $services.order
-        .create({
-          data: {
-            code: new Date().getTime().toString().substring(0, 13),
-            name: item.caption,
-            merchandiseId: item.id
-          }
-        })
-        .then((res: ResultType) => {
-          if (res.code == 200) {
-            ElMessage({
-              message: '创建订单成功',
-              type: 'success'
-            })
-          }
-        })
+      await marketCtrl.buyShoping([item]);
     }, 1)
   }).catch(()=>{})
 }
@@ -266,8 +253,8 @@ const buyThings = (item:any) => {
     getShopcarNum()
   })
   //加入购物车
-  const joinShopCar = async (id: any) => {
-    await appstore.staging(id)
+  const joinShopCar = async (item: any) => {
+    marketCtrl.joinApply(item);
   }
   // 加入商店
   const checksSearch = (val:any)=>{
@@ -307,19 +294,25 @@ const buyThings = (item:any) => {
   const searchVal = ref<string>('') // 搜索关键词
 
   // 获取应用列表
-  const getAppList = (id:string) =>{
-    const markets = marketCtrl.Market.joinedMarkets;
-    // MarketModel.Market.getMerchandise({"id":"358266491960954880","page":{"filter":"","limit":10,"offset":0}}).then((res)=>{
-    //   console.log('resss',res)
-    // })
+  const getAppList = (item:any) =>{
+    let page = {
+      filter:"",
+      limit:pageStore.pageSize,
+      offset:pageStore.currentPage
+    }
+    item?.getMerchandise(page).then((res:any)=>{
+      state.myAppList = res.result;
+      console.log('state.myApp',state.myAppList)
+      diyTable.value.state.page.total = res.total
+    })
   }
 
   // 获取共享仓库信息
   const getMarketInfo = async () => {
-    // softShareInfo.value = await appstore.getMarketInfo()
-    // MarketModel.Market.getJoinMarkets().then((res)=>{
-    //   getAppList(res[0].market.id)
-    // })
+    marketCtrl.Market.getJoinMarkets().then((res)=>{
+      storeList.value = res;
+      getAppList(res[0])
+    })
   }
 
   const GoPage = (path: string) => {
@@ -342,12 +335,12 @@ const buyThings = (item:any) => {
       })
   }
   watch(() => router.currentRoute.value.fullPath, () => {
-    if(router.currentRoute.value.query?.id){
-      getShopData();
-    }else{
-      let id = router.currentRoute.value.query.id as string
-      getAppList(id) 
-    }
+      //监听路由
+      let id = router.currentRoute.value.query.id
+      let item = storeList.value.filter((item:any) => {
+          return item.market.id == id;
+      });
+      getAppList(item[0]) 
   })
   instance?.proxy?.$Bus.on("clickBus", (num) => {
     if(num =='1020'){ //创建商店

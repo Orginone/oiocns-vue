@@ -249,8 +249,7 @@ const departmentServices = new DepartmentServices()
 import identityServices from '@/module/relation/identity'
 const IdentityServices = new identityServices()
 import QrCodeCustom from '@/components/qrCode/index.vue'
-import { PersonalModel } from '@/ts/core'
-import { TargetType } from '@/module/enums'
+import {TargetType} from '@/ts/coreIndex'
 
 let cascaderTree = ref<OrgTreeModel[]>([])
 const router = useRouter()
@@ -685,6 +684,10 @@ const selectionChange = (val: any) => {
 }
 //获取单位信息
 onMounted(() => {
+  debugger;
+  USERCTRL.company.getDepartments((res)=>{
+    console.log("res=>",res);
+  })
   getPostList()
   loadOrgTree()
   getSelectTree()

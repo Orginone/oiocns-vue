@@ -103,12 +103,15 @@ class MarketController extends Emitter {
     if (this._shopinglist.length === 0) {
       this._shopinglist.push(data);
       // message.success('已加入购物车');
+      alert('已加入购物车')
     } else if (this._shopinglist.some((item) => item.id === data?.id)) {
       // message.warning('您已添加该商品，请勿重复添加');
+      alert('您已添加该商品，请勿重复添加')
       return;
     } else {
       this._shopinglist.push(data);
       // message.success('已加入购物车');
+      alert('已加入购物车')
     }
     this.cacheJoinOrDeleShopingCar(this._shopinglist);
   };
@@ -125,6 +128,7 @@ class MarketController extends Emitter {
       );
       this._shopinglist = arrs;
       // message.success('移出成功');
+      alert('移出成功')
       this.cacheJoinOrDeleShopingCar(this._shopinglist);
     }
   };
@@ -153,6 +157,7 @@ class MarketController extends Emitter {
       this._shopinglist = arrs;
       this.cacheJoinOrDeleShopingCar(this._shopinglist);
       // message.success('下单成功');
+      alert('下单成功')
     }
   };
 
