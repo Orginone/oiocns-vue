@@ -32,9 +32,9 @@
           <template #content="scope">
             {{ scope.row.target.name }}申请加入{{ scope.row.team.name }}
           </template>
-          <template #targetName="scope">
+          <!-- <template #targetName="scope">
             {{chat.getName(scope.row.createUser)}}
-          </template>
+          </template> -->
           <template #status="scope">
             <div v-if="scope.row.status >= 0 && scope.row.status < 100">待批</div>
             <div v-else-if="scope.row.status >= 100 && scope.row.status < 200">
@@ -87,9 +87,9 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { TabsPaneContext } from 'element-plus'
   import searchCompany from '@/components/searchs/index.vue'
-  import { chat } from '@/module/chat/orgchat'
+  // import { chat } from '@/module/chat/orgchat'
   
-  import thingServices from '@/module/flow/thing'
+  // import thingServices from '@/module/flow/thing'
 
   import {WorkModel} from "@/oiocns-ts";
 
@@ -133,7 +133,7 @@
       })
   }
 
-  const ThingServices  = new thingServices()
+  // const ThingServices  = new thingServices()
   const instance = getCurrentInstance()
   const route = useRoute()
   const router = useRouter()
@@ -142,7 +142,37 @@
   const { workspaceData } = storeToRefs(store)
   var tableData = ref<any>([{id:123,flowInstance:{}}])
   const diyTable = ref(null)
-  const tableHead =ref<any>(ThingServices.companyHead) ;
+  const tableHead =ref<any[]>([
+    {
+       prop: 'target.name',
+       label: '申请人',
+       name: 'target.name',
+       type: 'slot',
+     },
+     {
+       type: 'slot',
+       prop: 'content',
+       label: '内容',
+       name: 'content'
+     },
+     {
+       type: 'slot',
+       prop: 'status',
+       label: '状态',
+       name: 'status'
+     },
+     {
+       prop: 'createTime',
+       label: '发送时间',
+       name: 'createTime'
+     },
+     {
+       type: 'slot',
+       prop: 'option',
+       label: '操作',
+       name: 'option'
+     }
+  ]) ;
   const options = {
     expandAll: false,
     checkBox: false,
@@ -181,8 +211,15 @@
 
   // 查询我的申请
   var getApplyList = async () => {
-    await ThingServices.getAllApply()
-    tableData.value = ThingServices.applyList
+    const res = await WorkModel.OrgTodo.getApplyList({
+      offset:0,
+      limit: 20,
+      filter: ""
+    });
+    tableData.value = res.map(d => {
+      d.Data.cancel = d.cancel;
+      return d.Data;
+    });
   }
 
   // 当前menu默认active
@@ -221,10 +258,10 @@
     tableData.value = []
     // diyTable.value.state.page.total = 0
     activeIndex.value = key;
-    ThingServices.whiteList = [];
+    // ThingServices.whiteList = [];
     if (whiteList.includes(key)) {
       getApplyList()
-      tableHead.value = ThingServices.companyHead;
+      // tableHead.value = ThingServices.companyHead;
     }
   }
 
