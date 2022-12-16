@@ -5,7 +5,7 @@
         :detailDialog="dialogType.detailDialog"
         @closeDialog="closeDialog('detailDialog', false)"
       ></appDetail>
-      <opened></opened>
+      <!-- <opened></opened> -->
       <div class="table">
         <DiyTable
           :style="{ width: '100%' }"
@@ -44,7 +44,7 @@
             <el-button class="btn-check" @click="goCreate()" type="primary" link
               >创建</el-button
             >
-            <el-button class="btn-check" type="primary" link>暂存</el-button>
+            <!-- <el-button class="btn-check" type="primary" link>暂存</el-button> -->
           </template>
           <template #name="scope">
             {{ scope.row.name }}
@@ -81,6 +81,7 @@
               <span class="el-dropdown-link"> ··· </span>
               <template #dropdown>
                 <el-dropdown-menu>
+                  <el-dropdown-item @click="handleChooseItem(scope.row)">打开</el-dropdown-item>
                   <el-dropdown-item
                     v-if="
                       scope.row.authority == '所属权' &&
@@ -163,6 +164,8 @@
                           <span class="el-dropdown-link drop-list"> ··· </span>
                           <template #dropdown>
                             <el-dropdown-menu>
+                              <el-dropdown-item @click="handleChooseItem(item)">打开</el-dropdown-item>
+
                               <el-dropdown-item
                                 v-if="
                                   item.authority == '所属权' &&
@@ -301,15 +304,17 @@ import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/user";
 import DiyTable from "@/components/diyTable/index.vue";
 import authority from "@/utils/authority";
-import { appstore } from "@/module/store/app";
 import opened from "./components/opened.vue";
 import appDetail from "./components/appDetail.vue";
 import ShareComponent from "./components/shareComponents.vue";
 import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
-// import {MarketModel} from "@/ts/market";
 // import {StoreModel} from "@/ts/store";
 // import {PersonalModel} from '@/ts/personal'
 import marketCtrl from '@/ts/controller/store/marketCtrl';
+import appCtrl from '@/ts/controller/store/appCtrl';
+import userCtrl from '@/ts/controller/setting/userCtrl';
+import { useCommonStore } from '@store/common'
+import img1 from '@/assets/img/group22.png'
 
 const goCreate = () => {
   router.push({ path: "/store/appRegister" });
@@ -361,6 +366,7 @@ const goBuy = () => {
 };
 //去应用详情
 const goDetail = (id: string) => {
+  appCtrl.setCurProduct(id);
   router.push({ path: "/store/appManagement", query: { id: id } });
 };
 type StateType = {
@@ -371,6 +377,7 @@ type StateType = {
   options: any[]; //集团列表
   selectLabel: selectType; // 选中的集团名称
   tableHead: any[];
+  appList:any[];
   dropDwonActiveId: string; // 当前dropdwon打开时选中的id
 };
 const options = ref<any>({
@@ -393,6 +400,7 @@ const state: StateType = reactive({
   marketOptions: [],
   options: [],
   dropDwonActiveId: "",
+  appList:[],
   selectLabel: {
     label: "",
     id: "",
@@ -452,6 +460,22 @@ onMounted(() => {
     
 });
 
+const commonStore = useCommonStore()
+// 打开应用
+const handleChooseItem = async (app: any) => {
+  state.appList.forEach(element => {
+    if(element.prod.id ==app.id){
+      const { link } = element.prod.resource[0]
+      let data = { type: '', appInfo: app, icon: img1, link, path: '/online' }
+      data.type = 'app'
+      commonStore.iframeLink = data?.link
+      router.push(data.path)
+    }else{
+
+    }
+  });
+ 
+}
 const handleUpdate = (page: any) => {
   pageStore.currentPage = page.current;
   pageStore.pageSize = page.pageSize;
@@ -459,35 +483,11 @@ const handleUpdate = (page: any) => {
 };
 // 获取我的应用列表
 const getProductList = () => {
-  // appstore.getProductList(pageStore, searchText.value,(res:any)=>{
-  //   state[`ownProductList`] = [...res.result]
-  //   let resData = JSON.parse(JSON.stringify(state[`ownProductList`]))
-  //   for (let product of resData) {
-  //       appstore.getResource(product.id,(res:any)=>{
-  //         let flowArr: any = [];
-  //         var arr = JSON.parse(JSON.stringify(res.result))
-  //         arr.filter((element: any) => element.flows && element.flows.length > 0)
-  //           .forEach((element: any) => {
-  //             let arr = JSON.parse(element.flows);
-  //             let itemArr: any = [];
-  //             arr.forEach((el: any) => {
-  //               el.appId = product.id;
-  //               el.appName = product.name;
-  //               el.sourceId = element.id;
-  //               itemArr.push(el);
-  //             });
-  //             flowArr.push(...itemArr);
-  //           });
-  //         product.resourcesList = flowArr;
-  //         pageStore.total = res.total;
-  //         diyTable.value.state.page.total = res.total
-  //       });
-  //   }
-  // })
   marketCtrl.Market.getOwnProducts(false).then((res:any)=>{
     let arr:any = []
     res.forEach((element:any) => {
       let obj = {
+        id:element.prod.id,
         name: element.prod.name,
         updateTime:element.prod.updateTime,
         createTime:element.prod.createTime,
@@ -501,7 +501,8 @@ const getProductList = () => {
       arr.push(obj)
     });
     state[`ownProductList`] = arr;
-    console.log('state',state.ownProductList)
+    state['appList'] = res;
+    console.log('res',res)
 
   })
 };
@@ -512,16 +513,13 @@ const deleteApp = (item: any) => {
     confirmButtonText: "确认",
     cancelButtonText: "取消",
     type: "warning",
-  })
-    .then(async () => {
-      const success = await appstore.deleteApp(item.id);
-      if (success) {
-        getProductList();
-        ElMessage({
-          type: "success",
-          message: "操作成功",
-        });
-      }
+  }).then(async () => {
+      await userCtrl.space.deleteProduct(item.id);
+      getProductList();
+      ElMessage({
+        type: "success",
+        message: "操作成功",
+      });
     })
     .catch(() => {});
 };
@@ -607,7 +605,7 @@ instance?.proxy?.$Bus.on("clickBus", (num) => {
   }
 
   .content {
-    width: calc(100vw - 200px);
+    width: calc(100vw);
     display: flex;
     flex-direction: column;
     background: #f0f4f8;
@@ -622,7 +620,7 @@ instance?.proxy?.$Bus.on("clickBus", (num) => {
     .table {
       background: #fff;
       margin-top: 3px;
-      height: calc(100vh - 260px);
+      height: calc(100vh - 100px);
 
       .btn-check {
         padding: 8px 16px;

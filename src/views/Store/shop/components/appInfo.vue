@@ -73,8 +73,7 @@
     import $services from '@/services'
     import { ElMessage } from 'element-plus'
     import moment from 'moment'
-    import {chat} from '@/module/chat/orgchat'
-  
+
     const props = defineProps({
       infoDialog:{
         type:Boolean,

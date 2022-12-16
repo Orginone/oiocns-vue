@@ -116,16 +116,12 @@
 
 <script setup lang="ts">
   // @ts-nocheck
-  import InfiniteScroll from 'element-plus'
   import { onMounted, ref, reactive, toRefs, watch, nextTick, computed, onUnmounted } from 'vue'
-  import { ElMessage, ElMessageBox } from 'element-plus'
-  import API from '@/services'
+  import { ElMessage } from 'element-plus'
   import Author from './author.vue'
   import authority from '@/utils/authority'
   import { useUserStore } from '@/store/user'
   import { Application } from '@/module/store/app.ts'
-  import type { TabsPaneContext } from 'element-plus'
-  import { AnyAaaaRecord } from 'dns'
   const typePD: any = computed(() => {
     if (props.dialogType == '1') {
       return 1
