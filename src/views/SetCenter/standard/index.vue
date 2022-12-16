@@ -4,49 +4,39 @@
         <div class="detail">
           <el-descriptions
               class="margin-top"
-              title="万物的基本信息"
+              :title="`${currentData.name}的基本信息`"
               :column="2"
               border
           >
             <el-descriptions-item>
               <template #label>
-                <div class="cell-item">
-                  共享组织
-                </div>
+                <div class="cell-item">共享组织</div>
               </template>
-              kooriookami
+              <span>{{ currentData.belongInfo ? currentData.belongInfo.name : '奥集能平台' }}</span>
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
-                <div class="cell-item">
-                  分类编码
-                </div>
+                <div class="cell-item">分类编码</div>
               </template>
-              18100000000
+              <span>{{ currentData.target.code }}</span>
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
-                <div class="cell-item">
-                  开放域
-                </div>
+                <div class="cell-item">开放域</div>
               </template>
-              Suzhou
+              <span>{{ currentData.target.public ? '开放' : '私有' }}</span>
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
-                <div class="cell-item">
-                  创建时间
-                </div>
+                <div class="cell-item">创建时间</div>
               </template>
-              School
+              <span>{{ currentData.target.createTime }}</span>
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
-                <div class="cell-item">
-                  分类定义
-                </div>
+                <div class="cell-item">分类定义</div>
               </template>
-              No.1188, Wuzhong Avenue, Wuzhong District, Suzhou, Jiangsu Province
+              <span>{{ currentData.target.remark }}</span>
             </el-descriptions-item>
           </el-descriptions>
         </div>
@@ -57,10 +47,9 @@
               :hasTabs="true"
               :hasTitle="false"
               :hasTableHead="true"
-              :tableData="tableData"
+              :tableData="state.tableData"
               :options="options"
               @handleUpdate="handleUpdate"
-              @selectionChange="selectionChange"
               :tableHead="tableHead"
           >
             <template #slot-tabs>
@@ -100,19 +89,33 @@
 <script lang="ts" setup>
   // @ts-nocheck
   import DiyTable from "@/components/diyTable/index.vue";
-  import { ref } from "vue";
-  // 表格展示数据
-  const pageStore = reactive({
-    currentPage: 1,
-    pageSize: 20,
-    total: 0
+  import {computed, reactive, ref, watch} from "vue";
+  import { setCenterStore } from '@/store/setting'
+  import {USERCTRL} from "@/ts/coreIndex";
+  import { PageRequest } from '@/ts/base/model';
+  const store: any = setCenterStore()
+
+  const currentData = computed(() => {
+    return store.currentSelectItme
   })
-  const tableData = ref([{
-    account:'业务名',
-    nickname:'string',
-    name:'3~20',
-    phone:'王伍',
-  }])
+
+  watch(currentData, async (n, o) => {
+    const page: PageRequest = {offset: 0, limit: 20, filter: ''}
+    const res = await n.loadAttrs(USERCTRL.space.id, page)
+    if (res && res.result) {
+      for (const item of res.result) {
+        const team = await USERCTRL.findTeamInfoById(item.belongId);
+        if (team) {
+          item.belongId = team.name;
+        }
+      }
+    }
+    state.tableData = res.result
+  })
+
+  const state = reactive({
+    tableData: []
+  })
   const options = ref<any>({
     checkBox: false,
     order: true,
@@ -129,29 +132,24 @@
       label: '特性编码',
     },
     {
-      prop: 'nickname',
-      label: '特性名称',
-      name: 'nickname'
-    },
-    {
       prop: 'name',
+      label: '特性名称',
+    },
+    {
+      prop: 'valueType',
       label: '特性类型',
-      name: 'name'
     },
     {
-      prop: 'phone',
+      prop: 'speciesId',
       label: '特性分类',
-      name: 'createTime'
     },
     {
-      prop: 'phone',
+      prop: 'belongId',
       label: '共享组织',
-      name: 'createTime'
     },
     {
-      prop: 'phone',
+      prop: 'remark',
       label: '特性定义',
-      name: 'createTime'
     },
     {
       type: 'slot',
@@ -163,13 +161,7 @@
     }
   ])
   const handleUpdate = (page: any) => {
-    pageStore.currentPage = page.currentPage
-    pageStore.pageSize = page.pageSize
-    remoteMethod()
-  }
-  const checkList = reactive<any>([])
-  const selectionChange = (val: any) => {
-    checkList.value = val
+
   }
 </script>
 <style lang="scss">

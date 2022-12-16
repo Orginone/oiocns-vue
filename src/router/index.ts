@@ -108,7 +108,7 @@ const mainRouter: RouteRecordRaw[] = [
     ]
   },
   {
-    component: () => import('@/views/Work/home.vue'),
+    component: () => import('@/views/Portal/home.vue'),
     name: 'workHome',
     path: '/workHome',
     meta: {
@@ -116,9 +116,9 @@ const mainRouter: RouteRecordRaw[] = [
       title: '工作组',
       id: "workHome"
     }
-  },
+  }, 
   {
-    component: () => import('@/views/Work/index.vue'),
+    component: () => import('@/views/Portal/index.vue'),
     name: 'work',
     path: '/work',
     meta: {
@@ -325,7 +325,7 @@ const mainRouter: RouteRecordRaw[] = [
     ]
   },
   {
-    component: () => import('@/views/Work/process.vue'),
+    component: () => import('@/views/Portal/process.vue'),
     name: '/work/process',
     path: '/work/process',
     meta: {

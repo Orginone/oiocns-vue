@@ -66,7 +66,6 @@ import { useUserStore } from '@/store/user'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { computed,onMounted,ref,reactive } from 'vue'
-// import { WorkModel } from '@/ts/core'
 
 const store = useUserStore()
 const router = useRouter()
