@@ -247,6 +247,8 @@ const departmentServices = new DepartmentServices()
 import identityServices from '@/module/relation/identity'
 const IdentityServices = new identityServices()
 import QrCodeCustom from '@/components/qrCode/index.vue'
+
+import {USERCTRL} from '@/ts/coreIndex'
 const cascaderProps = {
   checkStrictly: true,
   value: 'id',
@@ -646,6 +648,10 @@ const selectionChange = (val: any) => {
 }
 //获取单位信息
 onMounted(() => {
+  debugger;
+  USERCTRL.company.getDepartments((res)=>{
+    console.log("res=>",res);
+  })
   getPostList()
   loadOrgTree()
 })
