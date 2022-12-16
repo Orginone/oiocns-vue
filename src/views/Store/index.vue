@@ -47,23 +47,23 @@
             <!-- <el-button class="btn-check" type="primary" link>暂存</el-button> -->
           </template>
           <template #name="scope">
-            {{ scope.row.name }}
+            {{ scope.row.prod.name }}
           </template>
           <template #tag="scope">
             <el-tag
               v-if="
-                scope.row.endTime == undefined ||
+                scope.row.prod.endTime == undefined ||
                 new Date().getTime() < formartDateTime(scope.row?.endTime)
               "
               style="margin-left: 10px"
               :type="
-                authority.IsApplicationAdmin(scope.row.belongId)
+                authority.IsApplicationAdmin(scope.row.prod.belongId)
                   ? ''
                   : 'success'
               "
             >
               {{
-                authority.IsApplicationAdmin(scope.row.belongId)
+                authority.IsApplicationAdmin(scope.row.prod.belongId)
                   ? "可管理"
                   : "可使用"
               }}</el-tag
@@ -74,7 +74,7 @@
               :type="'danger'"
               >失效</el-tag
             >
-            <el-tag style="margin-left: 10px">{{ scope.row.source }}</el-tag>
+            <el-tag style="margin-left: 10px">{{ scope.row.prod.source }}</el-tag>
           </template>
           <template #operate="scope">
             <el-dropdown trigger="click">
@@ -84,8 +84,8 @@
                   <el-dropdown-item @click="handleChooseItem(scope.row)">打开</el-dropdown-item>
                   <el-dropdown-item
                     v-if="
-                      scope.row.authority == '所属权' &&
-                      scope.row.belongId == store.workspaceData.id
+                      scope.row.prod.authority == '所属权' &&
+                      scope.row.prod.belongId == store.workspaceData.id
                     "
                     link
                     type="primary"
@@ -95,7 +95,7 @@
                   <el-dropdown-item
                     link
                     type="primary"
-                    v-if="scope.row.belongId == store.workspaceData.id"
+                    v-if="scope.row.prod.belongId == store.workspaceData.id"
                     @click="handleCommand('own', 'share', scope.row)"
                   >
                     共享</el-dropdown-item
@@ -103,14 +103,14 @@
                   <el-dropdown-item
                     link
                     type="primary"
-                    v-if="authority.IsCompanySpace()"
+                    v-if="userCtrl.isCompanySpace"
                     @click="handleCommand('own', 'distribution', scope.row)"
                     >分配
                   </el-dropdown-item>
                   <el-dropdown-item
                     link
                     type="primary"
-                    @click="goDetail(scope.row.id)"
+                    @click="goDetail(scope.row.prod.id)"
                   >
                     查看详情
                   </el-dropdown-item>
@@ -122,8 +122,8 @@
                   >
                   <el-dropdown-item
                     v-if="
-                      scope.row.resourcesList &&
-                      scope.row.resourcesList.length > 0
+                      scope.row.prod.resourcesList &&
+                      scope.row.prod.resourcesList.length > 0
                     "
                   >
                     <el-dropdown trigger="hover" placement="top-end">
@@ -133,7 +133,7 @@
                           style="padding-left: 10px; min-width: 100px"
                         >
                           <el-dropdown-item
-                            v-for="resource in scope.row.resourcesList"
+                            v-for="resource in scope.row.prod.resourcesList"
                             :key="resource.formId"
                             @click="enterProcess(resource)"
                             >{{ resource.business }}</el-dropdown-item
@@ -154,11 +154,11 @@
                 :key="index"
               >
                 <div class="item-head">
-                  <div class="item-img">{{ item.name.substring(0,1) }}</div>
+                  <div class="item-img">{{ item.prod.name.substring(0,1) }}</div>
                   <div class="item-head-content">
                     <p>
                       <span
-                        >{{ item.name }}
+                        >{{ item.prod.name }}
                       </span>
                         <el-dropdown>
                           <span class="el-dropdown-link drop-list"> ··· </span>
@@ -168,8 +168,8 @@
 
                               <el-dropdown-item
                                 v-if="
-                                  item.authority == '所属权' &&
-                                  item.belongId ==
+                                  item.prod.authority == '所属权' &&
+                                  item.prod.belongId ==
                                     store.workspaceData.id
                                 "
                                 link
@@ -183,7 +183,7 @@
                                 link
                                 type="primary"
                                 v-if="
-                                  item.belongId ==
+                                  item.prod.belongId ==
                                   store.workspaceData.id
                                 "
                                 @click="handleCommand('own', 'share', item)"
@@ -193,7 +193,7 @@
                               <el-dropdown-item
                                 link
                                 type="primary"
-                                v-if="authority.IsCompanySpace()"
+                                v-if="userCtrl.isCompanySpace"
                                 @click="
                                   handleCommand('own', 'distribution', item)
                                 "
@@ -202,20 +202,20 @@
                               <el-dropdown-item
                                 link
                                 type="primary"
-                                @click="goDetail(item.id)"
+                                @click="goDetail(item.prod.id)"
                               >
                                 查看详情
                               </el-dropdown-item>
                               <el-dropdown-item
                                 link
                                 type="primary"
-                                @click="deleteApp(item.id)"
+                                @click="deleteApp(item.prod.id)"
                                 >移除应用</el-dropdown-item
                               >
-                              <el-dropdown-item
+                              <!-- <el-dropdown-item
                                 v-if="
-                                  item.resourcesList &&
-                                  item.resourcesList.length > 0
+                                  item.prod.resourcesList &&
+                                  item.prod.resourcesList.length > 0
                                 "
                               >
                                 <el-dropdown trigger="hover" placement="top-end">
@@ -233,7 +233,7 @@
                                     </el-dropdown-menu>
                                   </template>
                                 </el-dropdown>
-                              </el-dropdown-item>
+                              </el-dropdown-item> -->
                             </el-dropdown-menu>
                           </template>
                         </el-dropdown>
@@ -242,12 +242,12 @@
                   </div>
                 </div>
                 <div class="item-content">
-                  {{item.remark}}
+                  {{item.prod.remark}}
                 </div>
                 <div class="tag">
-                  <el-tag class="tag-item" type="info">{{item.typeName}}</el-tag>
+                  <el-tag class="tag-item" type="info">{{item.prod.typeName}}</el-tag>
                 </div>
-                <div class="time">创建于 {{ item.createTime }}</div>
+                <div class="time">创建于 {{ item.prod.createTime }}</div>
               </div>
             </div>
           </template>
@@ -484,23 +484,24 @@ const handleUpdate = (page: any) => {
 // 获取我的应用列表
 const getProductList = () => {
   marketCtrl.Market.getOwnProducts(false).then((res:any)=>{
-    let arr:any = []
-    res.forEach((element:any) => {
-      let obj = {
-        id:element.prod.id,
-        name: element.prod.name,
-        updateTime:element.prod.updateTime,
-        createTime:element.prod.createTime,
-        typeName:element.prod.typeName,
-        updateUser:element.prod.updateUser,
-        authority:element.prod.authority,
-        belongId:element.prod.belongId,
-        code:element.prod.code,
-        source:element.prod.source
-      }
-      arr.push(obj)
-    });
-    state[`ownProductList`] = arr;
+    // let arr:any = []
+    // res.forEach((element:any) => {
+    //   let obj = {
+    //     id:element.prod.id,
+    //     name: element.prod.name,
+    //     updateTime:element.prod.updateTime,
+    //     createTime:element.prod.createTime,
+    //     typeName:element.prod.typeName,
+    //     updateUser:element.prod.updateUser,
+    //     authority:element.prod.authority,
+    //     belongId:element.prod.belongId,
+    //     code:element.prod.code,
+    //     source:element.prod.source,
+    //     resource:element.prod.resource,
+    //   }
+    //   arr.push(obj)
+    // });
+    state[`ownProductList`] = res ;
     state['appList'] = res;
     console.log('res',res)
 
@@ -509,12 +510,12 @@ const getProductList = () => {
 
 // 移除app
 const deleteApp = (item: any) => {
-  ElMessageBox.confirm(`确认删除  ${item.name}?`, "警告", {
+  ElMessageBox.confirm(`确认删除  ${item.prod.name}?`, "警告", {
     confirmButtonText: "确认",
     cancelButtonText: "取消",
     type: "warning",
   }).then(async () => {
-      await userCtrl.space.deleteProduct(item.id);
+      await userCtrl.space.deleteProduct(item.prod.id);
       getProductList();
       ElMessage({
         type: "success",
@@ -533,6 +534,7 @@ const handleCommand = (
   item: any
 ) => {
   selectProductItem.value = item;
+  appCtrl.setCurProduct(item.prod.id)
   console.log("selectProductItem", selectProductItem.value);
   switch (command) {
     case "share": //分享
@@ -541,7 +543,7 @@ const handleCommand = (
     case "putaway": //上架
       router.push({
         path: "/store/putShelves",
-        query: { name: item.name, id: item.id, typeName: item.typeName },
+        query: { name: item.prod.name, id: item.prod.id, typeName: item.prod.typeName },
       });
       break;
     case "unsubscribe":

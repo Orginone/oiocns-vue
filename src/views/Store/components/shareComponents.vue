@@ -2,7 +2,7 @@
   <div class="cohortLayout">
     <div class="cohortLayout-header" v-if="typePD !== 3">
       <div class="cohortLayout-header-text"
-        >{{ typePD == 1 ? '请选择资源：' : '请选择集团：' }}
+        >{{ typePD == 1 ? '请选择资源：' : '请选择集团：' }}--typePD：{{typePD}}
       </div>
       <div class="cohortLayout-header-tabs">
         <el-tabs v-model="activeName" class="demo-tabs">
@@ -33,6 +33,7 @@
             </el-icon>
           </template>
         </el-input>
+        1111---{{radio}}
         <el-tree
           v-if="radio == '1'"
           ref="leftTree"
@@ -42,6 +43,7 @@
           :check-strictly="true"
           :default-expand-all="true"
           show-checkbox
+          
           @check-change="handleCheckChange"
           :filter-node-method="filterNode"
         />
@@ -72,6 +74,7 @@
             </el-icon>
           </template>
         </el-input>
+        222222 {{radio}}
         <el-tree
           v-if="radio == '2' || radio == '3' || (radio == '4' && centerTreeShow)"
           ref="centerTree"
@@ -121,7 +124,10 @@
   import Author from './author.vue'
   import authority from '@/utils/authority'
   import { useUserStore } from '@/store/user'
-  import { Application } from '@/module/store/app.ts'
+  import { Application } from './app.ts'
+  import userCtrl from '@/ts/controller/setting/userCtrl';
+  import appCtrl from '@/ts/controller/store/appCtrl';
+
   const typePD: any = computed(() => {
     if (props.dialogType == '1') {
       return 1
@@ -133,7 +139,6 @@
       }
     }
   })
-  console.log('props',props)
   const application = new Application(props.info.id, typePD.value)
   interface Tree {
     id: string
@@ -290,11 +295,11 @@
         state.way = [
           {
             id: '1',
-            label: '按集团共享'
+            label: '按集团分配'
           },
           {
             id: '2',
-            label: '按角色共享'
+            label: '按角色分配'
           },
           {
             id: '3',
@@ -310,7 +315,7 @@
         state.way = [
           {
             id: '1',
-            label: '按群组共享'
+            label: '按组织共享'
           },
           {
             id: '2',
@@ -318,11 +323,11 @@
           },
           {
             id: '3',
-            label: '按身份分配'
+            label: '按身份共享'
           },
           {
             id: '4',
-            label: '按人员分配'
+            label: '按人员共享'
           }
         ]
         getFriendsList()
@@ -342,8 +347,8 @@
 
   // 获取群组信息
   const getFriendsList = async () => {
-    cascaderTree.value = await application.getJoinedCohorts()
-    getHistoryData()
+    cascaderTree.value = userCtrl.buildTargetTree(await userCtrl.getTeamTree())
+    // getHistoryData()
   }
 
   // 获取集团数据
@@ -621,28 +626,33 @@
     }
   }
   const handleNodeClick = async (node: any, load: boolean, search?: string) => {
-    if (node && node.data && authority.IsApplicationAdmin([node.data.id, node.data.belongId])) {
+
+    if (node) {
+      console.log('aaaa',appCtrl.curProduct,node)
       centerTreeShow.value = true
-      sumbitSwitch(node)
-      state.switchData = node
-      if (typeof load == 'object' && typeof search == 'object') {
-        searchValue.value = ''
-      }
-      if (typeof load !== 'boolean') {
-        page.currentPage = 1
-      } else if (typeof search == 'string') {
-        page.currentPage = 1
-      }
+      const item: ITarget = node.item;
+      // sumbitSwitch(node)
+      // state.switchData = node
+      // if (typeof load == 'object' && typeof search == 'object') {
+      //   searchValue.value = ''
+      // }
+      // if (typeof load !== 'boolean') {
+      //   page.currentPage = 1
+      // } else if (typeof search == 'string') {
+      //   page.currentPage = 1
+      // }
+      console.log(radio.value,await node.item.selectAuthorityTree())
+
       switch (radio.value) {
         case '2':
           state.loadID = node
-          const centerData = await application.getAuthorityTree(node, search)
+          const centerData =await node.item.selectAuthorityTree();
           state.centerTree = [centerData]
           getHistoryData(node)
           break
         case '3':
           state.loadID = node
-          const res = await application.getIdentities(node, page, search)
+          const res = await node.item.getIdentitys()
           if (load == true) {
             state.centerTree.concat(res)
           } else {
@@ -652,7 +662,7 @@
           break
         case '4':
           state.loadID = node
-          const result = await application.getPerson(node, page, search)
+          const result = node.item.loadMembers({ limit: 10000,offset: 0, filter: '', })
           if (result) {
             if (load == true) {
               state.centerTree.concat(result)
@@ -758,8 +768,8 @@
     }
   }
   const searchResource = async () => {
-    tabs.value = await application.searchResource()
-    resource.value = tabs.value[0].id
+    tabs.value = props.info.resource || []
+    resource.value = tabs.value[0]?.id
   }
   let cascaderTree = ref<OrgTreeModel[]>([])
   const getCompanyTree = async () => {

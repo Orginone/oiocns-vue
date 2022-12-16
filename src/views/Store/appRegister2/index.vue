@@ -104,7 +104,35 @@ const next = () => {
   title.value = stepsArr[active.value].title
 }
 
-
+type Resources = {
+    name: string
+    code: string
+    link: string
+    privateKey: string
+    customId: number
+    flows: Flows[]
+    components: Components[]
+}
+type Field = {
+    name: string
+    code: string
+    type: string
+    customId: number
+    dict: any[]
+}
+type Flows = {
+    formId: string 
+    business: string
+    customId: number
+    field: Field[]
+  }
+  type Components = {
+    name: string
+    url: string
+    width: string
+    height: string
+    customId: number
+  }
 let state = reactive<{ [key: string]: any; resources: Resources[] }>({
   form: {
     id: '',
