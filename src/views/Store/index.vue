@@ -7,6 +7,7 @@
       ></appDetail>
       <opened></opened>
       <div class="table">
+        {{state.ownProductList}}
         <DiyTable
           :style="{ width: '100%' }"
           ref="diyTable"
@@ -306,6 +307,7 @@ import opened from "./components/opened.vue";
 import appDetail from "./components/appDetail.vue";
 import ShareComponent from "./components/shareComponents.vue";
 import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
+
 // import {MarketModel} from "@/ts/market";
 // import {StoreModel} from "@/ts/store";
 // import {PersonalModel} from '@/ts/personal'
@@ -484,6 +486,7 @@ const getProductList = () => {
   //       });
   //   }
   // })
+
   marketCtrl.Market.getOwnProducts(false).then((res:any)=>{
     let arr:any = []
     res.forEach((element:any) => {
@@ -501,7 +504,6 @@ const getProductList = () => {
       arr.push(obj)
     });
     state[`ownProductList`] = arr;
-    console.log('state',state.ownProductList)
 
   })
 };
