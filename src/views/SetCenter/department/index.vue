@@ -68,31 +68,6 @@
       </diytab>
     </div>
   </div>
-  <el-dialog v-model="deptDialogVisible" title="请录入部门信息" width="30%" center append-to-body @close="dialogHide">
-    <div>
-      <el-form-item label="部门名称" style="width: 100%">
-        <el-input v-model="formData.teamName" placeholder="请输入" clearable style="width: 100%" />
-      </el-form-item>
-      <el-form-item label="部门简称" style="width: 100%">
-        <el-input v-model="formData.name" placeholder="请输入" clearable style="width: 100%" />
-      </el-form-item>
-      <el-form-item label="部门编号" style="width: 100%">
-        <el-input v-model="formData.code" placeholder="请输入" clearable style="width: 100%" />
-      </el-form-item>
-      <el-form-item label="部门标识" style="width: 100%">
-        <el-input v-model="formData.teamCode" placeholder="请输入" clearable style="width: 100%" />
-      </el-form-item>
-      <el-form-item label="部门简介" style="width: 100%">
-        <el-input v-model="formData.teamRemark" :autosize="{ minRows: 5 }" placeholder="请输入" type="textarea" clearable />
-      </el-form-item>
-    </div>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogHide">取消</el-button>
-        <el-button type="primary" @click="createDept">确认</el-button>
-      </span>
-    </template>
-  </el-dialog>
 
   <el-dialog v-model="jobDialogVisible" title="请录入工作组信息" width="40%" center append-to-body @close="dialogHide">
     <div>
@@ -239,9 +214,11 @@
   </el-dialog>
   <CreateTeamModal 
     :title="activeModal"
-    :visible="visible"
+    v-model:visible="visible"
     :current="store.currentSelectItme?.intans || USERCTRL.company"
-    :typeNames="createOrEdit?.split('|')"
+    v-model:typeNames="createOrEdit"
+    :handleCancel="handleCancel()"
+    @handleOk="handleOk"
   />
   <AssignedPerson v-if="assignDialog" :checkList='tableData' :id="company.id" :selectLimit='0' :serachType='5'
     @closeDialog="hideAssignDialog" @checksSearch='checksCompanySearch' />
@@ -265,6 +242,18 @@ import CreateTeamModal from '../GlobalComps/createTeam.vue';
 const activeModal = ref('')
 const createOrEdit = ref()
 const visible = ref(false)
+const handleCancel = () => {
+  // visible.value = true
+}
+const handleOk = (newItem) => {
+  console.log('newItem: ', newItem);
+  if(newItem) {
+    ElMessage.success('创建成功!')
+    visible.value = false
+    proxy?.$Bus.emit('refreshNav')
+  }
+}
+
 let cascaderTree = ref<OrgTreeModel[]>([])
 const router = useRouter()
 
@@ -289,7 +278,6 @@ const subscribe = store.$subscribe(
     // 如果设置detached值为 true 时，即使所在组件被卸载，订阅依然在生效
 )
 
-let deptDialogVisible = ref<boolean>(false)
 let jobDialogVisible = ref<boolean>(false)
 let personDialogVisible = ref<boolean>(false)
 let createDeptDialogVisible = ref<boolean>(false)
@@ -308,28 +296,10 @@ let currentData = ref<any>({})
 //关闭弹窗清空
 const dialogHide = () => {
   formData.value = { parentId: store.currentSelectItme?.id }
-  deptDialogVisible.value = false
   jobDialogVisible.value = false
   personDialogVisible.value = false
   createDeptDialogVisible.value = false
   setPostDialogVisible.value = false
-}
-let isUnit = ref<boolean>(true)
-// 创建部门
-const createDept = async() => {
-  const data = {
-    avatar:undefined,
-    typeName:"部门",
-    ...formData.value
-  }
-  // 单位创建部门 Or 部门下创建部门
-  const unitOrdeptApi = isUnit.value ? USERCTRL.company : store.currentSelectItme?.intans
-  // 单位创建部门
-  if (await unitOrdeptApi.create(data)) {
-    ElMessage.success('创建成功!')
-    dialogHide()
-    proxy?.$Bus.emit('refreshNav')
-  }
 }
 
 // 分享集团
@@ -551,16 +521,15 @@ const { proxy } = getCurrentInstance()
 
 proxy?.$Bus.on('clickBus', (id) => {
   if(id === '2201') { // 部门创建子部门
-    isUnit.value = false
-    deptDialogVisible.value = true
+    activeModal.value = '新建'
+    visible.value = true
+    createOrEdit.value = store.currentSelectItme?.intans?.subTeamTypes
   } else if(id === '2202') { // 创建工作组
     jobDialogVisible.value = true
   } else if(id === '2203') {  // 单位创建部门
-    isUnit.value = true
-    // activeModal.value = '新建'
-    // visible.value = true
-    deptDialogVisible.value = true
-    // createOrEdit.value = '新建|' + USERCTRL.company.subTeamTypes.join('|');
+    activeModal.value = '新建'
+    visible.value = true
+    createOrEdit.value = ((USERCTRL.company.subTeamTypes.join('|')).split('|'))
   }
 })
 

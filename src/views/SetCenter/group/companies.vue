@@ -139,7 +139,7 @@ const tableHead = ref([
 const handleUpdate = (page: any) => {
   pageStore.currentPage = page.currentPage
   pageStore.pageSize = page.pageSize
-  getCompanies()
+  // getCompanies()
 }
 
 // 加载单位
@@ -250,7 +250,7 @@ onMounted(() => {
     let headerHeight = cardHeight.value?.clientHeight
     tabHeight.value = headerHeight
   })
-  getCompanies()
+  // getCompanies()
 })
 
 // 分享集团
@@ -261,7 +261,7 @@ const handleShare = () => {
 
 watch(props, () => {
   pageStore.currentPage = 1;
-  getCompanies()
+  // getCompanies()
   nextTick(() => {
     let headerHeight = cardHeight.value?.clientHeight
     tabHeight.value = headerHeight

@@ -34,29 +34,6 @@ export const setCenterStore = defineStore({
       this.currentSelectItme = this.departmentInfo[0] // 默认选中第一个节点
       return this.departmentInfo
     },
-    async GetGroupInfo() {
-      // 获取集团节点信息
-      await $services.company.companyGetGroups({ data: { offset: 0, limit: 1000 } }).then((res: any) => {
-        if (res.success) {
-          if (res.data.result && res.data.result.length > 0) {
-            const groups = res.data.result
-            // state.options = groups.map(g => {
-            //   return { value: g.id, label: g.name }
-            // })
-            // selectedValue.value = groups[0].name
-            // loadOrgTree(groups[0].id)
-          } else {
-            this.groupInfo = []
-          }
-        } else {
-          ElMessage({
-            message: res.msg,
-            type: 'warning'
-          })
-        }
-      })
-      return this.departmentInfo
-    },
     async GetIdentities() {
       const stations = await USERCTRL.company.getStations(false);
       let data: { label: string; key: string; object: any, [key: string]: any }[] = [];

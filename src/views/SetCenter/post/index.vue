@@ -32,14 +32,23 @@
       </span>
     </template>
   </el-dialog>
+  <CreateTeamModal 
+    :title="activeModal"
+    v-model:visible="visible"
+    :current="USERCTRL.company  ||  settingStore.currentSelectItme"
+    :typeNames="['岗位']"
+    @handleOk="handleOk"
+  />
 </template>
 <script lang="ts" setup>
   // @ts-nocheck
+  import CreateTeamModal from '../GlobalComps/createTeam.vue';
   import adminTable from './components/adminTable.vue'
   import postTable from './components/postTable.vue'
   import { getCurrentInstance, computed } from "vue";
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { useUserStore } from '@/store/user'
+  import { USERCTRL, TargetType } from '@/ts/coreIndex';
   import { setCenterStore } from '@/store/setting'
   import identityServices from '@/module/relation/identity'
   const IdentityServices = new identityServices()
@@ -48,6 +57,17 @@
 
   const isUpdate = ref<boolean>(false)
   const { proxy } = getCurrentInstance()
+
+  const activeModal = ref('')
+  const createOrEdit = ref()
+  const visible = ref(false)
+  const handleOk = (newItem) => {
+    if(newItem) {
+      ElMessage.success(`${isUpdate.value ? '编辑': '新增'}成功!`)
+      visible.value = false
+      proxy?.$Bus.emit('refreshNav')
+    }
+  }
 
   let formData = reactive<any>({
     name: '',
@@ -62,11 +82,15 @@
       if (ruleFormRef.value) {
         ruleFormRef.value.resetFields()
       }
-      createOrUpdatePostDialog.value = true
+      activeModal.value = '新增|岗位'
+      visible.value = true
+      // createOrUpdatePostDialog.value = true
     } else if (id == '2009') {
       isUpdate.value = true
       formData = settingStore.currentSelectItme
-      createOrUpdatePostDialog.value = true
+      // createOrUpdatePostDialog.value = true
+      activeModal.value = '编辑'
+      visible.value = true
     } else if(id == '2010') {
       handleDelete()
     }

@@ -27,7 +27,7 @@
                     <el-icon><Plus /></el-icon>
                   </template>
                   <div class="btn-bus" @click="clickBus" :style="{cursor: 'pointer'}" >
-                    <div class="row-btn" v-for="(item,index) in data.btns" :key="item" :data-index="item.id">{{item.name}}</div>
+                    <div class="row-btn" v-for="(item,index) in data.btns" :key="index" :data-index="item.id">{{item.name}}</div>
                   </div>
                 </el-popover>&nbsp;
                 <el-popover
@@ -110,6 +110,7 @@ import searchGroup from '@/components/searchs/index.vue'
 import { Search } from '@element-plus/icons-vue'
 import authority from '@/utils/authority'
 import { useUserStore } from '@/store/user'
+import {USERCTRL} from '@/ts/coreIndex';
 const store = useUserStore()
 const goBack = () => {
   window.history.go(-1)
@@ -272,27 +273,19 @@ let myGroupList: any = []
 let addGroupList: any = []
 
 // 查询集团列表
-const getGroupList = () => {
-  $services.company
-    .companyGetGroups({
-      data: {
-        offset: 0,
-        limit: 1000
-      }
-    })
-    .then((res: ResultType) => {
-      if (res.data.result && res.data.result.length > 0) {
-        groups = res.data.result
+const getGroupList = async() => {
+  const groups = await USERCTRL.company.getJoinedGroups(false);
+  console.log('groups: ', groups);
         myGroupList = []
         addGroupList = []
         groups.length && groups.forEach((item: any) => {
           if (item.createUser == store.queryInfo.id) {
-            myGroupList.push({...item, label: item?.team?.name ?? item?.name, btns: [{
+            myGroupList.push({...item, label: item?.target?.name ?? item?.name, btns: [{
               name: '创建子集团',
               id: '2103'
             }]})
           } else {
-            addGroupList.push({...item, label: item.name, btns: [{
+            addGroupList.push({...item, label: item?.target?.name, btns: [{
               name: '加入集团',
               id: '2100'
             }]})
@@ -319,14 +312,11 @@ const getGroupList = () => {
           }
         ]
         orgTree.value = newObj;
+        console.log('orgTree.value: ', orgTree.value);
         state.options = groups.map(g => {
           return { value: g.id, label: g.name }
         })
         loadOrgTree(groups[0].id)
-      } else {
-        groups = []
-      }
-    })
 }
 
 const nodeClick = (val: any, nodeAttribute?: any, event?: any) => {

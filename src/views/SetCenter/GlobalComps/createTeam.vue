@@ -3,6 +3,7 @@
     :model-value="visible"
     :title="title"
     width="30%"
+    @close="emit('update:visible', false)"
     append-to-body
   >
     <el-form
@@ -41,6 +42,12 @@
                 :placeholder="item.placeholder || ''"
                 class="ele-fluid"
               >
+                <el-option
+                  v-for="i in item.options"
+                  :key="i.value"
+                  :label="i.label"
+                  :value="i.value"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -61,35 +68,28 @@ import { ref, reactive, watch, computed } from "vue";
 import type { FormInstance, FormRules } from 'element-plus'
 import { ITarget } from '@/ts/core';
 
-// interface Iprops {
-//   title: string; // modal标题
-//   visible: boolean; // 弹窗是否打开
-//   handleCancel: () => void;
-//   handleOk: (newItem: ITarget | undefined) => void;
-//   current: ITarget; // 当前选中数据
-//   typeNames: string[]; // 类型名称
-// }
-const props = withDefaults(
+interface Iprops {
+  title: string; // modal标题
+  visible: boolean; // 弹窗是否打开
+  handleCancel: () => void;
+  current: ITarget; // 当前选中数据
+  typeNames: string[]; // 类型名称
+}
+const props: Iprops = withDefaults(
   defineProps<{
-    visible: boolean; 
+    visible: boolean;
+    title: string;
+    current: ITarget; // 当前选中数据
+    typeNames: string[]; // 类型名称
   }>(),
   {
     visible: false,
   }
 )
 const emit = defineEmits<{
-  (e: 'update:visible', isShow: boolean): void
+  (e: 'update:visible', isShow: boolean): void,
+  (e: 'handleOk', newItem: ITarget | undefined): void,
 }>()
-let dialogVisible = computed({
-  get() {
-    return props.visible ;
-  },
-  set(v) {
-    emit("update:visible", v);
-  }
-});
-const { visible, title, handleOk, current, handleCancel } = props;
-
 type columnsProps = {
   type?: string; // 表单项类型：1、默认是input-输入框 2、select-多选
   label?: string; // 标题
@@ -103,12 +103,7 @@ type columnsProps = {
 // 表单列配置
 const columns: columnsProps[] = reactive([
     { label: '名称', propName: 'teamName', placeholder: '请输入', required: true },
-    { type: 'select', label: '团队类型', propName: 'typeName', placeholder: '请选择', required: true, options: props.typeNames?.map((i) => {
-      return {
-        value: i,
-        label: i
-      }
-    }) },
+    { type: 'select', label: '团队类型', propName: 'typeName', placeholder: '请选择', required: true, options: []},
     { label: '团队代码', propName: 'code', placeholder: '请输入', required: true },
     { label: '团队简称', propName: 'name', placeholder: '请输入', required: true },
     { label: '团队标识', propName: 'teamCode', placeholder: '请输入', required: true },
@@ -126,15 +121,26 @@ const rules = reactive<FormRules>({
 // 表单实例
 const ruleFormRef = ref<FormInstance>()
 // 表单数据
-const ruleForm: any = reactive({});
+const ruleForm: any = reactive({
+  avatar:undefined,
+  teamName: '',
+  typeName: '',
+  code: '',
+  name: '',
+  teamCode: '',
+  teamRemark: ''
+});
 // 提交表单
 const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
-  formEl.validate((valid) => {
+  formEl.validate(async (valid) => {
     if (valid) {
-      console.log('submit!')
+      if(props.title === '编辑') {
+        emit('handleOk', await props.current.update(ruleForm))
+      } else {
+        emit('handleOk', await props.current.create(ruleForm))
+      }
     } else {
-      console.log('error submit!')
       return false
     }
   })
@@ -158,14 +164,22 @@ function renderViewByData(data) {
 watch(
   () => props.visible,
   (visible) => {
+    console.log(props.current);
+    
     if (visible) {
-      if (title === '编辑') renderViewByData(current.target);
+      ruleForm.typeName = props.typeNames[0]
+      if(props.typeNames) {
+        columns[1].options = props.typeNames?.map((i) => {
+          return {
+            value: i,
+            label: i
+          }
+        })
+      }
+      if (props.title === '编辑') renderViewByData(current.target);
     } else {
-      // ruleFormRef.value.resetFields()
+      resetForm()
     }
-  },
-  {
-    immediate: true
   }
 );
 
