@@ -314,7 +314,7 @@ import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
 import marketCtrl from '@/ts/controller/store/marketCtrl';
 
 const goCreate = () => {
-  router.push({ path: "/store/appRegister" });
+  router.push({ path: "/store/appRegister2" });
 };
 const dialogType: any = reactive({
   detailDialog: false, //应用详情弹窗
