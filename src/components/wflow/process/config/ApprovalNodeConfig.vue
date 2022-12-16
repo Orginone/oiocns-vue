@@ -149,7 +149,7 @@
     <!-- <org-picker :title="pickerTitle" multiple :type="orgPickerType" ref="orgPicker" :selected="orgPickerSelected"
                 @ok="selected"/> -->
       <el-dialog  v-model="nodeProps.friendDialogmode"  custom-class="share-dialog" :title="nodeProps.friendDialogmode==1?'选择人员':'选择岗位'" width="1000px" draggable :close-on-click-modal="false">
-        <chooseOperator  v-show="nodeProps.friendDialogmode==1 && spaceType=='单位'" @closeDialog="nodeProps.friendDialogmode = 0"  @submit="checksSearch" @submitPersonNum="setNum" :radio="'4'"  :way="[ 
+        <!-- <chooseOperator  v-show="nodeProps.friendDialogmode==1 && spaceType=='单位'" @closeDialog="nodeProps.friendDialogmode = 0"  @submit="checksSearch" @submitPersonNum="setNum" :radio="'4'"  :way="[ 
         {
           id: '4',
           label: '按人员'
@@ -163,7 +163,7 @@
           label: '集团岗位'
         }]"></chooseOperator>
         <chooseOperatorPersonal v-show="nodeProps.friendDialogmode==1 && spaceType=='人员'" dialogType="1" @closeDialog="nodeProps.friendDialogmode = 0" :info="selectProductItem" :type="4" @submit="checksSearch" @submitPersonNum="setNum"></chooseOperatorPersonal>
-        <chooseOperatorPersonal v-show="nodeProps.friendDialogmode==3 && spaceType=='人员'" dialogType="1" @closeDialog="nodeProps.friendDialogmode = 0" :info="selectProductItem" :type="3" @submit="checksSearch" @submitPersonNum="setNum"></chooseOperatorPersonal>
+        <chooseOperatorPersonal v-show="nodeProps.friendDialogmode==3 && spaceType=='人员'" dialogType="1" @closeDialog="nodeProps.friendDialogmode = 0" :info="selectProductItem" :type="3" @submit="checksSearch" @submitPersonNum="setNum"></chooseOperatorPersonal> -->
       </el-dialog>
   </div>
 </template>
@@ -182,8 +182,8 @@
     ComponentInternalInstance
   } from 'vue';
   // import searchFriend from '@/components/searchs/index.vue'
-  import chooseOperator from '@/views/Market/components/chooseOperator.vue'
-  import chooseOperatorPersonal from '@/views/Market/components/chooseOperatorPersonal.vue'
+  // import chooseOperator from '@/views/Market/components/chooseOperator.vue'
+  // import chooseOperatorPersonal from '@/views/Market/components/chooseOperatorPersonal.vue'
 import { relative } from 'path/posix';
 import { title } from 'process';
 import authority from '@/utils/authority'
@@ -191,7 +191,7 @@ import { ElMessage } from 'element-plus'
   // import OrgPicker from "@/components/common/OrgPicker";
   export default defineComponent({
     name: 'ApprovalNodeConfig',
-    components: {chooseOperator,chooseOperatorPersonal},
+    // components: {chooseOperator,chooseOperatorPersonal},
     props: {
       config: {
         type: Object,

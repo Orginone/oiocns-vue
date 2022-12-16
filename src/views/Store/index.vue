@@ -421,25 +421,25 @@ const state: StateType = reactive({
       width: "200",
     },
     {
-      prop: "code",
+      prop: "prod.code",
       label: "应用编码",
       width: "150",
     },
     {
-      prop: "source",
+      prop: "prod.source",
       label: "应用来源",
     },
     {
-      prop: "typeName",
+      prop: "prod.typeName",
       label: "应用类型",
       width: "150",
     },
     {
-      prop: "authority",
+      prop: "prod.authority",
       label: "持有权限",
     },
     {
-      prop: "createTime",
+      prop: "prod.createTime",
       label: "创建时间",
       width: "200",
     },
