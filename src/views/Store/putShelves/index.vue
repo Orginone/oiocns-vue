@@ -65,20 +65,19 @@
     import { ElMessage, FormInstance, FormRules } from 'element-plus'
     import { onMounted, reactive, ref } from 'vue'
     import detailBox from './../components/detailBox.vue'
-    import { useRoute } from 'vue-router'
+    import { useRoute ,useRouter} from 'vue-router'
     import marketCtrl from '@/ts/controller/store/marketCtrl';
 
     const route = useRoute()
-
+    const router = useRouter()
     const formRef = ref<FormInstance>()
-    const formLabelAlign = reactive({
+    const formLabelAlign = reactive({ 
       caption: route.query.name,
-      productid: route.query.id,
       price: undefined,
       sellAuth: '使用权',
-      marketId: undefined,
+      marketId: route.query.id,
       information: '',
-      days: undefined
+      days: ''
     })
     const productItem = ref<any>();
     // 获取我的应用列表
@@ -105,16 +104,20 @@
     }
 
     // 提交上架
-    const onPutawaySubmit = () => {
-      if (!formRef.value) return
-      formRef.value.validate(async (valid, fields) => {
-        if (valid) {
-          await productItem.value.publish(formLabelAlign)
-          // resetForm()
-        } else {
-          console.log('上架error submit!', fields)
+    const onPutawaySubmit = async () => {
+      console.log('formRef.value',formRef.value)
+      // formRef.value.validate(async (valid, fields) => {
+      //   if (valid) {
+        const res = await productItem.value.publish(formLabelAlign)
+        if(res){
+          ElMessage({message: "发布成功",type: 'success'})
+          router.go(-1)
         }
-      })
+          resetForm()
+        // } else {
+        //   console.log('上架error submit!', fields)
+        // }
+      // })
     }
   
     const emit = defineEmits(['closeDialog'])
