@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <!-- <detailBox></detailBox> -->
+    <detailBox></detailBox>
     <el-form
       ref="formRef"
       :model="formLabelAlign"
@@ -13,28 +13,23 @@
       <el-form-item label="上架平台" prop="marketId">
         <el-select
           v-model="formLabelAlign.marketId"
-          filterable
-          remote
-          reserve-keyword
           placeholder="请设置上架平台"
-          :remote-method="remoteMethod"
-          :loading="loading"
           style="width: 100%"
         >
           <el-option
-            :value="item.id"
-            :label="`${item.name}(${item.code})`"
+            :value="item.market.id"
+            :label="`${item.market.name}(${item.market.code})`"
             v-for="item in marketList"
             :key="item.id"
           >
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="上架应用:" name="name">
-        <el-input readonly v-model="route.query.name" />
+      <el-form-item label="应用名称:" name="name">
+        <el-input readonly v-model="(route.query.name as string)" />
       </el-form-item>
       <el-form-item label="应用类型:">
-        <el-input readonly v-model="route.query.typeName" />
+        <el-input readonly v-model="(route.query.typeName as string)" />
       </el-form-item>
       <el-form-item label="应用权限:" prop="sellAuth">
         <el-radio-group v-model.number="formLabelAlign.sellAuth">
@@ -70,8 +65,9 @@
     import { ElMessage, FormInstance, FormRules } from 'element-plus'
     import { onMounted, reactive, ref } from 'vue'
     import detailBox from './../components/detailBox.vue'
-    import { appstore } from '@/module/store/app'
     import { useRoute } from 'vue-router'
+    import marketCtrl from '@/ts/controller/store/marketCtrl';
+
     const route = useRoute()
 
     const formRef = ref<FormInstance>()
@@ -84,43 +80,37 @@
       information: '',
       days: undefined
     })
-  
-    const marketList = ref([])
-  
-    const loading = ref(false)
-  
+    const productItem = ref<any>();
+    // 获取我的应用列表
+    const getProductList = () => {
+      marketCtrl.Market.getOwnProducts(false).then((res:any)=>{
+        let arr:any = []
+        res.forEach((element:any) => {
+          if(element.prod.id == route.query.id){
+            productItem.value = element
+          }
+        });
+      })
+    };
+    const marketList = ref([])  
     onMounted(() => {
       // 获取市场列表
       getMarketOptions()
+      getProductList();
     })
     // 获取市场列表
     const getMarketOptions = async (queryStr?: string) => {
-      const { data, success } = await API.market.searchOwn({
-        data: { offset: 0, limit: 10000, filter: queryStr ?? '' }
-      })
-  
-      if (success) {
-        const { result = [] } = data
-        marketList.value = [...result]
-        loading.value = false
-      }
+      marketList.value = marketCtrl.Market.joinedMarkets
+      console.log('marketList',marketList.value)
     }
-    // 市场关键字搜索
-    const remoteMethod = (query: string) => {
-      if (query) {
-        loading.value = true
-        getMarketOptions(query)
-      } else {
-        marketList.value = []
-      }
-    }
+
     // 提交上架
     const onPutawaySubmit = () => {
       if (!formRef.value) return
       formRef.value.validate(async (valid, fields) => {
         if (valid) {
-          await appstore.publishProduct(formLabelAlign)
-          resetForm()
+          await productItem.value.publish(formLabelAlign)
+          // resetForm()
         } else {
           console.log('上架error submit!', fields)
         }

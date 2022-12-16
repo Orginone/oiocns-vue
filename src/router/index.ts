@@ -531,9 +531,9 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/store/appRegister',
+        path: '/store/appRegister2',
         name: 'storeAppRegister',
-        component: () => import('@/views/Store/appRegister/index.vue'),
+        component: () => import('@/views/Store/appRegister2/index.vue'),
         meta: {
           isHidden: true,
           title: '应用创建'

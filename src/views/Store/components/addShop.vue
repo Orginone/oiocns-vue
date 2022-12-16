@@ -62,7 +62,6 @@
   import { ref, reactive, onMounted, nextTick } from 'vue'
   import { ElMessage } from 'element-plus'
   import {chat} from '@/module/chat/orgchat'
-  const dialogVisible = ref<boolean>(true)
   const diyTable = ref(null)
   // 表格展示数据
   const pageStore = reactive({

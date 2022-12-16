@@ -108,14 +108,11 @@
   import { useRouter } from 'vue-router'
   import $services from '@/services'
   import { ElMessage, ElMessageBox } from 'element-plus'
-  import { appstore } from '@/module/store/app'
   import createShop from "../components/createShop.vue";
   import addShop from "../components/addShop.vue";
-  import marketServices from "@/module/store/market"
   import appInfo from "./components/appInfo.vue"
   import marketCtrl from '@/ts/controller/store/marketCtrl';
-  // import {MarketModel} from "@/ts/market";
-  import { IMarket } from '@/ts/core';
+  import userCtrl from '@/ts/controller/setting/userCtrl';
 
   const diyTable = ref(null)
   const valuee = ref<any>('');
@@ -150,7 +147,7 @@
       type: 'warning'
     })
     .then(async() => {
-      await marketServices.deleteMarket(id);
+      await  marketCtrl.Market.deleteMarket(id) 
       router.go(0);
     })
     .catch(() => { })
@@ -180,7 +177,6 @@
     dialogType[type] = key;
   };
   const router = useRouter()
-  const shopcarNum = ref(0)
 
   // 表格展示数据
   const pageStore = reactive({
@@ -250,44 +246,31 @@ const buyThings = (item:any) => {
 }
   onMounted(() => {
     getMarketInfo()
-    getShopcarNum()
   })
   //加入购物车
   const joinShopCar = async (item: any) => {
     marketCtrl.joinApply(item);
   }
   // 加入商店
-  const checksSearch = (val:any)=>{
+  const checksSearch = async (val:any)=>{
     let selectId: any[] = []
     console.log('selectId',val)
 
     val.value.forEach((el: { id: any }) => {
       selectId.push(el.id)
     })
-    $services.appstore
-    .applyJoin({
-      data: {
-        id: selectId[0]
-      }
-    })
-    .then((res: ResultType) => {
-      if (res.success) {
-        ElMessage({
-          message: '加入成功',
-          type: 'success'
-        })
-        closeDialog('addDialog',false)
-      }
-    })
+    if(await userCtrl.user.applyJoinMarket(selectId[0])){
+      ElMessage({
+        message: '加入成功',
+        type: 'success'
+      })
+      closeDialog('addDialog',false)
+    }
   }
   // 详情弹窗
   const requireItem = (item:Object) => {
     dialogType.infoDialog = true;
     infoDetail.info = item;
-  }
-  // 获取购物车数量
-  const getShopcarNum = async () => {
-    shopcarNum.value = await appstore.getShopcarNum()
   }
 
   // 搜索功能-关键词
