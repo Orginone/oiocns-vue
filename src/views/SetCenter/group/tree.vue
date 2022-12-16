@@ -99,6 +99,13 @@
       </span>
     </template>
   </el-dialog>
+  <CreateTeamModal 
+    :title="activeModal"
+    v-model:visible="visible"
+    :current="current"
+    :typeNames="['集团']"
+    @handleOk="handleOk"
+  />
   <searchGroup v-if="friendDialog" :serachType="4" @closeDialog="closeDialog"  @checksSearch='checksSearch'></searchGroup>
 </template>
 
@@ -111,15 +118,28 @@ import { Search } from '@element-plus/icons-vue'
 import authority from '@/utils/authority'
 import { useUserStore } from '@/store/user'
 import {USERCTRL} from '@/ts/coreIndex';
+import { setCenterStore } from '@/store/setting'
+import CreateTeamModal from '../GlobalComps/createTeam.vue';
 const store = useUserStore()
 const goBack = () => {
   window.history.go(-1)
+}
+const activeModal = ref('')
+const createOrEdit = ref()
+const current = ref()
+const visible = ref(false)
+const handleOk = (newItem) => {
+  if(newItem) {
+    ElMessage.success('新增成功!')
+    visible.value = false
+    getGroupList()
+  }
 }
 
 const emit = defineEmits(['nodeClick'])
 
 const loadNode = (node: any, resolve: (data: any[]) => void) => {
-  console.log(node);
+  // console.log(node);
   if (node.level === 0) {
     return resolve(orgTree.value)
   } else if(node.level === 1 && node.data.label === '创建集团'){
@@ -127,9 +147,10 @@ const loadNode = (node: any, resolve: (data: any[]) => void) => {
   } else if(node.level === 1 && node.data.label === '加入集团'){
     return resolve(addGroupList)
   } else if (node.level === 2) {
-    loadOrgTree(node?.data?.id as string).then((res: any)=> {
-      return resolve(res ?? [])
-    })
+    return resolve([])
+    // loadOrgTree(node?.data?.id as string).then((res: any)=> {
+    //   return resolve(res ?? [])
+    // })
   } else {
     return resolve([])
   }
@@ -146,8 +167,11 @@ const form = reactive({
 })
 const clickBus = (e:any)=>{
   let id = e.target.dataset.index
-  if (id === '2101') {
-    dialogVisible.value = true
+  if (id === '2101') { //  单位创建集团
+    activeModal.value = '新增|集团'
+    visible.value = true
+    current.value = USERCTRL.company
+    // dialogVisible.value = true
   } else if(id === '2102') {
     friendDialog.value = true;
   } else if(id === '2103') {
@@ -275,53 +299,52 @@ let addGroupList: any = []
 // 查询集团列表
 const getGroupList = async() => {
   const groups = await USERCTRL.company.getJoinedGroups(false);
-  console.log('groups: ', groups);
-        myGroupList = []
-        addGroupList = []
-        groups.length && groups.forEach((item: any) => {
-          if (item.createUser == store.queryInfo.id) {
-            myGroupList.push({...item, label: item?.target?.name ?? item?.name, btns: [{
-              name: '创建子集团',
-              id: '2103'
-            }]})
-          } else {
-            addGroupList.push({...item, label: item?.target?.name, btns: [{
-              name: '加入集团',
-              id: '2100'
-            }]})
-          }
-        })
-        let newObj:any =  [
-          {
-            id: 1,
-            label: "创建集团",
-            btns:[{
-              "name":"创建集团",
-              "id":"2101"
-            }],
-            children: myGroupList
-          },
-          {
-            id: 2,
-            label: "加入集团",
-            btns:[{
-                "name":"加入集团",
-                "id":"2102"
-            }],
-            children: addGroupList
-          }
-        ]
-        orgTree.value = newObj;
-        console.log('orgTree.value: ', orgTree.value);
-        state.options = groups.map(g => {
-          return { value: g.id, label: g.name }
-        })
-        loadOrgTree(groups[0].id)
+    myGroupList = []
+    addGroupList = []
+    groups.length && groups.forEach((item: any) => {
+      if (item.createUser == store.queryInfo.id) {
+        myGroupList.push({item, label: item?.target?.name ?? item?.name, btns: [{
+          name: '创建子集团',
+          id: '2103'
+        }]})
+      } else {
+        addGroupList.push({item, label: item?.target?.name, btns: [{
+          name: '加入集团',
+          id: '2100'
+        }]})
+      }
+    })
+    let newObj:any =  [
+      {
+        id: 1,
+        label: "创建集团",
+        btns:[{
+          "name":"创建集团",
+          "id":"2101"
+        }],
+        children: myGroupList
+      },
+      {
+        id: 2,
+        label: "加入集团",
+        btns:[{
+            "name":"加入集团",
+            "id":"2102"
+        }],
+        children: addGroupList
+      }
+    ]
+    orgTree.value = newObj;
+    state.options = groups.map(g => {
+      return { value: g.id, label: g.name }
+    })
+    orgTree.value.length && emit('nodeClick', orgTree.value[0]?.children[0])
 }
 
 const nodeClick = (val: any, nodeAttribute?: any, event?: any) => {
   if (['创建集团', '加入集团'].includes(val.label)) return
   emit('nodeClick', val)
+  setCenterStore().currentSelectItme = val
   formData.value.parentId = val.id
 }
 
@@ -332,20 +355,19 @@ const filterNode = (value: string, data: any) => {
 }
 
 // 加载集团树
-const loadOrgTree = async (id?: string)=>{
-  let treeData: any = []
-  await $services.company.getGroupTree({
-    data: { id }
-  }).then((res: any) => {
-    // orgTree.value = []
-    // orgTree.value.push(newObj)
-    cascaderTree.value = [res.data]
-    defaultExpandedKeys.value = [res.data.id]
-    nodeClick(res.data)
-    treeData = res.data
-  })
-  return treeData?.children
-}
+// const loadOrgTree = async (id?: string)=>{
+//   let treeData: any = []
+//   await $services.company.getGroupTree({
+//     data: { id }
+//   }).then((res: any) => {
+//     // orgTree.value = []
+//     // orgTree.value.push(newObj)
+//     cascaderTree.value = [res.data]
+//     nodeClick(res.data)
+//     treeData = res.data
+//   })
+//   return treeData?.children
+// }
 
 let createGroupDialogVisible = ref<boolean>(false)
 

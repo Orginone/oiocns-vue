@@ -62,7 +62,6 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import $services from '@/services'
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router';

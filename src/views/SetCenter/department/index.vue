@@ -45,7 +45,7 @@
         <template #buttons>
           <el-button class="btn-check" type="primary" link @click="handleShare()">分享部门</el-button>
           <el-button v-if="checkList.length" @click="setPost('', 1)" class="btn-check" type="primary" link>岗位设置</el-button>
-          <el-button class="btn-check" type="primary" link @click="showAssignDialog">添加成员</el-button>
+          <el-button class="btn-check" type="primary" link @click="showGiveDialog">添加成员</el-button>
           <el-button class="btn-check" type="primary" link @click="viewApplication">查看申请</el-button>
         </template>
         <template #operate="scope">
@@ -68,26 +68,6 @@
       </diytab>
     </div>
   </div>
-
-  <el-dialog v-model="jobDialogVisible" title="请录入工作组信息" width="40%" center append-to-body @close="dialogHide">
-    <div>
-      <el-form-item label="工作组名称" style="width: 100%">
-        <el-input v-model="formData.name" placeholder="请输入" clearable style="width: 100%" />
-      </el-form-item>
-      <el-form-item label="工作组编号" style="width: 100%">
-        <el-input v-model="formData.code" placeholder="请输入" clearable style="width: 100%" />
-      </el-form-item>
-      <el-form-item label="工作组简介" style="width: 100%">
-        <el-input v-model="formData.remark" :autosize="{ minRows: 5 }" placeholder="请输入" type="textarea" clearable />
-      </el-form-item>
-    </div>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogHide">取消</el-button>
-        <el-button type="primary" @click="createJob">确认</el-button>
-      </span>
-    </template>
-  </el-dialog>
 
   <el-dialog v-model="personDialogVisible" title="修改信息" width="40%" append-to-body @close="dialogHide">
     <el-form
@@ -222,13 +202,36 @@
   />
   <AssignedPerson v-if="assignDialog" :checkList='tableData' :id="company.id" :selectLimit='0' :serachType='5'
     @closeDialog="hideAssignDialog" @checksSearch='checksCompanySearch' />
+  <el-dialog v-model="giveDialog" @close="hideGiveDialog" title="添加人员" width="50%">
+    <el-input v-model="giveSearch" class="search" placeholder="搜索用户" @input="giveSearchChange">
+      <template #prefix>
+        <el-icon class="el-input__icon">
+          <Search />
+        </el-icon>
+      </template>
+    </el-input>
+    <DiyTable ref="giveTable" :hasTableHead="true" :tableData="companyUsers" :options="{
+      expandAll: false,
+      checkBox: true,
+      order: true,
+      selectLimit:0,
+      noPage: false
+    }" @handleUpdate="giveTableChange" :tableHead="columns" :style="{height: '350px'}">
+    </DiyTable>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="hideGiveDialog">取消</el-button>
+        <el-button type="primary" @click="giveIdentity">确认</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
 // @ts-nocheck
 import Info from "./components/info.vue";
 import diytab from "@/components/diyTable/index.vue";
 import $services from '@/services'
-import { ref, onMounted, getCurrentInstance, onBeforeMount } from "vue";
+import { ref, onMounted, getCurrentInstance, onBeforeMount, computed } from "vue";
 import { useRouter } from 'vue-router'
 import AssignedPerson from '@/components/searchs/index.vue'
 import { setCenterStore } from '@/store/setting'
@@ -238,6 +241,96 @@ const IdentityServices = new identityServices()
 import QrCodeCustom from '@/components/qrCode/index.vue'
 import {TargetType, USERCTRL} from '@/ts/coreIndex'
 import CreateTeamModal from '../GlobalComps/createTeam.vue';
+
+let companyUsers = ref<any>([])
+const giveDialog = ref<boolean>(false)
+const giveTable = ref(null)
+const columns = ref([
+  {
+    prop: 'code',
+    label: '账号',
+    width: '180',
+  },
+  {
+    prop: 'name',
+    label: '姓名',
+    width: '240',
+    name: 'name',
+  },
+  {
+    prop: 'team.code',
+    label: '手机号',
+    width: '330',
+    name: 'teamCode',
+  }
+])
+const hideGiveDialog = () => {
+  giveDialog.value = false
+  getUsers()
+}
+// 过滤数据
+const giveSearch = ref('')
+const giveTableChange = (page: any) => {
+  pageStore.currentPage = page.currentPage
+  pageStore.pageSize = page.pageSize
+  getOrgUsers()
+}
+// 分配页面搜索用户变化
+const giveSearchChange = (e: string) => {
+  getOrgUsers(e)
+}
+// 指派岗位
+const showGiveDialog = () => {
+  pageStore.currentPage =1;
+  if (!store.currentSelectItme.intans?.target?.name) {
+    ElMessage({
+      type: 'warning',
+      message: '请选择岗位'
+    })
+    return false
+  }
+  giveDialog.value = true
+  getOrgUsers()
+}
+// 加载单位所有用户
+const getOrgUsers = async(filter?: string) => {
+  let data = {
+    offset: (pageStore.currentPage - 1) * pageStore.pageSize,
+    limit: pageStore.pageSize,
+    filter: ''
+  }
+  if (filter && filter.trim() != '') {
+    data = { ...data, ...{ filter } }
+  }
+  const personData = await USERCTRL.space.loadMembers({
+    offset: 0,
+    limit: 10,
+    filter: ''
+  });
+
+  let us = personData.result || []
+  let userIds = []
+  if (tableData.value) {
+    userIds = tableData.value.map((u: any) => u.id);
+  }
+  const set: Set<string> = new Set(userIds)
+  companyUsers.value = us.filter((u: any) => !set.has(u.id))
+  pageStore.total = personData.total - userIds.length
+  giveTable.value.state.page.total = pageStore.total;
+}
+// 给人员岗位
+const giveIdentity = async () => {
+  const userIds = giveTable?.value?.state?.multipleSelection.map((u: any) => u.id);
+  const data = await store.currentSelectItme.intans?.pullMembers(userIds, TargetType.Person)
+  if (data) {
+    ElMessage({
+      message: '添加成功',
+      type: 'success'
+    })
+    hideGiveDialog()
+    getUsers()
+  }
+}
 
 const activeModal = ref('')
 const createOrEdit = ref()
@@ -278,7 +371,6 @@ const subscribe = store.$subscribe(
     // 如果设置detached值为 true 时，即使所在组件被卸载，订阅依然在生效
 )
 
-let jobDialogVisible = ref<boolean>(false)
 let personDialogVisible = ref<boolean>(false)
 let createDeptDialogVisible = ref<boolean>(false)
 let setPostDialogVisible = ref<boolean>(false)
@@ -296,7 +388,6 @@ let currentData = ref<any>({})
 //关闭弹窗清空
 const dialogHide = () => {
   formData.value = { parentId: store.currentSelectItme?.id }
-  jobDialogVisible.value = false
   personDialogVisible.value = false
   createDeptDialogVisible.value = false
   setPostDialogVisible.value = false
@@ -368,14 +459,6 @@ const editDept = async ()=> {
   }
 }
 
-// 加载单位
-const loadOrgTree = () => {
-  $services.company.getCompanyTree({}).then((res: any)=>{
-    const orgTree = []
-    orgTree.push(res.data)
-  })
-}
-
 function getSelectTree() {
   store.loadTreeData(false).then((res: any[]) => {
     cascaderTree.value = res
@@ -389,33 +472,6 @@ const filter = (nodes: OrgTreeModel[]): OrgTreeModel[] => {
     node.children = filter(node.children)
   }
   return nodes;
-}
-// 创建工作组
-const createJob = () => {
-  $services.company.createJob({
-    data: {
-      id: formData.value.id,
-      code: formData.value.code,
-      name: formData.value.name,
-      parentId: store.currentSelectItme?.id,
-      teamName: formData.value.name,
-      teamRemark: formData.value.remark
-    }
-  }).then((res: ResultType) => {
-    if (res.success) {
-      dialogHide()
-      ElMessage({
-        message: res.msg,
-        type: 'success'
-      })
-      proxy?.$Bus.emit('refreshNav')
-    } else {
-      ElMessage({
-        message: res.msg,
-        type: 'error'
-      })
-    }
-  })
 }
 const personUpdate = () => {
   const {id, code, name, thingId, teamName, teamCode, teamRemark } = personFormData.value
@@ -447,7 +503,7 @@ const hideAssignDialog = () => {
 const showAssignDialog = () => {
   assignDialog.value = true
 }
-
+// 添加成员
 const checksCompanySearch = async(val: any) => {
   if (val.value.length > 0) {
     let arr: Array<arrList> = []
@@ -524,8 +580,6 @@ proxy?.$Bus.on('clickBus', (id) => {
     activeModal.value = '新建'
     visible.value = true
     createOrEdit.value = store.currentSelectItme?.intans?.subTeamTypes
-  } else if(id === '2202') { // 创建工作组
-    jobDialogVisible.value = true
   } else if(id === '2203') {  // 单位创建部门
     activeModal.value = '新建'
     visible.value = true
@@ -588,9 +642,8 @@ const selectionChange = (val: any) => {
   checkList.value = val
 }
 //获取单位信息
-onMounted(() => {
+onMounted(() => {  
   getPostList()
-  loadOrgTree()
   getSelectTree()
 })
 // 获取单位信息

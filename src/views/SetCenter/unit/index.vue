@@ -12,7 +12,6 @@
 <script lang="ts" setup>
   import Info from './components/info.vue'
   import User from './components/User.vue'
-  import $services from '@/services'
   import { ref, onMounted, computed } from 'vue'
   import { useUserStore } from '@/store/user'
   import { storeToRefs } from 'pinia'
@@ -24,12 +23,6 @@
   const { workspaceData } = storeToRefs(store)
 
   const user = ref(null)
-  // 加载单位
-  // const loadOrgTree = () => {
-  //   $services.company.getCompanyTree({}).then((res: any) => {
-  //     nodeClick(res.data)
-  //   })
-  // }
   // 给相应组件传值
   const nodeClick = (selectItem: any) => {
     settingStore.unitInfo = selectItem
@@ -38,9 +31,7 @@
   }
   //获取部门信息
   onMounted(() => {
-    if(store?.workspaceData?.name != '个人空间') {
-      // loadOrgTree()
-    } else {
+    if(store?.workspaceData?.name == '个人空间') {
       ElMessage({
         message: '当前处于个人空间',
         type: 'warning'

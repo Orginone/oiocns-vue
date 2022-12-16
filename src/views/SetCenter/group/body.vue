@@ -15,6 +15,8 @@
 import { ref, onMounted } from 'vue'
 import type { TabsPaneContext } from 'element-plus'
 import Companies from './companies.vue';
+import { setCenterStore } from '@/store/setting'
+const store = setCenterStore()
 
 const activeName = ref('companies')
 let selectItem = ref<any>({})

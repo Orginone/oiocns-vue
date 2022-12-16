@@ -176,7 +176,7 @@ watch(
           }
         })
       }
-      if (props.title === '编辑') renderViewByData(current.target);
+      if (props.title === '编辑') renderViewByData(props.current.target);
     } else {
       resetForm()
     }

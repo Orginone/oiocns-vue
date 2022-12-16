@@ -46,7 +46,7 @@ export const setCenterStore = defineStore({
           query: true,
           btns: [{
             id: '2009',
-            name: '更改岗位名称',
+            name: '编辑岗位',
           },
           {
             id: '2010',
@@ -91,19 +91,10 @@ export const setCenterStore = defineStore({
     },
     filter(nodes: any[]) {
       nodes = nodes?.map(node => {
-        const btns = node.data?.typeName === '工作组' ? [
-          {
-            name: "新增工作组",
-            id: "2202"
-          }
-        ] : [
+        const btns = [
           {
             name: "新增部门",
             id: "2201"
-          },
-          {
-            name: "新增工作组",
-            id: "2202"
           }
         ]
         return Object.assign({}, node, { structure: true, query: true, btns })

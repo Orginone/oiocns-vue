@@ -14,9 +14,6 @@
         >
       </div>
     </div>
-    <!-- <div class="tab-list">
-      <img class="image" src="@assets/img/DIANZIUNIVERSITYLOGO.png" alt="" />
-    </div> -->
     <div class="tab-list">
       <el-descriptions :column="2" border>
         <el-descriptions-item
@@ -35,7 +32,7 @@
           width="150px"
           label-class-name="my-label"
           class-name="my-content"
-          >{{ chat.getName(info?.belongId) }}
+          >{{info?.belongId }}
         </el-descriptions-item>
         <el-descriptions-item
           :label="'社会统一信用代码'"
@@ -121,7 +118,6 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import $services from '@/services'
 import { ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router';

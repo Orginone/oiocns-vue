@@ -139,22 +139,28 @@ const tableHead = ref([
 const handleUpdate = (page: any) => {
   pageStore.currentPage = page.currentPage
   pageStore.pageSize = page.pageSize
-  // getCompanies()
+  getCompanies()
 }
 
-// 加载单位
-const getCompanies = async () => {
-  const item = props.selectItem
-  if(item){
-    if (item.typeName == '集团') {
-      rootGroup.value = JSON.parse(JSON.stringify(item))
+// 加载岗位下的用户
+const getCompanies = async (currentData = props.selectItem) => {
+  if(currentData){
+    const backData =  await currentData.item?.loadMembers({
+      filter: "",
+      limit: 20,
+      offset: 0
+    })
+    if(backData?.result){
+      companies.value =backData.result;
+      pageStore.total = backData.total
+      diyTable.value.state.page.total = pageStore.total
+    }else{
+      companies.value =[];
+      pageStore.total = 0
     }
-    const backData = await groupServices.getCompanies(props.selectItem)
-    companies.value = backData.result
-    pageStore.total = backData.total
-    diyTable.value.state.page.total = pageStore.total
   }
 }
+
 const pullCompanysDialog = ref<boolean>(false)
 const closeDialog = () => {
   pullCompanysDialog.value = false
@@ -250,7 +256,6 @@ onMounted(() => {
     let headerHeight = cardHeight.value?.clientHeight
     tabHeight.value = headerHeight
   })
-  // getCompanies()
 })
 
 // 分享集团
@@ -261,7 +266,7 @@ const handleShare = () => {
 
 watch(props, () => {
   pageStore.currentPage = 1;
-  // getCompanies()
+  getCompanies()
   nextTick(() => {
     let headerHeight = cardHeight.value?.clientHeight
     tabHeight.value = headerHeight
