@@ -13,7 +13,7 @@
   import DiyTable from "@/components/diyTable/index.vue";
   import { useUserStore } from "@/store/user";
   import { storeToRefs } from "pinia";
-  import { chat } from '@/module/chat/orgchat'
+  import { chat } from '@/ts/controller/chat'
 import _ from 'lodash';
 import { useAsyncComputed } from '@/hooks/useAsyncComputed';
 

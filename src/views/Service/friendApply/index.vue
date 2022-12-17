@@ -72,7 +72,7 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import friendJosn from '../json/friend.json';
   import type { TabsPaneContext } from 'element-plus'
-  import { chat } from '@/module/chat/orgchat'
+  import { chat } from '@/ts/controller/chat'
   import searchFriend from '@/components/searchs/index.vue'
   import FriendServices from '@/module/relation/friend'
   const friendServices  = new FriendServices()

@@ -115,7 +115,7 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { formatDate } from '@/utils/index'
 import HeadImg from '@/components/headImg.vue'
-import { chat } from '@/module/chat/orgchat'
+import { chat } from '@/ts/controller/chat'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import searchFriend from '@/components/searchs/index.vue'

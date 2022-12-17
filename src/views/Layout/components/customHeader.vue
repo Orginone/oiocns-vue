@@ -144,7 +144,7 @@
   import SearchDialog from './searchDialog.vue'
   import headImg from '@/components/headImg.vue'
   import { useDark } from '@vueuse/core'
-  import { chat } from '@/module/chat/orgchat'
+  import { chat } from '@/ts/controller/chat'
   import { USERCTRL ,TargetType} from '@/ts/coreIndex'
 
   const isDark = useDark()

@@ -73,7 +73,7 @@
     import $services from '@/services'
     import { ElMessage } from 'element-plus'
     import moment from 'moment'
-    import {chat} from '@/module/chat/orgchat'
+    import {chat} from '@/ts/controller/chat'
   
     const props = defineProps({
       infoDialog:{

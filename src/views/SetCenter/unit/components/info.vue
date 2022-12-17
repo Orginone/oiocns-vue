@@ -55,7 +55,7 @@ import $services from '@/services'
 import { ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router';
-import {chat} from '@/module/chat/orgchat'
+import {chat} from '@/ts/controller/chat'
 import authority from '@/utils/authority'
 import DepartmentServices from '@/module/relation/department'
 const allowEdit = () => {
