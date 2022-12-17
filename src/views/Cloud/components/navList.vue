@@ -32,7 +32,7 @@
 <script lang="ts" setup>
   import type Node from 'element-plus/es/components/tree/src/model/node'
   import { ref, onMounted, watch, reactive, nextTick } from 'vue'
-  import Cloud from '@/ts/cloud'
+  import Cloud, { FileObject } from '@/ts/cloud'
   import { zipFileName } from '@/utils'
   import { useRouter } from "vue-router";
 
@@ -58,17 +58,17 @@
   }
 
   // 动态加载子目录
-  const loadNode = async (node: Node, resolve: (data: any[]) => void) => {
+  const loadNode = async (node: Node, resolve: (data: FileObject[]) => void) => {
     if(node.level == 0) {
       resolve([Cloud.DocModel.root])
     } else {
-      await Cloud.GetLeftTree(node.data)
+      await Cloud.GetLeftTree(node.data as FileObject)
       resolve(node.data.dirChildren)
     }
   }
 
   // 点击节点目录
-  const nodeClick = (data: any, item: any, treenode: any, event: any) => {
+  const nodeClick = (data: FileObject, item: any, treenode: any, event: any) => {
     if(props.onlySelect) {
       emit('selectTreeNode', data)
     } else {
@@ -82,7 +82,7 @@
   }
 
   // 选中某个节点
-  const checkedNode = (data: any) => {
+  const checkedNode = (data: FileObject) => {
     nextTick(() => {
       treeRef.value.setCurrentKey(data.key, true)
       const node = treeRef.value.getNode(data.key)
@@ -98,7 +98,7 @@
   }
 
   // 添加节点
-  const appendNode = (data: any, parent: any) => {
+  const appendNode = (data: FileObject, parent: FileObject) => {
     nextTick(() => {
       data.isLeaf = true
       treeRef.value.append(data, parent.key || parent)
@@ -106,7 +106,7 @@
   }
 
   // 删除节点
-  const removeNode = (data: any) => {
+  const removeNode = (data: FileObject) => {
     nextTick(() => {
       treeRef.value.remove(data.key)
     })
