@@ -40,7 +40,6 @@
 
 </template>
 <script lang='ts' setup>
-import $services from '@/services'
 import DiyTable from '@/components/diyTable/index.vue'
 import { nextTick, onMounted, reactive, ref, watch } from 'vue';
 import { useRouter } from "vue-router";
@@ -49,8 +48,6 @@ import { Search } from '@element-plus/icons-vue'
 import searchFriend from '@/components/searchs/index.vue'
 import AssignedPerson from '@/components/searchs/index.vue'
 import authority from '@/utils/authority'
-// import DepartmentServices from '@/module/relation/department'
-// const departmentServices = new DepartmentServices()
 
 let selectItem = ref<any>({})
 // 获取单位树点击的信息
@@ -142,7 +139,7 @@ const columns = ref([
 const router = useRouter()
 // 表格展示数据
 const diyTable = ref(null)
-// 加载用户
+// 加载用户（待提供接口）
 const getUsers = async () => {
   if(selectItem.value?.data){
     const data = selectItem.value?.data
@@ -187,7 +184,7 @@ const checksCompanySearch = (val: any) => {
   }
 }
 
-//邀请加入单位
+//邀请加入单位（待提供接口）
 const pullPerson = async (arr: any) => {
   // const data =  await departmentServices.pullPerson(selectItem.value.id,arr)
   if (data) {
@@ -210,7 +207,7 @@ const viewApplication = (row: any) => {
   router.push({ path: '/cardDetail', query: { type: 1, id: selectItem.value.id } })
 }
 
-// 移除
+// 移除（待提供接口）
 const removeFrom = async (row: any) => {
   let rowObj = {
     name:row.name,
@@ -248,7 +245,7 @@ const assign = (arr: any) => {
   }
 }
 
-//分配部门
+//分配部门（待提供接口）
 const assignDepartment =  async (id:string, targetIds: string[]) => {
   // const data = await departmentServices.assignDepartment(id,targetIds)
   if(data){
@@ -260,7 +257,7 @@ const assignDepartment =  async (id:string, targetIds: string[]) => {
     getUsers()
   }
 }
-//分配工作组
+//分配工作组（待提供接口）
 const assignJob = async (id: string, targetIds: string[]) => {
   // const data = await departmentServices.assignJob(id,targetIds)
   if(data){

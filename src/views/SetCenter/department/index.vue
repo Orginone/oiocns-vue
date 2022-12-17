@@ -53,10 +53,10 @@
             <span class="el-dropdown-link"> ··· </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="reviseInfo(scope.row)">修改信息</el-dropdown-item>
+                <!-- <el-dropdown-item @click="reviseInfo(scope.row)">修改信息</el-dropdown-item> -->
                 <el-dropdown-item @click="changeDepartment(scope.row)">变更部门</el-dropdown-item>
                 <el-dropdown-item @click="setPost(scope.row, 2)">岗位设置</el-dropdown-item>
-                <el-dropdown-item @click="showDiong">停用</el-dropdown-item>
+                <!-- <el-dropdown-item @click="showDiong">停用</el-dropdown-item> -->
                 <el-dropdown-item @click="removeFrom(scope.row)" style="color: #f67c80">移出成员</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -165,9 +165,9 @@
         >
           <el-option
             v-for="item in postOptions"
-            :key="item.id"
+            :key="item.key"
             :label="item.label"
-            :value="item.id"
+            :value="item.key"
           />
         </el-select>
       </el-form-item>
@@ -230,14 +230,11 @@
 // @ts-nocheck
 import Info from "./components/info.vue";
 import diytab from "@/components/diyTable/index.vue";
-import $services from '@/services'
 import { ref, onMounted, getCurrentInstance, onBeforeMount, computed } from "vue";
 import { useRouter } from 'vue-router'
 import AssignedPerson from '@/components/searchs/index.vue'
 import { setCenterStore } from '@/store/setting'
 const store = setCenterStore()
-import identityServices from '@/module/relation/identity'
-const IdentityServices = new identityServices()
 import QrCodeCustom from '@/components/qrCode/index.vue'
 import {TargetType, USERCTRL} from '@/ts/coreIndex'
 import CreateTeamModal from '../GlobalComps/createTeam.vue';
@@ -419,13 +416,15 @@ const setPost = (row: any, type: number) => {
 }
 // 给人员岗位
 const addPost = async () => {
+  if(!postValue.value) return
   let userIds = []
   if(setPostType.value === 1) {
     userIds = checkList.value.map((u: any) => u.id)
   } else {
     userIds = [currentData?.value?.id]
   }
-  const data = await IdentityServices.giveIdentity(postValue.value, userIds)
+  const current = postOptions.value.filter((obj: any) => postValue.value === obj.key)
+  const data = await current[0].object?.pullMembers(userIds, TargetType.Person)
   if (data) {
     ElMessage({
       message: '分配成功',
@@ -473,27 +472,28 @@ const filter = (nodes: OrgTreeModel[]): OrgTreeModel[] => {
   }
   return nodes;
 }
+// 待提供接口
 const personUpdate = () => {
   const {id, code, name, thingId, teamName, teamCode, teamRemark } = personFormData.value
-  $services.person
-    .update({
-      data: { id, code, name, thingId, teamName, teamCode, teamRemark }
-    })
-    .then((res: ResultType) => {
-      if (res.success) {
-        dialogHide()
-        getUsers(store.currentSelectItme?.intans)
-        ElMessage({
-          message: '更新成功',
-          type: 'success'
-        })
-      } else {
-        ElMessage({
-          message: res.msg,
-          type: 'warning'
-        })
-      }
-    })
+  // person
+  //   .update({
+  //     data: { id, code, name, thingId, teamName, teamCode, teamRemark }
+  //   })
+  //   .then((res: ResultType) => {
+  //     if (res.success) {
+  //       dialogHide()
+  //       getUsers(store.currentSelectItme?.intans)
+  //       ElMessage({
+  //         message: '更新成功',
+  //         type: 'success'
+  //       })
+  //     } else {
+  //       ElMessage({
+  //         message: res.msg,
+  //         type: 'warning'
+  //       })
+  //     }
+  //   })
   }
 
 const assignDialog = ref<boolean>(false)

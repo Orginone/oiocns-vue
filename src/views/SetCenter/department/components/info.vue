@@ -23,7 +23,7 @@
         <el-descriptions-item :label="'团队编码'" label-align="center" align="center" width="150px"
           label-class-name="my-label" class-name="my-content">{{currentData?.team.code}}</el-descriptions-item>
         <el-descriptions-item :label="'创建人'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{chat.getName(currentData?.createUser) || ''}}
+          label-class-name="my-label" class-name="my-content">{{currentData?.createUser || ''}}
         </el-descriptions-item>
         <el-descriptions-item :label="'创建时间'" label-align="center" align="center" width="150px"
           label-class-name="my-label" class-name="my-content">{{currentData?.createTime || ''}}</el-descriptions-item>
@@ -65,7 +65,6 @@
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router';
-import {chat} from '@/module/chat/orgchat'
 import authority from '@/utils/authority'
 import { setCenterStore } from '@/store/setting'
 const store: any = setCenterStore()

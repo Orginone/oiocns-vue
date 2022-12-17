@@ -74,31 +74,6 @@
     </template>
   </el-dialog>
 
-  <el-dialog v-model="dialogVisible" title="提示" width="30%">
-    <el-form :model="form" label-width="120px">
-      <el-form-item label="集团名称">
-        <el-input v-model="form.teamName" style="width: 80%" />
-      </el-form-item>
-      <el-form-item label="集团编码">
-        <el-input v-model="form.code" style="width: 80%" />
-      </el-form-item>
-      <el-form-item label="集团简称">
-        <el-input v-model="form.name" style="width: 80%" />
-      </el-form-item>
-      <el-form-item label="集团代码">
-        <el-input v-model="form.teamCode" style="width: 80%" />
-      </el-form-item>
-      <el-form-item label="集团简介">
-        <el-input v-model="form.teamRemark" style="width: 80%" />
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="save">确认</el-button>
-      </span>
-    </template>
-  </el-dialog>
   <CreateTeamModal 
     :title="activeModal"
     v-model:visible="visible"
@@ -111,7 +86,6 @@
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted, watch } from 'vue'
-import $services from '@/services'
 import { ElMessage } from 'element-plus';
 import searchGroup from '@/components/searchs/index.vue'
 import { Search } from '@element-plus/icons-vue'
@@ -171,40 +145,11 @@ const clickBus = (e:any)=>{
     activeModal.value = '新增|集团'
     visible.value = true
     current.value = USERCTRL.company
-    // dialogVisible.value = true
   } else if(id === '2102') {
     friendDialog.value = true;
   } else if(id === '2103') {
     createGroupDialogVisible.value = true
   }
-}
-const save = () => {
-  $services.company
-    .createGroup({
-      data: {
-        name: form.name,
-        code: form.code,
-        belongId: store.workspaceData.id,
-        teamName: form.teamName,
-        teamCode: form.teamCode,
-        teamRemark: form.teamRemark
-      }
-    })
-    .then((res: ResultType) => {
-      if (res.success) {
-        ElMessage({
-          message: '创建成功',
-          type: 'success'
-        })
-        dialogVisible.value = false
-        getGroupList()
-      } else {
-        ElMessage({
-          message: res.msg,
-          type: 'warning'
-        })
-      }
-    })
 }
 const closeDialog = ()=>{
   friendDialog.value = false;
@@ -223,22 +168,15 @@ const checksSearch=(val:any)=>{
     friendDialog.value = false;
   }
 }
-const addGroupFun = (arr:any) => {
-  $services.company
-    .applyJoinGroup({
-      data: {
-        id: arr.join(',')
-      }
+const addGroupFun = async(arr:any) => {
+  const success = await userCtrl.company.applyJoinGroup(arr.join(','))
+  if (success) {
+    ElMessage({
+      message: '申请成功',
+      type: 'warning'
     })
-    .then((res: ResultType) => {
-      if (res.success) {
-        ElMessage({
-          message: '申请成功',
-          type: 'warning'
-        })
-        friendDialog.value = false
-      }
-    })
+    friendDialog.value = false
+  }
 }
 
 const onHover = (id: string) => {
@@ -357,9 +295,7 @@ const filterNode = (value: string, data: any) => {
 // 加载集团树
 // const loadOrgTree = async (id?: string)=>{
 //   let treeData: any = []
-//   await $services.company.getGroupTree({
-//     data: { id }
-//   }).then((res: any) => {
+//   const groups = await USERCTRL.company.getJoinedGroups(false).then((res: any) => {
 //     // orgTree.value = []
 //     // orgTree.value.push(newObj)
 //     cascaderTree.value = [res.data]
@@ -376,30 +312,7 @@ const createGroupDialogHide = () => {
 }
 
 const createGroup = ()=>{
-  $services.company.createSubgroup({
-    data: {
-      id: formData.value.id,
-      code: formData.value.code,
-      name: formData.value.name,
-      parentId: formData.value.parentId,
-      teamName: formData.value.name,
-      teamRemark: formData.value.teamRemark,
-    }
-  }).then((res: ResultType) => {
-    if (res.success) {
-      ElMessage({
-        message: res.msg,
-        type: 'success'
-      })
-      createGroupDialogHide()
-      getGroupList()
-    } else {
-      ElMessage({
-        message: res.msg,
-        type: 'error'
-      })
-    }
-  })
+  console.log('添加子集团');
 }
 
 //获取部门

@@ -121,7 +121,6 @@
 import { ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router';
-import {chat} from '@/module/chat/orgchat'
 import authority from '@/utils/authority'
 import userCtrl from '@/ts/controller/setting/userCtrl'
 

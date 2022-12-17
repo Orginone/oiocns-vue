@@ -18,7 +18,7 @@
         <el-descriptions-item :label="'团队编码'" label-align="center" align="center" width="150px"
           label-class-name="my-label" class-name="my-content">{{selectItem?.target?.team?.code}}</el-descriptions-item>
         <el-descriptions-item :label="'创建人'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{chat.getName(selectItem?.target?.createUser)}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{selectItem?.target?.createUser}}</el-descriptions-item>
         <el-descriptions-item :label="'创建时间'" label-align="center" align="center" width="150px"
           label-class-name="my-label" class-name="my-content">{{selectItem?.target?.createTime}}</el-descriptions-item>
         <el-descriptions-item label="描述" :span="2" label-align="center" align="center">
@@ -39,15 +39,11 @@
   />
 </template>
 <script lang="ts" setup>
-import $services from '@/services'
 import { ref, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import router from '@/router';
-import {chat} from '@/module/chat/orgchat';
 import authority from '@/utils/authority'
-import GroupServices from '@/module/relation/group'
 import CreateTeamModal from '../GlobalComps/createTeam.vue';
-const groupServices = new GroupServices()
 const emit = defineEmits(['refresh'])
 
 const activeModal = ref('')

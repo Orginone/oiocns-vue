@@ -22,7 +22,7 @@
         <el-descriptions-item :label="'团队编码'" label-align="center" align="center" width="150px"
           label-class-name="my-label" class-name="my-content">{{selectItem?.data?.team.code}}</el-descriptions-item>
         <el-descriptions-item :label="'创建人'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{chat.getName(selectItem?.data?.createUser)}}
+          label-class-name="my-label" class-name="my-content">{{selectItem?.data?.createUser}}
         </el-descriptions-item>
         <el-descriptions-item :label="'创建时间'" label-align="center" align="center" width="150px"
           label-class-name="my-label" class-name="my-content">{{selectItem?.data?.createTime}}</el-descriptions-item>
@@ -56,11 +56,9 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import $services from '@/services'
 import { ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router';
-import {chat} from '@/module/chat/orgchat'
 import authority from '@/utils/authority'
 const allowEdit = () => {
   return selectItem.value.id &&
