@@ -74,7 +74,7 @@
             </el-icon>
           </template>
         </el-input>
-        222222 {{radio}}
+        --{{radio}}--
         <el-tree
           v-if="radio == '2' || radio == '3' || (radio == '4' && centerTreeShow)"
           ref="centerTree"
@@ -186,7 +186,7 @@
     disabled: 'disabled'
   }
   const friendNodeClass = (data: any, node: any) => {
-    if (data.disabled) {
+    if (data?.disabled) {
       return 'penultimate'
     }
     return null
@@ -218,23 +218,25 @@
       state.personsData = []
       state.identitysData = []
       nextTick(() => {
-        if (newValue == '1') {
-          let arr: any[] = []
-          state.departData.forEach((el) => {
-            if (el.type == 'add' || el.type == 'has') {
-              arr.push(el.id)
-            }
-          })
-          leftTree.value.setCheckedKeys(arr, true)
-        }
+        // if (newValue == '1') {
+        //   let arr: any[] = []
+        //   state.departData.forEach((el) => {
+        //     if (el.type == 'add' || el.type == 'has') {
+        //       arr.push(el.id)
+        //     }
+        //   })
+        //   leftTree.value.setCheckedKeys(arr, true)
+        // }
+        getHistoryData();
       })
     }
   )
   const customNodeClass = (data: Tree, node: Node) => {
-    if (data.authAdmin === false || data?.data?.authAdmin === false) {
-      return 'penultimate'
-    }
-    return null
+    console.log('data',data)
+    // if (data.authAdmin === false || data?.data?.authAdmin === false) {
+    //   return 'penultimate'
+    // }
+    return 'aa'
   }
   watch(
     () => resource.value,
@@ -253,13 +255,13 @@
       }
     }
   )
-  watch(
-    () => searchValue.value,
-    (newValue, oldValue) => {
-      console.log(newValue)
-      handleNodeClick(state.loadID, false, newValue)
-    }
-  )
+  // watch(
+  //   () => searchValue.value,
+  //   (newValue, oldValue) => {
+  //     console.log(newValue)
+  //     handleNodeClick(state.loadID, false, newValue)
+  //   }
+  // )
   watch(
     () => searchLeftValue.value,
     (newValue, oldValue) => {
@@ -334,6 +336,7 @@
       }
     }
   })
+  
 
   onUnmounted(() => {
     sumbitSwitch(state.switchData, true)
@@ -348,7 +351,7 @@
   // 获取群组信息
   const getFriendsList = async () => {
     cascaderTree.value = userCtrl.buildTargetTree(await userCtrl.getTeamTree())
-    // getHistoryData()
+    getHistoryData()
   }
 
   // 获取集团数据
@@ -388,10 +391,9 @@
     switch (radio.value) {
       case '1':
         setTimeout(async () => {
-          state.departHisData = await application.getHistoryData(
-            radio.value,
-            typePD !== 3 ? resource.value : ''
-          )
+          let data1 =  await appCtrl.curProduct.queryExtend('组织','0');
+          state.departHisData =  data1.result
+
           let arr: any[] = []
           state.departHisData.forEach((el) => {
             arr.push(el.id)
@@ -402,11 +404,8 @@
         }, 300)
         break
       case '2':
-        state.authorHisData = await application.getHistoryData(
-          radio.value,
-          typePD !== 3 ? resource.value : '',
-          data
-        )
+        let data2 =  await appCtrl.curProduct.queryExtend('职权','0');
+        state.authorHisData =  data3.result
         state.authorData = JSON.parse(JSON.stringify(state.authorHisData))
         let arrAu: any[] = []
         state.authorData.forEach((el) => {
@@ -418,12 +417,9 @@
         }
         break
       case '3':
-        state.identitysHisData = await application.getHistoryData(
-          radio.value,
-          typePD !== 3 ? resource.value : '',
-          data
-        )
-        state.identitysData = JSON.parse(JSON.stringify(state.identitysHisData))
+        let data3 =  await appCtrl.curProduct.queryExtend('身份','0');
+        state.identitysHisData = data3.result
+        state.identitysData = state.identitysHisData
         let arrId: any[] = []
         state.identitysData.forEach((el) => {
           el.type = 'has'
@@ -434,12 +430,9 @@
         }
         break
       case '4':
-        state.personsHisData = await application.getHistoryData(
-          radio.value,
-          typePD !== 3 ? resource.value : '',
-          data
-        )
-        state.personsData = JSON.parse(JSON.stringify(state.personsHisData))
+        let data4 = await appCtrl.curProduct.queryExtend('人员','0');        
+        state.personsHisData =  data4.result
+        state.personsData = state.personsHisData
         let arrPe: any[] = []
         state.personsData.forEach((el) => {
           el.type = 'has'
@@ -572,7 +565,7 @@
       dataList.push(data)
     }
   }
-  // 左侧树点击事件
+  // 组织左侧树点击事件
   const handleCheckChange = (data: any, checked: boolean, indeterminate: any) => {
     console.log('点击左侧', data, checked, indeterminate)
     if (checked) {
@@ -625,6 +618,17 @@
       }
     }
   }
+  const handleTreeData = (node: any, belongId: string) => {
+    node.disabled = !(node.belongId && node.belongId == belongId);
+    if (node.children) {
+      node.nodes = node.children.map((child: any) => {
+        return handleTreeData(child, belongId);
+      });
+    }
+    //判断是否有操作权限
+    return { ...node._authority, node };
+  };
+  // 除组织外的左侧树点击事件
   const handleNodeClick = async (node: any, load: boolean, search?: string) => {
 
     if (node) {
@@ -642,13 +646,13 @@
       //   page.currentPage = 1
       // }
       console.log(radio.value,await node.item.selectAuthorityTree())
-
       switch (radio.value) {
         case '2':
           state.loadID = node
           const centerData =await node.item.selectAuthorityTree();
-          state.centerTree = [centerData]
-          getHistoryData(node)
+          let data = handleTreeData(centerData)
+          state.centerTree = [data]
+          // getHistoryData(node)
           break
         case '3':
           state.loadID = node
@@ -658,19 +662,19 @@
           } else {
             state.centerTree = res
           }
-          getHistoryData(node)
+          // getHistoryData(node)
           break
         case '4':
           state.loadID = node
-          const result = node.item.loadMembers({ limit: 10000,offset: 0, filter: '', })
+          const result = await node.item.loadMembers({ limit: 10000,offset: 0, filter: '', })
           if (result) {
             if (load == true) {
-              state.centerTree.concat(result)
+              state.centerTree.concat(result.result)
             } else {
-              state.centerTree = result
+              state.centerTree = result.result
             }
-            getHistoryData(node)
-          } else {
+            // getHistoryData(node)
+          } else {            
             state.centerTree = []
             state.personsData = []
           }
