@@ -334,6 +334,8 @@
           treeLabel(el.children || [])
         })
       }
+    } else {
+      menuArr.state = []
     }
   }
   
