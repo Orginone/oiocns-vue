@@ -1,29 +1,5 @@
 <template>
   <div class="cohortLayout">
-    <div class="cohortLayout-header" v-if="typePD !== 3">
-      <div class="cohortLayout-header-text"
-        >{{ typePD == 1 ? '请选择资源：' : '请选择集团：' }}
-      </div>
-      <div class="cohortLayout-header-tabs">
-        <el-tabs v-model="activeName" class="demo-tabs">
-          <el-tab-pane v-for="(item, index) in tabs" :key="item.id" :name="index">
-            <template #label>
-              <div slot="label" @click="handleTabClick(item.id)">{{ item.name }}</div>
-            </template>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
-    </div>
-    <div class="cohortLayout-header" style="margin-top: 10px">
-      <div class="cohortLayout-header-text">请选择{{ typePD == 1 ? '分配' : '共享' }}方式：</div>
-      <div class="cohortLayout-header-tabs">
-        <el-radio-group v-model="radio">
-          <el-radio v-for="item in state.way" :key="item.id" :label="item.id">{{
-            item.label
-          }}</el-radio>
-        </el-radio-group>
-      </div>
-    </div>
     <div class="cohortLayout-content">
       <div class="cohortLayout-content-left" :style="'width:' + (radio == '1' ? '49%' : '33%')">
         <el-input v-model="searchLeftValue" class="w-50 m-2" placeholder="搜索">
@@ -34,25 +10,12 @@
           </template>
         </el-input>
         <el-tree
-          v-if="radio == '1'"
-          ref="leftTree"
-          node-key="id"
-          :data="cascaderTree"
-          :props="typePD !== 3 ? { class: customNodeClass } : unitProps"
-          :check-strictly="true"
-          :default-expand-all="true"
-          show-checkbox
-          @check-change="handleCheckChange"
-          :filter-node-method="filterNode"
-        />
-        <el-tree
-          v-else
           ref="leftTree"
           :data="cascaderTree"
           :key="radio"
           :highlight-current="true"
           :expand-on-click-node="false"
-          :props="typePD !== 3 ? { class: customNodeClass } : unitProps"
+          :props="unitProps"
           :default-expand-all="true"
           @node-click="handleNodeClick"
           :filter-node-method="filterNode"
@@ -73,7 +36,7 @@
           </template>
         </el-input>
         <el-tree
-          v-if="radio == '2' || radio == '3' || (radio == '4' && centerTreeShow)"
+          v-if="radio == '2'"
           ref="centerTree"
           node-key="id"
           :check-strictly="true"
@@ -86,29 +49,13 @@
       </div>
       <div class="cohortLayout-content-right" :style="'width:' + (radio == '1' ? '49%' : '33%')">
         <Author
-          v-if="radio == '1'"
-          @delContent="delContent"
-          :departData="state.departData"
-        ></Author>
-        <Author
           v-if="radio == '2'"
           @delContent="delContentAuth"
           :departData="state.authorData"
         ></Author>
-        <Author
-          v-if="radio == '3'"
-          @delContent="delContentAuth"
-          :departData="state.identitysData"
-        ></Author>
-        <Author
-          v-if="radio == '4'"
-          @delContent="delContentAuth"
-          :departData="state.personsData"
-        ></Author>
       </div>
     </div>
-    <!-- v-if="radio == '1'" -->
-    <div class="footer" >
+    <div class="footer" v-if="radio == '2'">
       <el-button type="primary" @click="submitAll">确认</el-button>
       <el-button class="footer-btn" @click="closeDialog">取消</el-button>
     </div>
@@ -156,7 +103,7 @@
   const searchLeftValue = ref('')
   const activeName = ref(0)
   const tabs = ref([])
-  const radio = ref('1')
+  const radio = ref('2')
   const leftTree = ref(null)
   const centerTree = ref(null)
   const resource = ref<string>('')
@@ -180,11 +127,11 @@
   })
   const authorityProps = {
     label: 'name',
-    children: 'nodes',
+    children: 'children',
     disabled: 'disabled'
   }
   const friendNodeClass = (data: any, node: any) => {
-    if (data?.disabled) {
+    if (data.disabled) {
       return 'penultimate'
     }
     return null
@@ -216,26 +163,18 @@
       state.personsData = []
       state.identitysData = []
       nextTick(() => {
-        // if (newValue == '1') {
-        //   let arr: any[] = []
-        //   state.departData.forEach((el) => {
-        //     if (el.type == 'add' || el.type == 'has') {
-        //       arr.push(el.id)
-        //     }
-        //   })
-        //   leftTree.value.setCheckedKeys(arr, true)
-        // }
-        getHistoryData();
+        if (newValue == '1') {
+          let arr: any[] = []
+          state.departData.forEach((el) => {
+            if (el.type == 'add' || el.type == 'has') {
+              arr.push(el.id)
+            }
+          })
+          leftTree.value.setCheckedKeys(arr, true)
+        }
       })
     }
   )
-  const customNodeClass = (data: Tree, node: Node) => {
-    console.log('data',data)
-    // if (data.authAdmin === false || data?.data?.authAdmin === false) {
-    //   return 'penultimate'
-    // }
-    return 'aa'
-  }
   watch(
     () => resource.value,
     async (newValue, oldValue) => {
@@ -253,13 +192,13 @@
       }
     }
   )
-  // watch(
-  //   () => searchValue.value,
-  //   (newValue, oldValue) => {
-  //     console.log(newValue)
-  //     handleNodeClick(state.loadID, false, newValue)
-  //   }
-  // )
+  watch(
+    () => searchValue.value,
+    (newValue, oldValue) => {
+      console.log(newValue)
+      handleNodeClick(state.loadID, false, newValue)
+    }
+  )
   watch(
     () => searchLeftValue.value,
     (newValue, oldValue) => {
@@ -272,94 +211,17 @@
     if (typePD.value == 1) {
       searchResource()
       getCompanyTree()
-      state.way = [
-        {
-          id: '1',
-          label: '按部门分配'
-        },
-        {
-          id: '2',
-          label: '按角色分配'
-        },
-        {
-          id: '3',
-          label: '按岗位分配'
-        },
-        {
-          id: '4',
-          label: '按人员分配'
-        }
-      ]
-    } else {
-      if (typePD.value == 2) {
-        state.way = [
-          {
-            id: '1',
-            label: '按集团分配'
-          },
-          {
-            id: '2',
-            label: '按角色分配'
-          },
-          {
-            id: '3',
-            label: '按岗位分配'
-          },
-          {
-            id: '4',
-            label: '按单位分配'
-          }
-        ]
-        getGroupList()
-      } else {
-        state.way = [
-          {
-            id: '1',
-            label: '按组织共享'
-          },
-          {
-            id: '2',
-            label: '按角色共享'
-          },
-          {
-            id: '3',
-            label: '按身份共享'
-          },
-          {
-            id: '4',
-            label: '按人员共享'
-          }
-        ]
-        getFriendsList()
-      }
     }
   })
-  
 
   onUnmounted(() => {
     sumbitSwitch(state.switchData, true)
   })
 
-  const emit = defineEmits(['closeDialog'])
+  const emit = defineEmits(['closeDialog', 'add'])
 
   const closeDialog = () => {
     emit('closeDialog')
-  }
-
-  // 获取群组信息
-  const getFriendsList = async () => {
-    cascaderTree.value = userCtrl.buildTargetTree(await userCtrl.getTeamTree())
-    getHistoryData()
-  }
-
-  // 获取集团数据
-  const getGroupList = async () => {
-    tabs.value = await application.searchResource()
-    if(tabs.value[0]){
-      resource.value = tabs.value[0].id
-      await getGroupTree()
-    }
- 
   }
 
   const getGroupTree = async (val?: boolean) => {
@@ -389,9 +251,10 @@
     switch (radio.value) {
       case '1':
         setTimeout(async () => {
-          let data1 =  await appCtrl.curProduct.queryExtend('组织','0');
-          state.departHisData =  data1.result || []
-
+          state.departHisData = await application.getHistoryData(
+            radio.value,
+            typePD !== 3 ? resource.value : ''
+          )
           let arr: any[] = []
           state.departHisData.forEach((el) => {
             arr.push(el.id)
@@ -402,8 +265,11 @@
         }, 300)
         break
       case '2':
-        let data2 =  await appCtrl.curProduct.queryExtend('职权','0');
-        state.authorHisData =  data2.result || []
+        state.authorHisData = await application.getHistoryData(
+          radio.value,
+          typePD !== 3 ? resource.value : '',
+          data
+        )
         state.authorData = JSON.parse(JSON.stringify(state.authorHisData))
         let arrAu: any[] = []
         state.authorData.forEach((el) => {
@@ -415,9 +281,12 @@
         }
         break
       case '3':
-        let data3 =  await appCtrl.curProduct.queryExtend('身份','0');
-        state.identitysHisData = data3.result || []
-        state.identitysData = state.identitysHisData
+        state.identitysHisData = await application.getHistoryData(
+          radio.value,
+          typePD !== 3 ? resource.value : '',
+          data
+        )
+        state.identitysData = JSON.parse(JSON.stringify(state.identitysHisData))
         let arrId: any[] = []
         state.identitysData.forEach((el) => {
           el.type = 'has'
@@ -428,9 +297,12 @@
         }
         break
       case '4':
-        let data4 = await appCtrl.curProduct.queryExtend('人员','0');        
-        state.personsHisData =  data4.result || []
-        state.personsData = state.personsHisData
+        state.personsHisData = await application.getHistoryData(
+          radio.value,
+          typePD !== 3 ? resource.value : '',
+          data
+        )
+        state.personsData = JSON.parse(JSON.stringify(state.personsHisData))
         let arrPe: any[] = []
         state.personsData.forEach((el) => {
           el.type = 'has'
@@ -459,23 +331,7 @@
           await application.sumbitSwitch(
             state.authorData,
             state.switchData.id,
-            '职权',
-            resource.value
-          )
-          break
-        case '3':
-          await application.sumbitSwitch(
-            state.identitysData,
-            state.switchData.id,
-            '身份',
-            resource.value
-          )
-          break
-        case '4':
-          await application.sumbitSwitch(
-            state.personsData,
-            state.switchData.id,
-            '人员',
+            '角色',
             resource.value
           )
           break
@@ -487,12 +343,7 @@
 
   // 提交表单
   const submitAll = async () => {
-    const res = await application.submitAll(state.departData, resource.value,radio.value,)
-    ElMessage({
-      type: 'success',
-      message: typePD.value == 1 ? '分配成功' : '共享成功'
-    })
-    closeDialog()
+    emit('add', state.authorData)
   }
   // 中间树形滚动加载事件
   const load = () => {
@@ -507,18 +358,10 @@
     if (checked) {
       if (radio.value == '2') {
         handleBoxClick(state.authorHisData, state.authorData, data)
-      } else if (radio.value == '3') {
-        handleBoxClick(state.identitysHisData, state.identitysData, data)
-      } else {
-        handleBoxClick(state.personsHisData, state.personsData, data)
       }
     } else {
       if (radio.value == '2') {
         handleBoxCancelClick(state.authorHisData, state.authorData, data)
-      } else if (radio.value == '3') {
-        handleBoxCancelClick(state.identitysHisData, state.identitysData, data)
-      } else {
-        handleBoxCancelClick(state.personsHisData, state.personsData, data)
       }
     }
   }
@@ -538,7 +381,6 @@
     })
   }
   const handleBoxClick = (hisData: any, dataList: any, data: any) => {
-    console.log('aaaaaaa',hisData,dataList,data)
     let result = hisData.some((item: any) => {
       return item.id == data.id
     })
@@ -564,15 +406,15 @@
       dataList.push(data)
     }
   }
-  // 组织左侧树点击事件
+  // 左侧树点击事件
   const handleCheckChange = (data: any, checked: boolean, indeterminate: any) => {
+    console.log('点击左侧', data, checked, indeterminate)
     if (checked) {
       if (radio.value == '1') {
         let result = state.departHisData.some((item: any) => {
           return item.id == data.id
         })
         for (let i = 0; i < state.departData.length; i++) {
-          console.log(state.departData[i].id,data.id)
           if (state.departData[i].id == data.id) {
             if (data.type == 'add') {
               return
@@ -617,76 +459,20 @@
       }
     }
   }
-  const handleTreeData = (node: any, belongId: string) => {
-    node.disabled = !(node.belongId && node.belongId == belongId);
-    if (node.children) {
-      node.nodes = node.children.map((child: any) => {
-        return handleTreeData(child, belongId);
-      });
-    }
-    //判断是否有操作权限
-    return { ...node._authority, node };
-  };
-  // 除组织外的左侧树点击事件
   const handleNodeClick = async (node: any, load: boolean, search?: string) => {
 
     if (node) {
       console.log('aaaa',appCtrl.curProduct,node)
       centerTreeShow.value = true
       const item: ITarget = node.item;
-      // sumbitSwitch(node)
-      // state.switchData = node
-      // if (typeof load == 'object' && typeof search == 'object') {
-      //   searchValue.value = ''
-      // }
-      // if (typeof load !== 'boolean') {
-      //   page.currentPage = 1
-      // } else if (typeof search == 'string') {
-      //   page.currentPage = 1
-      // }
-      console.log(radio.value,await node.item.selectAuthorityTree())
-      switch (radio.value) {
-        case '2':
-          state.loadID = node
-          const centerData =await node.item.selectAuthorityTree();
-          let data = handleTreeData(centerData)
-          state.centerTree = [data]
-          // getHistoryData(node)
-          break
-        case '3':
-          state.loadID = node
-          const res = await node.item.getIdentitys()
-          if (load == true) {
-            state.centerTree.concat(res)
-          } else {
-            state.centerTree = res
-          }
-          // getHistoryData(node)
-          break
-        case '4':
-          state.loadID = node
-          const result = await node.item.loadMembers({ limit: 10000,offset: 0, filter: '', })
-          if (result) {
-            if (load == true) {
-              state.centerTree.concat(result.result)
-            } else {
-              state.centerTree = result.result
-            }
-            // getHistoryData(node)
-          } else {            
-            state.centerTree = []
-            state.personsData = []
-          }
-        default:
-          break
-      }
-    }
-  }
+      console.log(radio.value,await item.selectAuthorityTree())
 
-  const handleTabClick = (id: string) => {
-    resource.value = id
-    cascaderTree.value = []
-    getGroupTree(true)
+      state.loadID = node
+      const centerData = await item.getIdentitys()
+      console.log('centerData: ', centerData);
+      state.centerTree = centerData
+      // getHistoryData(node)
+    }
   }
   const delContentAuth = (item: any) => {
     if (radio.value == '2') {
@@ -701,46 +487,6 @@
         })
       } else {
         state.authorData.forEach((el, index) => {
-          if (el.id == item.id) {
-            el.type = 'del'
-            if (state.centerTree.length !== 0) {
-              centerTree.value.setChecked(el.id, false)
-            }
-          }
-        })
-      }
-    } else if (radio.value == '3') {
-      if (item.type == 'del') {
-        return
-      } else if (item.type == 'add') {
-        state.identitysData.forEach((el, index) => {
-          if (el.id == item.id) {
-            state.identitysData.splice(index, 1)
-            centerTree.value.setChecked(item.id, false)
-          }
-        })
-      } else {
-        state.identitysData.forEach((el, index) => {
-          if (el.id == item.id) {
-            el.type = 'del'
-            if (state.centerTree.length !== 0) {
-              centerTree.value.setChecked(el.id, false)
-            }
-          }
-        })
-      }
-    } else {
-      if (item.type == 'del') {
-        return
-      } else if (item.type == 'add') {
-        state.personsData.forEach((el, index) => {
-          if (el.id == item.id) {
-            state.personsData.splice(index, 1)
-            centerTree.value.setChecked(item.id, false)
-          }
-        })
-      } else {
-        state.personsData.forEach((el, index) => {
           if (el.id == item.id) {
             el.type = 'del'
             if (state.centerTree.length !== 0) {
@@ -776,9 +522,8 @@
   }
   let cascaderTree = ref<OrgTreeModel[]>([])
   const getCompanyTree = async () => {
-    console.log('userCtrl.buildTargetTree(await userCtrl.getTeamTree(false))',userCtrl.buildTargetTree(await userCtrl.getTeamTree(false)))
-    cascaderTree.value = userCtrl.buildTargetTree(await userCtrl.getTeamTree(false))
-    getHistoryData()
+    cascaderTree.value = await userCtrl.buildTargetTree(await userCtrl.getTeamTree())
+    // getHistoryData()
   }
 </script>
 <style>

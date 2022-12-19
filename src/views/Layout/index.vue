@@ -87,7 +87,7 @@
   
   // 路由控制，单独匹配的话需要增加 showMenu.value = true;
   function getNavData2() { 
-
+    btnType.value='';//默认为空
     if(router.currentRoute.value.path.indexOf('setCenter') != -1){
       if (router.currentRoute.value.name === 'department') {
           titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
@@ -162,6 +162,8 @@
     if(router.currentRoute.value.path.indexOf('store/shop') != -1){
       getShopList();
       showMenu.value = true;
+      console.log('a')
+
       return
     }
     if(router.currentRoute.value.path.indexOf('store/appManagement') != -1){
@@ -224,7 +226,6 @@
     anystore.subscribed(`selfAppMenu`, 'user', (data) => {
       let newJSON = JSON.parse(JSON.stringify(storeJson))
         if(data?.data?.length>0){
-          console.log('data',data.data)
           menuData.data = data.data;
           dataFilter(menuData.data)
           newJSON[2].children = menuData.data;
@@ -350,7 +351,7 @@
           myList.push(obj)
       })
       let newObj:any =  {
-        label: "商城分类",
+        label: "商店分类",
         structure: true,
         isPenultimate: true,
         btns:[{

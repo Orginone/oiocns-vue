@@ -13,14 +13,14 @@
         >
           <template #buttons>
             <div style="display: flex;align-items: center">
-              <el-button v-if="allowEdit() && props.selectItem?.typeName == '集团'" class="btn-check" type="primary" link @click="handleShare()">分享集团</el-button>
-              <el-divider v-if="props.selectItem?.typeName == '集团'" direction="vertical"/>
+              <el-button v-if="allowEdit() && props.selectItem?.item?.typeName == '集团'" class="btn-check" type="primary" link @click="handleShare()">分享集团</el-button>
+              <el-divider v-if="props.selectItem?.item?.typeName == '集团'" direction="vertical"/>
               <el-button class="btn-check" type="primary" link>岗位设置</el-button>
               <el-divider direction="vertical"/>
-              <el-button class="btn-check" v-if="allowEdit() && props.selectItem?.typeName == '集团'" small link type="primary" @click="pullCompanysDialog = true">添加单位</el-button>
-              <el-divider v-if="props.selectItem?.typeName == '集团'" direction="vertical"/>
-              <el-button class="btn-check" v-if="allowEdit() && props.selectItem?.typeName == '集团'" small link type="primary" @click="viewApplication">查看申请</el-button>
-              <el-button class="btn-check" v-if="allowEdit() && props.selectItem?.typeName == '子集团'" small link type="primary" @click="showAssignDialog">分配单位</el-button>
+              <el-button class="btn-check" v-if="allowEdit() && props.selectItem?.item?.typeName == '集团'" small link type="primary" @click="pullCompanysDialog = true">添加单位</el-button>
+              <el-divider v-if="props.selectItem?.item?.typeName == '集团'" direction="vertical"/>
+              <el-button class="btn-check" v-if="allowEdit() && props.selectItem?.item?.typeName == '集团'" small link type="primary" @click="viewApplication">查看申请</el-button>
+              <el-button class="btn-check" v-if="allowEdit() && props.selectItem?.item?.typeName == '子集团'" small link type="primary" @click="showAssignDialog">分配单位</el-button>
             </div>
           </template>
           <template #operate="scope">
@@ -58,16 +58,13 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import $services from '@/services'
 import DiyTable from '@/components/diyTable/index.vue'
 import { onMounted, reactive, ref, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import searchCompany from '@/components/searchs/index.vue'
 import authority from '@/utils/authority'
-import GroupServices from '@/module/relation/group'
 import QrCodeCustom from '@/components/qrCode/index.vue'
-const groupServices = new GroupServices()
 const props = defineProps<{
   selectItem: any // 节点数据
   tabHeight: any
@@ -79,8 +76,8 @@ let companies = ref<any>([])
 const allowEdit = () => {
   if (props.selectItem && props.selectItem.id) {
     return authority.IsRelationAdmin([
-      props.selectItem.id,
-      props.selectItem.belongId
+      props.selectItem?.item?.target?.id,
+      props.selectItem?.item?.target?.belongId
     ])
   }
   return false
@@ -142,19 +139,25 @@ const handleUpdate = (page: any) => {
   getCompanies()
 }
 
-// 加载单位
-const getCompanies = async () => {
-  const item = props.selectItem
-  if(item){
-    if (item.typeName == '集团') {
-      rootGroup.value = JSON.parse(JSON.stringify(item))
+// 加载岗位下的用户
+const getCompanies = async (currentData = props.selectItem) => {
+  if(currentData){
+    const backData =  await currentData.item?.loadMembers({
+      filter: "",
+      limit: 20,
+      offset: 0
+    })
+    if(backData?.result){
+      companies.value =backData.result;
+      pageStore.total = backData.total
+      diyTable.value.state.page.total = pageStore.total
+    }else{
+      companies.value =[];
+      pageStore.total = 0
     }
-    const backData = await groupServices.getCompanies(props.selectItem)
-    companies.value = backData.result
-    pageStore.total = backData.total
-    diyTable.value.state.page.total = pageStore.total
   }
 }
+
 const pullCompanysDialog = ref<boolean>(false)
 const closeDialog = () => {
   pullCompanysDialog.value = false
@@ -185,9 +188,9 @@ const checksCompanySearch = (val: any) => {
   }
 }
 
-//拉单位进集团
+//拉单位进集团(待提供接口)
 const pullCompanys = async (arr: any) => {
-  const data =  await groupServices.pullCompanys(props.selectItem.id,arr)
+  // const data =  await groupServices.pullCompanys(props.selectItem.id,arr)
   if (data) {
     ElMessage({
       message: '添加成功',
@@ -203,14 +206,14 @@ const viewApplication = (row: any) => {
   router.push({ path: '/service/group', query: { type: 1, id: props.selectItem.id } })
 }
 
-// 移除n
+// 移除(待提供接口)
 const removeFrom = async (row: any) => {
   let rowObj = {
     name:row.name,
     id:row.id,
     typeName:props.selectItem.typeName
   }
-  const data =  await groupServices.removeCompany(rowObj,props.selectItem.id)
+  // const data =  await groupServices.removeCompany(rowObj,props.selectItem.id)
   if(data){
     ElMessage({
       message: '操作成功',
@@ -229,10 +232,10 @@ const showAssignDialog = () => {
   assignDialog.value = true
 }
 
-// 分配单位到子集团
+// 分配单位到子集团(待提供接口)
 const assign = async (arr: any) => {
   const companyIds = arr
-  const data = await groupServices.assignSubgroup(props.selectItem.id,companyIds)
+  // const data = await groupServices.assignSubgroup(props.selectItem.id,companyIds)
   if(data){
     ElMessage({
       message: '分配成功',
@@ -250,7 +253,6 @@ onMounted(() => {
     let headerHeight = cardHeight.value?.clientHeight
     tabHeight.value = headerHeight
   })
-  getCompanies()
 })
 
 // 分享集团
