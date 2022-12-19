@@ -1,7 +1,7 @@
 <template>
     <div class="main">
       <div class="content">
-        <div class="detail">
+        <div class="detail" v-if="currentData.target">
           <el-descriptions
               class="margin-top"
               :title="`${currentData.name}的基本信息`"
@@ -72,7 +72,7 @@
                 <span class="el-dropdown-link"> ··· </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="showDiong">编辑</el-dropdown-item>
+                    <el-dropdown-item @click="editAttr(scope.row)">编辑</el-dropdown-item>
                     <el-dropdown-item @click="deleteAttrItem(scope.row)" style="color: #f67c80">删除</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -85,8 +85,8 @@
         </div>
       </div>
       <!-- 特性提交表单 -->
-      <el-dialog v-model="attrFormDialog" title="新增特性" width="600">
-        <el-form :model="state.attrForm" label-width="120px">
+      <el-dialog v-model="attrFormDialog" :title="`${isEditAttr ? '编辑' : '新增'}特性`" width="600">
+        <el-form :model="state.attrForm" label-width="120px" ref="attrFormRef">
           <el-form-item label="特性名称">
             <el-input v-model="state.attrForm.name" placeholder="请输入"/>
           </el-form-item>
@@ -94,10 +94,10 @@
             <el-input v-model="state.attrForm.code" placeholder="请输入"/>
           </el-form-item>
           <el-form-item label="选择制定组织">
-            <el-cascader v-model="state.attrForm.belongIds" :options="state.belongTreeData" :props="{ label: 'name', value: 'id', children: 'subTeam', checkStrictly: true}" placeholder="请选择" />
+            <el-tree-select v-model="state.attrForm.belongId" :data="state.belongTreeData" highlight-current default-expand-all check-strictly :props="{ label: 'name', value: 'id', children: 'subTeam'}" placeholder="请选择" />
           </el-form-item>
           <el-form-item label="选择管理职权">
-            <el-cascader v-model="state.attrForm.authIds" :options="state.authTreeData" :props="{ label: 'name', value: 'id', checkStrictly: true }" placeholder="请选择" />
+            <el-tree-select v-model="state.attrForm.authId" :data="state.authTreeData" highlight-current default-expand-all check-strictly :props="{ label: 'name', value: 'id'}" placeholder="请选择" />
           </el-form-item>
           <el-form-item label="向下级组织公开">
             <el-select v-model="state.attrForm.public" placeholder="请选择">
@@ -128,7 +128,7 @@
 <script lang="ts" setup>
   // @ts-nocheck
   import DiyTable from "@/components/diyTable/index.vue";
-  import {computed, reactive, ref, watch} from "vue";
+  import {computed, nextTick, reactive, ref, watch} from "vue";
   import { setCenterStore } from '@/store/setting'
   import { USERCTRL } from "@/ts/coreIndex";
   import { PageRequest } from '@/ts/base/model';
@@ -144,6 +144,8 @@
   })
 
   const attrFormDialog = ref(false)
+  const isEditAttr =  ref(false)
+  const attrFormRef = ref<FormInstance>()
 
   const state = reactive({
     tableData: [],
@@ -212,6 +214,7 @@
   }
 
   const openAttrFormDialog = async () => {
+    isEditAttr.value = false
     attrFormDialog.value = true
     state.belongTreeData = await USERCTRL.getTeamTree()
     const authData = await USERCTRL.company.selectAuthorityTree(false)
@@ -219,8 +222,11 @@
   }
 
   const submitAttrForm = async () => {
-    state.attrForm.belongId = state.attrForm.belongIds[state.attrForm.belongIds.length - 1]
-    state.attrForm.authId = state.attrForm.authIds[state.attrForm.authIds.length - 1]
+    if(isEditAttr) {
+      ElMessage.warning({ message: '暂不支持编辑'})
+      attrFormDialog.value = false
+      return false
+    }
     const success = await currentData.value.createAttr(state.attrForm)
     if(success) {
       ElMessage.success({ message: '新增成功'})
@@ -234,7 +240,18 @@
     if(success) {
       ElMessage.success({ message: '删除成功'})
       await loadSpeciesAttrs(currentData.value)
+    } else {
+      ElMessage.error({ message: '删除失败'})
     }
+  }
+
+  const editAttr = async (attr) => {
+    isEditAttr.value = true
+    state.belongTreeData = await USERCTRL.getTeamTree()
+    const authData = await USERCTRL.company.selectAuthorityTree(false)
+    state.authTreeData = authData ? [authData] : [];
+    attrFormDialog.value = true
+    state.attrForm = attr
   }
 
   const handleUpdate = (page: any) => {
