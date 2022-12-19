@@ -65,7 +65,7 @@
               </div>
             </template>
             <template #buttons>
-              <el-button class="btn-check" type="primary" link>新增特性</el-button>
+              <el-button class="btn-check" type="primary" link @click="openAttrFormDialog">新增特性</el-button>
             </template>
             <template #operate="scope">
               <el-dropdown>
@@ -73,7 +73,7 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item @click="showDiong">编辑</el-dropdown-item>
-                    <el-dropdown-item @click="showDiong" style="color: #f67c80">删除</el-dropdown-item>
+                    <el-dropdown-item @click="deleteAttrItem(scope.row)" style="color: #f67c80">删除</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -84,6 +84,45 @@
           </DiyTable>
         </div>
       </div>
+      <!-- 特性提交表单 -->
+      <el-dialog v-model="attrFormDialog" title="新增特性" width="600">
+        <el-form :model="state.attrForm" label-width="120px">
+          <el-form-item label="特性名称">
+            <el-input v-model="state.attrForm.name" placeholder="请输入"/>
+          </el-form-item>
+          <el-form-item label="特性代码">
+            <el-input v-model="state.attrForm.code" placeholder="请输入"/>
+          </el-form-item>
+          <el-form-item label="选择制定组织">
+            <el-cascader v-model="state.attrForm.belongIds" :options="state.belongTreeData" :props="{ label: 'name', value: 'id', children: 'subTeam', checkStrictly: true}" placeholder="请选择" />
+          </el-form-item>
+          <el-form-item label="选择管理职权">
+            <el-cascader v-model="state.attrForm.authIds" :options="state.authTreeData" :props="{ label: 'name', value: 'id', checkStrictly: true }" placeholder="请选择" />
+          </el-form-item>
+          <el-form-item label="向下级组织公开">
+            <el-select v-model="state.attrForm.public" placeholder="请选择">
+              <el-option label="公开" :value="true" />
+              <el-option label="不公开" :value="false" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="特性类型">
+            <el-select v-model="state.attrForm.valueType" placeholder="请选择">
+              <el-option label="数值型" value="数值型" />
+              <el-option label="描述型" value="描述型" />
+              <el-option label="选择型" value="选择型" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="特性定义">
+            <el-input v-model="state.attrForm.remark" placeholder="请输入" type="textarea"/>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="attrFormDialog = false">取消</el-button>
+            <el-button type="primary" @click="submitAttrForm">确定</el-button>
+          </span>
+        </template>
+      </el-dialog>
     </div>
 </template>
 <script lang="ts" setup>
@@ -91,8 +130,9 @@
   import DiyTable from "@/components/diyTable/index.vue";
   import {computed, reactive, ref, watch} from "vue";
   import { setCenterStore } from '@/store/setting'
-  import {USERCTRL} from "@/ts/coreIndex";
+  import { USERCTRL } from "@/ts/coreIndex";
   import { PageRequest } from '@/ts/base/model';
+  import {ElMessage} from "element-plus";
   const store: any = setCenterStore()
 
   const currentData = computed(() => {
@@ -100,21 +140,16 @@
   })
 
   watch(currentData, async (n, o) => {
-    const page: PageRequest = {offset: 0, limit: 20, filter: ''}
-    const res = await n.loadAttrs(USERCTRL.space.id, page)
-    if (res && res.result) {
-      for (const item of res.result) {
-        const team = await USERCTRL.findTeamInfoById(item.belongId);
-        if (team) {
-          item.belongId = team.name;
-        }
-      }
-    }
-    state.tableData = res.result
+    await loadSpeciesAttrs(n)
   })
 
+  const attrFormDialog = ref(false)
+
   const state = reactive({
-    tableData: []
+    tableData: [],
+    attrForm: {},
+    belongTreeData: [],
+    authTreeData: []
   })
   const options = ref<any>({
     checkBox: false,
@@ -160,6 +195,48 @@
       name: 'operate'
     }
   ])
+
+  const loadSpeciesAttrs = async (species) => {
+    const page: PageRequest = {offset: 0, limit: 20, filter: ''}
+    const res = await species.loadAttrs(USERCTRL.space.id, page)
+    console.log(res)
+    if (res && res.result) {
+      for (const item of res.result) {
+        const team = await USERCTRL.findTeamInfoById(item.belongId);
+        if (team) {
+          item.belongId = team.name;
+        }
+      }
+    }
+    state.tableData = res.result
+  }
+
+  const openAttrFormDialog = async () => {
+    attrFormDialog.value = true
+    state.belongTreeData = await USERCTRL.getTeamTree()
+    const authData = await USERCTRL.company.selectAuthorityTree(false)
+    state.authTreeData = authData ? [authData] : [];
+  }
+
+  const submitAttrForm = async () => {
+    state.attrForm.belongId = state.attrForm.belongIds[state.attrForm.belongIds.length - 1]
+    state.attrForm.authId = state.attrForm.authIds[state.attrForm.authIds.length - 1]
+    const success = await currentData.value.createAttr(state.attrForm)
+    if(success) {
+      ElMessage.success({ message: '新增成功'})
+      attrFormDialog.value = false
+      await loadSpeciesAttrs(currentData.value)
+    }
+  }
+
+  const deleteAttrItem = async (attr) => {
+    const success = await currentData.value.deleteAttr(attr.id)
+    if(success) {
+      ElMessage.success({ message: '删除成功'})
+      await loadSpeciesAttrs(currentData.value)
+    }
+  }
+
   const handleUpdate = (page: any) => {
 
   }
