@@ -308,8 +308,6 @@ import opened from "./components/opened.vue";
 import appDetail from "./components/appDetail.vue";
 import ShareComponent from "./components/shareComponents.vue";
 import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
-// import {StoreModel} from "@/ts/store";
-// import {PersonalModel} from '@/ts/personal'
 import marketCtrl from '@/ts/controller/store/marketCtrl';
 import appCtrl from '@/ts/controller/store/appCtrl';
 import userCtrl from '@/ts/controller/setting/userCtrl';
