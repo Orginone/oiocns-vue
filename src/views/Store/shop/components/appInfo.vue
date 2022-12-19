@@ -35,13 +35,13 @@
           <template #label>
             <div > 归属 </div>
           </template>
-          {{ chat.getName(infoDetail.product.belongId) }}
+          {{ infoDetail.product.belongId }}
         </el-descriptions-item>
         <el-descriptions-item :span="1">
           <template #label>
             <div > 发起人 </div>
           </template>
-          {{ chat.getName(infoDetail.createUser) }}
+          {{ infoDetail.createUser }}
         </el-descriptions-item>
         <el-descriptions-item :span="1">
           <template #label>

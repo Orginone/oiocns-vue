@@ -12,43 +12,26 @@
 <script lang="ts" setup>
   import Info from './components/info.vue'
   import User from './components/User.vue'
-  import $services from '@/services'
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, computed } from 'vue'
   import { useUserStore } from '@/store/user'
   import { storeToRefs } from 'pinia'
   import { ElMessage } from 'element-plus'
   import { setCenterStore } from '@/store/setting'
-  import { PersonalModel } from '@/ts/personal'
   const settingStore = setCenterStore()
 
   const store = useUserStore()
   const { workspaceData } = storeToRefs(store)
 
-  const info = ref(null)
   const user = ref(null)
-  // 加载单位
-  const loadOrgTree = () => {
-    // console.log(PersonalModel.Company);
-    
-    // PersonalModel.Company.getDepartments().then(res => {
-    //   console.log('res: ', res);
-    // })
-    
-    $services.company.getCompanyTree({}).then((res: any) => {
-      nodeClick(res.data)
-    })
-  }
   // 给相应组件传值
   const nodeClick = (selectItem: any) => {
     settingStore.unitInfo = selectItem
     info.value.selectItemChange(selectItem)
-    user.value.selectItemChange(selectItem)
+    user.value?.selectItemChange(selectItem)
   }
   //获取部门信息
   onMounted(() => {
-    if(store?.workspaceData?.name != '个人空间') {
-      loadOrgTree()
-    } else {
+    if(store?.workspaceData?.name == '个人空间') {
       ElMessage({
         message: '当前处于个人空间',
         type: 'warning'

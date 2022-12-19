@@ -75,7 +75,7 @@
       caption: route.query.name,
       price: undefined,
       sellAuth: '使用权',
-      marketId: route.query.id,
+      marketId: '',
       information: '',
       days: ''
     })
@@ -100,7 +100,6 @@
     // 获取市场列表
     const getMarketOptions = async (queryStr?: string) => {
       marketList.value = marketCtrl.Market.joinedMarkets
-      console.log('marketList',marketList.value)
     }
 
     // 提交上架
