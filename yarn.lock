@@ -363,10 +363,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@orginone/oiocns-ts@^1.1.1":
-  version "1.1.1"
-  resolved "https://packages.aliyun.com/5ef30abb2c41c1ea2703ace1/npm/npm-registry/@orginone/oiocns-ts/-/@orginone/oiocns-ts-1.1.1.tgz#3004e5b39b3c44872ccad2b26674be4b41a4c13c"
-  integrity sha512-ndNg+DkCbYUVWQDiRy/4/oCmWuKc6AnXRAeqwS/W2ieQW9F3OVO9inVZarkyXYF35yO2DAbc0dDgd6pLfPVVFg==
+"@orginone/oiocns-ts@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@orginone/oiocns-ts/-/oiocns-ts-1.1.0.tgz#737247e96630e512fd9234a26df8e8657cc07fa7"
+  integrity sha512-mn3KzrBKsTMjmEdidgat4UgjjfZwbDM6iOlt8uqjxBN0lAWZ673//o6eRmR7VRkLO/D/pTajWz3haDN1ajPnlg==
 
 "@popperjs/core@npm:@sxzz/popperjs-es@^2.11.7":
   version "2.11.7"
