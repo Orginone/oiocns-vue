@@ -602,6 +602,20 @@ export class Application {
       }
     })
     let teamId = this.opertion == 1 ? this.rootTreeId : this.opertion == 2 ? resource : store.queryInfo.id
+    if(!teamId){
+      teamId = '0';
+    }
+    if(destType == '1'){
+      destType ='组织'
+    }else if(destType == '2'){
+      destType ='职权'
+    }else if(destType == '3'){
+      destType ='身份'
+    }else if(destType == '4'){
+      destType ='人员'
+    }
+
+    console.log('departAdd',departAdd,'departDel',departDel)
     if (departAdd.length > 0) {
       await appCtrl.curProduct?.createExtend(
         teamId,
@@ -610,6 +624,9 @@ export class Application {
       );
     }
     if (departDel.length > 0) {
+      console.log('delete',teamId,
+      departDel,
+      destType)
        await appCtrl.curProduct?.deleteExtend(
         teamId,
         departDel,
@@ -635,6 +652,9 @@ export class Application {
       }
     })
     let teamId = this.opertion == 1 ? this.rootTreeId : this.opertion == 2 ? resource : store.queryInfo.id
+    if(!teamId){
+      teamId = '0';
+    }
     if (addData.length > 0) {
       await appCtrl.curProduct?.createExtend(
           teamId,

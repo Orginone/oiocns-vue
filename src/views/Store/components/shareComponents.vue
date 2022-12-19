@@ -572,6 +572,7 @@
           return item.id == data.id
         })
         for (let i = 0; i < state.departData.length; i++) {
+          console.log(state.departData[i].id,data.id)
           if (state.departData[i].id == data.id) {
             if (data.type == 'add') {
               return
