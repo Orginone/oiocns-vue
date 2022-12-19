@@ -113,7 +113,7 @@ const handleOk = (newItem) => {
 const emit = defineEmits(['nodeClick'])
 
 const loadNode = (node: any, resolve: (data: any[]) => void) => {
-  // console.log(node);
+  console.log(node);
   if (node.level === 0) {
     return resolve(orgTree.value)
   } else if(node.level === 1 && node.data.label === '创建集团'){
@@ -121,6 +121,7 @@ const loadNode = (node: any, resolve: (data: any[]) => void) => {
   } else if(node.level === 1 && node.data.label === '加入集团'){
     return resolve(addGroupList)
   } else if (node.level === 2) {
+    // const data = await node.data.item?.loadSubTeam()
     return resolve([])
     // loadOrgTree(node?.data?.id as string).then((res: any)=> {
     //   return resolve(res ?? [])

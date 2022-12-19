@@ -141,7 +141,6 @@ const handleUpdate = (page: any) => {
 
 // 加载岗位下的用户
 const getCompanies = async (currentData = props.selectItem) => {
-  console.log('props.selectItem: ', props.selectItem);
   if(currentData){
     const backData =  await currentData.item?.loadMembers({
       filter: "",

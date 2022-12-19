@@ -9,6 +9,7 @@
         :hasTableHead="true"
         :tableData="tableData"
         :options="options"
+        :total="pageStore.total"
         @handleUpdate="handleUpdate"
         @selectionChange="selectionChange"
         :tableHead="tableHead"
@@ -17,8 +18,8 @@
           <h4>关联角色</h4>
         </template>
         <template #buttons>
-          <el-button class="btn-check" type="primary" link>
-              <span style="transform: scale(1.5);">+</span>
+          <el-button @click="addRole()" class="btn-check" type="primary" link>
+            添加身份
           </el-button>
         </template>
         <template #operate="scope">
@@ -37,12 +38,51 @@
       </diytab>
     </div>
   </div>
+  <el-dialog
+    v-model="dialogTableVisible"
+    custom-class="share-dialog"
+    title="添加身份"
+    width="1000px"
+    draggable
+    append-to-body
+    :close-on-click-modal="false"
+  >
+    <ShareComponent
+        dialogType="1"
+        @closeDialog="closeDialog(false)"
+        @add="add"
+        :info="[]"
+      >
+      </ShareComponent>
+  </el-dialog>
 </template>
 <script lang="ts" setup>
 // @ts-nocheck
 import diytab from "@/components/diyTable/index.vue";
 import { ref, reactive, watch } from "vue";
 import { setCenterStore } from '@/store/setting'
+import ShareComponent from "../../GlobalComps/shareComponents.vue";
+const dialogTableVisible = ref(false)
+// 关闭弹窗
+const closeDialog = (type: string, key: boolean) => {
+  dialogTableVisible.value = key;
+};
+
+const add = async(val: any) => {
+  const res = await store.currentSelectItme?.object.pullIdentitys(val)
+  if(res) {
+    closeDialog(false)
+     ElMessage({
+        message: '添加成功',
+        type: 'success'
+      })
+    getUsers
+  }
+}
+
+const addRole = () => {
+  dialogTableVisible.value = true
+}
 
 // 表格展示数据
 const pageStore = reactive({
