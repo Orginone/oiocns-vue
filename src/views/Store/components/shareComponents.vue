@@ -120,7 +120,6 @@
   import { onMounted, ref, reactive, toRefs, watch, nextTick, computed, onUnmounted } from 'vue'
   import { ElMessage } from 'element-plus'
   import Author from './author.vue'
-  import authority from '@/utils/authority'
   import { useUserStore } from '@/store/user'
   import { Application } from './app.ts'
   import userCtrl from '@/ts/controller/setting/userCtrl';

@@ -31,7 +31,6 @@
   
   <script setup lang="ts">
     import diytab from '@components/diyTable/index.vue'
-    import $services from '@/services'
     import { ref, reactive, onMounted, nextTick } from 'vue'
     import { ElMessage } from 'element-plus'
   
