@@ -464,7 +464,7 @@ const commonStore = useCommonStore()
 // 打开应用
 const handleChooseItem = async (app: any) => {
   state.appList.forEach(element => {
-    if(element.prod.id ==app.id){
+    if(element.prod.id ==app.prod.id){
       const { link } = element.prod.resource[0]
       let data = { type: '', appInfo: app, icon: img1, link, path: '/online' }
       data.type = 'app'

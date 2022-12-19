@@ -2,7 +2,7 @@
   <div class="cohortLayout">
     <div class="cohortLayout-header" v-if="typePD !== 3">
       <div class="cohortLayout-header-text"
-        >{{ typePD == 1 ? '请选择资源：' : '请选择集团：' }}--typePD：{{typePD}}
+        >{{ typePD == 1 ? '请选择资源：' : '请选择集团：' }}
       </div>
       <div class="cohortLayout-header-tabs">
         <el-tabs v-model="activeName" class="demo-tabs">
@@ -33,7 +33,6 @@
             </el-icon>
           </template>
         </el-input>
-        1111---{{radio}}
         <el-tree
           v-if="radio == '1'"
           ref="leftTree"
@@ -43,7 +42,6 @@
           :check-strictly="true"
           :default-expand-all="true"
           show-checkbox
-          
           @check-change="handleCheckChange"
           :filter-node-method="filterNode"
         />
@@ -74,7 +72,6 @@
             </el-icon>
           </template>
         </el-input>
-        --{{radio}}--
         <el-tree
           v-if="radio == '2' || radio == '3' || (radio == '4' && centerTreeShow)"
           ref="centerTree"
@@ -110,7 +107,8 @@
         ></Author>
       </div>
     </div>
-    <div class="footer" v-if="radio == '1'">
+    <!-- v-if="radio == '1'" -->
+    <div class="footer" >
       <el-button type="primary" @click="submitAll">确认</el-button>
       <el-button class="footer-btn" @click="closeDialog">取消</el-button>
     </div>
@@ -392,7 +390,7 @@
       case '1':
         setTimeout(async () => {
           let data1 =  await appCtrl.curProduct.queryExtend('组织','0');
-          state.departHisData =  data1.result
+          state.departHisData =  data1.result || []
 
           let arr: any[] = []
           state.departHisData.forEach((el) => {
@@ -405,7 +403,7 @@
         break
       case '2':
         let data2 =  await appCtrl.curProduct.queryExtend('职权','0');
-        state.authorHisData =  data3.result
+        state.authorHisData =  data2.result || []
         state.authorData = JSON.parse(JSON.stringify(state.authorHisData))
         let arrAu: any[] = []
         state.authorData.forEach((el) => {
@@ -418,7 +416,7 @@
         break
       case '3':
         let data3 =  await appCtrl.curProduct.queryExtend('身份','0');
-        state.identitysHisData = data3.result
+        state.identitysHisData = data3.result || []
         state.identitysData = state.identitysHisData
         let arrId: any[] = []
         state.identitysData.forEach((el) => {
@@ -431,7 +429,7 @@
         break
       case '4':
         let data4 = await appCtrl.curProduct.queryExtend('人员','0');        
-        state.personsHisData =  data4.result
+        state.personsHisData =  data4.result || []
         state.personsData = state.personsHisData
         let arrPe: any[] = []
         state.personsData.forEach((el) => {
@@ -461,7 +459,7 @@
           await application.sumbitSwitch(
             state.authorData,
             state.switchData.id,
-            '角色',
+            '职权',
             resource.value
           )
           break
@@ -469,7 +467,7 @@
           await application.sumbitSwitch(
             state.identitysData,
             state.switchData.id,
-            '岗位',
+            '身份',
             resource.value
           )
           break
@@ -489,7 +487,7 @@
 
   // 提交表单
   const submitAll = async () => {
-    const res = await application.submitAll(state.departData, resource.value)
+    const res = await application.submitAll(state.departData, resource.value,radio.value,)
     ElMessage({
       type: 'success',
       message: typePD.value == 1 ? '分配成功' : '共享成功'
@@ -540,6 +538,7 @@
     })
   }
   const handleBoxClick = (hisData: any, dataList: any, data: any) => {
+    console.log('aaaaaaa',hisData,dataList,data)
     let result = hisData.some((item: any) => {
       return item.id == data.id
     })
@@ -567,7 +566,6 @@
   }
   // 组织左侧树点击事件
   const handleCheckChange = (data: any, checked: boolean, indeterminate: any) => {
-    console.log('点击左侧', data, checked, indeterminate)
     if (checked) {
       if (radio.value == '1') {
         let result = state.departHisData.some((item: any) => {
@@ -777,7 +775,8 @@
   }
   let cascaderTree = ref<OrgTreeModel[]>([])
   const getCompanyTree = async () => {
-    cascaderTree.value = await application.getCompanyTree()
+    console.log('userCtrl.buildTargetTree(await userCtrl.getTeamTree(false))',userCtrl.buildTargetTree(await userCtrl.getTeamTree(false)))
+    cascaderTree.value = userCtrl.buildTargetTree(await userCtrl.getTeamTree(false))
     getHistoryData()
   }
 </script>
