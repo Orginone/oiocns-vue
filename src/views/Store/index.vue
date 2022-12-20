@@ -38,12 +38,14 @@
             </div>
           </template>
           <template #buttons>
-            <el-button class="btn-check" type="primary" @click="goBuy()" link
-              >购买</el-button
-            >
-            <el-button class="btn-check" @click="goCreate()" type="primary" link
-              >创建</el-button
-            >
+            <div class="btn-box">
+              <el-button link type="primary" @click="goBuy()" 
+                >购买</el-button
+              >
+              <el-button link @click="goCreate()" type="primary" 
+                >创建</el-button
+              >
+            </div>
             <!-- <el-button class="btn-check" type="primary" link>暂存</el-button> -->
           </template>
           <template #name="scope">
@@ -503,8 +505,7 @@ const getProductList = () => {
     // });
     state[`ownProductList`] = res ;
     state['appList'] = res;
-    console.log('res',res)
-
+    diyTable.value.state.page.total = res.length
   })
 };
 
@@ -623,18 +624,10 @@ instance?.proxy?.$Bus.on("clickBus", (num) => {
       background: #fff;
       margin-top: 3px;
       height: calc(100vh - 100px);
-
-      .btn-check {
-        padding: 8px 16px;
-        color: #154ad8;
+      .btn-box{
+        padding-bottom: 10px;
+        width: 80px;
       }
-
-      .btn-check:hover {
-        background: #154ad8;
-        color: #fff;
-        padding: 8px 16px;
-      }
-
       .table-tabs {
 
         .el-menu--horizontal {
