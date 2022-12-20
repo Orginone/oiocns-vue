@@ -78,6 +78,7 @@
   import {INullSpeciesItem} from "@/ts/core";
 
   const { proxy } = getCurrentInstance()
+  const store = useUserStore()
 
   const btnType = ref<string>('');
   const addMenuDialog = ref<boolean>(false);
@@ -208,10 +209,12 @@
   const menuData = reactive({
     data:[]
   });
+
+  //数据过滤
   const dataFilter = (data:any)=>{
     if(data.length>0){
       data.forEach((element:any) => {
-        element.url = '/store?id='+element.id
+        element.isStoreMenu = true;
         element.label = element.title
         if(element.children.length>0){
           dataFilter(element.children)
@@ -223,10 +226,11 @@
   };
   // 获取商店分类
   const getMenu = () => {
-    anystore.subscribed(`selfAppMenu`, 'user', (data) => {
+    anystore.subscribed('STORE_MENU'+store.workspaceData.id, 'user', (data) => {
       let newJSON = JSON.parse(JSON.stringify(storeJson))
-        if(data?.data?.length>0){
-          menuData.data = data.data;
+      console.log('newJSON',newJSON)
+        if(data?.data?.species.length>0){
+          menuData.data = data.data.species;          
           dataFilter(menuData.data)
           newJSON[2].children = menuData.data;
         }

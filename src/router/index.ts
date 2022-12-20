@@ -531,6 +531,15 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
+        path: '/store/public',
+        name: 'storeAppPublic',
+        component: () => import('@/views/Store/public/index.vue'),
+        meta: {
+          title: '应用详情',
+          id: "store.appPublic"
+        }
+      },
+      {
         path: '/store/appRegister',
         name: 'storeAppRegister',
         component: () => import('@/views/Store/appRegister/index.vue'),

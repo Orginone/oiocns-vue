@@ -119,6 +119,18 @@
                   <el-dropdown-item
                     link
                     type="primary"
+                    @click="goPublic(scope.row.prod.id)">
+                    上架列表
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    link
+                    type="primary"
+                    @click="handleSetting(scope.row.prod.id)">
+                    移动至
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    link
+                    type="primary"
                     @click="deleteApp(scope.row)"
                     >移除应用</el-dropdown-item
                   >
@@ -316,6 +328,8 @@ import userCtrl from '@/ts/controller/setting/userCtrl';
 import { useCommonStore } from '@store/common'
 import img1 from '@/assets/img/group22.png'
 
+const { proxy } = getCurrentInstance()
+
 const goCreate = () => {
   router.push({ path: "/store/appRegister" });
 };
@@ -484,29 +498,24 @@ const handleUpdate = (page: any) => {
 // 获取我的应用列表
 const getProductList = () => {
   marketCtrl.Market.getOwnProducts(false).then((res:any)=>{
-    // let arr:any = []
-    // res.forEach((element:any) => {
-    //   let obj = {
-    //     id:element.prod.id,
-    //     name: element.prod.name,
-    //     updateTime:element.prod.updateTime,
-    //     createTime:element.prod.createTime,
-    //     typeName:element.prod.typeName,
-    //     updateUser:element.prod.updateUser,
-    //     authority:element.prod.authority,
-    //     belongId:element.prod.belongId,
-    //     code:element.prod.code,
-    //     source:element.prod.source,
-    //     resource:element.prod.resource,
-    //   }
-    //   arr.push(obj)
-    // });
     state[`ownProductList`] = res ;
     state['appList'] = res;
     diyTable.value.state.page.total = res.length
   })
 };
-
+proxy?.$Bus.on("storeMenu", (arr:any) => {
+    // getShopList();
+    let newArr:Array<Object> = []
+    arr.forEach((item:any) => {
+      state.appList.forEach(element => {
+        if(element.prod.id == item){
+          newArr.push(element)
+        }
+      });
+    });
+    state[`ownProductList`] = newArr ;
+    diyTable.value.state.page.total = newArr?.length || 0
+});
 // 移除app
 const deleteApp = (item: any) => {
   ElMessageBox.confirm(`确认删除  ${item.prod.name}?`, "警告", {
@@ -556,7 +565,18 @@ const handleCommand = (
       break;
   }
 };
-
+//分配标签
+const handleSetting = (id:string) => {
+  console.log('id',id)
+};
+// 去上架列表
+const goPublic = (id:string) => {
+  appCtrl.setCurProduct(id);
+  router.push({
+    path: "/store/public",
+    query: { id:id},
+  });
+};
 //  打开集团选择弹窗
 const openShareDialog = () => {
   dialogType.shareVisible = true;
