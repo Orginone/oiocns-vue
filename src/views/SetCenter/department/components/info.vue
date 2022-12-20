@@ -107,11 +107,7 @@ const handleUpdate = () => {
 const visible = ref(false)
 // 权限管理
 const handleAuthority = ()=> {
-  console.log(visible.value);
-  
   visible.value = true
-  console.log(visible.value);
-
 }
 
 // 保存

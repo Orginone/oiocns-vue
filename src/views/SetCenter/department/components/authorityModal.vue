@@ -79,15 +79,6 @@
           <el-radio :label="false">否</el-radio>
         </el-radio-group>
       </el-form-item>
-      <!-- <el-form-item label="上级节点" style="width: 100%">
-        <el-cascader
-          :props="cascaderProps"
-          :options="cascaderTree"
-          v-model="formData.parentId"
-          style="width: 100%"
-          placeholder="请选择"
-        />
-      </el-form-item> -->
       <el-form-item label="备注" style="width: 100%">
         <el-input
           v-model="formData.remark"

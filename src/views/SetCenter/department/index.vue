@@ -45,7 +45,7 @@
         <template #buttons>
           <el-button class="btn-check" type="primary" link @click="handleShare()">分享部门</el-button>
           <el-button v-if="checkList.length" @click="setPost('', 1)" class="btn-check" type="primary" link>岗位设置</el-button>
-          <el-button class="btn-check" type="primary" link @click="showGiveDialog">身份设置</el-button>
+          <el-button class="btn-check" type="primary" link @click="handleIdentity()">身份设置</el-button>
           <el-button class="btn-check" type="primary" link @click="showGiveDialog">添加成员</el-button>
           <el-button class="btn-check" type="primary" link @click="viewApplication">查看申请</el-button>
         </template>
@@ -226,6 +226,9 @@
       </span>
     </template>
   </el-dialog>
+  <identityModal
+    v-model:visible="identityVisible"
+  />
 </template>
 <script lang="ts" setup>
 // @ts-nocheck
@@ -239,6 +242,13 @@ const store = setCenterStore()
 import QrCodeCustom from '@/components/qrCode/index.vue'
 import {TargetType, USERCTRL} from '@/ts/coreIndex'
 import CreateTeamModal from '../GlobalComps/createTeam.vue';
+import identityModal from './components/identityModal.vue';
+
+const identityVisible = ref(false)
+// 权限管理
+const handleIdentity = ()=> {
+  identityVisible.value = true
+}
 
 let companyUsers = ref<any>([])
 const giveDialog = ref<boolean>(false)
