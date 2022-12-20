@@ -45,6 +45,7 @@
         <template #buttons>
           <el-button class="btn-check" type="primary" link @click="handleShare()">分享部门</el-button>
           <el-button v-if="checkList.length" @click="setPost('', 1)" class="btn-check" type="primary" link>岗位设置</el-button>
+          <el-button class="btn-check" type="primary" link @click="showGiveDialog">身份设置</el-button>
           <el-button class="btn-check" type="primary" link @click="showGiveDialog">添加成员</el-button>
           <el-button class="btn-check" type="primary" link @click="viewApplication">查看申请</el-button>
         </template>
@@ -315,7 +316,7 @@ const getOrgUsers = async(filter?: string) => {
   pageStore.total = personData.total - userIds.length
   giveTable.value.state.page.total = pageStore.total;
 }
-// 给人员岗位
+// 添加成员
 const giveIdentity = async () => {
   const userIds = giveTable?.value?.state?.multipleSelection.map((u: any) => u.id);
   const data = await store.currentSelectItme.intans?.pullMembers(userIds, TargetType.Person)
@@ -325,7 +326,7 @@ const giveIdentity = async () => {
       type: 'success'
     })
     hideGiveDialog()
-    getUsers()
+    getUsers(store.currentSelectItme?.intans)
   }
 }
 
@@ -402,7 +403,6 @@ const postValue = ref('')
 const getPostList = () => {
   setCenterStore().GetIdentities().then((treeData)=> {
     postOptions.value = treeData ?? []
-    console.log('treeData: ', treeData);
   })
 }
 // 设置岗位type 1：多选设置岗位  2：人员列表设置岗位
@@ -512,12 +512,12 @@ const checksCompanySearch = async(val: any) => {
     });
     const current = store.currentSelectItme?.intans
     if (await current.pullMembers(arr, TargetType.Person)) {
-       ElMessage({
+      getUsers(current)
+      ElMessage({
         message: '分配成功',
         type: 'success'
       })
       hideAssignDialog()
-      getUsers(store.currentSelectItme?.intans)
     }
   } else {
     assignDialog.value = false;
@@ -670,6 +670,9 @@ onBeforeMount(()=> {
     background:#1642cb;
     color: #fff;
   }
+  :deep .el-table th.el-table__cell {
+    background-color: #eceffb!important;
+  }
   .content {
     width: 100%;
     height: 100%;
@@ -693,9 +696,9 @@ onBeforeMount(()=> {
         color: #154ad8;
       }
       .btn-check:hover{
-          background: #154ad8;
-          color: #fff;
-          padding: 8px  16px;
+        background: #154ad8;
+        color: #fff;
+        padding: 8px  16px;
       }
       .body-tabs {
         margin: 0px 20px;

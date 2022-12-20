@@ -4,7 +4,7 @@
       <div class="title">{{title}}信息</div>
       <div class="box-btns">
         <el-button small link type="primary" @click="handleUpdate">编辑</el-button>
-        <el-button small link type="primary" @click="handleUpdate">权限管理</el-button>
+        <el-button small link type="primary" @click="handleAuthority">权限管理</el-button>
         <!-- <el-button small link type="primary" v-if="authority.IsSpaceRelationAdmin()" @click="handleUpdate">编辑
         </el-button>
         <el-button small link type="primary" v-if="allowEdit()" @click="toAuth">角色管理</el-button>
@@ -17,11 +17,6 @@
           label-class-name="my-label" class-name="my-content">{{currentData?.name}}</el-descriptions-item>
         <el-descriptions-item :label="`${title}编码`" label-align="center" align="center" width="150px"
           label-class-name="my-label" class-name="my-content">{{currentData?.code || ''}}</el-descriptions-item>
-        <el-descriptions-item :label="'我的岗位'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{authority.GetTargetIdentitys(currentData?.id) || ''}}
-        </el-descriptions-item>
-        <el-descriptions-item :label="'团队编码'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{currentData?.team.code}}</el-descriptions-item>
         <el-descriptions-item :label="'创建人'" label-align="center" align="center" width="150px"
           label-class-name="my-label" class-name="my-content">{{currentData?.createUser || ''}}
         </el-descriptions-item>
@@ -60,10 +55,14 @@
       </span>
     </template>
   </el-dialog>
+  <authorityModal
+    v-model:visible="visible"
+  />
 </template>
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
+import authorityModal from './authorityModal.vue';
 import router from '@/router';
 import authority from '@/utils/authority'
 import { setCenterStore } from '@/store/setting'
@@ -103,6 +102,16 @@ const handleUpdate = () => {
     teamRemark: currentData.value.team?.remark
   }
   dialogVisible.value = true
+}
+
+const visible = ref(false)
+// 权限管理
+const handleAuthority = ()=> {
+  console.log(visible.value);
+  
+  visible.value = true
+  console.log(visible.value);
+
 }
 
 // 保存
