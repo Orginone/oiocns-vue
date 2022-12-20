@@ -25,7 +25,7 @@
   import Identity from '../module/identity.vue'
   import Info from '../module/info.vue'
   import User from '../module/user.vue'
-  import { ref, onMounted, computed} from 'vue';
+  import { ref, onMounted, computed, watch} from 'vue';
   import { setCenterStore } from '@/store/setting'
 
   const currentData = computed(()=> setCenterStore().identityList)
@@ -54,6 +54,12 @@
   const refresh = ()=>{
     identity.value.refresh();
   }
+
+  watch(()=> props.visible, (newValue) => {
+    if(newValue) {
+      identity.value?.refresh()
+    }
+  })
 
   window.addEventListener('resize',function () {
     if(container.value && infoWrap.value){

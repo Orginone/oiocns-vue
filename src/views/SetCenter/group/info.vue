@@ -40,18 +40,15 @@
 </template>
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import router from '@/router';
+import { ElMessage } from 'element-plus'
 import authority from '@/utils/authority'
 import CreateTeamModal from '../GlobalComps/createTeam.vue';
 const emit = defineEmits(['refresh'])
 
 const activeModal = ref('')
-const createOrEdit = ref()
 const current = ref()
 const visible = ref(false)
-const handleOk = (newItem) => {
-  console.log('newItem: ', newItem);
+const handleOk = (newItem: any) => {
   if(newItem) {
     ElMessage.success('编辑成功!')
     visible.value = false
@@ -60,7 +57,6 @@ const handleOk = (newItem) => {
 }
 
 let selectItem = ref<any>({})
-let formData: any = ref({})
 
 // 获取单位树点击的信息
 const selectItemChange = (data: any) => {
@@ -72,15 +68,6 @@ defineExpose({ selectItemChange });
 watch(selectItem, () => {
 });
 
-const allowEdit = () => {
-  if(selectItem.value && selectItem.value.id){
-    return authority.IsRelationAdmin([
-      selectItem.value.id,
-      selectItem.value?.belongId
-    ])
-  }
-  return false
-}
 // 删除集团信息
 const handleDelete = async () => {
   if (!selectItem.value.id) {
@@ -106,37 +93,6 @@ const handleUpdate = () => {
   activeModal.value = '编辑'
   visible.value = true
   current.value = selectItem.value
-}
-
-
-// 跳转至角色管理页面
-const toAuth = () => {
-  if(selectItem.value?.id?.length > 0){
-    router.push({
-      path: '/relation/authority',
-      query: {
-        title: '集团',
-        belongId: selectItem.value.id,
-        name: selectItem.value.label,
-        code: selectItem.value.data.code,
-        teamRemark: selectItem.value.data.teamRemark
-      }
-    })
-  }
-}
-// 跳转至岗位管理页面
-const toIdentity = () => {
-  if(selectItem.value?.id?.length > 0){
-    router.push({
-      path: '/relation/identity',
-      query: {
-        belongId: selectItem.value.id,
-        name: selectItem.value.label,
-        module: 'company',
-        persons: 'getPersons',
-      }
-    })
-  }
 }
 </script>
 

@@ -99,10 +99,9 @@ const goBack = () => {
   window.history.go(-1)
 }
 const activeModal = ref('')
-const createOrEdit = ref()
 const current = ref()
 const visible = ref(false)
-const handleOk = (newItem) => {
+const handleOk = (newItem: any) => {
   if(newItem) {
     ElMessage.success('新增成功!')
     visible.value = false
@@ -131,7 +130,6 @@ const loadNode = (node: any, resolve: (data: any[]) => void) => {
   }
   
 }
-let dialogVisible = ref(false)
 const friendDialog = ref<boolean>(false)
 const form = reactive({
   name: '',
@@ -170,7 +168,7 @@ const checksSearch=(val:any)=>{
   }
 }
 const addGroupFun = async(arr:any) => {
-  const success = await userCtrl.company.applyJoinGroup(arr.join(','))
+  const success = await USERCTRL.company.applyJoinGroup(arr.join(','))
   if (success) {
     ElMessage({
       message: '申请成功',
@@ -210,7 +208,6 @@ const selectItemChange = (data: any) => {
 };
 const cascaderProps = {
   checkStrictly: true,
-  // expandTrigger: ExpandTrigger.HOVER,
   value: 'id',
   emitPath: false,
 }

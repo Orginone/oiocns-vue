@@ -83,8 +83,6 @@ const allowEdit = () => {
   return false
 }
 const router = useRouter()
-// 表格数据加载状态
-const loading = ref<boolean>(false)
 // 表格展示数据
 const pageStore = reactive({
   tableData: [],

@@ -154,7 +154,6 @@ const handleUpdate = (page: any) => {
 
 // 移除岗位下的人员
 const removeFrom = (row: any) => {
-  let url: string = 'removeIdentity';
   ElMessageBox.confirm(
     `是否确认移除该人员`,
     '提示',

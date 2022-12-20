@@ -27,7 +27,7 @@
     </div>
   </div>
 
-  <el-dialog v-model="dialogVisible" title="修改岗位信息" width="40%" center append-to-body @close="dialogHide">
+  <el-dialog v-model="dialogVisible" title="编辑" width="40%" center append-to-body @close="dialogHide">
     <div>
       <el-form-item label="岗位名称" style="width: 100%">
         <el-input v-model="formData.name" placeholder="请输入" clearable style="width: 100%" />
@@ -36,8 +36,16 @@
         <el-input v-model="formData.code" placeholder="请输入" clearable style="width: 100%" />
       </el-form-item>
       <el-form-item label="所属角色" style="width: 100%">
-        <el-cascader :props="cascaderProps" :options="cascaderTree" v-model="formData.authId" style="width: 100%"
-          placeholder="请选择" />
+        <el-tree-select
+            v-model="formData.authId"
+            :data="cascaderTree"
+            check-strictly
+            disabled
+            :props="cascaderProps"
+            :render-after-expand="false"
+            style="width: 100%"
+            :default-expand-all="true"
+          />
       </el-form-item>
       <el-form-item label="岗位简介" style="width: 100%">
         <el-input v-model="formData.remark" :autosize="{ minRows: 5 }" placeholder="请输入" type="textarea" clearable />
@@ -65,8 +73,10 @@ let dialogVisible = ref<boolean>(false)
 let formData: any = ref({
   name: ''
 })
+const currentData = ref()
 // 获取单位树点击的信息
 const selectItemChange = (data: any) => {
+  currentData.value = data;
   selectItem.value = data?.target;
 };
 defineExpose({ selectItemChange });
@@ -78,8 +88,8 @@ const handleDelete = () => {
     return
   }
   ElMessageBox.confirm(
-    `确定删除 ${selectItem.value.name} 岗位吗？`,
-    '警告',
+    `是否确认删除`,
+    '提示',
     {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
@@ -115,36 +125,29 @@ const dialogHide = () => {
   formData.value = {}
 }
 // 保存 todo
-const updateIdentity = () => {
-  ElMessage.error('待提供接口...')
-  return;
-  // const data = { ...formData.value };
-  // let url = null;
-  // if (data.typeName == '集团') {
-  //   url = 'updateGroup'
-  // } else if (data.typeName == '子集团') {
-  //   url = 'updateSubGroup'
-  // }
-  // company[url]({
-  //   data
-  // }).then((res: ResultType) => {
-  //   if (res.code == 200 && res.success) {
-  //     dialogVisible.value = false
-  //     ElMessage.success('信息修改成功!')
-  //     selectItem.value.data = data
-  //   }
-  // })
+const updateIdentity = async() => {
+  const data =  await currentData.value.updateIdentity(
+    formData.name,
+    formData.code,
+    formData.remark
+  )
+  if(data){
+    ElMessage({
+      message: '修改成功!',
+      type: 'success'
+    })
+    emit('refresh')
+    dialogHide()
+  }
 }
 
 let authorityTree = ref<any[]>([])
 let cascaderTree = ref<any[]>([])
 
 const cascaderProps = {
-  checkStrictly: true,
   value: 'id',
   label: 'name',
-  children: 'nodes',
-  emitPath: false,
+  children: 'children',
 }
 
 // 加载角色树
@@ -156,7 +159,6 @@ const loadAuthorityTree = async () => {
     cascaderTree.value = authorityTree.value
   }
 }
-
 
 onMounted(() => {
   loadAuthorityTree();
