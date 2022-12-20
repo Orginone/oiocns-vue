@@ -80,7 +80,6 @@ class AppController extends Emitter {
       this._curProdId = '';
     } else if (this._target) {
       this._curProdId = id;
-      console.log('少时诵诗书',this._curProdId)
       if (cache && this._caches) {
         this._caches.alwaysUseIds = this._caches.alwaysUseIds.filter((i) => i != id);
         this._caches.alwaysUseIds.unshift(id);

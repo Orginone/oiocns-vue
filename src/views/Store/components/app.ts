@@ -2,6 +2,9 @@ import authority from '@/utils/authority'
 import API from '@/services'
 import { useUserStore } from '@/store/user'
 import { ElMessage } from 'element-plus'
+import appCtrl from '@/ts/controller/store/appCtrl';
+import { debug } from 'console';
+
 const store = useUserStore()
 type TreeData = {
   children: any[]
@@ -368,6 +371,7 @@ export class Application {
   constructor(appInfo?: string, opertion?: number) {
     this.appInfo = appInfo
     this.opertion = opertion
+    console.log('thus',this)
   }
   /**
    * @desc 获取群的树形信息
@@ -586,7 +590,7 @@ export class Application {
    *@param departData 提交的数据
    *@param resource 所选择的资源信息
    */
-  public async submitAll(departData: any, resource?: string) {
+  public async submitAll(departData: any, resource?: string,destType:string = '组织') {
     let departAdd: any[] = []
     let departDel: any[] = []
 
@@ -597,42 +601,44 @@ export class Application {
         departDel.push(el.id)
       }
     })
-    let teamId =
-      this.opertion == 1 ? this.rootTreeId : this.opertion == 2 ? resource : store.queryInfo.id
-    let sourceId = this.opertion == 1 ? resource : this.appInfo
-    let sourceType = this.opertion == 1 ? '资源' : '产品'
-    let promise1
-    let promise2
+    let teamId = this.opertion == 1 ? this.rootTreeId : this.opertion == 2 ? resource : store.queryInfo.id
+    if(!teamId){
+      teamId = '0';
+    }
+    if(destType == '1'){
+      destType ='组织'
+    }else if(destType == '2'){
+      destType ='职权'
+    }else if(destType == '3'){
+      destType ='身份'
+    }else if(destType == '4'){
+      destType ='人员'
+    }
+
+    console.log('departAdd',departAdd,'departDel',departDel)
     if (departAdd.length > 0) {
-      promise1 = API.product.extendCreate({
-        data: {
-          teamId: teamId,
-          sourceId: sourceId,
-          destIds: departAdd,
-          sourceType: sourceType,
-          destType: '组织'
-        }
-      })
+      await appCtrl.curProduct?.createExtend(
+        teamId,
+        departAdd,
+        destType
+      );
     }
     if (departDel.length > 0) {
-      promise2 = API.product.extendDelete({
-        data: {
-          teamId: teamId,
-          sourceId: sourceId,
-          destIds: departDel,
-          sourceType: sourceType,
-          destType: '组织'
-        }
-      })
+      console.log('delete',teamId,
+      departDel,
+      destType)
+       await appCtrl.curProduct?.deleteExtend(
+        teamId,
+        departDel,
+        destType
+      );
     }
-    const res = await Promise.all([promise1, promise2])
-    return res
   }
   /**
    *@desc 提交radio != 1 时的方法
    *@param data 所选中的数据
    *@param switchData 接口所需teamid数据
-   *@param destType 区分分发分享的数据
+   *@param destType 区分分发分享的类型
    *@param resource 所选中的资源信息
    */
   public async sumbitSwitch(data: any, switchData: string, destType: string, resource?: string) {
@@ -645,55 +651,26 @@ export class Application {
         delData.push(el.id)
       }
     })
-    let sourceId = this.opertion == 1 ? resource : this.appInfo
-    let sourceType = this.opertion == 1 ? '资源' : '产品'
-    let promise1
-    let promise2
+    let teamId = this.opertion == 1 ? this.rootTreeId : this.opertion == 2 ? resource : store.queryInfo.id
+    if(!teamId){
+      teamId = '0';
+    }
     if (addData.length > 0) {
-      promise1 = API.product.extendCreate({
-        data: {
-          teamId: switchData,
-          sourceId: sourceId,
-          destIds: addData,
-          sourceType: sourceType,
-          destType: destType
-        }
-      })
+      await appCtrl.curProduct?.createExtend(
+          teamId,
+          addData,
+          destType
+        )
     }
     if (delData.length > 0) {
-      promise2 = API.product.extendDelete({
-        data: {
-          teamId: switchData,
-          sourceId: sourceId,
-          destIds: delData,
-          sourceType: sourceType,
-          destType: destType
-        }
-      })
+      await appCtrl.curProduct?.deleteExtend(
+        teamId,
+        addData,
+        destType
+      );
     }
-    await Promise.all([promise1, promise2])
   }
 
-  /**
-   *@desc 点击左侧树形获取到的数据
-   *@type 按角色
-   *@param node 所选中左侧树的数据
-   *@param search 搜索内容
-   *@return 返回角色中间树形信息
-   */
-  public async getAuthorityTree(node: any, search?: string) {
-    const { data, success } = await API.company.getAuthorityTree({
-      data: {
-        id: node.id,
-        filter: typeof search == 'string' ? search : ''
-      }
-    })
-    if (!success) {
-      return
-    }
-    const tree = this.handleTreeData(data, node.id)
-    return tree
-  }
   private handleTreeData(node: any, belongId: string) {
     node.disabled = !(node.belongId && node.belongId == belongId)
     if (node.nodes) {
@@ -703,85 +680,6 @@ export class Application {
     }
     //判断是否有操作权限
     return node
-  }
-  /**
-   *@desc 点击左侧树形获取到的数据
-   *@type 按岗位
-   *@param node 所选中左侧树的数据
-   *@param search 搜索内容
-   *@param page 接口页数信息
-   *@return 返回岗位中间树形信息
-   */
-  public async getIdentities(node: any, page: PageStore, search: string) {
-    const { data, success } = await API.company.getIdentities({
-      data: {
-        id: node.id,
-        limit: page.pageSize,
-        offset: page.current,
-        filter: typeof search == 'string' ? search : ''
-      }
-    })
-    if (!success) {
-      return
-    }
-    const { result = [], total = 0 } = data
-    result.forEach((item: any) => {
-      item.disable = !authority.IsApplicationAdmin([item.belongId, node.data.belongId])
-    })
-    return result
-  }
-  private handleCurrent(page: any) {
-    return (page.currentPage - 1) * page.pageSize
-  }
-  /**
-   *@desc 点击左侧树形获取到的数据
-   *@type 按人员
-   *@param node 所选中左侧树的数据
-   *@param page 接口页数信息
-   *@param search 搜索内容
-   *@return 返回人员中间树形信息
-   */
-  public async getPerson(node: any, page: PageStore, search: string) {
-    let action = ''
-    let module = ''
-    if (this.opertion == 1) {
-      module = 'company'
-      action = 'getPersons'
-      switch (node.data.typeName) {
-        case '部门':
-          action = 'getDepartmentPersons'
-          break
-        case '工作组':
-          action = 'getJobPersons'
-          break
-      }
-    } else if (this.opertion == 2) {
-      module = 'company'
-      action = 'getGroupCompanies'
-      if (node.data.typeName === '子集团') {
-        action = 'getSubgroupCompanies'
-      }
-    } else {
-      module = 'person'
-      action = 'getFriends'
-      if (node.data.typeName === '群组') {
-        module = 'cohort'
-        action = 'getPersons'
-      }
-    }
-    const { data, success } = await API[module][action]({
-      data: {
-        id: node.id,
-        limit: page.pageSize,
-        offset: this.handleCurrent(page),
-        filter: typeof search == 'string' ? search : ''
-      }
-    })
-    if (!success) {
-      return
-    }
-    const { result = [], total = 0 } = data
-    return result
   }
 }
 

@@ -35,7 +35,6 @@
   </template>
   
   <script setup lang="ts">
-    import $services from '@/services'
     import diytab from '@/components/diyTable/index.vue'
     import { ref, reactive, onMounted, nextTick } from 'vue'
     import { ElMessage, ElMessageBox } from 'element-plus'

@@ -61,7 +61,6 @@
   </div>
 </template>
   <script lang="ts" setup>
-    import API from '@/services'
     import { ElMessage, FormInstance, FormRules } from 'element-plus'
     import { onMounted, reactive, ref } from 'vue'
     import detailBox from './../components/detailBox.vue'
@@ -75,7 +74,7 @@
       caption: route.query.name,
       price: undefined,
       sellAuth: '使用权',
-      marketId: route.query.id,
+      marketId: '',
       information: '',
       days: ''
     })
@@ -100,7 +99,6 @@
     // 获取市场列表
     const getMarketOptions = async (queryStr?: string) => {
       marketList.value = marketCtrl.Market.joinedMarkets
-      console.log('marketList',marketList.value)
     }
 
     // 提交上架
