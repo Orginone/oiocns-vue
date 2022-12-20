@@ -159,6 +159,17 @@ const findAimObj = (isParent = false, id: string, topParentData?: any[]) => {
   findItem(id, { children: topParentData });
   return aimObjet;
 };
+
+function getDescendantProp(obj: object | any[], desc: string): any {
+  const arr = desc.split(/\[|\]?\./g).filter(Boolean);
+  let res = obj;
+  for (let i = 0; i < arr.length; i ++) {
+    if (!res) return
+    res = (res as any)[arr[i]];
+  }
+  return res;
+}
+
 export {
   debounce,
   findAimObj,
@@ -169,4 +180,5 @@ export {
   showChatTime,
   showMessage,
   validIsSocialCreditCode,
+  getDescendantProp
 };
