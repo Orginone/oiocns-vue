@@ -15,7 +15,6 @@
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from 'vue'
-import FriendServices from '@/module/relation/friend'
 import Head from '@/components/protal/components/head.vue'
 import Cent from '@/components/protal/components/cent.vue'
 import Foot from '@/components/protal/components/foot.vue'
@@ -28,7 +27,7 @@ interface ListItem {
 type arrList = {
   id: string
 }
-const friendServices = new FriendServices()
+// const friendServices = new FriendServices()
 const isShowMenu = ref<boolean>(false)
 const options = ref<ListItem[]>([])
 const value = ref('')
@@ -36,27 +35,27 @@ const loading = ref(false)
 onMounted(() => {
   isShowMenu.value = true
 })
-const addFriends = (arr: Array<arrList>) => {
-  const data = friendServices.applyJoin(arr)
-  if (data) {
-    ElMessage({
-      message: '申请成功',
-      type: 'warning'
-    })
-    dialogVisible.value = false
-  }
-}
-const checksSearch = (val: any) => {
-  if (val.value.length > 0) {
-    let arr: Array<arrList> = []
-    val.value.forEach((element: any) => {
-      arr.push(element.id)
-    })
-    addFriends(arr)
-  } else {
-    dialogVisible.value = false
-  }
-}
+// const addFriends = (arr: Array<arrList>) => {
+//   const data = friendServices.applyJoin(arr)
+//   if (data) {
+//     ElMessage({
+//       message: '申请成功',
+//       type: 'warning'
+//     })
+//     dialogVisible.value = false
+//   }
+// }
+// const checksSearch = (val: any) => {
+//   if (val.value.length > 0) {
+//     let arr: Array<arrList> = []
+//     val.value.forEach((element: any) => {
+//       arr.push(element.id)
+//     })
+//     addFriends(arr)
+//   } else {
+//     dialogVisible.value = false
+//   }
+// }
 const dialogVisible = ref(false)
 const joinFriend = () => {
   dialogVisible.value = true
