@@ -61,7 +61,6 @@
   </div>
 </template>
   <script lang="ts" setup>
-    import API from '@/services'
     import { ElMessage, FormInstance, FormRules } from 'element-plus'
     import { onMounted, reactive, ref } from 'vue'
     import detailBox from './../components/detailBox.vue'

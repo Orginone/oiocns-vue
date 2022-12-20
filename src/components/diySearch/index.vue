@@ -28,7 +28,6 @@
 
 <script setup lang="ts">
   import { ref, reactive } from 'vue'
-  import $services from '@/services'
   import { ElMessage } from 'element-plus'
 
   const props = defineProps({

@@ -20,7 +20,6 @@
 
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
-import $services from '@/services'
 import { useUserStore } from '@/store/user'
 import { anystore } from '@/hubs/anystore'
 import type { FormInstance, FormRules } from 'element-plus'
