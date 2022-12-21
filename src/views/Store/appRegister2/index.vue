@@ -168,7 +168,6 @@ const rules = reactive<FormRules>({
 
 <style lang="scss" scoped>
     .app-register-wrap {
-      // height: 100%;
       background: var(--el-bg-color-overlay);
       padding: 6px;
       border: 0;

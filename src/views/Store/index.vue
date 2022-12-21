@@ -284,7 +284,7 @@
         :info="selectProductItem"
       ></ShareComponent>
     </el-dialog>
-    <ProcessDesign ref="processDesignRef" />
+    <!-- <ProcessDesign ref="processDesignRef" /> -->
   </div>
 </template>
 
@@ -306,7 +306,7 @@ import { appstore } from "@/module/store/app";
 import opened from "./components/opened.vue";
 import appDetail from "./components/appDetail.vue";
 import ShareComponent from "./components/shareComponents.vue";
-import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
+// import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
 
 // import {MarketModel} from "@/ts/market";
 // import {StoreModel} from "@/ts/store";
@@ -327,7 +327,7 @@ const closeDialog = (type: string, key: boolean) => {
   dialogType[type] = key;
 };
 
-const processDesignRef = ref();
+// const processDesignRef = ref();
 const isCard = ref(true);
 const instance = getCurrentInstance();
 
@@ -574,10 +574,10 @@ const formartDateTime = (dateStr: any) => {
   }
 };
 
-const enterProcess = (resource: any) => {
-  console.log("resource", resource);
-  processDesignRef.value.startDesign(resource);
-};
+// const enterProcess = (resource: any) => {
+//   console.log("resource", resource);
+//   processDesignRef.value.startDesign(resource);
+// };
 
 instance?.proxy?.$Bus.on("clickBus", (num) => {
   console.log(num);

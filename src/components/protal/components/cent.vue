@@ -50,10 +50,10 @@
       </div>
       <div class="R_bottom">
         <div class="rb_col">
-            <div class="card" v-for="item in state.commonData" :key="item.id">
+            <div class="card" v-for="item in appList" :key="item.id" @click="handleChooseItem(item)">
               <span><img src="@/assets/img/app2.png" alt=""></span>
               <span>{{item.name}}</span>
-              <span>{{item.title}}</span>
+              <span>{{item.remark}}</span>
             </div>
         </div>
       </div>
@@ -65,7 +65,12 @@
 import { useUserStore } from '@/store/user'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
+import { appstore } from '@/module/store/app'
 import { computed,onMounted,ref,reactive } from 'vue'
+import { ElMessage } from 'element-plus'
+import img1 from '@/assets/img/group22.png'
+import marketCtrl from '@/ts/controller/store/marketCtrl'
+import { useCommonStore } from '@store/common'
 // import { WorkModel } from '@/ts/core'
 
 const store = useUserStore()
@@ -97,6 +102,50 @@ const state = reactive({
   cardFlag: '',
 })
 
+const appList = ref<ProductType[]>([])
+
+const getAppList = async () => {
+  marketCtrl.Market.getOwnProducts(false).then((res)=>{
+    console.log('res',res)
+    let arr:any = []
+    res.forEach(element => {
+      let obj = {
+        name: element.prod.name,
+        updateTime:element.prod.updateTime,
+        createTime:element.prod.createTime,
+        typeName:element.prod.typeName,
+        updateUser:element.prod.updateUser,
+        authority:element.prod.authority,
+        belongId:element.prod.belongId,
+        code:element.prod.code,
+        source:element.prod.source,
+        remark:element.prod.remark,
+        icon:img1
+      }
+      arr.push(obj)
+    });
+    appList.value = arr;
+  })
+}
+
+//常用应用跳转
+const commonStore = useCommonStore()
+const handleChooseItem = async (app: any) => {
+  const { result = [], total = 0 } = await appstore.queryOwnResource(app.id)
+  if (total === 0) {
+    return ElMessage({
+      type: 'error',
+      message: '该应用资源缺失,请联系管理员'
+    })
+  }
+  const { link } = result[0]
+  let data = { type: '', appInfo: app, icon: img1, link, path: '/online' }
+  data.type = 'app'
+  commonStore.iframeLink = data.link
+  commonStore.appInfo = data.appInfo
+  router.push(data.path)
+}
+
 // 页面跳转
 const handleRouterChage = (path: string) => {
   router.push({path})
@@ -113,6 +162,10 @@ const onOut = () => {
 const cardOnHover = (id: string) => {
   state.cardFlag = id
 }
+
+onMounted(() => {
+  getAppList()
+})
   
 </script>
 
@@ -124,7 +177,7 @@ const cardOnHover = (id: string) => {
   padding: 10px 0px;
   display: flex;
   .left{
-    width: 30%;
+    width: 450px;
     background: white;
     border-radius: 5px;
     margin-right: 6px;
@@ -177,7 +230,7 @@ const cardOnHover = (id: string) => {
       }
       .card{
         margin: 5px 10px;
-        width: 27%;
+        width: 25%;
         height: 57px;
         display: flex;
         border-radius: 8px;
@@ -190,7 +243,8 @@ const cardOnHover = (id: string) => {
     }
   }
   .right{
-    width: 70%;
+    width: calc(100% - 456px);
+    overflow-x: auto;
     background: white;
     border-radius: 5px;
     .eidtIcon{
@@ -221,14 +275,16 @@ const cardOnHover = (id: string) => {
     }
     .rb_col{
       width: 100%;
+      overflow-x: auto;
       display: flex;
-      justify-content: space-around;
       align-items: center;
       .card{
+        width: 110px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        cursor: pointer;
         span:nth-child(1) {
           width: 60px;
           height: 60px;

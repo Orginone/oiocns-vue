@@ -87,8 +87,8 @@ const getAppList = async () => {
     });
     appList.value = arr;
   })
- 
 }
+
 onMounted(() => {
   getAppList()
 })

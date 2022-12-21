@@ -1,11 +1,11 @@
 <template>
 	<div class="container">
-		<el-dialog fullscreen v-model="isShowDialog" append-to-body :close-on-click-modal="false" width="1080px"
-			:show-close="false">
-			<template #title>
+		<!-- <el-dialog fullscreen v-model="isShowDialog" append-to-body :close-on-click-modal="false" width="1080px"
+			:show-close="false"> -->
+			<!-- <template #title> -->
 				<LayoutHeader v-model="activeSelect" @changeVersion="changeVersion" @activeChange="activeChange" @exit="exit" @preview="preview"
 					@publish="validateDesign" @changeScale="changeScale"></LayoutHeader>
-			</template>
+			<!-- </template> -->
 			<div class="layout-body">
 				<!-- <FormBaseSetting ref="baseSetting" v-show="activeSelect === 'baseSetting'" /> -->
       			<!-- <FormDesign ref="formSetting" v-show="activeSelect === 'formSetting'"/> -->
@@ -31,7 +31,7 @@
 					</template>
 				</el-result>
 			</el-dialog>  -->
-		</el-dialog>
+		<!-- </el-dialog> -->
 		<LayoutPreview ref="LayoutPreviewRef" />
 	</div>
 </template>
@@ -49,6 +49,8 @@
     provide
 	} from 'vue';
 	import $services from '@/services'
+	import userCtrl from '@/ts/controller/setting/userCtrl';
+	// import processCtrl from '@/ts/controller/setting/processCtrl';
 	import LayoutHeader from './layout/LayoutHeader.vue';
 	// import FormDesign from './layout/FormDesign.vue'
 	import FormProcessDesign from './layout/FormProcessDesign.vue'
