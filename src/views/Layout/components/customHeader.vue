@@ -57,7 +57,7 @@
           :underline="false"
           @click="() => router.push('/workHome')"
         >
-           <img class="logo" src="./../../../assets/img/logo.png" alt="">
+           <img class="logo" src="@/assets/img/logo3.jpg" alt="">
         </el-link>
         <!-- <el-link
           title="消息"
