@@ -13,6 +13,16 @@
         >
           <template #buttons>
             <div style="display: flex;align-items: center">
+              <el-upload
+                ref="uploadRef"
+                :show-file-list="false"
+                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                :auto-upload="false"
+              >
+              <template #trigger>
+                <el-button class="btn-check" link type="primary">导入集团单位</el-button>
+              </template>
+              </el-upload>
               <el-button v-if="allowEdit() && props.selectItem?.item?.typeName == '集团'" class="btn-check" type="primary" link @click="handleShare()">分享集团</el-button>
               <el-divider v-if="props.selectItem?.item?.typeName == '集团'" direction="vertical"/>
               <el-button class="btn-check" type="primary" link>岗位设置</el-button>
@@ -189,14 +199,14 @@ const checksCompanySearch = (val: any) => {
 //拉单位进集团(待提供接口)
 const pullCompanys = async (arr: any) => {
   // const data =  await groupServices.pullCompanys(props.selectItem.id,arr)
-  if (data) {
-    ElMessage({
-      message: '添加成功',
-      type: 'success'
-    })
-    getCompanies()
-    pullCompanysDialog.value = false;
-  }
+  // if (data) {
+  //   ElMessage({
+  //     message: '添加成功',
+  //     type: 'success'
+  //   })
+  //   getCompanies()
+  //   pullCompanysDialog.value = false;
+  // }
 }
 
 //查看申请
@@ -212,13 +222,13 @@ const removeFrom = async (row: any) => {
     typeName:props.selectItem.typeName
   }
   // const data =  await groupServices.removeCompany(rowObj,props.selectItem.id)
-  if(data){
-    ElMessage({
-      message: '操作成功',
-      type: 'success'
-    })
-    getCompanies()
-  }
+  // if(data){
+  //   ElMessage({
+  //     message: '操作成功',
+  //     type: 'success'
+  //   })
+  //   getCompanies()
+  // }
 }
 
 const assignDialog = ref<boolean>(false)
@@ -234,14 +244,14 @@ const showAssignDialog = () => {
 const assign = async (arr: any) => {
   const companyIds = arr
   // const data = await groupServices.assignSubgroup(props.selectItem.id,companyIds)
-  if(data){
-    ElMessage({
-      message: '分配成功',
-      type: 'success'
-    })
-    hideAssignDialog()
-    getCompanies()
-  }
+  // if(data){
+  //   ElMessage({
+  //     message: '分配成功',
+  //     type: 'success'
+  //   })
+  //   hideAssignDialog()
+  //   getCompanies()
+  // }
 }
 
 const cardHeight = ref(null)

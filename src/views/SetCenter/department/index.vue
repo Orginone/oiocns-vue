@@ -44,6 +44,16 @@
         </template>
         <template #buttons>
           <el-button class="btn-check" type="primary" link @click="handleShare()">分享部门</el-button>
+          <el-upload
+            ref="uploadRef"
+            :show-file-list="false"
+            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            :auto-upload="false"
+          >
+          <template #trigger>
+            <el-button class="btn-check" link type="primary" @click="uploadExcel">导入成员</el-button>
+          </template>
+          </el-upload>
           <el-button v-if="checkList.length" @click="setPost('', 1)" class="btn-check" type="primary" link>岗位设置</el-button>
           <el-button class="btn-check" type="primary" link @click="handleIdentity()">身份设置</el-button>
           <el-button class="btn-check" type="primary" link @click="showGiveDialog">添加成员</el-button>
@@ -243,6 +253,8 @@ import QrCodeCustom from '@/components/qrCode/index.vue'
 import {TargetType, USERCTRL} from '@/ts/coreIndex'
 import CreateTeamModal from '../GlobalComps/createTeam.vue';
 import identityModal from './components/identityModal.vue';
+
+const uploadRef = ref()
 
 const identityVisible = ref(false)
 // 权限管理
