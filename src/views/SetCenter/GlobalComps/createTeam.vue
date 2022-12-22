@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch, computed } from "vue";
+import { ref, reactive, watch } from "vue";
 import type { FormInstance, FormRules } from 'element-plus'
 import { ITarget } from '@/ts/core';
 
@@ -153,7 +153,7 @@ const resetForm = () => {
  * 数据回显
  * @param data
  */
-function renderViewByData(data) {
+function renderViewByData(data: any) {
   Object.assign(ruleForm, {
     ...data,
     teamName: data.team?.name,

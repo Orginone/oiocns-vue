@@ -129,7 +129,6 @@
   import { ref, reactive, toRefs, computed, onMounted, watch,nextTick } from 'vue'
   import titleBox, { BtnItem, TabType } from "@/components/titleBox/index.vue";
   import { useUserStore } from '@/store/user'
-  import { TabPaneName } from 'element-plus';
 
   const store = useUserStore()
   const bodyBox = ref(null);
@@ -283,7 +282,7 @@
     }
   }
 
-  const changeTab = (name: TabPaneName) => {
+  const changeTab = (name: any) => {
     emit('changeTab', name)
   }
 
