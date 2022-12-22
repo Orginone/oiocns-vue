@@ -13,7 +13,7 @@ import { reactive, ref, onMounted, Ref } from 'vue';
 import DiyTable from "@/components/diyTable/index.vue";
 import $services from "@/services";
 import { useAsyncComputed } from '@/hooks/useAsyncComputed';
-import chat from '@/oiocns-ts/src/core/communicate/Model/CommunicateModel';
+import {CommunicateModel as chat} from '@orginone/oiocns-ts';
 const tableData = ref<any[]>([])
 onMounted(async () => {
   const res = await $services.company.getAssignedDepartments({
