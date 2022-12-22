@@ -59,14 +59,15 @@
   import { useUserStore } from '@/store/user'
   import { setCenterStore } from '@/store/setting'
   import authority from '@/utils/authority'
-  import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick,getCurrentInstance} from 'vue'
+  import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick,getCurrentInstance, onMounted} from 'vue'
   import { RouteLocationNormalizedLoaded, useRouter } from 'vue-router';
   import storeJson from './json/store.json';
   // import settingJosn from './json/setting.json';
   import setTree from './json/setTree.json';
-  import serviceJson from './json/service.json';
+  // import serviceJson from './json/service.json';
   // import userJosn from './json/user.json';
-  import { chat } from '@/module/chat/orgchat'
+  // import { chat } from '@/module/chat/orgchat'
+  import { WorkModel as todo } from '@orginone/oiocns-ts';
   import marketServices from "@/module/store/market"
 
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
@@ -85,6 +86,30 @@
   const menuTree = ref(createAllMenuTree());
   const allMenuItems = ref(getAllNodes(menuTree.value));
   
+  onMounted(() => {
+    todo.subscribe(async () => {
+      console.warn("触发全局订阅回调");
+      
+      const header = allMenuItems.value.find(m => m.id == "service");
+      for (const todomenu of header?.children || []) {
+        if (todomenu.id == "service.friendApply") {
+          // 未提供好友待办
+          todomenu.num = 0;
+        } else if (todomenu.id == "service.company") {
+          todomenu.num = (await todo.OrgTodo?.getCount()) ?? 0;
+        } else if (todomenu.id == "service.group") {
+          // 未提供集团待办
+          todomenu.num = 0;
+        } else if (todomenu.id == "service.shop") {
+          todomenu.num = (await todo.MarketTodo?.getCount()) ?? 0;
+        } else if (todomenu.id == "service.order") {
+          todomenu.num = (await todo.OrderTodo?.getCount()) ?? 0;
+        } 
+      }
+    });
+  })
+
+
   // 路由控制，单独匹配的话需要增加 showMenu.value = true;
   function getNavData2() { 
     btnType.value='';//默认为空
@@ -177,16 +202,16 @@
       getMenu()
       return
     }
-    if(router.currentRoute.value.path.indexOf('service') != -1){
-      serviceJson[1].children.forEach((element:any,index:any) => {
-        // element?.num = index
-      });
-      showMenu.value = true;
-      titleArr.state = serviceJson[0]
+    // if(router.currentRoute.value.path.indexOf('service') != -1){
+    //   serviceJson[1].children.forEach((element:any,index:any) => {
+    //     // element?.num = index
+    //   });
+    //   showMenu.value = true;
+    //   titleArr.state = serviceJson[0]
      
-      menuArr.state = serviceJson
-      return
-    }
+    //   menuArr.state = serviceJson
+    //   return
+    // }
     const ret = findMenu(router.currentRoute.value, allMenuItems.value);
     if (!ret) {
       showMenu.value = false;
@@ -428,16 +453,16 @@
 
   onBeforeMount(async () => {
     await authority.Load()
-    chat.start(useUserStore().userToken)
+    // chat.start(useUserStore().userToken)
   })
 
   onBeforeUnmount(() => {
-    chat.stop()
-    window.removeEventListener('beforeunload', chat.stop)
+    // chat.stop()
+    // window.removeEventListener('beforeunload', chat.stop)
   })
 
   // 页面刷新时 关闭握手
-  window.addEventListener('beforeunload', chat.stop)
+  // window.addEventListener('beforeunload', chat.stop)
   
   const instance = getCurrentInstance();
   instance?.proxy?.$Bus.on('refreshNav', () => { getNavData2() })
