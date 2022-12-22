@@ -13,6 +13,7 @@
                 "name": "应用",
                 "type":"1",
                 "uid":"1-1",
+                "icon": "OfficeBuilding",
                 "url":"/store",
                 "children": []
             },
@@ -20,6 +21,7 @@
                 "id": "cloud",
                 "name": "文档",
                 "type":"2",
+                "icon": "OfficeBuilding",
                 "uid":"1-1",
                 "url":"/cloud",
                 "children": []
@@ -28,6 +30,7 @@
                 "id": "store.data",
                 "name": "数据",
                 "type":"3",
+                "icon": "OfficeBuilding",
                 "uid":"1-1",
                 "url":"/store",
                 "children": []
@@ -36,6 +39,7 @@
                 "id": "store.resource",
                 "name": "资源",
                 "type":"4",
+                "icon": "OfficeBuilding",
                 "uid":"1-1",
                 "url":"/store",
                 "children": []

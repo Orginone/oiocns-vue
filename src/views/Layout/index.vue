@@ -68,8 +68,6 @@
   // import userJosn from './json/user.json';
   // import { chat } from '@/module/chat/orgchat'
   import { WorkModel as todo } from '@orginone/oiocns-ts';
-  import marketServices from "@/module/store/market"
-
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
   import { anystore } from '@/hubs/anystore'
@@ -79,6 +77,7 @@
   import {INullSpeciesItem} from "@/ts/core";
 
   const { proxy } = getCurrentInstance()
+  const store = useUserStore()
 
   const btnType = ref<string>('');
   const addMenuDialog = ref<boolean>(false);
@@ -176,6 +175,7 @@
       return;
     }
     // end-文档相关
+
     // start-标准设置相关
     if (router.currentRoute.value.path.indexOf('setCenter/standard') != -1) {
       titleArr.state = {icon: 'PriceTag',title: '标准设置', "backFlag": true}
@@ -184,6 +184,7 @@
       return;
     }
     // end-标准设置相关
+
     if(router.currentRoute.value.path.indexOf('store/shop') != -1){
       getShopList();
       showMenu.value = true;
@@ -191,6 +192,7 @@
 
       return
     }
+
     if(router.currentRoute.value.path.indexOf('store/appManagement') != -1){
       titleArr.state = storeJson[0]
       menuArr.state = storeJson
@@ -233,10 +235,12 @@
   const menuData = reactive({
     data:[]
   });
+
+  //数据过滤
   const dataFilter = (data:any)=>{
     if(data.length>0){
       data.forEach((element:any) => {
-        element.url = '/store?id='+element.id
+        element.isStoreMenu = true;
         element.label = element.title
         if(element.children.length>0){
           dataFilter(element.children)
@@ -248,10 +252,11 @@
   };
   // 获取商店分类
   const getMenu = () => {
-    anystore.subscribed(`selfAppMenu`, 'user', (data) => {
+    anystore.subscribed('STORE_MENU'+store.workspaceData.id, 'user', (data) => {
       let newJSON = JSON.parse(JSON.stringify(storeJson))
-        if(data?.data?.length>0){
-          menuData.data = data.data;
+      console.log('newJSON',newJSON)
+        if(data?.data?.species.length>0){
+          menuData.data = data.data.species;          
           dataFilter(menuData.data)
           newJSON[2].children = menuData.data;
         }
@@ -393,7 +398,7 @@
     let shopstoreJson = JSON.parse(JSON.stringify(storeJson))
     showMenu.value = true;
     shopstoreJson[2] = newObj
-    titleArr.state = shopstoreJson[0]
+    titleArr.state = {icon: 'User',title: '商店', "backFlag": true}
     menuArr.state = shopstoreJson
     })
     

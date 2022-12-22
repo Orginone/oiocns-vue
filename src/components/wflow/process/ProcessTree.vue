@@ -200,22 +200,44 @@
       };
       //解码渲染的时候插入dom到同级
       const decodeAppendDom = (h: any, node: any, dom: any, props = {}) => {
-        dom.unshift(h(compTrans(node.type.toLowerCase()), {
-          config: node,
-          ref: node.nodeId,
-          key: node.nodeId,
-          ...props,
-          //定义事件，插入节点，删除节点，选中节点，复制/移动
-          // on: {
-          onInsertNode: (type: any) => insertNode(type, node),
-          onDelNode: () => delNode(node),
-          onSelected: () => selectNode(node),
-          onCopy: () => copyBranch(node),
-          onLeftMove: () => branchMove(node, -1),
-          onRightMove: () => branchMove(node, 1)
-          // },
-        }, []))
+        if (!node || !node.nodeId) {
+          return;
+        }
+        const Dom = h(
+          compTrans(node.type.toLowerCase()),
+          {
+            config: node,
+            // ref: node.nodeId,
+            key: node.nodeId,
+            ...props,
+            //定义事件，插入节点，删除节点，选中节点，复制/移动
+            onInsertNode: (type: any) => insertNode(type, node),
+            onDelNode: () => delNode(node),
+            onSelected: () => selectNode(node),
+            onCopy: () => copyBranch(node),
+            onLeftMove: () => branchMove(node, -1),
+            onRightMove: () => branchMove(node, 1),
+          },[],
+        );
+        dom.unshift(Dom);
       };
+      // const decodeAppendDom = (h: any, node: any, dom: any, props = {}) => {
+      //   dom.unshift(h(compTrans(node.type.toLowerCase()), {
+      //     config: node,
+      //     ref: node.nodeId,
+      //     key: node.nodeId,
+      //     ...props,
+      //     //定义事件，插入节点，删除节点，选中节点，复制/移动
+      //     // on: {
+      //     onInsertNode: (type: any) => insertNode(type, node),
+      //     onDelNode: () => delNode(node),
+      //     onSelected: () => selectNode(node),
+      //     onCopy: () => copyBranch(node),
+      //     onLeftMove: () => branchMove(node, -1),
+      //     onRightMove: () => branchMove(node, 1)
+      //     // },
+      //   }, []))
+      // };
       // id映射到map，用来向上遍历
       const toMapping = (node: any) => {
         if (node && node.nodeId) {

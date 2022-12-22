@@ -36,7 +36,7 @@
       "ESNext",
       "DOM"
     ],
-    "skipLibCheck": true,
+    "skipLibCheck": true, //针对element-plus的ts打包校验
     "baseUrl": "./",
     "paths": {
       "@/*": [

@@ -44,7 +44,9 @@
     >
       <template #default="{ node, data }">
         <div class="custom-tree-node" @mouseover='onHover(node.id)' @mouseout="onOut" @click="jump(node)">
-          <span>{{ node.label }}</span>
+            <span style="padding-right:8px">{{ node.label }}
+              <div  v-if="node?.data?.isStoreMenu" class="blue-tips">{{node?.data?.items?.length}}</div>
+            </span>
           <span class="sp_10" v-show="node.id === state.flag">
             <el-popover
               placement="right"
@@ -185,11 +187,16 @@ const filterNode = (value: string, data: any) => {
 
 // 路由跳转
 const jump = (val:any)=>{
-    if(val.url){
-      router.push(val.url)
-    }else if (val.data.url){
-      router.push(val.data.url)
+    if(val?.data?.isStoreMenu){
+      instance?.proxy?.$Bus.emit('storeMenu', val.data.items)
+    }else{
+      if(val.url){
+        router.push(val.url)
+      }else if (val.data.url){
+        router.push(val.data.url)
+      }
     }
+   
 }
 // 树点击事件
 const nodeClick = (val: any) => {
@@ -228,6 +235,22 @@ const handleSelect = (key: any) => {
     align-items: center;
     justify-content: space-between;
     // position: relative;
+    span{
+      display: flex;
+      align-items: center;
+    }
+    .blue-tips{
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      margin-left: 5px;
+      color: #fff;
+      background: #214dd0;
+    }
     .sp_10{
       position: absolute;
       right: 8px;

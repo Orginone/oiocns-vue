@@ -173,6 +173,15 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
+        path: '/service/product',
+        name: 'product',
+        component: () => import('@/views/Service/product/index.vue'),
+        meta: {
+          title: '上架审核',
+          id: "service.product"
+        }
+      },
+      {
         path: '/service/order',
         name: 'order',
         component: () => import('@/views/Service/order/index.vue'),
@@ -295,6 +304,17 @@ const mainRouter: RouteRecordRaw[] = [
         component: () => import('@/views/SetCenter/flow/index.vue'),
         meta: {
           title: '流程设置',
+          icon: 'Postcard',
+          searchType: '2',
+          id: "setCenter.flow"
+        }
+      },
+      {
+        path: '/setCenter/wflow',
+        name: 'wflow',
+        component: () => import('@/views/SetCenter/wflow/index.vue'),
+        meta: {
+          title: '流程设计',
           icon: 'Postcard',
           searchType: '2',
           id: "setCenter.flow"
@@ -513,15 +533,6 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/store/shoppingCar',
-        name: 'storeShoppingCar',
-        component: () => import('@/views/Store/shoppingCar/index.vue'),
-        meta: {
-          title: '购物车',
-          id: "store.shoppingCar"
-        }
-      },
-      {
         path: '/store/appList',
         name: 'storeAppList',
         component: () => import('@/views/Store/appList/index.vue'),
@@ -531,8 +542,26 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/store/appRegister2',
+        path: '/store/public',
+        name: 'storeAppPublic',
+        component: () => import('@/views/Store/public/index.vue'),
+        meta: {
+          title: '应用详情',
+          id: "store.appPublic"
+        }
+      },
+      {
+        path: '/store/appRegister',
         name: 'storeAppRegister',
+        component: () => import('@/views/Store/appRegister/index.vue'),
+        meta: {
+          isHidden: true,
+          title: '应用创建'
+        }
+      },
+      {
+        path: '/store/appRegister2',
+        name: 'storeAppRegisters',
         component: () => import('@/views/Store/appRegister2/index.vue'),
         meta: {
           isHidden: true,
