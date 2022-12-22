@@ -67,6 +67,11 @@ import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { appstore } from '@/module/store/app'
 import { computed,onMounted,ref,reactive } from 'vue'
+import { ElMessage } from 'element-plus'
+import img1 from '@/assets/img/group22.png'
+import marketCtrl from '@/ts/controller/store/marketCtrl'
+import { useCommonStore } from '@store/common'
+// import { WorkModel } from '@/ts/core'
 
 const store = useUserStore()
 const router = useRouter()
@@ -172,7 +177,7 @@ onMounted(() => {
   padding: 10px 0px;
   display: flex;
   .left{
-    width: 450px;
+    width: 30%;
     background: white;
     border-radius: 5px;
     margin-right: 6px;
@@ -238,7 +243,7 @@ onMounted(() => {
     }
   }
   .right{
-    width: calc(100% - 456px);
+    width: calc(100% - 30%);
     overflow-x: auto;
     background: white;
     border-radius: 5px;
@@ -274,7 +279,7 @@ onMounted(() => {
       display: flex;
       align-items: center;
       .card{
-        width: 110px;
+        width: 155px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -291,6 +296,8 @@ onMounted(() => {
           }
         }
         span:nth-child(2) {
+          width: 155px;
+          text-align: center;
           font-size: 15px;
           font-weight: bold;
           margin: 5px 0;

@@ -114,6 +114,7 @@ import BindDialog from "./bindDialog.vue";
 import { ref, reactive, onMounted } from "vue";
 import { schema } from '@/ts/base';
 import userCtrl from '@/ts/controller/setting/userCtrl';
+import processCtrl from '@/ts/controller/setting/processCtrl';
 import { useRouter } from "vue-router";
 import { stat } from "fs";
 
@@ -179,6 +180,7 @@ const options = ref<any>({
 
 // 注册页面实例
 const router = useRouter();
+const diyTable = ref(null);
 
 const addNew = () =>{
   router.push("/SetCenter/wflow");
@@ -192,24 +194,12 @@ onMounted(() => {
 const initData = async () =>{
   const result = await userCtrl.space.getDefines(false);
   if (result) {
+    for(var i = 0;i<result.length;i++){
+      result[i].remarks = JSON.parse(result[i].remark || '{}')[0].label
+    }
     state.bindAppMes = result[0] || {}
-    // console.log(state.bindAppMes,'bindAppMsg')
-    let arr:any = []
-    result.forEach((element:any) => {
-      let obj = {
-        name: element.name,
-        updateTime:element.updateTime,
-        createTime:element.createTime,
-        remarks:JSON.parse(element.remark || '{}')[0].label,
-        updateUser:element.updateUser,
-        belongId:element.belongId,
-        code:element.code,
-        source:element.source,
-        createUser:element.createUser,
-      }
-      arr.push(obj)
-    });
-    state[`dataList`] = arr;
+    state[`dataList`] = result ;
+    diyTable.value.state.page.total = result.length
   }
 }
 //分页
@@ -245,7 +235,18 @@ const handleCommand = (
         }
       )
       .then(() => {
-        
+        const editorDataMes = JSON.parse(item?.content || '{}');
+        processCtrl.setProcessDesignTree(editorDataMes);
+        const contionData = {
+          name: editorDataMes.name,
+          labels: JSON.parse(editorDataMes.remark || '{}'),
+          fields: editorDataMes.fields,
+        };
+        processCtrl.setCondtionData(contionData);
+        console.log(contionData)
+        return new Promise<boolean>((resolve) => {
+          resolve(true);
+        });
       })
       .catch(() => {});
       break;

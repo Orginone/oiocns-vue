@@ -33,6 +33,7 @@ type StateType = {
 
 const state = reactive({
   dataList: [],
+  timer:null
 })
 
 onMounted(() => {
@@ -47,36 +48,43 @@ const props = defineProps({
 
 //加载数据
 const initData = async () =>{
-  setTimeout(async () => {
+  for(var i = 0;i<5; i++){
+    state.timer = setInterval(async() => {
       const tableData = await appCtrl.products;
-      const needData = tableData.map((item) => {
-        return {
-          name: item.prod.name,
-          id: item.prod.id,
-          remark: item.prod.remark,
-        };
-      });
-      const result = await userCtrl.space.getDefines(false); //流程列表
-      if (result && result.length > 0 && props.bindAppMes.id) {
-        const currentValue = await userCtrl.space.queryFlowRelation(false); //查询所有绑定值
-        if (currentValue && currentValue.length > 0) {
-          //遍历获取当前流程
-          const filterIdData = currentValue.filter((item) => {
-            return item.defineId === (props.bindAppMes?.id || result[0].id);
-          });
-          // 获取的值有限 循环拿应用name和remark
-          const getResult = filterIdData.map((item: any) => {
-            const findAppId = needData.find((innerItem) => innerItem.id === item.productId);
-            item.name = findAppId?.name;
-            item.remark = findAppId?.remark;
-            return item;
-          });
-          state.dataList = getResult
-        } else {
-          state.dataList = []
+      if(tableData){
+        const needData = tableData.map((item) => {
+          return {
+            name: item.prod.name,
+            id: item.prod.id,
+            remark: item.prod.remark,
+          };
+        });
+        const result = await userCtrl.space.getDefines(false); //流程列表
+        if (result && result.length > 0 && props.bindAppMes.id) {
+          const currentValue = await userCtrl.space.queryFlowRelation(false); //查询所有绑定值
+          if (currentValue && currentValue.length > 0) {
+            //遍历获取当前流程
+            const filterIdData = currentValue.filter((item) => {
+              return item.defineId === (props.bindAppMes?.id || result[0].id);
+            });
+            // 获取的值有限 循环拿应用name和remark
+            const getResult = filterIdData.map((item: any) => {
+              const findAppId = needData.find((innerItem) => innerItem.id === item.productId);
+              item.name = findAppId?.name;
+              item.remark = findAppId?.remark;
+              return item;
+            });
+            state.dataList = getResult
+          } else {
+            state.dataList = []
+          }
         }
+        clearInterval(state.timer)
+      }else{
+        initData()
       }
-  }, 500);
+    },500)
+  }
 }
 
 const unbinding = (item: any) => {
