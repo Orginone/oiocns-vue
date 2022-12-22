@@ -1,11 +1,10 @@
 import { defineStore } from 'pinia'
-import { ElMessage } from 'element-plus'
 import {USERCTRL} from '@/ts/coreIndex';
 
 type SettingStoreType = {
   unitInfo: any,
   departmentInfo: any
-  currentSelectItme: object
+  currentSelectItme: any
   identityInfo: any
   groupInfo: any
   [key: string]: any
@@ -20,7 +19,8 @@ export const setCenterStore = defineStore({
       departmentInfo: [], // 部门树节点信息
       currentSelectItme: {}, // 当前选中的节点信息
       identityInfo: [], // 岗位信息
-      groupInfo: [] // 集团树信息
+      groupInfo: [], // 集团树信息
+      identityList: []
     }
   },
   getters: {},
