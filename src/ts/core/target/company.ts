@@ -4,7 +4,7 @@ import MarketTarget from './mbase';
 import { companyTypes, departmentTypes, TargetType } from '../enum';
 import { TargetModel } from '@/ts/base/model';
 import Department from './department';
-import { validIsSocialCreditCode } from '@/utils/tools';
+// import { validIsSocialCreditCode } from '@/utils/tools';
 import { schema, kernel, common } from '@/ts/base';
 import {
   IGroup,
@@ -365,9 +365,9 @@ export default class Company extends MarketTarget implements ICompany {
     return this.joinedGroup;
   }
   public async update(data: TargetParam): Promise<ICompany> {
-    if (!validIsSocialCreditCode(data.code)) {
-      logger.warn('请填写正确的代码!');
-    }
+    // if (!validIsSocialCreditCode(data.code)) {
+    //   logger.warn('请填写正确的代码!');
+    // }
     await super.update(data);
     return this;
   }

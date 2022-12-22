@@ -112,7 +112,6 @@ import DiyTable from "@/components/diyTable/index.vue";
 import BindAppList from "./bindAppList.vue";
 import BindDialog from "./bindDialog.vue";
 import { ref, reactive, onMounted } from "vue";
-import { schema } from '@/ts/base';
 import userCtrl from '@/ts/controller/setting/userCtrl';
 import processCtrl from '@/ts/controller/setting/processCtrl';
 import { useRouter } from "vue-router";

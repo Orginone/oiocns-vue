@@ -47,7 +47,7 @@
 <script lang="ts" setup>
   import HeadImg from '@/components/headImg.vue'
   import { ref } from 'vue'
-  import {chat} from '@/module/chat/orgchat'
+  import {chat} from '@/ts/controller/chat'
   import QrCodeCustom from '@/components/qrCode/index.vue'
   const emit = defineEmits(['viewDetail', 'addUserOrCohort'])
 

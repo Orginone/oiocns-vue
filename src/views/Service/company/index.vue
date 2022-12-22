@@ -87,10 +87,8 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { TabsPaneContext } from 'element-plus'
   import searchCompany from '@/components/searchs/index.vue'
-  // import { chat } from '@/module/chat/orgchat'
+  // import { chat } from '@/ts/controller/chat'
   
-  // import thingServices from '@/module/flow/thing'
-
   import {WorkModel} from "@/oiocns-ts";
 
   // 申请加入单位弹窗控制

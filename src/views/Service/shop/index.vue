@@ -67,7 +67,7 @@
   import DiyTable from '@/components/diyTable/index.vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { TabsPaneContext } from 'element-plus'
-  import thingServices from '@/module/flow/thing'
+  // import thingServices from '@/module/flow/thing'
   import todoCtrl from '@/ts/controller/todo/todoCtrl';
   const statusMap = {
     1: {
@@ -99,7 +99,7 @@
       text: '已退货',
     },
   };
-  const ThingServices  = new thingServices()
+  // const ThingServices  = new thingServices()
   const store = useUserStore()
   const diyTable = ref(null)
        

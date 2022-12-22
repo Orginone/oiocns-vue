@@ -22,7 +22,6 @@
 
 <script lang="ts" setup>
 import { reactive, onMounted,toRefs } from 'vue'
-import SelfAppCtrl from '@/ts/controller/store/selfAppCtrl';
 import userCtrl from '@/ts/controller/setting/userCtrl';
 import appCtrl from '@/ts/controller/store/appCtrl';
 import {ElMessageBox, ElMessage} from "element-plus";

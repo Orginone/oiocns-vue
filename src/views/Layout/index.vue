@@ -66,7 +66,6 @@
   import setTree from './json/setTree.json';
   // import serviceJson from './json/service.json';
   // import userJosn from './json/user.json';
-  // import { chat } from '@/module/chat/orgchat'
   import { WorkModel as todo } from '@orginone/oiocns-ts';
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
