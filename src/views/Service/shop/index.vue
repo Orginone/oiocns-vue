@@ -10,45 +10,46 @@
           :hasTabs="true"
           :options="options"
           :hasTableHead="true"
-          :tableData="state.approvalList"
+          :tableData="state.list"
           :tableHead="tableHead"
+          @handleUpdate="handleUpdate"
         >
           <template #slot-tabs>
-            <el-tabs v-model="activeName" style="width: 100%" @tabClick="shopClick">
-              <el-tab-pane label="加入市场申请" name="first"> </el-tab-pane>
-              <el-tab-pane label="应用上架申请" name="second"> </el-tab-pane>
-              <el-tab-pane label="加入市场审批" name="third"> </el-tab-pane>
-              <el-tab-pane label="应用上架审批" name="four"> </el-tab-pane>
+            <el-tabs v-model="activeName" style="width: 100%" @tabClick="loadList">
+              <el-tab-pane label="待办" name="0"> </el-tab-pane>
+              <el-tab-pane label="已办" name="1"> </el-tab-pane>
+              <el-tab-pane label="我发起的" name="2"> </el-tab-pane>
             </el-tabs>
           </template>
+          <template  #marketName="scope" >
+            {{scope.row._data.market.name}}
+            <el-tag type="info">{{scope.row._data.market.code}}</el-tag>
+          </template>
+          <template  #marketCode="scope" >
+            {{scope.row.Data.target ? scope.row.Data.target.name : '本人'}}
+          </template>
+          <template  #status="scope" >
+             <el-tag>{{statusMap[scope.row._data.status].text}}</el-tag>
+          </template>
+          <template  #createTime="scope" >
+            {{scope.row._data.createTime}}
+          </template>
           <template #operate="scope">
-            <el-button v-if="activeName === 'first'" @click="cancelApply(scope.row.id)" type="primary"
-              >取消申请</el-button
-            >
             <el-button
-              v-if="activeName === 'third'"
-              @click="approvalSuccess(scope.row.id, 100)"
-              type="primary"
-              >审批通过</el-button
-            >
+              v-if="activeName == '0' || activeName == '1'"
+              @click="lastSuccess(scope.row, 100)"
+              type= 'primary'
+              link>同意</el-button>
             <el-button
-              v-if="activeName === 'third'"
-              @click="approvalSuccess(scope.row.id, 200)"
-              type="danger"
-              >驳回申请</el-button
-            >
-            <el-button
-              v-if="activeName === 'four'"
-              @click="LastSuccess(scope.row.id, 100)"
-              type="primary"
-              >审批通过</el-button
-            >
-            <el-button
-              v-if="activeName === 'four'"
-              @click="LastSuccess(scope.row.id, 200)"
-              type="danger"
-              >驳回申请</el-button
-            >
+              v-if="activeName == '0'"
+              @click="lastRefuse(scope.row, 200)"
+              type= 'danger'
+              link>拒绝</el-button>
+              <el-button
+              v-if="activeName == '2'"
+              @click="lastCancel(scope.row, 200)"
+              type= 'danger'
+              link>取消申请</el-button>
           </template>
           </DiyTable>
         </div>
@@ -66,202 +67,209 @@
   import DiyTable from '@/components/diyTable/index.vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { TabsPaneContext } from 'element-plus'
-  
   import thingServices from '@/module/flow/thing'
-
+  import todoCtrl from '@/ts/controller/todo/todoCtrl';
+  const statusMap = {
+    1: {
+      color: 'blue',
+      text: '待处理',
+    },
+    100: {
+      color: 'green',
+      text: '已同意',
+    },
+    200: {
+      color: 'red',
+      text: '已拒绝',
+    },
+    102: {
+      color: 'green',
+      text: '已发货',
+    },
+    220: {
+      color: 'gold',
+      text: '买方取消订单',
+    },
+    221: {
+      color: 'volcano',
+      text: '卖方取消订单',
+    },
+    222: {
+      color: 'default',
+      text: '已退货',
+    },
+  };
   const ThingServices  = new thingServices()
-  const instance = getCurrentInstance()
-  const route = useRoute()
-  const router = useRouter()
-  const dialogVisible = ref<boolean>(false)
   const store = useUserStore()
-  const { workspaceData } = storeToRefs(store)
-  var tableData = ref<any>([{id:123,flowInstance:{}}])
   const diyTable = ref(null)
-  
-  const tableHead =ref<any>(ThingServices.state.searchJoinApplyHead);
+       
+  const tableHead =ref<any>(
+    [
+      {
+        type:'slot',
+        name:'marketName',
+        prop: 'marketName',
+        label: '市场名称'
+      },
+      {
+        type:'slot',
+        name:'marketCode',
+        prop: 'marketCode',
+        label: '申请组织'
+      },
+      {
+        type:'slot',
+        name:'status',
+        prop: 'status',
+        label: '状态'
+      },
+      {
+        type:'slot',
+        name:'createTime',
+        prop: 'createTime',
+        label: '申请时间'
+      },
+      {
+        type: 'slot',
+        label: '操作',
+        fixed: 'right',
+        align: 'center',
+        width: '200',
+        name: 'operate'
+      }
+    ]
+  );
   const options = {
     expandAll: false,
     checkBox: false,
     order: true,
     switchType:false,
-    noPage: true,
+    noPage: false,
     selectLimit: 0
   }
   // 表格展示数据
   const pageStore = reactive({
     tableData: [],
-    currentPage: 1,
+    currentPage: 0,
     pageSize: 20,
     total: 0
   })
-
-  const activeIndex = ref<string>('1')
-  const flowActive = ref<string>('1')
-  const activeId = ref<string>('0')
-  const elmenus = ref(null);
   const activeName = ref('first') //商店tab
   
   const state = reactive({
-    approvalList: [],
+    list: [],
   })
-  const handleClose = (index:any) => {
-    elmenus.value.open(index)
-    handleSelect(activeIndex.value, [])
-  }
-  const shopClick = (tab: TabsPaneContext, event: any) => {
-    if (tab.index === '0') {
-      activeName.value = 'first'
-      searchJoinApply()
-    }
-    if (tab.index === '1') {
-      activeName.value = 'second'
-      searchPublishApply()
-    }
-    if (tab.index === '2') {
-      activeName.value = 'third'
-      searchJoinApplyManager()
-    }
-    if (tab.index === '3') {
-      activeName.value = 'four'
-      searchManagerPublishApply()
-    }
-  }
-
-  //查询加入市场申请
-  var searchJoinApply = async () => {
-    await ThingServices.searchJoinApply()
-    state.approvalList =ThingServices.state.searchJoinApplyList
-    tableHead.value = ThingServices.state.searchJoinApplyHead
-  }
-  searchJoinApply()
-  //查询加入市场审批
-  const searchJoinApplyManager = async () => {
-    await ThingServices.searchJoinApplyManager()
-    state.approvalList =ThingServices.state.searchJoinApplyManagerList
-    tableHead.value = ThingServices.state.searchJoinApplyManagerHead
-  }
-  //查询产品上架申请
-  const searchPublishApply = async () => {
-    await ThingServices.searchPublishApply()
-    state.approvalList =ThingServices.state.searchPublishApplyList
-    tableHead.value = ThingServices.state.searchPublishApplyHead
-  }
-  //查询应用上架审批
-  const searchManagerPublishApply = async () => {
-    await ThingServices.searchManagerPublishApply()
-    state.approvalList =ThingServices.state.searchManagerPublishApplyList
-    tableHead.value = ThingServices.state.searchManagerPublishApplyHead
-  }
-  
-  //取消申请
-  var cancelJoin = (item: { id: '' }) => {
-    ElMessageBox.confirm('确定取消吗？', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(async () => {
-     const data = await ThingServices.cancelJoin(item.id)
-      if(data){
-        ElMessage({
-          message: '取消成功',
-          type: 'success'
-        })
-        ThingServices.whiteList = [];
-        handleSelect(activeIndex.value, [])
-      }
+  const handleUpdate = (page:any) => {
+    pageStore.currentPage = page.current
+    pageStore.pageSize = page.pageSize
+    loadList({
+      uid: 0,
+        slots: undefined,
+        props: undefined,
+        paneName: '',
+        active: false,
+        index: activeName.value,
+        isClosable: false
     })
   }
-  //取消申请
-  const cancelApply = async (index: number) => {
-    await $services.appstore
-      .cancelJoin({
-        data: {
-          id: index
-        }
-      })
-      .then((res: ResultType) => {
-        if (res.success) {
-          ElMessage({
-            message: '取消申请成功',
-            type: 'success'
-          })
-          ThingServices.whiteList = [];
-          searchJoinApply()
-        }
-      })
-  }
-  //审批加入市场
-  const approvalSuccess = async (index: number, status: number) => {
-    await $services.appstore
-      .approvalJoin({
-        data: {
-          id: index,
-          status: status
-        }
-      })
-      .then((res: ResultType) => {
-        if (res.success) {
-          ElMessage({
-            message: '审批完成',
-            type: 'success'
-          })
-          ThingServices.whiteList = [];
-          searchJoinApplyManager()
-        }
-      })
-  }
-   //上架审批
-  const LastSuccess = async (index: number, status: number) => {
-    await $services.appstore
-      .approvalPublish({
-        data: {
-          id: index,
-          status: status
-        }
-      })
-      .then((res: ResultType) => {
-        if (res.success) {
-          ElMessage({
-            message: '审批完成',
-            type: 'success'
-          })
-          ThingServices.whiteList = [];
-          searchManagerPublishApply()
-        }
-      })
-  }
-  const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
-  const handleSelect = (key: any, keyPath: string[]) => {
-    tableData.value = []
-    // diyTable.value.state.page.total = 0
-    activeIndex.value = key;
-    ThingServices.whiteList = [];
-    if (whiteList.includes(key)) {
-      searchJoinApply()
-    } 
-  }
-
-  onMounted(() => {
-    // ThingServices.whiteList = [];
-    // const route = useRouter();
-    // const selectType = route.currentRoute.value.query.type?'1-1':'2-1';
-    // let id = route.currentRoute.value.query.id;
-    // activeIndex.value = '1-1';
-    // if (Array.isArray(id)) {
-    //   activeId.value = id[0];
-    // } else {
-    //   activeId.value = id
-    // }
-    
-    // handleSelect(selectType, [])
-  });
-
-  instance?.proxy?.$Bus.on('selectBtn', (num) => {
-    if(num === '1-3') {
-      handleSelect(num, [])
+  const loadList = async (tab: TabsPaneContext) => {
+    if(!tab){
+      tab.index= '0';
     }
-  })
+    if (tab.index== '0') {
+      const list = await todoCtrl.MarketTodo['getTodoList'](false);
+      state.list = list || []
+      diyTable.value.state.page.total = state.list.length
+
+    } else if (tab.index =='1'){
+      const list = await todoCtrl.MarketTodo['getDoList']({
+        limit:pageStore.pageSize,
+        offset:pageStore.currentPage,
+        filter:""
+      });
+      state.list = list || []
+      diyTable.value.state.page.total = state.list.length
+    }else {
+      const list = await todoCtrl.MarketTodo['getApplyList']({
+        limit:pageStore.pageSize,
+        offset:pageStore.currentPage,
+        filter:""
+      });
+      state.list = list || []
+      diyTable.value.state.page.total = state.list.length
+    }
+    console.log('state', state.list)
+  };
+
+   //同意
+  const lastSuccess = async (item: any,status:number) => {
+    item.pass(status, '').then(() => {
+      todoCtrl.changCallback();
+      ElMessage({
+        message: '审批完成',
+        type: 'success'
+      })
+      loadList({
+        uid: 0,
+        slots: undefined,
+        props: undefined,
+        paneName: '',
+        active: false,
+        index: activeName.value,
+        isClosable: false
+      },);
+    })
+  }
+  // 拒绝
+  const lastRefuse = async (item: any,status:number) =>{
+    item.reject(status, '').then(() => {
+      ElMessage({
+        message: '审批完成',
+        type: 'success'
+      })
+      loadList({
+        uid: 0,
+        slots: undefined,
+        props: undefined,
+        paneName: '',
+        active: false,
+        index: activeName.value,
+        isClosable: false
+      },);
+    })
+  }
+  // 取消
+  const lastCancel = async (item: any,status:number) =>{
+    item.cancel(status, '').then(() => {
+      ElMessage({
+        message: '审批完成',
+        type: 'success'
+      })
+      loadList({
+        uid: 0,
+        slots: undefined,
+        props: undefined,
+        paneName: '',
+        active: false,
+        index: activeName.value,
+        isClosable: false
+      },);
+    })
+  }
+  onMounted(() => {
+   nextTick(()=>{
+      loadList({
+          uid: 0,
+          slots: undefined,
+          props: undefined,
+          paneName: '',
+          active: false,
+          index: '0',
+          isClosable: false
+      },);
+      activeName.value = '0';
+   })
+  });
 </script>
 
 

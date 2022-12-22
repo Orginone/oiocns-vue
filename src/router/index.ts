@@ -173,6 +173,15 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
+        path: '/service/product',
+        name: 'product',
+        component: () => import('@/views/Service/product/index.vue'),
+        meta: {
+          title: '上架审核',
+          id: "service.product"
+        }
+      },
+      {
         path: '/service/order',
         name: 'order',
         component: () => import('@/views/Service/order/index.vue'),
@@ -510,15 +519,6 @@ const mainRouter: RouteRecordRaw[] = [
         meta: {
           title: '售卖订单',
           id: "store.order-cell"
-        }
-      },
-      {
-        path: '/store/shoppingCar',
-        name: 'storeShoppingCar',
-        component: () => import('@/views/Store/shoppingCar/index.vue'),
-        meta: {
-          title: '购物车',
-          id: "store.shoppingCar"
         }
       },
       {

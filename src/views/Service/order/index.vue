@@ -32,8 +32,6 @@
         </el-select>
       </div>
        <div class="tab-list">
-        <div class="container">
-          <div class="limit_table_height">
             <!-- 采购订单 -->
             <DiyTable
               v-show="switchType ==1"
@@ -138,8 +136,6 @@
             </DiyTable>
             <payView v-if="payDialog.show" :order="payDialog.data" @close="closePay"></payView>
             <payList v-if="payListDialog.show" :selectLimit="0" @closeDialog="closePayList" />
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -215,7 +211,7 @@
     checkBox: false,
     order: true,
     switchType:false,
-    noPage: true,
+    noPage: false,
     selectLimit: 0
   }
   const handleUpdate = (page: any) => {
@@ -454,34 +450,10 @@
     state.orderMessage.total = total
     state.orderMessage.list = data
   }
-  //确认开始交易
-  // const sureContent = async (id: string) => {
-  //   await $services.order
-  //     .updateDetail({
-  //       data: {
-  //         id: id,
-  //         status: 100
-  //       }
-  //     })
-  //     .then((res: ResultType) => {
-  //       if (res.code == 200) {
-  //         getTableList(searchType.value)
-  //         ElMessage({
-  //           message: '确认开始交易',
-  //           type: 'success'
-  //         })
-  //       }
-  //     })
-  // }
   //查询支付列表
   const showPayList = async (data: any) => {
     payListDialog.data = data
     payListDialog.show = true
-  }
-  //支付
-  const showPay = async (data: any) => {
-    payDialog.data = data
-    payDialog.show = true
   }
   //关闭支付
   const closePay = async () => {
@@ -492,30 +464,6 @@
     payListDialog.show = false
   }
 
-  // const pay = async (id: string, price: number, paymentType: string) => {
-  //   await $services.order
-  //     .createPay({
-  //       data: {
-  //         orderId: parseInt(id),
-  //         price: price,
-  //         paymentType: paymentType
-  //       }
-  //     })
-  //     .then((res: ResultType) => {res.code == 200
-  //       if (res.code == 200) {
-  //         getTableList(searchType.value)
-  //         ElMessage({
-  //           message: '支付成功',
-  //           type: 'warning'
-  //         })
-  //       } else {
-  //         ElMessage({
-  //           message: res.msg,
-  //           type: 'warning'
-  //         })
-  //       }
-  //     })
-  // }
   //退货退款
   const reject = async (id: string) => {
     const { code } = await OrderSevice.rejectOrder({
@@ -731,7 +679,7 @@
       right: 20px;
     }
     .tab-list {
-      height: calc(100% - 40px);
+      height: calc(100% - 60px);
       overflow-y:auto;
       box-sizing: border-box;
 

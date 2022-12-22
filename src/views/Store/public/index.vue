@@ -1,8 +1,12 @@
 <template>
     <div class="main">
         <div class="content">
+            <div class="content-title">
+                <i class="icon iconfont icon-jiantou-left" @click="goBack"></i>
+                <div>应用上架信息</div>
+            </div>
             <div class="table">
-                <DiyTable :style="{ width: '100%' }" ref="diyTable" :hasTabs="true" :tableName="'应用上架信息'"
+                <DiyTable :style="{ width: '100%' }" ref="diyTable" :hasTabs="true"
                     :hasTitle="true" :hasTableHead="true" :tableData="state.list" :options="options"
                     :total="pageStore.total" @handleUpdate="handleUpdate" @selectionChange="selectionChange"
                     :tableHead="state.tableHead">
@@ -208,6 +212,10 @@ const removeShelf = (item: any) => {
         })
 
 };
+// 返回
+const goBack = () => {
+  window.history.go(-1)
+}
 
 </script>
 <style lang="scss">
@@ -233,10 +241,20 @@ const removeShelf = (item: any) => {
         display: flex;
         flex-direction: column;
         background: #f0f4f8;
-
+        .content-title{
+            background: #fff;
+            display:flex;
+            align-items: center;
+            margin-top:3px;
+            font-size: 14px;
+            padding: 16px;
+            i{
+                margin-right: 10px;
+            }
+            border-bottom: 1px solid #ebeef5;
+        }
         .table {
             background: #fff;
-            margin-top: 3px;
             height: calc(100vh - 100px);
 
             .btn-box {

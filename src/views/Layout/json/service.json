@@ -43,10 +43,18 @@
               "children": []
           },
           {
-            "id": "service.order",
-              "name": "订单审核",
+            "id": "service.product",
+              "name": "上架审核",
               "type":"4",
               "uid":"1-4",
+              "url":"/service/product",
+              "children": []
+          },
+          {
+            "id": "service.order",
+              "name": "订单审核",
+              "type":"6",
+              "uid":"1-6",
               "url":"/service/order",
               "children": []
           }

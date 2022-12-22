@@ -187,8 +187,7 @@ const filterNode = (value: string, data: any) => {
 
 // 路由跳转
 const jump = (val:any)=>{
-  console.log('val',val)
-    if(val.data.isStoreMenu){
+    if(val?.data?.isStoreMenu){
       instance?.proxy?.$Bus.emit('storeMenu', val.data.items)
     }else{
       if(val.url){

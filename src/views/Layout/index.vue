@@ -152,6 +152,7 @@
       return;
     }
     // end-文档相关
+
     // start-标准设置相关
     if (router.currentRoute.value.path.indexOf('setCenter/standard') != -1) {
       titleArr.state = {icon: 'PriceTag',title: '标准设置', "backFlag": true}
@@ -160,6 +161,7 @@
       return;
     }
     // end-标准设置相关
+
     if(router.currentRoute.value.path.indexOf('store/shop') != -1){
       getShopList();
       showMenu.value = true;
@@ -167,6 +169,7 @@
 
       return
     }
+
     if(router.currentRoute.value.path.indexOf('store/appManagement') != -1){
       titleArr.state = storeJson[0]
       menuArr.state = storeJson
@@ -178,6 +181,7 @@
       getMenu()
       return
     }
+    
     if(router.currentRoute.value.path.indexOf('service') != -1){
       serviceJson[1].children.forEach((element:any,index:any) => {
         // element?.num = index
@@ -372,7 +376,7 @@
     let shopstoreJson = JSON.parse(JSON.stringify(storeJson))
     showMenu.value = true;
     shopstoreJson[2] = newObj
-    titleArr.state = shopstoreJson[0]
+    titleArr.state = {icon: 'User',title: '商店', "backFlag": true}
     menuArr.state = shopstoreJson
     })
     

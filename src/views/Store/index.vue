@@ -471,7 +471,7 @@ const title = ref<string>("");
 onMounted(() => {
   // 获取列表
   getProductList(); 
-    
+  console.log('marketCtrl.shopinglist',marketCtrl.shopinglist)
 });
 
 const commonStore = useCommonStore()

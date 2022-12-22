@@ -58,10 +58,9 @@
 
 <script setup lang="ts">
   import diytab from '@components/diyTable/index.vue'
-  import $services from '@/services'
   import { ref, reactive, onMounted, nextTick } from 'vue'
-  import { ElMessage } from 'element-plus'
-  import {chat} from '@/module/chat/orgchat'
+  import userCtrl from '@/ts/controller/setting/userCtrl';
+
   const diyTable = ref(null)
   // 表格展示数据
   const pageStore = reactive({
@@ -115,44 +114,10 @@
     tableHead.value = tableHead5.value
     url.value = ''
     title.value = '搜索商店'
-      let data= {
-          filter: value.value,
-          offset: (pageStore.currentPage - 1) * pageStore.pageSize,
-          limit: pageStore.pageSize,
-          id:props.id
-        }
-      $services.appstore.searchAll({
-        data: data
-      }).then((res: ResultType) => {
-        let arr: any = []
-        if (res.code == 200) {
-          if (res.data.result != undefined) {
-            let states = res.data.result
-            if (states) {
-              states.forEach((el: any) => {
-                let obj = {}
-                  obj={
-                    id: el.id,
-                    code: el.code,
-                    name: el.name,
-                    remark: el.remark,
-                    belong:chat.getName(el.belongId),
-                    create: chat.getName(el.createUser)
-                  }
-                arr.push(obj)
-              })
-              pageStore.total = res.data.total
-              diyTable.value.state.page.total = pageStore.total
-            }
-          }
-          list.value = arr
-        } else {
-          ElMessage({
-            message: res.msg,
-            type: 'warning'
-          })
-        }
-      })
+    userCtrl.space.getMarketByCode(value.value).then((a:any) => {
+      console.log('a',a)
+      list.value = a?.result ||[]
+    });
   }
 
   const handleUpdate = (page: any) => {
