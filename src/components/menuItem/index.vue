@@ -95,7 +95,8 @@ const props = defineProps({
     type: Array,
   },
   btnType:{
-    type:String
+    type:String,
+    default:'',
   },
   titleData: {
     type: Object

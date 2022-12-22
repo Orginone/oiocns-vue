@@ -19,7 +19,6 @@ import FriendServices from '@/module/relation/friend'
 import Head from '@/components/protal/components/head.vue'
 import Cent from '@/components/protal/components/cent.vue'
 import Foot from '@/components/protal/components/foot.vue'
-import $services from '@/services'
 import { ElMessage } from 'element-plus'
 
 interface ListItem {

@@ -116,10 +116,10 @@ defineExpose({ submitForm, resetForm })
 .ele-fluid {
   width: 100% !important;
 }
-::v-deep .el-form-item__content .el-input {
+:deep .el-form-item__content .el-input {
   width: 100% !important;
 }
-::v-deep .el-form-item__content .el-input .el-input__wrapper {
+:deep .el-form-item__content .el-input .el-input__wrapper {
   width: 100% !important;
 }
 </style>

@@ -74,6 +74,8 @@
   import { anystore } from '@/hubs/anystore'
   // import {MarketModel} from "@/ts/market";
   import marketCtrl from '@/ts/controller/store/marketCtrl';
+  import thingCtrl from '@/ts/controller/thing'
+  import {INullSpeciesItem} from "@/ts/core";
 
   const { proxy } = getCurrentInstance()
 
@@ -85,7 +87,7 @@
   
   // 路由控制，单独匹配的话需要增加 showMenu.value = true;
   function getNavData2() { 
-
+    btnType.value='';//默认为空
     if(router.currentRoute.value.path.indexOf('setCenter') != -1){
       if (router.currentRoute.value.name === 'department') {
           titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
@@ -135,7 +137,7 @@
       }else if (router.currentRoute.value.name !== 'unit') {
         let currentRouteName: any = router.currentRoute.value.name
         const jsonData: any = setTree
-        if (['unit', 'group', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
+        if (['unit', 'group', 'data' , 'resource' , 'authority'].includes(currentRouteName)) {
           titleArr.state= jsonData[currentRouteName][0]
           menuArr.state = jsonData[currentRouteName]
           showMenu.value = true;
@@ -149,9 +151,19 @@
       return;
     }
     // end-文档相关
+    // start-标准设置相关
+    if (router.currentRoute.value.path.indexOf('setCenter/standard') != -1) {
+      titleArr.state = {icon: 'PriceTag',title: '标准设置', "backFlag": true}
+      getStandardSpecies()
+      showMenu.value = true;
+      return;
+    }
+    // end-标准设置相关
     if(router.currentRoute.value.path.indexOf('store/shop') != -1){
       getShopList();
       showMenu.value = true;
+      console.log('a')
+
       return
     }
     if(router.currentRoute.value.path.indexOf('store/appManagement') != -1){
@@ -214,7 +226,6 @@
     anystore.subscribed(`selfAppMenu`, 'user', (data) => {
       let newJSON = JSON.parse(JSON.stringify(storeJson))
         if(data?.data?.length>0){
-          console.log('data',data.data)
           menuData.data = data.data;
           dataFilter(menuData.data)
           newJSON[2].children = menuData.data;
@@ -303,6 +314,30 @@
     menuText.value = '';
     addMenuDialog.value = false;
   }
+
+  // 获取数据标准分类
+  interface SpeciesObject extends INullSpeciesItem {
+    structure: boolean
+    label: string
+  }
+  const getStandardSpecies = ()=>{
+    const teamSpecies: SpeciesObject = thingCtrl.teamSpecies as SpeciesObject
+    if(teamSpecies) {
+      teamSpecies.structure = true
+      const treeData = [teamSpecies]
+      treeLabel(treeData)
+      menuArr.state = treeData
+      function treeLabel(arr: any[]) {
+        arr.forEach((el) => {
+          el.label = el.name
+          delete el.parent
+          treeLabel(el.children || [])
+        })
+      }
+    } else {
+      menuArr.state = []
+    }
+  }
   
   // 获取我的商店列表
   const getShopList = async ()=>{
@@ -318,7 +353,7 @@
           myList.push(obj)
       })
       let newObj:any =  {
-        label: "商城分类",
+        label: "商店分类",
         structure: true,
         isPenultimate: true,
         btns:[{

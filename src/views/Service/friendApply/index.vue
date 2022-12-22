@@ -63,7 +63,6 @@
 </template>
 
 <script lang="ts" setup>
-  import $services from '@/services'
   import { ref, onMounted, reactive,nextTick, getCurrentInstance } from 'vue'
   import { storeToRefs } from 'pinia'
   import { useUserStore } from '@/store/user'

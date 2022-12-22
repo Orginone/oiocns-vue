@@ -82,7 +82,8 @@
     import { ElMessage, FormRules } from 'element-plus'
     import { useRouter } from 'vue-router'
     import { useCommonStore } from '@/store/common'
-    import { appstore } from '@/module/store/app'
+    import userCtrl from '@/ts/controller/setting/userCtrl';
+
     const commonStore = useCommonStore()
     const router = useRouter()
   
@@ -425,9 +426,8 @@
             el.flows = JSON.stringify(el.flows)
             el.components = JSON.stringify(el.components)
           })
-          const params = { ...state.form, resources: resourcesData }
-          const success = await appstore.onRegister(params)
-          if (success) {
+          const res = await userCtrl.space.createProduct({ ...state.form, resources: resourcesData });
+          if (res) {
             ElMessage({
               type: 'success',
               message: '应用注册成功'

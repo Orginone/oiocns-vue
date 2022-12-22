@@ -101,7 +101,7 @@ export class SpeciesItem implements ISpeciesItem {
     const res = await kernel.deleteAttribute({
       id: id,
       typeName: '',
-      belongId: '',
+      belongId: '0',
     });
     return res.success;
   }

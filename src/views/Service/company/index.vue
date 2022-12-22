@@ -201,6 +201,7 @@
   var getAllApprovalList = async () => {
     // await ThingServices.getAllApproval('0')
     // tableData.value = ThingServices.approvalList.length && ThingServices.approvalList.filter(i => i?.team?.target?.typeName === '单位')
+    await WorkModel.waitUntilInitialized();
     const res = await WorkModel.OrgTodo.getTodoList(true);
     tableData.value = res.map(d => {
       d.Data.pass = d.pass;
@@ -211,6 +212,7 @@
 
   // 查询我的申请
   var getApplyList = async () => {
+    await WorkModel.waitUntilInitialized();
     const res = await WorkModel.OrgTodo.getApplyList({
       offset:0,
       limit: 20,

@@ -61,8 +61,7 @@
   import $services from '@/services'
   import { ref, reactive, onMounted, nextTick } from 'vue'
   import { ElMessage } from 'element-plus'
-  import {chat} from '@/ts/controller/chat'
-  const dialogVisible = ref<boolean>(true)
+  import {chat} from '@/module/chat/orgchat'
   const diyTable = ref(null)
   // 表格展示数据
   const pageStore = reactive({

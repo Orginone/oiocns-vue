@@ -158,12 +158,10 @@ export const useUserStore = defineStore({
       await this.copyCompanys.forEach((el: any, index: number) => {
         if (id == el.id) {
           this.workspaceData = el
-          console.log("this.workspaceData=>",this.workspaceData);
           // sessionStorage.setItem('WORKSPACE', JSON.stringify(obj))
           // if (getLoad) {
             // 防止选择单位时先删除后刷新
             this.loadCompanys = Object.assign([],this.userCompanys);
-            console.log("this.loadCompanys=>",this.loadCompanys)
             // this.userCompanys.splice(index, 1)
           // } else {
             // 点击加载单位 去除当前单位
