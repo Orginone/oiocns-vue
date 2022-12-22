@@ -108,7 +108,7 @@ const mainRouter: RouteRecordRaw[] = [
     ]
   },
   {
-    component: () => import('@/views/Work/home.vue'),
+    component: () => import('@/views/Portal/home.vue'),
     name: 'workHome',
     path: '/workHome',
     meta: {
@@ -116,9 +116,9 @@ const mainRouter: RouteRecordRaw[] = [
       title: '工作组',
       id: "workHome"
     }
-  },
+  }, 
   {
-    component: () => import('@/views/Work/index.vue'),
+    component: () => import('@/views/Portal/index.vue'),
     name: 'work',
     path: '/work',
     meta: {
@@ -336,7 +336,7 @@ const mainRouter: RouteRecordRaw[] = [
     ]
   },
   {
-    component: () => import('@/views/Work/process.vue'),
+    component: () => import('@/views/Portal/process.vue'),
     name: '/work/process',
     path: '/work/process',
     meta: {
@@ -542,8 +542,26 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/store/appRegister2',
+        path: '/store/public',
+        name: 'storeAppPublic',
+        component: () => import('@/views/Store/public/index.vue'),
+        meta: {
+          title: '应用详情',
+          id: "store.appPublic"
+        }
+      },
+      {
+        path: '/store/appRegister',
         name: 'storeAppRegister',
+        component: () => import('@/views/Store/appRegister/index.vue'),
+        meta: {
+          isHidden: true,
+          title: '应用创建'
+        }
+      },
+      {
+        path: '/store/appRegister2',
+        name: 'storeAppRegisters',
         component: () => import('@/views/Store/appRegister2/index.vue'),
         meta: {
           isHidden: true,

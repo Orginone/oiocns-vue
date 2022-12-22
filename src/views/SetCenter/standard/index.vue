@@ -1,52 +1,42 @@
 <template>
     <div class="main">
       <div class="content">
-        <div class="detail">
+        <div class="detail" v-if="currentData.target">
           <el-descriptions
               class="margin-top"
-              title="万物的基本信息"
+              :title="`${currentData.name}的基本信息`"
               :column="2"
               border
           >
             <el-descriptions-item>
               <template #label>
-                <div class="cell-item">
-                  共享组织
-                </div>
+                <div class="cell-item">共享组织</div>
               </template>
-              kooriookami
+              <span>{{ currentData.belongInfo ? currentData.belongInfo.name : '奥集能平台' }}</span>
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
-                <div class="cell-item">
-                  分类编码
-                </div>
+                <div class="cell-item">分类编码</div>
               </template>
-              18100000000
+              <span>{{ currentData.target.code }}</span>
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
-                <div class="cell-item">
-                  开放域
-                </div>
+                <div class="cell-item">开放域</div>
               </template>
-              Suzhou
+              <span>{{ currentData.target.public ? '开放' : '私有' }}</span>
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
-                <div class="cell-item">
-                  创建时间
-                </div>
+                <div class="cell-item">创建时间</div>
               </template>
-              School
+              <span>{{ currentData.target.createTime }}</span>
             </el-descriptions-item>
             <el-descriptions-item>
               <template #label>
-                <div class="cell-item">
-                  分类定义
-                </div>
+                <div class="cell-item">分类定义</div>
               </template>
-              No.1188, Wuzhong Avenue, Wuzhong District, Suzhou, Jiangsu Province
+              <span>{{ currentData.target.remark }}</span>
             </el-descriptions-item>
           </el-descriptions>
         </div>
@@ -57,10 +47,9 @@
               :hasTabs="true"
               :hasTitle="false"
               :hasTableHead="true"
-              :tableData="tableData"
+              :tableData="state.tableData"
               :options="options"
               @handleUpdate="handleUpdate"
-              @selectionChange="selectionChange"
               :tableHead="tableHead"
           >
             <template #slot-tabs>
@@ -76,15 +65,15 @@
               </div>
             </template>
             <template #buttons>
-              <el-button class="btn-check" type="primary" link>新增特性</el-button>
+              <el-button class="btn-check" type="primary" link @click="openAttrFormDialog">新增特性</el-button>
             </template>
             <template #operate="scope">
               <el-dropdown>
                 <span class="el-dropdown-link"> ··· </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="showDiong">编辑</el-dropdown-item>
-                    <el-dropdown-item @click="showDiong" style="color: #f67c80">删除</el-dropdown-item>
+                    <el-dropdown-item @click="editAttr(scope.row)">编辑</el-dropdown-item>
+                    <el-dropdown-item @click="deleteAttrItem(scope.row)" style="color: #f67c80">删除</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -95,24 +84,75 @@
           </DiyTable>
         </div>
       </div>
+      <!-- 特性提交表单 -->
+      <el-dialog v-model="attrFormDialog" :title="`${isEditAttr ? '编辑' : '新增'}特性`" width="600">
+        <el-form :model="state.attrForm" label-width="120px" ref="attrFormRef">
+          <el-form-item label="特性名称">
+            <el-input v-model="state.attrForm.name" placeholder="请输入"/>
+          </el-form-item>
+          <el-form-item label="特性代码">
+            <el-input v-model="state.attrForm.code" placeholder="请输入"/>
+          </el-form-item>
+          <el-form-item label="选择制定组织">
+            <el-tree-select v-model="state.attrForm.belongId" :data="state.belongTreeData" highlight-current default-expand-all check-strictly :props="{ label: 'name', value: 'id', children: 'subTeam'}" placeholder="请选择" />
+          </el-form-item>
+          <el-form-item label="选择管理职权">
+            <el-tree-select v-model="state.attrForm.authId" :data="state.authTreeData" highlight-current default-expand-all check-strictly :props="{ label: 'name', value: 'id'}" placeholder="请选择" />
+          </el-form-item>
+          <el-form-item label="向下级组织公开">
+            <el-select v-model="state.attrForm.public" placeholder="请选择">
+              <el-option label="公开" :value="true" />
+              <el-option label="不公开" :value="false" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="特性类型">
+            <el-select v-model="state.attrForm.valueType" placeholder="请选择">
+              <el-option label="数值型" value="数值型" />
+              <el-option label="描述型" value="描述型" />
+              <el-option label="选择型" value="选择型" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="特性定义">
+            <el-input v-model="state.attrForm.remark" placeholder="请输入" type="textarea"/>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="attrFormDialog = false">取消</el-button>
+            <el-button type="primary" @click="submitAttrForm">确定</el-button>
+          </span>
+        </template>
+      </el-dialog>
     </div>
 </template>
 <script lang="ts" setup>
   // @ts-nocheck
   import DiyTable from "@/components/diyTable/index.vue";
-  import { ref } from "vue";
-  // 表格展示数据
-  const pageStore = reactive({
-    currentPage: 1,
-    pageSize: 20,
-    total: 0
+  import {computed, nextTick, reactive, ref, watch} from "vue";
+  import { setCenterStore } from '@/store/setting'
+  import { USERCTRL } from "@/ts/coreIndex";
+  import { PageRequest } from '@/ts/base/model';
+  import {ElMessage} from "element-plus";
+  const store: any = setCenterStore()
+
+  const currentData = computed(() => {
+    return store.currentSelectItme
   })
-  const tableData = ref([{
-    account:'业务名',
-    nickname:'string',
-    name:'3~20',
-    phone:'王伍',
-  }])
+
+  watch(currentData, async (n, o) => {
+    await loadSpeciesAttrs(n)
+  })
+
+  const attrFormDialog = ref(false)
+  const isEditAttr =  ref(false)
+  const attrFormRef = ref<FormInstance>()
+
+  const state = reactive({
+    tableData: [],
+    attrForm: {},
+    belongTreeData: [],
+    authTreeData: []
+  })
   const options = ref<any>({
     checkBox: false,
     order: true,
@@ -129,29 +169,24 @@
       label: '特性编码',
     },
     {
-      prop: 'nickname',
-      label: '特性名称',
-      name: 'nickname'
-    },
-    {
       prop: 'name',
+      label: '特性名称',
+    },
+    {
+      prop: 'valueType',
       label: '特性类型',
-      name: 'name'
     },
     {
-      prop: 'phone',
+      prop: 'speciesId',
       label: '特性分类',
-      name: 'createTime'
     },
     {
-      prop: 'phone',
+      prop: 'belongId',
       label: '共享组织',
-      name: 'createTime'
     },
     {
-      prop: 'phone',
+      prop: 'remark',
       label: '特性定义',
-      name: 'createTime'
     },
     {
       type: 'slot',
@@ -162,14 +197,65 @@
       name: 'operate'
     }
   ])
-  const handleUpdate = (page: any) => {
-    pageStore.currentPage = page.currentPage
-    pageStore.pageSize = page.pageSize
-    remoteMethod()
+
+  const loadSpeciesAttrs = async (species) => {
+    const page: PageRequest = {offset: 0, limit: 20, filter: ''}
+    const res = await species.loadAttrs(USERCTRL.space.id, page)
+    console.log(res)
+    if (res && res.result) {
+      for (const item of res.result) {
+        const team = await USERCTRL.findTeamInfoById(item.belongId);
+        if (team) {
+          item.belongId = team.name;
+        }
+      }
+    }
+    state.tableData = res.result
   }
-  const checkList = reactive<any>([])
-  const selectionChange = (val: any) => {
-    checkList.value = val
+
+  const openAttrFormDialog = async () => {
+    isEditAttr.value = false
+    attrFormDialog.value = true
+    state.belongTreeData = await USERCTRL.getTeamTree()
+    const authData = await USERCTRL.company.selectAuthorityTree(false)
+    state.authTreeData = authData ? [authData] : [];
+  }
+
+  const submitAttrForm = async () => {
+    if(isEditAttr) {
+      ElMessage.warning({ message: '暂不支持编辑'})
+      attrFormDialog.value = false
+      return false
+    }
+    const success = await currentData.value.createAttr(state.attrForm)
+    if(success) {
+      ElMessage.success({ message: '新增成功'})
+      attrFormDialog.value = false
+      await loadSpeciesAttrs(currentData.value)
+    }
+  }
+
+  const deleteAttrItem = async (attr) => {
+    const success = await currentData.value.deleteAttr(attr.id)
+    if(success) {
+      ElMessage.success({ message: '删除成功'})
+      await loadSpeciesAttrs(currentData.value)
+    } else {
+      ElMessage.error({ message: '删除失败'})
+    }
+  }
+
+  const editAttr = async (attr) => {
+    isEditAttr.value = true
+    state.belongTreeData = await USERCTRL.getTeamTree()
+    const authData = await USERCTRL.company.selectAuthorityTree(false)
+    state.authTreeData = authData ? [authData] : [];
+    attrFormDialog.value = true
+    state.attrForm = attr
+  }
+
+  const handleUpdate = (page: any) => {
+
   }
 </script>
 <style lang="scss">

@@ -13,7 +13,7 @@
   import DiyTable from "@/components/diyTable/index.vue";
   import { useUserStore } from "@/store/user";
   import { storeToRefs } from "pinia";
-  import { chat } from '@/module/chat/orgchat'
+  import {CommunicateModel as chat} from '@orginone/oiocns-ts';
 import _ from 'lodash';
 import { useAsyncComputed } from '@/hooks/useAsyncComputed';
 
@@ -24,7 +24,7 @@ import { useAsyncComputed } from '@/hooks/useAsyncComputed';
     tableData.value = _.cloneDeep(queryInfo.value.identitys);
     const rows: Ref<any>[] = tableData.value.map(d => ref(d));
     for (const row of rows) {
-      useAsyncComputed(row, "belongId", "belongName", v => chat.getNameAsync(v))
+      useAsyncComputed(row, "belongId", "belongName", async v => chat.getName(v))
     }
   })
   

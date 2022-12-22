@@ -171,7 +171,7 @@
 
 <script lang="ts" setup>
   import NavList from './components/navList.vue'
-  import Cloud from '@/ts/cloud'
+  import Cloud, {FileObject} from '@/ts/cloud'
   import { onMounted, reactive, ref, nextTick, computed } from 'vue'
   import FileIcon from './components/fileIcon.vue'
   import {ElMessageBox, ElMessage, UploadProps, UploadRequestOptions} from "element-plus";
@@ -197,8 +197,8 @@
   const showType = ref<number>(2)
 
   // @ts-ignore
-  state.breadcrumb = computed<any[]>(() => {
-    const breadcrumb: any[] = []
+  state.breadcrumb = computed<FileObject[]>(() => {
+    const breadcrumb: FileObject[] = []
     pushBreadcrumb(breadcrumb, state.currentLay)
     return breadcrumb
   })
@@ -210,10 +210,10 @@
   }
 
   //面包屑递归
-  const pushBreadcrumb = (breadcrumb: any[], item: any) => {
+  const pushBreadcrumb = (breadcrumb: FileObject[], item: FileObject) => {
     breadcrumb.unshift(item)
     if(item.parent) {
-      pushBreadcrumb(breadcrumb, item.parent)
+      pushBreadcrumb(breadcrumb, item.parent as FileObject)
     }
   }
 
@@ -225,14 +225,14 @@
   }
 
   // 打开文件
-  const clickFile = async (item: any) => {
+  const clickFile = async (item: FileObject) => {
     await Cloud.DocModel.open(item.key)
     state.currentLay = Cloud.DocModel.current
     navRef.value.checkedNode(item)
   }
 
   // 选中一个文件夹
-  const selectTargetItem = (item: any) => {
+  const selectTargetItem = (item: FileObject) => {
     state.targetItem = item
   }
 
@@ -242,14 +242,14 @@
   }
 
   // 返回到某一层
-  const goBack = async (item: any, index: number) => {
+  const goBack = async (item: FileObject, index: number) => {
     await clickFile(item)
   }
 
   // 自定义文件上传
   const customUpload = async (options: UploadRequestOptions) => {
     const file = options.file as File
-    await Cloud.DocModel.upload(state.currentLay.key, file.name, file, async (res) => {
+    await Cloud.DocModel.upload(state.currentLay.key, file.name, file, async (res: any) => {
       if(res.finished == res.size) {
         ElMessage.success('上传成功')
         await refreshCurrent()
@@ -348,7 +348,7 @@
   }
 
   // 右键展开文件操作栏
-  const fileRightClick = (event: any, item: any, index: number) => {
+  const fileRightClick = (event: any, item: FileObject, index: number) => {
     state.operateItem = item
     showFileMenu.value = false
     menuLeft.value = event.pageX

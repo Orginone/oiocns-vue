@@ -13,7 +13,7 @@ import { reactive, ref, onMounted, Ref } from 'vue';
 import DiyTable from "@/components/diyTable/index.vue";
 import $services from "@/services";
 import { useAsyncComputed } from '@/hooks/useAsyncComputed';
-import { chat } from '@/module/chat/orgchat';
+import {CommunicateModel as chat} from '@orginone/oiocns-ts';
 const tableData = ref<any[]>([])
 onMounted(async () => {
   const res = await $services.company.getAssignedDepartments({
@@ -25,7 +25,7 @@ onMounted(async () => {
   tableData.value = res.data.result || [];
   const rows: Ref<any>[] = tableData.value.map(d => ref<any>(d));
   for (const row of rows) {
-    useAsyncComputed(row, "belongId", "belongName", v => chat.getNameAsync(v))
+    useAsyncComputed(row, "belongId", "belongName", async v => chat.getName(v))
   }
 })
 

@@ -57,7 +57,7 @@
           :underline="false"
           @click="() => router.push('/workHome')"
         >
-           <img class="logo" src="./../../../assets/img/logo.png" alt="">
+           <img class="logo" src="@/assets/img/logo3.jpg" alt="">
         </el-link>
         <!-- <el-link
           title="消息"
@@ -77,13 +77,15 @@
             <ChatDotSquare />
           </el-icon>
         </el-link> -->
-        <li
+        <li class="top-icon"
           v-for="(item, index) in state.mainMenus"
           @click="handleRouterChage(item)"
           :key="index"
           :title="item.name"
         >
+          <el-badge :value="item.count || 0" :hidden="!item.showCount">
             <i class="icon-list iconfont" :class="item.icon" ></i>
+          </el-badge>
         </li>
         <el-dropdown trigger="hover" size="large" class="dropdown-menu">
           <span class="el-dropdown-link">
@@ -133,18 +135,19 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref,reactive, computed } from 'vue'
+  import { ref,reactive, computed, onMounted } from 'vue'
   import { storeToRefs } from 'pinia'
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/store/user'
-  import $services from '@/services'
   import { ElMessage } from 'element-plus'
   import CreateUnitDialog from './createUnitDialog.vue'
   import searchCompany from '@/components/searchs/index.vue'
   import SearchDialog from './searchDialog.vue'
   import headImg from '@/components/headImg.vue'
   import { useDark } from '@vueuse/core'
-  import { chat } from '@/module/chat/orgchat'
+  // import { chat } from '@/module/chat/orgchat'
+  // import { CommunicateModel as chat } from '@/oiocns-ts/src';
+  import { CommunicateModel as chat, WorkModel as todo } from '@orginone/oiocns-ts';
   import { USERCTRL ,TargetType} from '@/ts/coreIndex'
 
   const isDark = useDark()
@@ -169,11 +172,25 @@
 
   const state = reactive({
     mainMenus: [
-      { name: '沟通', icon: 'icon-message', path: '/chat' },
-      { name: '办事', icon: 'icon-todo', path: '/service' },
+      { name: '沟通', icon: 'icon-message', path: '/chat', showCount: true, count: 0 },
+      { name: '办事', icon: 'icon-todo', path: '/service', showCount: true, count: 0 },
       { name: '仓库', icon: 'icon-store', path: '/store' },
       { name: '设置', icon: 'icon-setting', path: '/setCenter' },  
     ]
+  })
+  onMounted(() => {
+    // TODO: 目前消息只有全局脏检查订阅，不能单独订阅
+    chat.subscribe(() => {
+      console.warn("触发全局订阅回调");
+      const count = chat.getNoReadCount();
+      state.mainMenus[0].count = count;
+    });
+
+    todo.subscribe(async () => {
+      console.warn("触发全局订阅回调");
+      const count = await todo.TaskCount();
+      state.mainMenus[1].count = count;
+    });
   })
 
   const getDropMenuStyle = computed(() => {
@@ -347,7 +364,7 @@
   const exitLogin = () => {
     sessionStorage.clear()
     store.resetState()
-    chat.stop()
+    // chat.stop()
     router.push('/login')
   }
 </script>
@@ -461,6 +478,12 @@
       border-radius: 50px;
       width: 20px;
       transform: scale(0.7, 0.7);
+    }
+  }
+
+  .top-icon {
+    :deep(.el-badge__content) {
+      transform: translateY(25%) translateX(100%);
     }
   }
 

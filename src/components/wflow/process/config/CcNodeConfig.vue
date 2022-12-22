@@ -6,7 +6,7 @@
     </div> -->
     <org-items v-model="select"/>
     <!-- <org-picker multiple ref="orgPicker" :selected="select" @ok="selected"/> -->
-    <el-dialog  v-model="friendDialogmodeBool"  custom-class="share-dialog" :title="'选择人员'" width="1000px" draggable :close-on-click-modal="false">
+    <!-- <el-dialog  v-model="friendDialogmodeBool"  custom-class="share-dialog" :title="'选择人员'" width="1000px" draggable :close-on-click-modal="false">
         <chooseOperator  v-show="friendDialogmodeBool && spaceType=='单位'" @closeDialog="friendDialogmodeBool = false"  @submit="checksSearch" :radio="'3'"  :way="[ 
         {
           id: '3',
@@ -16,8 +16,8 @@
           label: '集团岗位'
         }]"></chooseOperator>
         <chooseOperatorPersonal v-show="friendDialogmodeBool && spaceType=='人员'" dialogType="1" @closeDialog="nodeProps.friendDialogmode = 0" :info="selectProductItem" :type="4" @submit="checksSearch"></chooseOperatorPersonal>
-      </el-dialog>
-      <div v-if="nodeProps.assignedUser && nodeProps.assignedUser.length>0">已选择：<span v-for="(item, index) in nodeProps.assignedUser" :key="index"><el-tag closable @close="handleClose(index)">{{item.name}}</el-tag></span></div> 
+    </el-dialog> -->
+      <!-- <div v-if="nodeProps.assignedUser && nodeProps.assignedUser.length>0">已选择：<span v-for="(item, index) in nodeProps.assignedUser" :key="index"><el-tag closable @close="handleClose(index)">{{item.name}}</el-tag></span></div>  -->
   </div>
 </template>
 
@@ -34,12 +34,12 @@
   } from 'vue';
   // import OrgPicker from "@/components/common/OrgPicker";
 
-  import chooseOperator from '@/views/Market/components/chooseOperator.vue'
-  import chooseOperatorPersonal from '@/views/Market/components/chooseOperatorPersonal.vue'
+  // import chooseOperator from '@/views/Market/components/chooseOperator.vue'
+  // import chooseOperatorPersonal from '@/views/Market/components/chooseOperatorPersonal.vue'
   import authority from '@/utils/authority'
   export default defineComponent({
     name: 'CcNodeConfig',
-    components: {chooseOperator,chooseOperatorPersonal},
+    // components: {chooseOperator,chooseOperatorPersonal},
     props: {
       config: {
         type: Object,

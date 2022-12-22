@@ -146,7 +146,6 @@
 </template>
 
 <script lang="ts" setup>
-  import $services from '@/services'
   import { ref, onMounted, reactive, nextTick, getCurrentInstance } from 'vue'
   import { storeToRefs } from 'pinia'
   import { useUserStore } from '@/store/user'
@@ -456,24 +455,24 @@
     state.orderMessage.list = data
   }
   //确认开始交易
-  const sureContent = async (id: string) => {
-    await $services.order
-      .updateDetail({
-        data: {
-          id: id,
-          status: 100
-        }
-      })
-      .then((res: ResultType) => {
-        if (res.code == 200) {
-          getTableList(searchType.value)
-          ElMessage({
-            message: '确认开始交易',
-            type: 'success'
-          })
-        }
-      })
-  }
+  // const sureContent = async (id: string) => {
+  //   await $services.order
+  //     .updateDetail({
+  //       data: {
+  //         id: id,
+  //         status: 100
+  //       }
+  //     })
+  //     .then((res: ResultType) => {
+  //       if (res.code == 200) {
+  //         getTableList(searchType.value)
+  //         ElMessage({
+  //           message: '确认开始交易',
+  //           type: 'success'
+  //         })
+  //       }
+  //     })
+  // }
   //查询支付列表
   const showPayList = async (data: any) => {
     payListDialog.data = data

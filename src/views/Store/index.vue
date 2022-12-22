@@ -5,9 +5,8 @@
         :detailDialog="dialogType.detailDialog"
         @closeDialog="closeDialog('detailDialog', false)"
       ></appDetail>
-      <opened></opened>
+      <!-- <opened></opened> -->
       <div class="table">
-        {{state.ownProductList}}
         <DiyTable
           :style="{ width: '100%' }"
           ref="diyTable"
@@ -39,32 +38,34 @@
             </div>
           </template>
           <template #buttons>
-            <el-button class="btn-check" type="primary" @click="goBuy()" link
-              >购买</el-button
-            >
-            <el-button class="btn-check" @click="goCreate()" type="primary" link
-              >创建</el-button
-            >
-            <el-button class="btn-check" type="primary" link>暂存</el-button>
+            <div class="btn-box">
+              <el-button link type="primary" @click="goBuy()" 
+                >购买</el-button
+              >
+              <el-button link @click="goCreate()" type="primary" 
+                >创建</el-button
+              >
+            </div>
+            <!-- <el-button class="btn-check" type="primary" link>暂存</el-button> -->
           </template>
           <template #name="scope">
-            {{ scope.row.name }}
+            {{ scope.row.prod.name }}
           </template>
           <template #tag="scope">
             <el-tag
               v-if="
-                scope.row.endTime == undefined ||
+                scope.row.prod.endTime == undefined ||
                 new Date().getTime() < formartDateTime(scope.row?.endTime)
               "
               style="margin-left: 10px"
               :type="
-                authority.IsApplicationAdmin(scope.row.belongId)
+                authority.IsApplicationAdmin(scope.row.prod.belongId)
                   ? ''
                   : 'success'
               "
             >
               {{
-                authority.IsApplicationAdmin(scope.row.belongId)
+                authority.IsApplicationAdmin(scope.row.prod.belongId)
                   ? "可管理"
                   : "可使用"
               }}</el-tag
@@ -75,17 +76,18 @@
               :type="'danger'"
               >失效</el-tag
             >
-            <el-tag style="margin-left: 10px">{{ scope.row.source }}</el-tag>
+            <el-tag style="margin-left: 10px">{{ scope.row.prod.source }}</el-tag>
           </template>
           <template #operate="scope">
             <el-dropdown trigger="click">
               <span class="el-dropdown-link"> ··· </span>
               <template #dropdown>
                 <el-dropdown-menu>
+                  <el-dropdown-item @click="handleChooseItem(scope.row)">打开</el-dropdown-item>
                   <el-dropdown-item
                     v-if="
-                      scope.row.authority == '所属权' &&
-                      scope.row.belongId == store.workspaceData.id
+                      scope.row.prod.authority == '所属权' &&
+                      scope.row.prod.belongId == store.workspaceData.id
                     "
                     link
                     type="primary"
@@ -95,7 +97,7 @@
                   <el-dropdown-item
                     link
                     type="primary"
-                    v-if="scope.row.belongId == store.workspaceData.id"
+                    v-if="scope.row.prod.belongId == store.workspaceData.id"
                     @click="handleCommand('own', 'share', scope.row)"
                   >
                     共享</el-dropdown-item
@@ -103,16 +105,28 @@
                   <el-dropdown-item
                     link
                     type="primary"
-                    v-if="authority.IsCompanySpace()"
+                    v-if="userCtrl.isCompanySpace"
                     @click="handleCommand('own', 'distribution', scope.row)"
                     >分配
                   </el-dropdown-item>
                   <el-dropdown-item
                     link
                     type="primary"
-                    @click="goDetail(scope.row.id)"
+                    @click="goDetail(scope.row.prod.id)"
                   >
                     查看详情
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    link
+                    type="primary"
+                    @click="goPublic(scope.row.prod.id)">
+                    上架列表
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    link
+                    type="primary"
+                    @click="handleSetting(scope.row.prod.id)">
+                    移动至
                   </el-dropdown-item>
                   <el-dropdown-item
                     link
@@ -122,8 +136,8 @@
                   >
                   <el-dropdown-item
                     v-if="
-                      scope.row.resourcesList &&
-                      scope.row.resourcesList.length > 0
+                      scope.row.prod.resourcesList &&
+                      scope.row.prod.resourcesList.length > 0
                     "
                   >
                     <el-dropdown trigger="hover" placement="top-end">
@@ -133,7 +147,7 @@
                           style="padding-left: 10px; min-width: 100px"
                         >
                           <el-dropdown-item
-                            v-for="resource in scope.row.resourcesList"
+                            v-for="resource in scope.row.prod.resourcesList"
                             :key="resource.formId"
                             @click="enterProcess(resource)"
                             >{{ resource.business }}</el-dropdown-item
@@ -154,20 +168,22 @@
                 :key="index"
               >
                 <div class="item-head">
-                  <div class="item-img">{{ item.name.substring(0,1) }}</div>
+                  <div class="item-img">{{ item.prod.name.substring(0,1) }}</div>
                   <div class="item-head-content">
                     <p>
                       <span
-                        >{{ item.name }}
+                        >{{ item.prod.name }}
                       </span>
                         <el-dropdown>
                           <span class="el-dropdown-link drop-list"> ··· </span>
                           <template #dropdown>
                             <el-dropdown-menu>
+                              <el-dropdown-item @click="handleChooseItem(item)">打开</el-dropdown-item>
+
                               <el-dropdown-item
                                 v-if="
-                                  item.authority == '所属权' &&
-                                  item.belongId ==
+                                  item.prod.authority == '所属权' &&
+                                  item.prod.belongId ==
                                     store.workspaceData.id
                                 "
                                 link
@@ -181,7 +197,7 @@
                                 link
                                 type="primary"
                                 v-if="
-                                  item.belongId ==
+                                  item.prod.belongId ==
                                   store.workspaceData.id
                                 "
                                 @click="handleCommand('own', 'share', item)"
@@ -191,7 +207,7 @@
                               <el-dropdown-item
                                 link
                                 type="primary"
-                                v-if="authority.IsCompanySpace()"
+                                v-if="userCtrl.isCompanySpace"
                                 @click="
                                   handleCommand('own', 'distribution', item)
                                 "
@@ -200,20 +216,20 @@
                               <el-dropdown-item
                                 link
                                 type="primary"
-                                @click="goDetail(item.id)"
+                                @click="goDetail(item.prod.id)"
                               >
                                 查看详情
                               </el-dropdown-item>
                               <el-dropdown-item
                                 link
                                 type="primary"
-                                @click="deleteApp(item.id)"
+                                @click="deleteApp(item.prod.id)"
                                 >移除应用</el-dropdown-item
                               >
-                              <el-dropdown-item
+                              <!-- <el-dropdown-item
                                 v-if="
-                                  item.resourcesList &&
-                                  item.resourcesList.length > 0
+                                  item.prod.resourcesList &&
+                                  item.prod.resourcesList.length > 0
                                 "
                               >
                                 <el-dropdown trigger="hover" placement="top-end">
@@ -231,7 +247,7 @@
                                     </el-dropdown-menu>
                                   </template>
                                 </el-dropdown>
-                              </el-dropdown-item>
+                              </el-dropdown-item> -->
                             </el-dropdown-menu>
                           </template>
                         </el-dropdown>
@@ -240,12 +256,12 @@
                   </div>
                 </div>
                 <div class="item-content">
-                  {{item.remark}}
+                  {{item.prod.remark}}
                 </div>
                 <div class="tag">
-                  <el-tag class="tag-item" type="info">{{item.typeName}}</el-tag>
+                  <el-tag class="tag-item" type="info">{{item.prod.typeName}}</el-tag>
                 </div>
-                <div class="time">创建于 {{ item.createTime }}</div>
+                <div class="time">创建于 {{ item.prod.createTime }}</div>
               </div>
             </div>
           </template>
@@ -302,19 +318,20 @@ import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/user";
 import DiyTable from "@/components/diyTable/index.vue";
 import authority from "@/utils/authority";
-import { appstore } from "@/module/store/app";
 import opened from "./components/opened.vue";
 import appDetail from "./components/appDetail.vue";
 import ShareComponent from "./components/shareComponents.vue";
-// import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
-
-// import {MarketModel} from "@/ts/market";
-// import {StoreModel} from "@/ts/store";
-// import {PersonalModel} from '@/ts/personal'
+import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
 import marketCtrl from '@/ts/controller/store/marketCtrl';
+import appCtrl from '@/ts/controller/store/appCtrl';
+import userCtrl from '@/ts/controller/setting/userCtrl';
+import { useCommonStore } from '@store/common'
+import img1 from '@/assets/img/group22.png'
+
+const { proxy } = getCurrentInstance()
 
 const goCreate = () => {
-  router.push({ path: "/store/appRegister2" });
+  router.push({ path: "/store/appRegister" });
 };
 const dialogType: any = reactive({
   detailDialog: false, //应用详情弹窗
@@ -363,6 +380,7 @@ const goBuy = () => {
 };
 //去应用详情
 const goDetail = (id: string) => {
+  appCtrl.setCurProduct(id);
   router.push({ path: "/store/appManagement", query: { id: id } });
 };
 type StateType = {
@@ -373,6 +391,7 @@ type StateType = {
   options: any[]; //集团列表
   selectLabel: selectType; // 选中的集团名称
   tableHead: any[];
+  appList:any[];
   dropDwonActiveId: string; // 当前dropdwon打开时选中的id
 };
 const options = ref<any>({
@@ -395,6 +414,7 @@ const state: StateType = reactive({
   marketOptions: [],
   options: [],
   dropDwonActiveId: "",
+  appList:[],
   selectLabel: {
     label: "",
     id: "",
@@ -415,25 +435,25 @@ const state: StateType = reactive({
       width: "200",
     },
     {
-      prop: "code",
+      prop: "prod.code",
       label: "应用编码",
       width: "150",
     },
     {
-      prop: "source",
+      prop: "prod.source",
       label: "应用来源",
     },
     {
-      prop: "typeName",
+      prop: "prod.typeName",
       label: "应用类型",
       width: "150",
     },
     {
-      prop: "authority",
+      prop: "prod.authority",
       label: "持有权限",
     },
     {
-      prop: "createTime",
+      prop: "prod.createTime",
       label: "创建时间",
       width: "200",
     },
@@ -454,6 +474,22 @@ onMounted(() => {
     
 });
 
+const commonStore = useCommonStore()
+// 打开应用
+const handleChooseItem = async (app: any) => {
+  state.appList.forEach(element => {
+    if(element.prod.id ==app.prod.id){
+      const { link } = element.prod.resource[0]
+      let data = { type: '', appInfo: app, icon: img1, link, path: '/online' }
+      data.type = 'app'
+      commonStore.iframeLink = data?.link
+      router.push(data.path)
+    }else{
+
+    }
+  });
+ 
+}
 const handleUpdate = (page: any) => {
   pageStore.currentPage = page.current;
   pageStore.pageSize = page.pageSize;
@@ -461,69 +497,38 @@ const handleUpdate = (page: any) => {
 };
 // 获取我的应用列表
 const getProductList = () => {
-  // appstore.getProductList(pageStore, searchText.value,(res:any)=>{
-  //   state[`ownProductList`] = [...res.result]
-  //   let resData = JSON.parse(JSON.stringify(state[`ownProductList`]))
-  //   for (let product of resData) {
-  //       appstore.getResource(product.id,(res:any)=>{
-  //         let flowArr: any = [];
-  //         var arr = JSON.parse(JSON.stringify(res.result))
-  //         arr.filter((element: any) => element.flows && element.flows.length > 0)
-  //           .forEach((element: any) => {
-  //             let arr = JSON.parse(element.flows);
-  //             let itemArr: any = [];
-  //             arr.forEach((el: any) => {
-  //               el.appId = product.id;
-  //               el.appName = product.name;
-  //               el.sourceId = element.id;
-  //               itemArr.push(el);
-  //             });
-  //             flowArr.push(...itemArr);
-  //           });
-  //         product.resourcesList = flowArr;
-  //         pageStore.total = res.total;
-  //         diyTable.value.state.page.total = res.total
-  //       });
-  //   }
-  // })
-
   marketCtrl.Market.getOwnProducts(false).then((res:any)=>{
-    let arr:any = []
-    res.forEach((element:any) => {
-      let obj = {
-        name: element.prod.name,
-        updateTime:element.prod.updateTime,
-        createTime:element.prod.createTime,
-        typeName:element.prod.typeName,
-        updateUser:element.prod.updateUser,
-        authority:element.prod.authority,
-        belongId:element.prod.belongId,
-        code:element.prod.code,
-        source:element.prod.source
-      }
-      arr.push(obj)
-    });
-    state[`ownProductList`] = arr;
-
+    state[`ownProductList`] = res ;
+    state['appList'] = res;
+    diyTable.value.state.page.total = res.length
   })
 };
-
+proxy?.$Bus.on("storeMenu", (arr:any) => {
+    // getShopList();
+    let newArr:Array<Object> = []
+    arr.forEach((item:any) => {
+      state.appList.forEach(element => {
+        if(element.prod.id == item){
+          newArr.push(element)
+        }
+      });
+    });
+    state[`ownProductList`] = newArr ;
+    diyTable.value.state.page.total = newArr?.length || 0
+});
 // 移除app
 const deleteApp = (item: any) => {
-  ElMessageBox.confirm(`确认删除  ${item.name}?`, "警告", {
+  ElMessageBox.confirm(`确认删除  ${item.prod.name}?`, "警告", {
     confirmButtonText: "确认",
     cancelButtonText: "取消",
     type: "warning",
-  })
-    .then(async () => {
-      const success = await appstore.deleteApp(item.id);
-      if (success) {
-        getProductList();
-        ElMessage({
-          type: "success",
-          message: "操作成功",
-        });
-      }
+  }).then(async () => {
+      await userCtrl.space.deleteProduct(item.prod.id);
+      getProductList();
+      ElMessage({
+        type: "success",
+        message: "操作成功",
+      });
     })
     .catch(() => {});
 };
@@ -537,6 +542,7 @@ const handleCommand = (
   item: any
 ) => {
   selectProductItem.value = item;
+  appCtrl.setCurProduct(item.prod.id)
   console.log("selectProductItem", selectProductItem.value);
   switch (command) {
     case "share": //分享
@@ -545,7 +551,7 @@ const handleCommand = (
     case "putaway": //上架
       router.push({
         path: "/store/putShelves",
-        query: { name: item.name, id: item.id, typeName: item.typeName },
+        query: { name: item.prod.name, id: item.prod.id, typeName: item.prod.typeName },
       });
       break;
     case "unsubscribe":
@@ -559,7 +565,18 @@ const handleCommand = (
       break;
   }
 };
-
+//分配标签
+const handleSetting = (id:string) => {
+  console.log('id',id)
+};
+// 去上架列表
+const goPublic = (id:string) => {
+  appCtrl.setCurProduct(id);
+  router.push({
+    path: "/store/public",
+    query: { id:id},
+  });
+};
 //  打开集团选择弹窗
 const openShareDialog = () => {
   dialogType.shareVisible = true;
@@ -609,7 +626,7 @@ instance?.proxy?.$Bus.on("clickBus", (num) => {
   }
 
   .content {
-    width: calc(100vw - 200px);
+    width: calc(100vw);
     display: flex;
     flex-direction: column;
     background: #f0f4f8;
@@ -624,19 +641,11 @@ instance?.proxy?.$Bus.on("clickBus", (num) => {
     .table {
       background: #fff;
       margin-top: 3px;
-      height: calc(100vh - 260px);
-
-      .btn-check {
-        padding: 8px 16px;
-        color: #154ad8;
+      height: calc(100vh - 100px);
+      .btn-box{
+        padding-bottom: 10px;
+        width: 80px;
       }
-
-      .btn-check:hover {
-        background: #154ad8;
-        color: #fff;
-        padding: 8px 16px;
-      }
-
       .table-tabs {
 
         .el-menu--horizontal {
