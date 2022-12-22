@@ -300,7 +300,7 @@
         :info="selectProductItem"
       ></ShareComponent>
     </el-dialog>
-    <ProcessDesign ref="processDesignRef" />
+    <!-- <ProcessDesign ref="processDesignRef" /> -->
   </div>
 </template>
 
@@ -344,7 +344,7 @@ const closeDialog = (type: string, key: boolean) => {
   dialogType[type] = key;
 };
 
-const processDesignRef = ref();
+// const processDesignRef = ref();
 const isCard = ref(true);
 const instance = getCurrentInstance();
 
@@ -591,10 +591,10 @@ const formartDateTime = (dateStr: any) => {
   }
 };
 
-const enterProcess = (resource: any) => {
-  console.log("resource", resource);
-  processDesignRef.value.startDesign(resource);
-};
+// const enterProcess = (resource: any) => {
+//   console.log("resource", resource);
+//   processDesignRef.value.startDesign(resource);
+// };
 
 instance?.proxy?.$Bus.on("clickBus", (num) => {
   console.log(num);

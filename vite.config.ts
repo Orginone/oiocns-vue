@@ -3,7 +3,6 @@ import vue from '@vitejs/plugin-vue'
 import * as path from 'path'
 // import styleImport from 'vite-plugin-style-import';
 import AutoImport from 'unplugin-auto-import/vite'
-
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { settings } from './src/config/index'

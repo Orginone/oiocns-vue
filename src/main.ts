@@ -14,6 +14,7 @@ import VueMarkdownEditor from '@kangc/v-md-editor';
 import '@kangc/v-md-editor/lib/style/base-editor.css';
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
 import '@kangc/v-md-editor/lib/theme/style/vuepress.css';
+import locale from "element-plus/lib/locale/lang/zh-cn";
 import mitt from 'mitt'
 const Mit = mitt()
 declare module "vue" {
@@ -55,6 +56,7 @@ app.use(pinia)
 app.use(VueGridLayout)
 setupRouter(app)
 app.use(ElementPlus)
+// app.use(ElementPlus, {locale}) //国内
 // await router.isReady()
 
 import Prism from 'prismjs';
