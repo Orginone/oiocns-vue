@@ -66,7 +66,7 @@
   import setTree from './json/setTree.json';
   import serviceJson from './json/service.json';
   // import userJosn from './json/user.json';
-  import { chat } from '@/module/chat/orgchat'
+  import { chat } from '@/ts/controller/chat'
   import marketServices from "@/module/store/market"
 
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";

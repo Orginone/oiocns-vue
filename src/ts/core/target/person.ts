@@ -6,7 +6,7 @@ import MarketTarget from './mbase';
 import { companyTypes, TargetType } from '../enum';
 import University from './university';
 import { CommonStatus } from './../enum';
-import { validIsSocialCreditCode } from '@/utils/tools';
+// import { validIsSocialCreditCode } from '@/utils/tools';
 import { ICompany, IPerson, ICohort, SpaceType, ITarget } from './itarget';
 import { schema, model, kernel, common } from '@/ts/base';
 import { TargetModel } from '@/ts/base/model';
@@ -123,10 +123,10 @@ export default class Person extends MarketTarget implements IPerson {
       logger.warn('您无法创建该类型单位!');
       return;
     }
-    if (!validIsSocialCreditCode(data.code)) {
-      logger.warn('请填写正确的代码!');
-      return;
-    }
+    // if (!validIsSocialCreditCode(data.code)) {
+    //   logger.warn('请填写正确的代码!');
+    //   return;
+    // }
     const tres = await this.searchTargetByName(data.code, companyTypes);
     if (!tres.result) {
       const res = await this.createTarget(data);
