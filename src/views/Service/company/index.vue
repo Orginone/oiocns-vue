@@ -89,8 +89,6 @@
   import searchCompany from '@/components/searchs/index.vue'
   // import { chat } from '@/ts/controller/chat'
   
-  // import thingServices from '@/module/flow/thing'
-
   import {WorkModel} from "@/oiocns-ts";
 
   // 申请加入单位弹窗控制

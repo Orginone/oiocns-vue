@@ -112,7 +112,6 @@ import { ElMessage } from 'element-plus'
 import HeadImg from '@/components/headImg.vue'
 import { reactive, ref, computed } from 'vue'
 import { chat } from '@/ts/controller/chat'
-import { TargetType } from '@/module/enums'
 // 会话列表搜索关键字
 const searchValue = ref<string>('')
 
