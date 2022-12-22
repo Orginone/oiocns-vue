@@ -59,16 +59,15 @@
   import { useUserStore } from '@/store/user'
   import { setCenterStore } from '@/store/setting'
   import authority from '@/utils/authority'
-  import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick,getCurrentInstance} from 'vue'
+  import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick,getCurrentInstance, onMounted} from 'vue'
   import { RouteLocationNormalizedLoaded, useRouter } from 'vue-router';
   import storeJson from './json/store.json';
   // import settingJosn from './json/setting.json';
   import setTree from './json/setTree.json';
-  import serviceJson from './json/service.json';
+  // import serviceJson from './json/service.json';
   // import userJosn from './json/user.json';
-  import { chat } from '@/ts/controller/chat'
-  import marketServices from "@/module/store/market"
-
+  // import { chat } from '@/module/chat/orgchat'
+  import { WorkModel as todo } from '@orginone/oiocns-ts';
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
   import { anystore } from '@/hubs/anystore'
@@ -78,6 +77,7 @@
   import {INullSpeciesItem} from "@/ts/core";
 
   const { proxy } = getCurrentInstance()
+  const store = useUserStore()
 
   const btnType = ref<string>('');
   const addMenuDialog = ref<boolean>(false);
@@ -85,6 +85,30 @@
   const menuTree = ref(createAllMenuTree());
   const allMenuItems = ref(getAllNodes(menuTree.value));
   
+  onMounted(() => {
+    todo.subscribe(async () => {
+      console.warn("触发全局订阅回调");
+      
+      const header = allMenuItems.value.find(m => m.id == "service");
+      for (const todomenu of header?.children || []) {
+        if (todomenu.id == "service.friendApply") {
+          // 未提供好友待办
+          todomenu.num = 0;
+        } else if (todomenu.id == "service.company") {
+          todomenu.num = (await todo.OrgTodo?.getCount()) ?? 0;
+        } else if (todomenu.id == "service.group") {
+          // 未提供集团待办
+          todomenu.num = 0;
+        } else if (todomenu.id == "service.shop") {
+          todomenu.num = (await todo.MarketTodo?.getCount()) ?? 0;
+        } else if (todomenu.id == "service.order") {
+          todomenu.num = (await todo.OrderTodo?.getCount()) ?? 0;
+        } 
+      }
+    });
+  })
+
+
   // 路由控制，单独匹配的话需要增加 showMenu.value = true;
   function getNavData2() { 
     btnType.value='';//默认为空
@@ -151,6 +175,7 @@
       return;
     }
     // end-文档相关
+
     // start-标准设置相关
     if (router.currentRoute.value.path.indexOf('setCenter/standard') != -1) {
       titleArr.state = {icon: 'PriceTag',title: '标准设置', "backFlag": true}
@@ -159,6 +184,7 @@
       return;
     }
     // end-标准设置相关
+
     if(router.currentRoute.value.path.indexOf('store/shop') != -1){
       getShopList();
       showMenu.value = true;
@@ -166,6 +192,7 @@
 
       return
     }
+
     if(router.currentRoute.value.path.indexOf('store/appManagement') != -1){
       titleArr.state = storeJson[0]
       menuArr.state = storeJson
@@ -177,16 +204,16 @@
       getMenu()
       return
     }
-    if(router.currentRoute.value.path.indexOf('service') != -1){
-      serviceJson[1].children.forEach((element:any,index:any) => {
-        // element?.num = index
-      });
-      showMenu.value = true;
-      titleArr.state = serviceJson[0]
+    // if(router.currentRoute.value.path.indexOf('service') != -1){
+    //   serviceJson[1].children.forEach((element:any,index:any) => {
+    //     // element?.num = index
+    //   });
+    //   showMenu.value = true;
+    //   titleArr.state = serviceJson[0]
      
-      menuArr.state = serviceJson
-      return
-    }
+    //   menuArr.state = serviceJson
+    //   return
+    // }
     const ret = findMenu(router.currentRoute.value, allMenuItems.value);
     if (!ret) {
       showMenu.value = false;
@@ -208,10 +235,12 @@
   const menuData = reactive({
     data:[]
   });
+
+  //数据过滤
   const dataFilter = (data:any)=>{
     if(data.length>0){
       data.forEach((element:any) => {
-        element.url = '/store?id='+element.id
+        element.isStoreMenu = true;
         element.label = element.title
         if(element.children.length>0){
           dataFilter(element.children)
@@ -223,10 +252,11 @@
   };
   // 获取商店分类
   const getMenu = () => {
-    anystore.subscribed(`selfAppMenu`, 'user', (data) => {
+    anystore.subscribed('STORE_MENU'+store.workspaceData.id, 'user', (data) => {
       let newJSON = JSON.parse(JSON.stringify(storeJson))
-        if(data?.data?.length>0){
-          menuData.data = data.data;
+      console.log('newJSON',newJSON)
+        if(data?.data?.species.length>0){
+          menuData.data = data.data.species;          
           dataFilter(menuData.data)
           newJSON[2].children = menuData.data;
         }
@@ -368,7 +398,7 @@
     let shopstoreJson = JSON.parse(JSON.stringify(storeJson))
     showMenu.value = true;
     shopstoreJson[2] = newObj
-    titleArr.state = shopstoreJson[0]
+    titleArr.state = {icon: 'User',title: '商店', "backFlag": true}
     menuArr.state = shopstoreJson
     })
     
@@ -428,16 +458,16 @@
 
   onBeforeMount(async () => {
     await authority.Load()
-    chat.start(useUserStore().userToken)
+    // chat.start(useUserStore().userToken)
   })
 
   onBeforeUnmount(() => {
-    chat.stop()
-    window.removeEventListener('beforeunload', chat.stop)
+    // chat.stop()
+    // window.removeEventListener('beforeunload', chat.stop)
   })
 
   // 页面刷新时 关闭握手
-  window.addEventListener('beforeunload', chat.stop)
+  // window.addEventListener('beforeunload', chat.stop)
   
   const instance = getCurrentInstance();
   instance?.proxy?.$Bus.on('refreshNav', () => { getNavData2() })

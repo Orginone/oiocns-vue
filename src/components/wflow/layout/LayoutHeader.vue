@@ -21,11 +21,11 @@
         <!-- <el-menu-item index="proSetting">④ 扩展设置</el-menu-item> -->
       </el-menu>
       <div class="back">
-        <el-button size="default" @click="exit">
+        <!-- <el-button size="default" @click="exit">
           <el-icon>
             <Back />
           </el-icon>退出
-        </el-button>
+        </el-button> -->
         <span>
           <el-input v-model="design.name" size="default" v-show="showInput" style="width: 300px"
           @blur="showInput = false" @keyup.enter.native="showInput = false"></el-input>
@@ -51,7 +51,6 @@
           />
         </el-select></span> -->
         </span>
-        
       </div>
       <div class="publish">
         <!-- <el-button size="small" @click="preview">
