@@ -25,7 +25,7 @@
           <component :is="val.icon" style="width: 16px;height: 16px;" :style="{color: state.flag1 === val.type ? '#1642cb' : '#c7ccdc' }" ></component>&nbsp;
           <span style="font-size: 14px;" :style="{color: state.flag1 === val.type ? '#000' : '#a5a8ba' }" >{{ val.name }} 
           </span>
-          <div class="tips" v-if="(item.num>0)"></div>
+          <div class="tips" v-if="(val.num>0)">{{val.num}}</div>
 
         </el-menu-item>
       </el-sub-menu>
