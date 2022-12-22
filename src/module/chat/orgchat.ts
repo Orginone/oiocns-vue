@@ -14,7 +14,9 @@ export enum MessageType {
     Video = "视频",
     Voice = "语音",
     Recall = "撤回",
-    Readed = "已读"
+    Readed = "已读",
+    RecvMsg = "监听消息",
+    RecvTask = "发送任务"
 }
 /** 存储消息数据集名称 */
 const hisMsgCollName = "chat-message"
@@ -169,6 +171,25 @@ export default class OrgChat extends Object {
                     }
                 }
             })
+        }
+        return name
+    }
+    /**
+     * 查询名称代码字典
+     * @param {string} id 任意ID
+     * @returns {string} id对应的名称
+     */
+    public async getNameAsync(id: string) {
+        let name = this.nameMap.value[id] || ''
+        if (name === '' && this.authed.value) {
+            const res = await this.connection.invoke("GetName", id)
+            if (res.success) {
+                this.nameMap.value[id] = res.data
+                if (this.chats.value.length > 0) {
+                    this._cacheChats()
+                }
+                return res.data;
+            } 
         }
         return name
     }

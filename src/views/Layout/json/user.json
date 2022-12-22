@@ -1,0 +1,101 @@
+[
+    {
+        "icon": "User",
+        "title": "我的",
+        "id": "mine-header"
+    },
+    {
+        "name": "信息中心",
+        "structure": false,
+        "id": "mine.info",
+        "children": [
+            {
+                "id": "mine.index",
+                "name": "个人信息",
+                "type": "0",
+                "uid": "1-1",
+                "url": "/mine",
+                "children": []
+            },
+            {
+                "id": "mine.my-unit",
+                "name": "我的单位",
+                "type": "2",
+                "uid": "1-1",
+                "url": "/mine/unit",
+                "children": []
+            },
+            {
+                "id": "mine.my-friend",
+                "name": "好友设置",
+                "type": "3",
+                "uid": "1-1",
+                "url": "/mine/friend",
+                "children": []
+            },
+            {
+                "id": "mine.my-cohort",
+                "name": "群组设置",
+                "type": "4",
+                "uid": "1-1",
+                "url": "/mine/cohort",
+                "children": []
+            },
+            {
+                "name": "首页设置",
+                "type": "5",
+                "uid": "1-1",
+                "url": "/setCenter/post",
+                "children": []
+            },
+            {
+                "name": "帮助中心",
+                "type": "6",
+                "uid": "1-1",
+                "url": "/#/store",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "自定义设置",
+        "structure": false,
+        "children": [
+            {
+                "name": "地址管理",
+                "type": "11",
+                "uid": "1-1",
+                "url": "/mine/certificate",
+                "children": []
+            },
+            {
+                "name": "证书管理",
+                "type": "12",
+                "uid": "1-1",
+                "url": "/mine/certificate",
+                "children": []
+            },
+            {
+                "name": "安全管理",
+                "type": "13",
+                "uid": "1-1",
+                "url": "/mine/certificate",
+                "children": []
+            },
+            {
+                "name": "消息设置",
+                "type": "14",
+                "uid": "1-1",
+                "url": "/mine/certificate",
+                "children": []
+            },
+            {
+                "name": "主题设置",
+                "type": "15",
+                "uid": "1-1",
+                "url": "/mine/certificate",
+                "children": []
+            }
+        ]
+    }
+]

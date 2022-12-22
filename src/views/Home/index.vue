@@ -19,7 +19,6 @@ import FriendServices from '@/module/relation/friend'
 import Head from '@/components/protal/components/head.vue'
 import Cent from '@/components/protal/components/cent.vue'
 import Foot from '@/components/protal/components/foot.vue'
-import $services from '@/services'
 import { ElMessage } from 'element-plus'
 
 interface ListItem {
@@ -79,15 +78,12 @@ const joinFriend = () => {
 
 .headers {
   width: 100%;
-  height: 39%;
 }
 .centers{
   width: 100%;
-  height: 25%;
 }
 .footers{
   width: 100%;
-  height: 34%;
   margin-top: 10px;
 }
 

@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
 import $services from '@/services'
 import { ElMessage } from 'element-plus'
-import { type } from 'os'
+import {USERCTRL} from '@/ts/coreIndex'
+// import { type } from 'os'
+import { ICompany,SpaceType } from '@/ts/core/target/itarget';
 
 type QueryInfoType = {
   id: string
@@ -32,7 +34,7 @@ export const useUserStore = defineStore({
       loadCompanys: [],
       copyCompanys: [],
       userToken: '',
-      workspaceData: {}, // 当前选中的单位
+      workspaceData: {}, // 当前选中的空间
       userUnitInfo: {} as UnitInfoType //所在单位信息
     }
   },
@@ -51,14 +53,17 @@ export const useUserStore = defineStore({
   },
   getters: { },
   actions: {
-    async updateUserInfo(data: { username: string; password: string }) {
-      // 获取用户登录信息
-      const res: ResultType = await $services.person.login({
-        data: {
-          account: data.username,
-          password: data.password
+    async setCurSpace(dataId: string){
+      USERCTRL.setCurSpace(dataId);
+      this.copyCompanys.forEach(d=>{
+        if(d.id==dataId){
+          this.workspaceData = Object.assign({},d);
         }
       })
+    },
+    async updateUserInfo(data: { username: string; password: string }) {
+      // 获取用户登录信息
+      const res: ResultType = await USERCTRL.login(data.username, data.password)
       if (res.success) {
         this.userInfo = res.data
         this.userToken = res.data.accessToken
@@ -67,7 +72,7 @@ export const useUserStore = defineStore({
           name: res.data.workspaceName
         }
         // this.userCompanys = [this.workspaceData]
-        await this.getQueryInfo(this.userToken)
+        // await this.getQueryInfo(this.userToken)
         return this.workspaceData
       } else {
         ElMessage({
@@ -93,46 +98,36 @@ export const useUserStore = defineStore({
       }
     },
     async getCompanyList(current: number, workspaceId: string, lazyLoad: boolean) {
-      await $services.company
-        .getJoinedCompany({
-          data: {
-            offset: current,
-            limit: 100
+      await USERCTRL.user
+      .getJoinedCompanys()
+        .then((res: ICompany[]) => {
+          if (!res) {
+            console.log(workspaceId, this.userInfo)
+            this.getWorkspaceData(workspaceId, false)
+            return
           }
-        })
-        .then((res: ResultType) => {
-          console.log(res)
-          if (res.code == 200) {
-            // if (lazyLoad) {
-            //   this.userCompanys = this.userCompanys.concat(res.data.result ? res.data.result : [])
-            // } else {
-            //   this.userCompanys = res.data.result ? res.data.result : []
-            // }
-            if (!res.data.result) {
-              console.log(workspaceId, this.userInfo)
-              this.getWorkspaceData(workspaceId, false)
-              return
-            }
-            this.userCompanys = [
-              {
-                id: this.userInfo.workspaceId,
-                name: this.userInfo.workspaceName,
-                type: 1
-              },
-              ...(res.data.result || [])
-            ]
-            this.copyCompanys = JSON.parse(JSON.stringify(this.userCompanys))
-            if (workspaceId) {
-              this.getWorkspaceData(workspaceId, false)
-            } else {
-              this.getWorkspaceData(this.userInfo.workspaceId, false)
-            }
+          const all: SpaceType[] =
+            USERCTRL.user?.joinedCompany?.map((item) => {
+              return item.spaceData;
+            }) || [];
+          all.unshift(USERCTRL.user.spaceData);
+          
+          this.userCompanys = all.filter((item) => {
+            return item.id != USERCTRL.space.spaceData.id;
+          })
+
+          this.copyCompanys = Object.assign([],all);
+          if (workspaceId) {
+            this.getWorkspaceData(workspaceId, false)
           } else {
-            ElMessage({
-              message: res.msg,
-              type: 'warning'
-            })
+            this.getWorkspaceData(this.userInfo.workspaceId, false)
           }
+          // } else {
+          //   ElMessage({
+          //     message: res.msg,
+          //     type: 'warning'
+          //   })
+          // }
         })
     },
 
@@ -159,36 +154,20 @@ export const useUserStore = defineStore({
         })
     },
 
-    async getWorkspaceData(id: string, getLoad: boolean) {
+    async getWorkspaceData(id: string) {
       await this.copyCompanys.forEach((el: any, index: number) => {
         if (id == el.id) {
-          let obj = {}
-          if (el.type === 1) {
-            obj = {
-              id: el.id,
-              name: el.team ? el.team.name : el.name,
-              type: 1
-            }
-          } else {
-            obj = {
-              id: el.id,
-              name: el.team ? el.team.name : el.name,
-              type: 2,
-              authId: el.team.authId
-            }
-          }
-
-          this.workspaceData = obj
-          sessionStorage.setItem('WORKSPACE', JSON.stringify(obj))
-          if (getLoad) {
+          this.workspaceData = el
+          // sessionStorage.setItem('WORKSPACE', JSON.stringify(obj))
+          // if (getLoad) {
             // 防止选择单位时先删除后刷新
-            this.loadCompanys = JSON.parse(JSON.stringify(this.userCompanys))
-            this.userCompanys.splice(index, 1)
-          } else {
+            this.loadCompanys = Object.assign([],this.userCompanys);
+            // this.userCompanys.splice(index, 1)
+          // } else {
             // 点击加载单位 去除当前单位
-            this.userCompanys.splice(index, 1)
-            this.loadCompanys = JSON.parse(JSON.stringify(this.userCompanys))
-          }
+          //   this.userCompanys.splice(index, 1)
+          //   this.loadCompanys = JSON.parse(JSON.stringify(this.userCompanys))
+          // }
         }
       })
     },

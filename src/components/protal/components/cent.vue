@@ -5,34 +5,39 @@
         <p class="lsolid"></p>
         <span class="csolid">快捷入口</span>
         <p class="rsolid"></p>
-        <el-icon class="eidtIcon"><Edit /></el-icon>
+        <el-popover
+          placement="right"
+          :width="150"
+          trigger="click"
+        >
+          <template #reference>
+            <el-icon class="eidtIcon"><Edit /></el-icon>
+          </template>
+          <p 
+          v-for="item in state.btnData" 
+          :key='item.id' 
+          :style="{cursor: 'pointer', margin: '5px', 
+          color: state.flag === item.id ? 'red' : ''}" 
+          @mouseover='onHover(item.id)' 
+          @mouseout="onOut" >
+            <component :is="item.icon" style="width: 16px;height: 16px;"></component>&nbsp;
+            {{item.title}}
+          </p>
+        </el-popover>
       </div>
       <div class="L_bottom">
         <div class="lb_col">
-            <el-card class="card" shadow="hover"> 
-              <el-icon>
-                <User />
-              </el-icon><span>Always</span> </el-card>
-              <el-card class="card" shadow="hover"> 
-              <el-icon>
-                <User />
-              </el-icon><span>Always</span> </el-card>
-              <el-card class="card" shadow="hover"> 
-              <el-icon>
-                <User />
-              </el-icon><span>Always</span> </el-card>
-              <el-card class="card" shadow="hover"> 
-              <el-icon>
-                <User />
-              </el-icon><span>Always</span> </el-card>
-              <el-card class="card" shadow="hover"> 
-              <el-icon>
-                <User />
-              </el-icon><span>Always</span> </el-card>
-              <el-card class="card" shadow="hover"> 
-              <el-icon>
-                <User />
-              </el-icon><span>Always</span> </el-card>
+            <el-card 
+              :style="{cursor: 'pointer'}" 
+              v-for="item in state.quickData" 
+              :key="item.id" class="card" 
+              :class="state.cardFlag === item.id ? 'card1' : ''" 
+              @mouseover='cardOnHover(item.id)' 
+              @mouseout="onOut" 
+              @click="handleRouterChage(item.path)" > 
+                <component :is="item.icon" style="width: 16px;height: 16px;"></component>
+                <span>{{item.title}}</span>
+            </el-card>
         </div>
       </div>
     </div>
@@ -45,30 +50,10 @@
       </div>
       <div class="R_bottom">
         <div class="rb_col">
-            <div class="card">
+            <div class="card" v-for="item in state.commonData" :key="item.id">
               <span><img src="@/assets/img/app2.png" alt=""></span>
-              <span>资产监管平台</span>
-              <span>简单、高效、开放的监管工具</span>
-            </div>
-            <div class="card">
-              <span><img src="@/assets/img/app2.png" alt=""></span>
-              <span>资产监管平台</span>
-              <span>简单、高效、开放的监管工具</span>
-            </div>
-            <div class="card">
-              <span><img src="@/assets/img/app2.png" alt=""></span>
-              <span>资产监管平台</span>
-              <span>简单、高效、开放的监管工具</span>
-            </div>
-            <div class="card">
-              <span><img src="@/assets/img/app2.png" alt=""></span>
-              <span>资产监管平台</span>
-              <span>简单、高效、开放的监管工具</span>
-            </div>
-            <div class="card">
-              <span><img src="@/assets/img/app2.png" alt=""></span>
-              <span>资产监管平台</span>
-              <span>简单、高效、开放的监管工具</span>
+              <span>{{item.name}}</span>
+              <span>{{item.title}}</span>
             </div>
         </div>
       </div>
@@ -79,14 +64,54 @@
 <script lang="ts" setup>
 import { useUserStore } from '@/store/user'
 import { storeToRefs } from 'pinia'
-import { computed,onMounted,ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { computed,onMounted,ref,reactive } from 'vue'
 
 const store = useUserStore()
+const router = useRouter()
 const { queryInfo } = storeToRefs(store)
-
-onMounted(() => {
-
+const state = reactive({
+  btnData: [
+    {id: '1', title: '添加入口', icon: 'CirclePlus'},
+    {id: '2', title: '新标签页打开', icon: 'Star'},
+    {id: '3', title: '删除入口', icon: 'Coffee'},
+  ],
+  quickData: [
+    {id: '0', title: '加好友', icon: 'User', path: '/store'},
+    {id: '1', title: '创单位', icon: 'Files', path: '/store'},
+    {id: '2', title: '邀成员', icon: 'Position', path: '/store'},
+    {id: '3', title: '建应用', icon: 'Sell', path: '/store'},
+    {id: '4', title: '逛商城', icon: 'ShoppingCart', path: '/store'},
+    {id: '5', title: '添数据', icon: 'Expand', path: '/store'},
+  ],
+  commonData: [
+    {id: '0', title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: '1', title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: '2', title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: '3', title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: '4', title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+    {id: '5', title: '简单、高效、开放的监管工具', name: '资产监管平台'},
+  ],
+  flag: '',
+  cardFlag: '',
 })
+
+// 页面跳转
+const handleRouterChage = (path: string) => {
+  router.push({path})
+  // console.log("通用SDK调用示例",WorkModel.CurAppTodo);
+}
+
+const onHover = (id: string) => {
+  state.flag = id
+}
+const onOut = () => {
+  state.flag = ''
+  state.cardFlag = ''
+}
+const cardOnHover = (id: string) => {
+  state.cardFlag = id
+}
   
 </script>
 
@@ -94,7 +119,8 @@ onMounted(() => {
 
 .center {
   width: 100%;
-  height: 100%;
+  height: 230px;
+  padding: 10px 0px;
   display: flex;
   .left{
     width: 30%;
@@ -133,11 +159,29 @@ onMounted(() => {
       justify-content: center;
       align-items: flex-start;
       flex-wrap: wrap;
-      .card{
+      font-size: 13px;
+      .card1{
         margin: 5px 10px;
         width: 25%;
+        height: 57px;
         display: flex;
+        background: #2b6ed9;
+        color: white;
+        border-radius: 8px;
         justify-content: center;
+        align-items: center;
+        span{
+          margin-left: 10px;
+        }
+      }
+      .card{
+        margin: 5px 10px;
+        width: 27%;
+        height: 57px;
+        display: flex;
+        border-radius: 8px;
+        justify-content: center;
+        align-items: center;
         span{
           margin-left: 10px;
         }

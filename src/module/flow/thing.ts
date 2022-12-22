@@ -38,26 +38,155 @@ class thingServices {
     searchManagerPublishApplyList:[],
     searchManagerPublishApplyHead:[],
   }
- 
   public flowHead :Array<Object> = [
-     {
-        prop: 'flowInstance.flowRelation.productId',
-        label: '应用ID',
-        name: 'productId',
-        type: 'slot',
+    {
+       prop: 'flowInstance.flowRelation.productId',
+       label: '应用ID',
+       name: 'productId',
+       type: 'slot',
+    },
+    {
+       prop: 'flowInstance.title',
+       label: '流程名称',
+       name: 'flowInstance.title',
+       type: 'content',
      },
      {
-        prop: 'flowInstance.title',
+       prop: 'flowInstance.flowRelation.functionCode',
+       label: '业务名称',
+       name: 'flowInstance.flowRelation.functionCode',
+       type: 'content',
+     },
+     {
+       prop: 'target.name',
+       label: '申请人',
+       name: 'target.name',
+       type: 'slot',
+     },
+     {
+       type: 'slot',
+       prop: 'content',
+       label: '内容',
+       name: 'content'
+     },
+     {
+       type: 'slot',
+       prop: 'status',
+       label: '状态',
+       name: 'status'
+     },
+     {
+       prop: 'createTime',
+       label: '发送时间',
+       name: 'createTime'
+     },
+     {
+       type: 'slot',
+       prop: 'option',
+       label: '操作',
+       name: 'option'
+     }
+  ]
+  public queryInstanceHead :Array<Object> =[
+    {
+      prop: 'flowRelation.productId',
+      label: '应用ID',
+      name: 'productId',
+      type: 'slot',
+     },
+     {
+        prop: 'title',
         label: '流程名称',
-        name: 'flowInstance.title',
+        name: 'title',
         type: 'content',
       },
       {
-        prop: 'flowInstance.flowRelation.functionCode',
+        prop: 'flowRelation.functionCode',
         label: '业务名称',
-        name: 'flowInstance.flowRelation.functionCode',
+        name: 'flowRelation.functionCode',
         type: 'content',
       },
+      {
+        prop: 'target.name',
+        label: '发起人',
+        name: 'target.name',
+        type: 'slot',
+      },
+      {
+        prop: 'createTime',
+        label: '过期时间',
+        name: 'createTime'
+      },
+      {
+        type: 'slot',
+        prop: 'option',
+        label: '操作',
+        name: 'option'
+      }
+  ]
+  public companyHead :Array<Object> = [
+    {
+      prop: 'flowInstance.flowRelation.productId',
+      label: '事项',
+      name: 'productId',
+      type: 'slot',
+   },
+   {
+      type: 'slot',
+      prop: 'content',
+      label: '说明',
+      name: 'content'
+    },
+    {
+      prop: 'target.name',
+      label: '发起人',
+      name: 'target.name',
+      type: 'slot',
+    },
+    {
+      prop: 'createTime',
+      label: '发起时间',
+      name: 'createTime'
+    },
+    {
+      type: 'slot',
+      prop: 'option',
+      label: '操作',
+      name: 'option'
+    }
+  ]
+  public shopHead :Array<Object> =[
+    {
+      prop: 'flowInstance.flowRelation.productId',
+      label: '事项',
+      name: 'productId',
+      type: 'slot',
+   },
+   {
+      type: 'slot',
+      prop: 'content',
+      label: '说明',
+      name: 'content'
+    },
+    {
+      prop: 'target.name',
+      label: '发起人',
+      name: 'target.name',
+      type: 'slot',
+    },
+    {
+      prop: 'createTime',
+      label: '过期时间',
+      name: 'createTime'
+    },
+    {
+      type: 'slot',
+      prop: 'option',
+      label: '操作',
+      name: 'option'
+    }
+  ]
+  public orderHead :Array<Object> = [
       {
         prop: 'target.name',
         label: '申请人',
@@ -89,134 +218,85 @@ class thingServices {
       }
   ]
   public recordHead :Array<Object> = [
-     {
-      prop: 'flowTask.flowInstance.flowRelation.productId',
-      label: '应用ID',
-      name: 'productId',
-      type: 'slot',
-     },
-     {
-        prop: 'flowTask.flowInstance.title',
-        label: '流程名称',
-        name: 'flowTask.flowInstance.title',
-        type: 'content',
-      },
-      {
-        prop: 'flowTask.flowInstance.flowRelation.functionCode',
-        label: '业务名称',
-        name: 'flowTask.flowInstance.flowRelation.functionCode',
-        type: 'content',
-      },
-      {
-        prop: 'target.name',
-        label: '申请人',
-        name: 'target.name',
-        type: 'slot',
-      },
-      {
-        type: 'slot',
-        prop: 'content',
-        label: '内容',
-        name: 'content'
-      },
-      {
-        type: 'slot',
-        prop: 'status',
-        label: '状态',
-        name: 'status'
-      },
-      {
-        prop: 'createTime',
-        label: '发送时间',
-        name: 'createTime'
-      },
-      {
-        type: 'slot',
-        prop: 'option',
-        label: '操作',
-        name: 'option'
-      }
-  ]
-  public queryInstanceHead :Array<Object> =[
     {
-      prop: 'flowRelation.productId',
-      label: '应用ID',
-      name: 'productId',
-      type: 'slot',
+     prop: 'flowTask.flowInstance.flowRelation.productId',
+     label: '应用ID',
+     name: 'productId',
+     type: 'slot',
+    },
+    {
+       prop: 'flowTask.flowInstance.title',
+       label: '流程名称',
+       name: 'flowTask.flowInstance.title',
+       type: 'content',
      },
      {
-        prop: 'title',
-        label: '流程名称',
-        name: 'title',
-        type: 'content',
-      },
-      {
-        prop: 'flowRelation.functionCode',
-        label: '业务名称',
-        name: 'flowRelation.functionCode',
-        type: 'content',
-      },
-      {
-        prop: 'target.name',
-        label: '申请人',
-        name: 'target.name',
-        type: 'slot',
-      },
-      {
-        type: 'slot',
-        prop: 'content',
-        label: '内容',
-        name: 'content'
-      },
-      {
-        type: 'slot',
-        prop: 'status',
-        label: '状态',
-        name: 'status'
-      },
-      {
-        prop: 'createTime',
-        label: '发送时间',
-        name: 'createTime'
-      },
-      {
-        type: 'slot',
-        prop: 'option',
-        label: '操作',
-        name: 'option'
-      }
-  ]
-  public examineHead :Array<Object> = [
-      {
-        prop: 'target.name',
-        label: '申请人',
-        name: 'target.name',
-        type: 'slot',
-      },
-      {
-        type: 'slot',
-        prop: 'content',
-        label: '内容',
-        name: 'content'
-      },
-      {
-        type: 'slot',
-        prop: 'status',
-        label: '状态',
-        name: 'status'
-      },
-      {
-        prop: 'createTime',
-        label: '发送时间',
-        name: 'createTime'
-      },
-      {
-        type: 'slot',
-        prop: 'option',
-        label: '操作',
-        name: 'option'
-      }
-  ]
+       prop: 'flowTask.flowInstance.flowRelation.functionCode',
+       label: '业务名称',
+       name: 'flowTask.flowInstance.flowRelation.functionCode',
+       type: 'content',
+     },
+     {
+       prop: 'target.name',
+       label: '申请人',
+       name: 'target.name',
+       type: 'slot',
+     },
+     {
+       type: 'slot',
+       prop: 'content',
+       label: '内容',
+       name: 'content'
+     },
+     {
+       type: 'slot',
+       prop: 'status',
+       label: '状态',
+       name: 'status'
+     },
+     {
+       prop: 'createTime',
+       label: '发送时间',
+       name: 'createTime'
+     },
+     {
+       type: 'slot',
+       prop: 'option',
+       label: '操作',
+       name: 'option'
+     }
+    ]
+  public companyHead :Array<Object> = [
+     {
+       prop: 'target.name',
+       label: '申请人',
+       name: 'target.name',
+       type: 'slot',
+     },
+     {
+       type: 'slot',
+       prop: 'content',
+       label: '内容',
+       name: 'content'
+     },
+     {
+       type: 'slot',
+       prop: 'status',
+       label: '状态',
+       name: 'status'
+     },
+     {
+       prop: 'createTime',
+       label: '发送时间',
+       name: 'createTime'
+     },
+     {
+       type: 'slot',
+       prop: 'option',
+       label: '操作',
+       name: 'option'
+     }
+ ]
      /**
    * @description: 列表数据
    */  
@@ -293,23 +373,22 @@ class thingServices {
    * @description: 查询我发起的应用待办
    * @return result 返回数据
    */
-   public async queryRecord (){
+  public async queryRecord (){
     if(this.whiteList.includes('queryRecord')){
     console.log('c')
-
-        return true;
+      return true;
     }
     const { data , success} = await API.wflow.queryRecord({
-        data: {
-            offset: 0,
-            limit: 1000,
-            filter: "string"
-        }
+      data: {
+        offset: 0,
+        limit: 1000,
+        filter: "string"
+      }
     })
     if (success) {
-        this.whiteList.push('queryRecord')
-        const { result = [], total = 0 } = data
-        this.recordList = result
+      this.whiteList.push('queryRecord')
+      const { result = [], total = 0 } = data
+      this.recordList = result
     }
   }
   /**
@@ -324,7 +403,7 @@ class thingServices {
         data: {
             offset: 0,
             limit: 1000,
-            filter: "string"
+            typeName: "approve"
         }
     })
     if (success) {

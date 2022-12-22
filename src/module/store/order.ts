@@ -8,7 +8,7 @@
 // 取消订单
 // 确认订单
 import API from '@/services'
-import  type { Merchandise, OrderType ,CancelType} from '@/views/Market/Order/order'
+// import  type { Merchandise, OrderType ,CancelType} from '@/views/Market/Order/order'
 
 export type ListProps = Pick<PaginationProps, 'current' | 'pageSize'> & Partial<CommonParamsType>
 

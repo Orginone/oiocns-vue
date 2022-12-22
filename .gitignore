@@ -1,1 +1,8 @@
 node_modules
+/dist
+package-lock.json
+
+/auto-imports.d.ts
+/components.d.ts
+.yalc/
+yalc.lock

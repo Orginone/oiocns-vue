@@ -48,8 +48,6 @@
     width: v-bind(imgWidthStyle);
     min-width: v-bind(imgWidthStyle);
     height: v-bind(imgWidthStyle);
-    margin-right: 10px;
-
     &.txt-img {
       background-color: var(--el-color-primary);
       display: flex;
@@ -59,6 +57,7 @@
       font-weight: bold;
       letter-spacing: 1px;
       color: #fff;
+      margin-right: 10px;
     }
 
     .user-img {

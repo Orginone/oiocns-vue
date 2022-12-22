@@ -21,7 +21,7 @@
           </div>
         </div>
 
-        <div @mouseover="handleOpen()" class="select-drop" :style="getDropMenuStyle">
+        <div v-if="modelIsShow" @mouseover="handleOpen()" class="select-drop" :style="getDropMenuStyle">
           <div class="select-box" v-infinite-scroll="load" infinite-scroll-immediate>
             <div
               class="seletc-drop__box"
@@ -49,39 +49,17 @@
         </div>
       </div>
     </el-col>
-    <!-- 中间搜索 -->
-    <!-- <el-col :span="6" class="col-center" v-if="false">
-      <el-popover trigger="click" :visible="visible" placement="bottom" :width="100">
-        <template #reference>
-          <el-input
-            ref="searchRef"
-            class="right-con"
-            v-model="SearchInfo"
-            :style="{ width: '100%', height: '40px' }"
-            placeholder="请输⼊想搜索的功能"
-          >
-            <template #prepend>
-              <el-button :icon="Search" @click="showSearchInfo" />
-            </template>
-          </el-input>
-        </template>
-        <SearchDialog></SearchDialog>
-      </el-popover>
-    </el-col> -->
     <!-- 右侧 -->
     <el-col :span="20" class="flex col-right">
       <el-space class="right-navbar">
-        <li
-          v-for="(item, index) in state.mainMenus.filter((a) => !a?.bottom)"
-          @click="handleRouterChage(item)"
-          :key="index"
-          :title="item.name"
-        >
-          <el-icon class="aside-li-icon" :size="20">
-            <component :is="item.icon" />
-          </el-icon>
-        </li>
         <el-link
+          title="首页"
+          :underline="false"
+          @click="() => router.push('/workHome')"
+        >
+           <img class="logo" src="@/assets/img/logo3.jpg" alt="">
+        </el-link>
+        <!-- <el-link
           title="消息"
           :underline="false"
           class="header-message-icon"
@@ -98,25 +76,25 @@
           <el-icon class="header-message-icon" :size="20" v-else>
             <ChatDotSquare />
           </el-icon>
-        </el-link>
-        <el-switch
-          title="模式"
-          v-model="isDark"
-          active-icon="Moon"
-          inactive-icon="Sunny"
-          inline-prompt
-        ></el-switch>
+        </el-link> -->
+        <li class="top-icon"
+          v-for="(item, index) in state.mainMenus"
+          @click="handleRouterChage(item)"
+          :key="index"
+          :title="item.name"
+        >
+          <el-badge :value="item.count || 0" :hidden="!item.showCount">
+            <i class="icon-list iconfont" :class="item.icon" ></i>
+          </el-badge>
+        </li>
         <el-dropdown trigger="hover" size="large" class="dropdown-menu">
           <span class="el-dropdown-link">
             <headImg :name="queryInfo.name" :limit="1" :imgWidth="24" :isSquare="false"></headImg>
-            <!-- <span>{{  queryInfo.name  }}</span> -->
-            <!-- <el-icon style="margin-left: 15px">
-              <CaretBottom />
-            </el-icon> -->
           </span>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="toWork" icon="Setting">首页配置</el-dropdown-item>
+              <el-dropdown-item @click="toSetting" icon="Setting">设置中心</el-dropdown-item>
               <el-dropdown-item @click="toUserSetting" icon="Postcard">个人中心</el-dropdown-item>
               <el-dropdown-item v-if="isUnitWork" @click="toCompanySetting" icon="Postcard"
                 >单位中心</el-dropdown-item
@@ -157,51 +135,62 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, watch, onMounted, reactive, computed } from 'vue'
-  import { Search } from '@element-plus/icons-vue'
+  import { ref,reactive, computed, onMounted } from 'vue'
   import { storeToRefs } from 'pinia'
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/store/user'
-  import $services from '@/services'
   import { ElMessage } from 'element-plus'
   import CreateUnitDialog from './createUnitDialog.vue'
   import searchCompany from '@/components/searchs/index.vue'
-  import JoinUnitDialog from './joinUnitDialog.vue'
   import SearchDialog from './searchDialog.vue'
   import headImg from '@/components/headImg.vue'
-  import { useDark, useToggle } from '@vueuse/core'
-  import { chat } from '@/module/chat/orgchat'
+  import { useDark } from '@vueuse/core'
+  // import { chat } from '@/module/chat/orgchat'
+  // import { CommunicateModel as chat } from '@/oiocns-ts/src';
+  import { CommunicateModel as chat, WorkModel as todo } from '@orginone/oiocns-ts';
+  import { USERCTRL ,TargetType} from '@/ts/coreIndex'
 
   const isDark = useDark()
-  // const toggleDark = useToggle(isDark)
-
   const store = useUserStore()
   const SearchInfo = ref('')
   const router = useRouter()
   let current = ref(1)
   const visible = ref(false)
+  const modelIsShow = ref(true)
   const showSearch = ref(false)
   const btnType = ref(false)
-  const { queryInfo } = storeToRefs(store)
-  const workspaceData = store.workspaceData
+  const { queryInfo,workspaceData } = storeToRefs(store)
+  // const workspaceData = store.workspaceData
   const dropdown = ref()
   const workHead = () => {
-    if (workspaceData?.name == '个人空间') {
+    if (workspaceData.value?.name == '个人空间') {
       return '我'
     }
-    return workspaceData?.name[0] || ''
+    return workspaceData.value?.name[0] || ''
   }
-  const isUnitWork = ref<boolean>(workspaceData.id != queryInfo.value.id)
+  const isUnitWork = ref<boolean>(workspaceData.value.id != queryInfo.value.id)
 
   const state = reactive({
     mainMenus: [
-      { name: '工作台', icon: 'DataAnalysis', path: '/workHome' },
-      { name: '关系', icon: 'SetUp', path: '/relation' },
-      { name: '仓库', icon: 'Box', path: '/market' },
-      { name: '网盘', icon: 'Files', path: '/cloud' },
-      { name: '待办', icon: 'Notebook', path: '/cardDetail' },
-      { name: '应用', icon: 'Menu', path: '#', bottom: true }
+      { name: '沟通', icon: 'icon-message', path: '/chat', showCount: true, count: 0 },
+      { name: '办事', icon: 'icon-todo', path: '/service', showCount: true, count: 0 },
+      { name: '仓库', icon: 'icon-store', path: '/store' },
+      { name: '设置', icon: 'icon-setting', path: '/setCenter' },  
     ]
+  })
+  onMounted(() => {
+    // TODO: 目前消息只有全局脏检查订阅，不能单独订阅
+    chat.subscribe(() => {
+      console.warn("触发全局订阅回调");
+      const count = chat.getNoReadCount();
+      state.mainMenus[0].count = count;
+    });
+
+    todo.subscribe(async () => {
+      console.warn("触发全局订阅回调");
+      const count = await todo.TaskCount();
+      state.mainMenus[1].count = count;
+    });
   })
 
   const getDropMenuStyle = computed(() => {
@@ -221,8 +210,9 @@
     let currentPage = 0
     current.value = current.value + 1
     currentPage = (current.value - 1) * 10 + 1
-    await store.getCompanyList(currentPage, workspaceData.id, true)
+    await store.getCompanyList(currentPage, workspaceData.value.id, true)
   }
+  
   const dialogShow = reactive([
     {
       key: 'unit',
@@ -250,7 +240,6 @@
       val.value.forEach((element: any) => {
         arr.push(element.id)
       })
-      console.log('val', arr)
       joinSubmit(arr)
     } else {
       searchDialog.value = false
@@ -260,14 +249,10 @@
     searchDialog.value = true
   }
   const joinSubmit = (arr: any) => {
-    $services.company
-      .applyJoin({
-        data: {
-          id: arr.join('')
-        }
-      })
-      .then((res: ResultType) => {
-        if (res.code == 200) {
+    USERCTRL.user
+      .applyJoinCompany(arr.join(''), TargetType.Company)
+      .then((isSuc:boolean) => {
+        if (isSuc) {
           searchDialog.value = false
           ElMessage({
             message: '申请成功',
@@ -279,8 +264,9 @@
 
   const onClickUnit = async () => {
     btnType.value = !btnType.value
+    modelIsShow.value = true;
     if (!store.userCompanys || store.userCompanys.length == 0) {
-      await store.getCompanyList(0, workspaceData.id, false)
+      await store.getCompanyList(0, workspaceData.value.id, false)
     }
   }
   const handleClose = () => {
@@ -308,60 +294,69 @@
   const onClickDrop = async () => {
     if (store.userCompanys.length == 0) {
       current.value = 0
-      await store.getCompanyList(current.value, workspaceData.id, false)
+      await store.getCompanyList(current.value, workspaceData.value.id, false)
     }
   }
 
   const switchCreateCompany = (data: { id: string }) => {
-    $services.person
-      .changeWorkspace({
-        data: {
-          id: data.id
-        }
-      })
-      .then(async (res: ResultType) => {
-        if (res.code == 200) {
-          sessionStorage.setItem('TOKEN', res.data.accessToken)
-          await store.getQueryInfo(res.data.accessToken)
-          current.value = 0
-          store.createUnit(res.data).then(() => {
-            location.href = '/'
-          })
-        } else {
-          ElMessage({
-            message: res.msg,
-            type: 'warning'
-          })
-        }
-      })
+    btnType.value = false
+    modelIsShow.value = false
+    store.setCurSpace(data.id)
+    // $services.person
+    //   .changeWorkspace({
+    //     data: {
+    //       id: data.id
+    //     }
+    //   })
+    //   .then(async (res: ResultType) => {
+    //     if (res.code == 200) {
+    //       sessionStorage.setItem('TOKEN', res.data.accessToken)
+    //       await store.getQueryInfo(res.data.accessToken)
+    //       current.value = 0
+    //       store.createUnit(res.data).then(() => {
+    //         location.href = '/'
+    //       })
+    //     } else {
+    //       ElMessage({
+    //         message: res.msg,
+    //         type: 'warning'
+    //       })
+    //     }
+    //   })
   }
   const switchCompany = (data: { id: string }) => {
-    $services.person
-      .changeWorkspace({
-        data: {
-          id: data.id
-        }
-      })
-      .then(async (res: ResultType) => {
-        if (res.code == 200) {
-          sessionStorage.setItem('TOKEN', res.data.accessToken)
-          await store.getQueryInfo(res.data.accessToken)
-          store.getWorkspaceData(res.data.workspaceId, true).then(() => {
-            location.href = '/'
-          })
-        } else {
-          ElMessage({
-            message: res.msg,
-            type: 'warning'
-          })
-        }
-      })
+    handleClose();
+    modelIsShow.value = false
+    store.setCurSpace(data.id)
+    // $services.person
+    //   .changeWorkspace({
+    //     data: {
+    //       id: data.id
+    //     }
+    //   })
+    //   .then(async (res: ResultType) => {
+    //     if (res.code == 200) {
+    //       sessionStorage.setItem('TOKEN', res.data.accessToken)
+    //       await store.getQueryInfo(res.data.accessToken)
+    //       store.getWorkspaceData(res.data.workspaceId, true).then(() => {
+    //         location.href = '/'
+    //       })
+    //     } else {
+    //       ElMessage({
+    //         message: res.msg,
+    //         type: 'warning'
+    //       })
+    //     }
+    //   })
   }
   const toWork = () => {
     router.push('/workHome')
   }
   const toUserSetting = () => {
-    router.push('/user')
+    router.push('/mine')
+  }
+  const toSetting = () => {
+    router.push('/setCenter')
   }
   const toCompanySetting = () => {
     router.push('/company')
@@ -369,12 +364,15 @@
   const exitLogin = () => {
     sessionStorage.clear()
     store.resetState()
-    chat.stop()
+    // chat.stop()
     router.push('/login')
   }
 </script>
 
 <style lang="scss" scoped>
+  .logo{
+    width: 18px;
+  }
   .select-box {
     overflow: auto;
     padding-left: 8px;
@@ -445,14 +443,6 @@
   .col-box {
     cursor: pointer;
     display: flex;
-
-    .el-icon {
-      margin-left: 10px;
-    }
-  }
-
-  :deep(.el-popover.el-popper) {
-    width: 100%;
   }
 
   .joinBox {
@@ -491,18 +481,22 @@
     }
   }
 
-  .page-custom-header {
-    // height: 60px;
-    // line-height: 60px;
+  .top-icon {
+    :deep(.el-badge__content) {
+      transform: translateY(25%) translateX(100%);
+    }
+  }
 
+  .page-custom-header {
+    height: 45px;
+    line-height: 45px;
+    display: flex;
+    align-items: center;
     .el-col {
       display: flex;
       align-items: center;
     }
 
-    .logo {
-      margin-right: 10px;
-    }
 
     .col-right {
       justify-content: flex-end;
@@ -513,6 +507,8 @@
 
       .right-navbar {
         height: 100%;
+        display: flex;
+        align-items: center;
       }
 
       :deep(.right-navbar .el-space__item) {
@@ -520,6 +516,15 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-right: 0;
+        li{
+          display: flex;
+         
+          .icon-list{
+            font-size: 22px;
+            color: #A6AEC7; 
+          }
+        }
       }
 
       :deep(.right-navbar .el-space__item .el-switch) {
@@ -530,7 +535,7 @@
         cursor: pointer;
         background: rgba(0, 0, 0, 0.03);
         height: 100%;
-        color: #409eff;
+        color: #154AD8;
       }
 
       // .dropdown-menu {

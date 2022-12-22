@@ -185,6 +185,36 @@ function isSpecialChar(value: any) {
 }
 
 /**
+ * 压缩文件名显示（中间隐藏，用..代替）
+ * @param name 文件名
+ * @param limit 压缩限制
+ * @param start 头
+ * @param end 尾
+ */
+function zipFileName(name: string, limit: number, start: number, end: number) {
+  if(!name) {
+    return ''
+  }
+  if(name.length > limit) {
+    const rp = name.substring(start, name.length - end);
+    return rp != name ? name.replace(rp, "..") : name
+  } else {
+    return name
+  }
+}
+
+/**
+ * 文件大小单位转换
+ * @param a 容量大小，单位字节
+ * @param b 保留小数点后几位
+ */
+function formatBytes(a: number, b: number) {
+  if(0 == a) return '0 B'
+  const c = 1024, d = b || 2, e = ['B', 'KB', 'MB', 'GB', 'TB'], f = Math.floor(Math.log(a) / Math.log(c))
+  return parseFloat((a / Math.pow(c, f)).toFixed(d)) + ' ' + e[f]
+}
+
+/**
  * 过滤对象中为空的属性
  *
  * @param obj
@@ -207,4 +237,4 @@ function filterEmptyPropObj(obj: any) {
   return obj
 }
 
-export { getQueryString, formatDate, formatTimeAgo, isEmoji, isSpecialChar, filterEmptyPropObj }
+export { getQueryString, formatDate, formatTimeAgo, isEmoji, isSpecialChar, zipFileName, formatBytes, filterEmptyPropObj }

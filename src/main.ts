@@ -1,3 +1,6 @@
+//必须放在入口第一行，用于引入polyfill
+import "core-js";
+
 import { createApp } from 'vue'
 import App from './App.vue'
 import router, { setupRouter } from '@/router'
@@ -11,6 +14,13 @@ import VueMarkdownEditor from '@kangc/v-md-editor';
 import '@kangc/v-md-editor/lib/style/base-editor.css';
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
 import '@kangc/v-md-editor/lib/theme/style/vuepress.css';
+import mitt from 'mitt'
+const Mit = mitt()
+declare module "vue" {
+  export interface ComponentCustomProperties {
+      $Bus: typeof Mit
+  }
+}
 
 // // 夜间模式 
 // import '@/assets/style/element.dark.scss'
@@ -52,6 +62,7 @@ import Prism from 'prismjs';
 VueMarkdownEditor.use(vuepressTheme, {
   Prism,
 });
+app.config.globalProperties.$Bus = Mit
 
 app.use(VueMarkdownEditor);
 app.mount('#app')

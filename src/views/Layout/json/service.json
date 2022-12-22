@@ -1,0 +1,65 @@
+[
+  {
+    "icon": "List",
+    "title": "办事",
+    "backFlag": true,
+    "id": "service-header"
+  },
+  {
+      "name": "平台待办",
+      "structure": false,
+      "id": "service",
+      "children": [
+          {
+              "id": "service.friendApply",
+              "name": "好友申请",
+              "type":"1",
+              "uid":"1-1",
+              "url":"/service",
+              "children": []
+          },
+          {
+            "id": "service.company",
+              "name": "单位审核",
+              "type":"2",
+              "uid":"1-2",
+              "url":"/service/company",
+              "children": []
+          },
+          {
+            "id": "service.group",
+              "name": "集团审核",
+              "type":"5",
+              "uid":"1-5",
+              "url":"/service/group",
+              "children": []
+          },
+          {
+            "id": "service.shop",
+              "name": "商店审核",
+              "type":"3",
+              "uid":"1-3",
+              "url":"/service/shop",
+              "children": []
+          },
+          {
+            "id": "service.order",
+              "name": "订单审核",
+              "type":"4",
+              "uid":"1-4",
+              "url":"/service/order",
+              "children": []
+          }
+      ]
+  },
+  {
+      "label": "应用待办",
+      "structure": true,
+      "url":"/service/todo",
+      "isPenultimate": false,
+      "id": 1,
+      "children": [
+        
+      ]
+  }
+]

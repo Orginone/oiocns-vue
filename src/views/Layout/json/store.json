@@ -1,0 +1,60 @@
+[   {
+        "icon": "User",
+        "title": "仓库",
+        "id": "store-header"
+    },
+    {
+        "name": "常用分类",
+        "structure": false,
+        "id": "store-kind",
+        "children": [
+            {
+                "id": "store.index",
+                "name": "应用",
+                "type":"1",
+                "uid":"1-1",
+                "url":"/store",
+                "children": []
+            },
+            {
+                "id": "cloud",
+                "name": "文档",
+                "type":"2",
+                "uid":"1-1",
+                "url":"/cloud",
+                "children": []
+            },
+            {
+                "id": "store.data",
+                "name": "数据",
+                "type":"3",
+                "uid":"1-1",
+                "url":"/store",
+                "children": []
+            },
+            {
+                "id": "store.resource",
+                "name": "资源",
+                "type":"4",
+                "uid":"1-1",
+                "url":"/store",
+                "children": []
+            }
+        ]
+    },
+    {
+        "label": "分类",
+        "structure": true,
+        "isPenultimate": true,
+        "btns":[{
+            "name":"创建",
+            "id":"101"
+        },{
+            "name":"事件",
+            "id":"102"
+        }],
+        "children": [
+        
+        ]
+    }
+]

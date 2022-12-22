@@ -13,7 +13,7 @@
         </el-select></span>
     </div>
     <div class="layout-header">
-      <el-menu :default-active="defaultActive" active-text-color="#409eff" class="el-menu-demo" mode="horizontal"
+      <el-menu :default-active="defaultActive" active-text-color="#154AD8" class="el-menu-demo" mode="horizontal"
         :ellipsis="false" @select="handleSelect">
         <!-- <el-menu-item index="baseSetting">① 基础信息</el-menu-item> -->
         <!-- <el-menu-item index="formSetting">②③ 审批表单</el-menu-item> -->

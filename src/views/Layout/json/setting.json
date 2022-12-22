@@ -1,0 +1,120 @@
+[
+    {
+        "icon": "Setting",
+        "title": "设置",
+        "id": "setCenter-header"
+    },
+    {
+        "name": "组织设置",
+        "structure": false,
+        "id": "setCenter-org",
+        "children": [
+            {
+                "id": "setCenter.unit",
+                "name": "单位设置",
+                "type": "1",
+                "uid": "1-1",
+                "icon": "Discount",
+                "url": "/setCenter",
+                "children": []
+            },
+            {
+                "id": "setCenter.department",
+                "name": "部门设置",
+                "icon": "User",
+                "type": "2",
+                "uid": "1-1",
+                "url": "/setCenter/department",
+                "children": []
+            },
+            {
+                "id": "setCenter.unit",
+                "name": "集团设置",
+                "type": "3",
+                "icon": "OfficeBuilding",
+                "uid": "1-1",
+                "url": "/setCenter/group",
+                "children": []
+            },
+            {
+                "id": "setCenter.post",
+                "name": "岗位设置",
+                "type": "4",
+                "icon": "Film",
+                "uid": "1-1",
+                "url": "/setCenter/post",
+                "children": []
+            },
+            {
+                "id": "setCenter.help",
+                "name": "帮助中心",
+                "type": "5",
+                "icon": "Wallet",
+                "uid": "1-1",
+                "url": "/setCenter/help",
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "配置中心",
+        "structure": false,
+        "id": "setCenter-config",
+        "children": [
+            {
+                "id": "setCenter.unitMain",
+                "name": "单位首页",
+                "type": "6",
+                "icon": "HomeFilled",
+                "uid": "1-1",
+                "url": "/setCenter/unitMain",
+                "children": []
+            },
+            {
+                "id": "setCenter.resource",
+                "name": "资源设置",
+                "type": "8",
+                "icon": "Histogram",
+                "uid": "1-1",
+                "url": "/setCenter/resource",
+                "children": []
+            },
+            {
+                "id": "setCenter.use",
+                "name": "应用设置",
+                "type": "9",
+                "icon": "Grid",
+                "uid": "1-1",
+                "url": "/setCenter/use",
+                "children": []
+            },
+            {
+                "id": "setCenter.flow",
+                "name": "流程设置",
+                "type": "10",
+                "icon": "Rank",
+                "uid": "1-1",
+                "url": "/setCenter/flow",
+                "children": []
+            },
+            {
+                "id": "setCenter.standard",
+                "name": "标准设置",
+                "type": "11",
+                "icon": "PriceTag",
+                "uid": "1-1",
+                "url": "/setCenter/standard",
+                "children": []
+            },
+            {
+                "id": "setCenter.authority",
+                "name": "权限设置",
+                "type": "12",
+                "icon": "Stamp",
+                "uid": "1-1",
+                "url": "/setCenter/authority",
+                "children": []
+            }
+        ]
+    }
+]

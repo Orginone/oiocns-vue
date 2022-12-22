@@ -1,64 +1,173 @@
 <template>
-  <div class="main">
+  <div class="main" :class="{autoWidth: props.onlySelect}">
+    <div class="contentTile" v-if="!props.onlySelect">
+      <el-icon class="back" title="返回" @click="goBack"><ArrowLeft/></el-icon>
+      <el-icon class="doc"><Document/></el-icon>
+      <b>文档</b>
+    </div>
     <el-tree
       ref="treeRef"
-      :data="props.menuList"
       :props="defaultProps"
-      :expand-on-click-node="false"
+      :node-key="'key'"
+      :expand-on-click-node="true"
+      :highlight-current="true"
+      :lazy="true"
+      :load="loadNode"
+      accordion
       @node-click="nodeClick"
-      @node-expand="nodeExpand"
-    />
+    >
+      <template #default="{ node, data }">
+        <div class="folder-node">
+          <div class="node-label">
+            <el-icon><FolderOpened v-if="node.expanded"/><Folder v-else/></el-icon>
+            <span>{{ doZipFileName(node.label) }}</span>
+          </div>
+          <el-icon class="node-dots" @click.stop="showNodeBtns" v-if="!props.onlySelect"><MoreFilled /></el-icon>
+        </div>
+      </template>
+    </el-tree>
   </div>
 </template>
 
 <script lang="ts" setup>
   import type Node from 'element-plus/es/components/tree/src/model/node'
-  import { ref, onMounted, watch } from 'vue'
-  import Bucket from '@/module/cloud/bucket'
-  import { encodeURIString } from '../conversion'
-  interface Tree {
-    label: string
-    children?: Tree[]
-    level?: number
-  }
+  import { ref, onMounted, watch, reactive, nextTick } from 'vue'
+  import Cloud, { FileObject } from '@/ts/cloud'
+  import { zipFileName } from '@/utils'
+  import { useRouter } from "vue-router";
+
+  const router = useRouter()
   const props = defineProps({
-    menuList: {
-      type: Array
+    onlySelect: {
+      type: Boolean,
+      default: false
     }
   })
   const treeRef = ref(null)
-  const emit = defineEmits(['changeCurrentLocation'])
-
-  defineExpose({ treeRef })
+  const emit = defineEmits(['clickFileFromTree', 'selectTreeNode'])
 
   const defaultProps = {
-    children: 'children',
-    label: 'Name'
+    children: 'dirChildren',
+    label: 'name',
+    isLeaf: 'isLeaf'
   }
-  const nodeClick = (data: Tree, item: any, treenode: any, event: any) => {
-    data.level = item.level
-    emit('changeCurrentLocation', data)
+
+  // 返回到仓库
+  const goBack = () => {
+    router.push({ path: '/store' })
   }
-  const nodeExpand = async (data: any, node: any, nodeData: any) => {
-    data.children = await Bucket.GetLeftTree(data.Key)
-    console.log('dianji', data)
-  }
-</script>
-<style lang="scss">
-  .main {
-    .cloud-true {
-      width: 100%;
-      height: 100vh;
-      overflow-y: auto;
+
+  // 动态加载子目录
+  const loadNode = async (node: Node, resolve: (data: FileObject[]) => void) => {
+    if(node.level == 0) {
+      resolve([Cloud.DocModel.root])
+    } else {
+      await Cloud.GetLeftTree(node.data as FileObject)
+      resolve(node.data.dirChildren)
     }
   }
-</style>
 
+  // 点击节点目录
+  const nodeClick = (data: FileObject, item: any, treenode: any, event: any) => {
+    if(props.onlySelect) {
+      emit('selectTreeNode', data)
+    } else {
+      emit('clickFileFromTree', data)
+    }
+  }
+
+  // 文本展示工具函数
+  const doZipFileName = (name: string) => {
+    return zipFileName(name, 15, 5, 6)
+  }
+
+  // 选中某个节点
+  const checkedNode = (data: FileObject) => {
+    nextTick(() => {
+      treeRef.value.setCurrentKey(data.key, true)
+      const node = treeRef.value.getNode(data.key)
+      if(node && !node.expanded) {
+        node.expand()
+      }
+      node && node.childNodes && node.childNodes.map((child: any) => {
+        if(child.expanded){
+          child.collapse()
+        }
+      })
+    })
+  }
+
+  // 添加节点
+  const appendNode = (data: FileObject, parent: FileObject) => {
+    nextTick(() => {
+      data.isLeaf = true
+      treeRef.value.append(data, parent.key || parent)
+    })
+  }
+
+  // 删除节点
+  const removeNode = (data: FileObject) => {
+    nextTick(() => {
+      treeRef.value.remove(data.key)
+    })
+  }
+
+  // 显示节点操作
+  const showNodeBtns = () => {
+    console.log('点击显示节点操作栏')
+  }
+
+  defineExpose({ checkedNode, removeNode, appendNode })
+
+  onMounted(async () => {
+    if(props.onlySelect) {
+      checkedNode(Cloud.DocModel.root)
+      emit('selectTreeNode', Cloud.DocModel.root)
+    }
+  })
+</script>
+<style lang="scss">
+  .el-tree-node__label {
+    width: 100%;
+  }
+</style>
 <style lang="scss" scoped>
   .main {
     width: 300px;
     height: 100%;
     background-color: #fff;
+    margin-right: 3px;
+
+    &.autoWidth {
+      width: 100%;
+    }
+
+    .contentTile{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      background-color: #f9fbfe;
+      font-size: 16px;
+      margin-bottom: 10px;
+      .back {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        position: absolute;
+        left: 20px;
+      }
+      .doc {
+        width: 16px;
+        height: 16px;
+        color:#154ad8;
+        margin-right: 10px;
+      }
+      b {
+        font-size: 14px;
+      }
+    }
+
     .tree-head {
       padding: 10px;
       display: flex;
@@ -66,6 +175,28 @@
       justify-content: space-between;
       .tree-text {
         font-size: 14px;
+      }
+    }
+    .folder-node {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding-right: 10px;
+      justify-content: space-between;
+      .node-label {
+        display: flex;
+        align-items: center;
+        span {
+          margin-left: 5px;
+        }
+      }
+      .node-dots {
+        display: none;
+      }
+      &:hover {
+        .node-dots {
+          display: block;
+        }
       }
     }
   }
