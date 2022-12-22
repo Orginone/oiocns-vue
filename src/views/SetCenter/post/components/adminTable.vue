@@ -186,6 +186,9 @@ watch(
 );
 </script>
 <style lang="scss" scoped>
+  :deep .el-table th.el-table__cell {
+    background-color: #eceffb!important;
+  }
   .el-dropdown-link{
     padding: 2px 10px;
     cursor: pointer;

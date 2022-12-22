@@ -27,7 +27,6 @@
             <span class="el-dropdown-link"> ··· </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="showDiong">调整岗位</el-dropdown-item>
                 <el-dropdown-item @click="removeFrom(scope.row)" style="color: #f67c80" >移出岗位</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -276,6 +275,9 @@ const giveIdentity = async () => {
 
 </script>
 <style lang="scss" scoped>
+  :deep .el-table th.el-table__cell {
+    background-color: #eceffb!important;
+  }
   .el-dropdown-link{
     padding: 2px 10px;
     cursor: pointer;
