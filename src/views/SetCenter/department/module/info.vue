@@ -64,7 +64,7 @@ import { ref, watch, onMounted,computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { setCenterStore } from '@/store/setting'
 const store: any = setCenterStore()
-const current = computed(()=> store.currentSelectItme?.intans)
+const current = computed(()=> store.currentSelectItme?.intans ?? store.currentSelectItme?.item)
 
 const emit = defineEmits(['refresh'])
 
@@ -152,7 +152,7 @@ const cascaderProps = {
 
 // 加载角色树
 const loadAuthorityTree = async () => {
-  const data = await current.value.selectAuthorityTree()
+  const data = await current.value?.selectAuthorityTree()
   if(data){
     authorityTree.value = []
     authorityTree.value.push(data)

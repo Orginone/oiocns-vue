@@ -112,7 +112,6 @@ const handleOk = (newItem: any) => {
 const emit = defineEmits(['nodeClick'])
 
 const loadNode = (node: any, resolve: (data: any[]) => void) => {
-  console.log(node);
   if (node.level === 0) {
     return resolve(orgTree.value)
   } else if(node.level === 1 && node.data.label === '创建集团'){
@@ -275,6 +274,7 @@ const getGroupList = async() => {
       return { value: g.id, label: g.name }
     })
     orgTree.value.length && emit('nodeClick', orgTree.value[0]?.children[0])
+    nodeClick(orgTree.value[0]?.children[0])
 }
 
 const nodeClick = (val: any, nodeAttribute?: any, event?: any) => {

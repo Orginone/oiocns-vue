@@ -24,7 +24,7 @@ import Info from './info.vue'
 import Body from './body.vue'
 import Breadcrumb from '@/components/divBreadcrumb/index.vue'
 
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const info = ref(null);
 const body = ref(null);

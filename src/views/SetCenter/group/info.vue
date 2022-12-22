@@ -3,6 +3,7 @@
     <div class="header">
       <div class="title">节点信息</div>
       <div class="box-btns">
+        <el-button small link type="primary"  @click="handleAuthority">权限管理</el-button>
         <el-button small link type="primary"  @click="handleUpdate">编辑</el-button>
         <el-button small link type="primary"  @click="handleDelete">删除</el-button>
       </div>
@@ -37,13 +38,23 @@
     :typeNames="['集团']"
     @handleOk="handleOk"
   />
+  <authorityModal
+    v-model:visible="authorityVisible"
+  />
 </template>
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import authority from '@/utils/authority'
+import authorityModal from '../department/components/authorityModal.vue';
 import CreateTeamModal from '../GlobalComps/createTeam.vue';
 const emit = defineEmits(['refresh'])
+
+const authorityVisible = ref(false)
+// 权限管理
+const handleAuthority = ()=> {
+  authorityVisible.value = true
+}
 
 const activeModal = ref('')
 const current = ref()
@@ -60,6 +71,7 @@ let selectItem = ref<any>({})
 
 // 获取单位树点击的信息
 const selectItemChange = (data: any) => {
+  console.log('data: ', data);
   selectItem.value = data?.item;
 };
 defineExpose({ selectItemChange });

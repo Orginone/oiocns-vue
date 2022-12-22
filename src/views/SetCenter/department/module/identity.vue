@@ -66,7 +66,7 @@ import { ref, onMounted, reactive,computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { setCenterStore } from '@/store/setting'
 const store: any = setCenterStore()
-const current = computed(()=> store.currentSelectItme?.intans)
+const current = computed(()=> store.currentSelectItme?.intans ?? store.currentSelectItme?.item)
 
 const emit = defineEmits(['itemClick'])
 

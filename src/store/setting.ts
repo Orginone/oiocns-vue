@@ -4,7 +4,7 @@ import {USERCTRL} from '@/ts/coreIndex';
 type SettingStoreType = {
   unitInfo: any,
   departmentInfo: any
-  currentSelectItme: object
+  currentSelectItme: any
   identityInfo: any
   groupInfo: any
   [key: string]: any
