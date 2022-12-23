@@ -1,8 +1,9 @@
 // import {WorkModel} from "@orginone/oiocns-ts"
 
 import USERCTRL from '@/ts/controller/setting/userCtrl'
+import THINGCTRL from '@/ts/controller/thing';
 
 import { companyTypes, DomainTypes, TargetType} from '@/ts/core/enum';
 // import { ICompany} from '@/ts/core/target/itarget';
 
-export {USERCTRL,TargetType}
+export {USERCTRL,TargetType,THINGCTRL}
