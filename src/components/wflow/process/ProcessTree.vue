@@ -50,7 +50,7 @@
 
     render() {
       this.nodeMap.clear()
-      let processTrees = this.getDomTree(h, this.currentDom)
+      let processTrees = this.getDomTree(h, this.dom)
       //插入末端节点
       processTrees.push(h('div', {style:{'text-align': 'center'}}, [
         h('div', {class:{'process-end': true}, innerHTML:'流程结束'})
@@ -75,10 +75,12 @@
 
       const stores = useAppwfConfig(proxy.$pinia);
 
+      // console.log(stores)
+
       /**组件渲染中变更dom   共享状态*/
       const design = processCtrl.currentTreeDesign;
       let currentDom = design.resource;
-      console.log(currentDom)
+      proxy.$pinia.state.value.appwfConfig.design.resource = currentDom
 
       const addNodeMap = computed((state: any) => {
         return proxy.$pinia.state.value.appwfConfig.addNodeMap
@@ -88,10 +90,9 @@
         return proxy.$pinia.state.value.appwfConfig.nodeMap;
       });
       
-      
-      // const dom = computed(() => {
-      //   return proxy.$pinia.state.value.appwfConfig.design.resource;
-      // });
+      const dom = computed(() => {
+        return proxy.$pinia.state.value.appwfConfig.design.resource;
+      });
 
       const state = reactive({
         valid: true,
@@ -606,7 +607,7 @@
       return {
         nodeMap,
         // editFlag,
-        // dom,
+        dom,
         getDomTree,
         decodeAppendDom,
         toMapping,
@@ -637,7 +638,6 @@
         forEachNode,
         // validate,
         deepCopy,
-        currentDom,
         ...toRefs(state),
       };
 

@@ -113,9 +113,9 @@
 				scale:100,
 				isShowDialog: false,
 				isNew: true,
-      			timer: null,
+      	timer: null,
 				activeSelect: 'processDesign',
-      			validStep: 0,
+      	validStep: 0,
 				validVisible: false,
 				validResult: null,
 				validOptions: [
@@ -243,7 +243,6 @@
 
 			// 应用id      资源id         
 			const startDesign= async (obj:any)=>{
-				
 				await getBindedFlow(obj)
 				await getFlowList(obj)
 				stores.setForm(obj);
