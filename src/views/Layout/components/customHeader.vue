@@ -77,7 +77,7 @@
             <ChatDotSquare />
           </el-icon>
         </el-link> -->
-        <li class="top-icon"
+        <li class="top-icon" :class="{'is-current': router.currentRoute.value.fullPath.startsWith(item.path)}"
           v-for="(item, index) in state.mainMenus"
           @click="handleRouterChage(item)"
           :key="index"
@@ -484,6 +484,11 @@
   .top-icon {
     :deep(.el-badge__content) {
       transform: translateY(25%) translateX(100%);
+    }
+    &.is-current {
+      .icon-list {
+        color: #154AD8 !important;
+      }
     }
   }
 

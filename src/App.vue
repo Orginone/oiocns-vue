@@ -16,9 +16,38 @@
 // import 'element-plus/theme-chalk/el-message.css'
 
 import { defineComponent } from 'vue'
-import { ElConfigProvider } from 'element-plus'
+import { ElConfigProvider,ElMessage } from 'element-plus'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
+import { logger, LoggerLevel } from '@/ts/base/common';
 
+logger.onLogger = (level, msg) => {
+  switch (level) {
+    case LoggerLevel.info:
+      ElMessage({
+        message: msg,
+        type: 'info'
+      })
+      break;
+    case LoggerLevel.warn:
+      ElMessage({
+        message: msg,
+        type: 'warning'
+      })
+      break;
+    case LoggerLevel.error:
+      ElMessage({
+        message: msg,
+        type: 'error'
+      })
+      break;
+    case LoggerLevel.unauth:
+        ElMessage({
+        message: msg,
+        type: 'error'
+      })
+      // return r.push('/login');
+  }
+}
 export default defineComponent({
   components: {
     ElConfigProvider

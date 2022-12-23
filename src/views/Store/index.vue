@@ -38,12 +38,14 @@
             </div>
           </template>
           <template #buttons>
-            <el-button class="btn-check" type="primary" @click="goBuy()" link
-              >购买</el-button
-            >
-            <el-button class="btn-check" @click="goCreate()" type="primary" link
-              >创建</el-button
-            >
+            <div class="btn-box">
+              <el-button link type="primary" @click="goBuy()" 
+                >购买</el-button
+              >
+              <el-button link @click="goCreate()" type="primary" 
+                >创建</el-button
+              >
+            </div>
             <!-- <el-button class="btn-check" type="primary" link>暂存</el-button> -->
           </template>
           <template #name="scope">
@@ -113,6 +115,18 @@
                     @click="goDetail(scope.row.prod.id)"
                   >
                     查看详情
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    link
+                    type="primary"
+                    @click="goPublic(scope.row.prod.id)">
+                    上架列表
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    link
+                    type="primary"
+                    @click="handleSetting(scope.row.prod.id)">
+                    移动至
                   </el-dropdown-item>
                   <el-dropdown-item
                     link
@@ -286,7 +300,7 @@
         :info="selectProductItem"
       ></ShareComponent>
     </el-dialog>
-    <ProcessDesign ref="processDesignRef" />
+    <!-- <ProcessDesign ref="processDesignRef" /> -->
   </div>
 </template>
 
@@ -314,6 +328,8 @@ import userCtrl from '@/ts/controller/setting/userCtrl';
 import { useCommonStore } from '@store/common'
 import img1 from '@/assets/img/group22.png'
 
+const { proxy } = getCurrentInstance()
+
 const goCreate = () => {
   router.push({ path: "/store/appRegister" });
 };
@@ -328,7 +344,7 @@ const closeDialog = (type: string, key: boolean) => {
   dialogType[type] = key;
 };
 
-const processDesignRef = ref();
+// const processDesignRef = ref();
 const isCard = ref(true);
 const instance = getCurrentInstance();
 
@@ -455,7 +471,7 @@ const title = ref<string>("");
 onMounted(() => {
   // 获取列表
   getProductList(); 
-    
+  console.log('marketCtrl.shopinglist',marketCtrl.shopinglist)
 });
 
 const commonStore = useCommonStore()
@@ -482,30 +498,24 @@ const handleUpdate = (page: any) => {
 // 获取我的应用列表
 const getProductList = () => {
   marketCtrl.Market.getOwnProducts(false).then((res:any)=>{
-    // let arr:any = []
-    // res.forEach((element:any) => {
-    //   let obj = {
-    //     id:element.prod.id,
-    //     name: element.prod.name,
-    //     updateTime:element.prod.updateTime,
-    //     createTime:element.prod.createTime,
-    //     typeName:element.prod.typeName,
-    //     updateUser:element.prod.updateUser,
-    //     authority:element.prod.authority,
-    //     belongId:element.prod.belongId,
-    //     code:element.prod.code,
-    //     source:element.prod.source,
-    //     resource:element.prod.resource,
-    //   }
-    //   arr.push(obj)
-    // });
     state[`ownProductList`] = res ;
     state['appList'] = res;
-    console.log('res',res)
-
+    diyTable.value.state.page.total = res.length
   })
 };
-
+proxy?.$Bus.on("storeMenu", (arr:any) => {
+    // getShopList();
+    let newArr:Array<Object> = []
+    arr.forEach((item:any) => {
+      state.appList.forEach(element => {
+        if(element.prod.id == item){
+          newArr.push(element)
+        }
+      });
+    });
+    state[`ownProductList`] = newArr ;
+    diyTable.value.state.page.total = newArr?.length || 0
+});
 // 移除app
 const deleteApp = (item: any) => {
   ElMessageBox.confirm(`确认删除  ${item.prod.name}?`, "警告", {
@@ -555,7 +565,18 @@ const handleCommand = (
       break;
   }
 };
-
+//分配标签
+const handleSetting = (id:string) => {
+  console.log('id',id)
+};
+// 去上架列表
+const goPublic = (id:string) => {
+  appCtrl.setCurProduct(id);
+  router.push({
+    path: "/store/public",
+    query: { id:id},
+  });
+};
 //  打开集团选择弹窗
 const openShareDialog = () => {
   dialogType.shareVisible = true;
@@ -570,10 +591,10 @@ const formartDateTime = (dateStr: any) => {
   }
 };
 
-const enterProcess = (resource: any) => {
-  console.log("resource", resource);
-  processDesignRef.value.startDesign(resource);
-};
+// const enterProcess = (resource: any) => {
+//   console.log("resource", resource);
+//   processDesignRef.value.startDesign(resource);
+// };
 
 instance?.proxy?.$Bus.on("clickBus", (num) => {
   console.log(num);
@@ -621,18 +642,10 @@ instance?.proxy?.$Bus.on("clickBus", (num) => {
       background: #fff;
       margin-top: 3px;
       height: calc(100vh - 100px);
-
-      .btn-check {
-        padding: 8px 16px;
-        color: #154ad8;
+      .btn-box{
+        padding-bottom: 10px;
+        width: 80px;
       }
-
-      .btn-check:hover {
-        background: #154ad8;
-        color: #fff;
-        padding: 8px 16px;
-      }
-
       .table-tabs {
 
         .el-menu--horizontal {
