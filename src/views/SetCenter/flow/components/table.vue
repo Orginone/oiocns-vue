@@ -243,7 +243,8 @@ const handleCommand = (
           fields: editorDataMes.fields,
         };
         processCtrl.setCondtionData(contionData);
-        console.log(contionData)
+        router.push({ path: "/SetCenter/wflow", query:{contionData:JSON.stringify(contionData)}});
+        // console.log(contionData,'contionData')
         return new Promise<boolean>((resolve) => {
           resolve(true);
         });

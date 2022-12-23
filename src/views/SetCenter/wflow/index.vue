@@ -102,7 +102,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref,reactive,toRefs,computed, getCurrentInstance ,ComponentInternalInstance } from 'vue'
+import { ref,reactive,toRefs,computed, getCurrentInstance ,ComponentInternalInstance, onMounted } from 'vue'
 import Wflow from "@/components/wflow/ProcessDesign.vue";
 import { ElMessage, ElMessageBox, FormRules } from "element-plus";
 import { useRouter } from "vue-router";
@@ -115,6 +115,8 @@ const formRef = ref(null);
 const {
   appContext
 } = getCurrentInstance() as ComponentInternalInstance;
+
+const { proxy } = getCurrentInstance()
 
 const state = reactive({
   workFlowForm: {
@@ -157,6 +159,18 @@ const rules = reactive<FormRules>({
 
 // 注册页面实例
 const router = useRouter();
+
+
+onMounted(() => {
+  let data = proxy.$route.query.contionData?JSON.parse(proxy.$route.query.contionData):{}
+  console.log(data)
+  if(data?.name){
+    active.value = 1
+    state.workFlowForm = data
+  }else{
+    active.value = 0
+  }
+})
 
 //返回
 const exit = () => {
@@ -228,8 +242,7 @@ const blockMargin = computed(() => {
 })
 
 const {
-  workFlowForm,
-  scale
+  workFlowForm
 } = {
   ...toRefs(state)
 };
