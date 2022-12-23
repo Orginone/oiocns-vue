@@ -83,7 +83,7 @@ export const setCenterStore = defineStore({
         for (const child of depts) {
           if (child.target) {
             data.push(await createTeeDom(child));
-          }
+          } 
         }
       }
       return data;
