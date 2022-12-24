@@ -148,7 +148,7 @@
   import DiyTable from "@/components/diyTable/index.vue";
   import {computed, nextTick, reactive, ref, watch} from "vue";
   import { setCenterStore } from '@/store/setting'
-  import { userCtrl,THINGCTRL } from "@/ts/coreIndex";
+  import { userCtrl,thingCtrl } from "@/ts/coreIndex";
 
   import { PageRequest } from '@/ts/base/model';
   import {ElMessage,FormRules,FormInstance} from "element-plus";
@@ -253,7 +253,7 @@
         if (team) {
           item.belongId = team.name;
         }
-        item.speciesId = findSpecesName(THINGCTRL.teamSpecies, item.speciesId);
+        item.speciesId = findSpecesName(thingCtrl.teamSpecies, item.speciesId);
       }
     }
     state.tableData = res.result

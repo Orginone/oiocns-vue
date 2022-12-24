@@ -65,7 +65,7 @@
 import { useUserStore } from '@/store/user'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { appstore } from '@/module/store/app'
+// import { appstore } from '@/module/store/app'
 import { computed,onMounted,ref,reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import img1 from '@/assets/img/group22.png'
@@ -128,19 +128,20 @@ const getAppList = async () => {
 //常用应用跳转
 const commonStore = useCommonStore()
 const handleChooseItem = async (app: any) => {
-  const { result = [], total = 0 } = await appstore.queryOwnResource(app.id)
-  if (total === 0) {
+  //TODO 改为最新的方式 add by liuwei 2022-12-24
+  // const { result = [], total = 0 } = await appstore.queryOwnResource(app.id)
+  // if (total === 0) {
     return ElMessage({
       type: 'error',
       message: '该应用资源缺失,请联系管理员'
     })
-  }
-  const { link } = result[0]
-  let data = { type: '', appInfo: app, icon: img1, link, path: '/online' }
-  data.type = 'app'
-  commonStore.iframeLink = data.link
-  commonStore.appInfo = data.appInfo
-  router.push(data.path)
+  // }
+  // const { link } = result[0]
+  // let data = { type: '', appInfo: app, icon: img1, link, path: '/online' }
+  // data.type = 'app'
+  // commonStore.iframeLink = data.link
+  // commonStore.appInfo = data.appInfo
+  // router.push(data.path)
 }
 
 // 页面跳转
