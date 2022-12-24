@@ -148,7 +148,7 @@
   import DiyTable from "@/components/diyTable/index.vue";
   import {computed, nextTick, reactive, ref, watch} from "vue";
   import { setCenterStore } from '@/store/setting'
-  import { USERCTRL,THINGCTRL } from "@/ts/coreIndex";
+  import { userCtrl,THINGCTRL } from "@/ts/coreIndex";
 
   import { PageRequest } from '@/ts/base/model';
   import {ElMessage,FormRules,FormInstance} from "element-plus";
@@ -245,11 +245,11 @@
 
   const loadSpeciesAttrs = async (species) => {
     const page: PageRequest = {offset: 0, limit: 20, filter: ''}
-    const res = await species.loadAttrs(USERCTRL.space.id, page)
+    const res = await species.loadAttrs(userCtrl.space.id, page)
     console.log(res)
     if (res && res.result) {
       for (const item of res.result) {
-        const team = await USERCTRL.findTeamInfoById(item.belongId);
+        const team = await userCtrl.findTeamInfoById(item.belongId);
         if (team) {
           item.belongId = team.name;
         }
@@ -277,8 +277,8 @@
   const openAttrFormDialog = async () => {
     isEditAttr.value = false
     attrFormDialog.value = true
-    state.belongTreeData = await USERCTRL.getTeamTree()
-    const authData = await USERCTRL.company.selectAuthorityTree(false)
+    state.belongTreeData = await userCtrl.getTeamTree()
+    const authData = await userCtrl.company.selectAuthorityTree(false)
     state.authTreeData = authData ? [authData] : [];
     
     state.attrForm = {public:true,valueType:"描述型"}
@@ -319,8 +319,8 @@
   /** 编辑特性 */
   const editAttr = async (attr) => {
     isEditAttr.value = true
-    state.belongTreeData = await USERCTRL.getTeamTree()
-    const authData = await USERCTRL.company.selectAuthorityTree(false)
+    state.belongTreeData = await userCtrl.getTeamTree()
+    const authData = await userCtrl.company.selectAuthorityTree(false)
     state.authTreeData = authData ? [authData] : [];
     attrFormDialog.value = true
     state.attrForm = attr

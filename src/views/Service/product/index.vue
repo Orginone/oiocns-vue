@@ -67,7 +67,7 @@
     import { ElMessage, ElMessageBox } from 'element-plus'
     import type { TabsPaneContext } from 'element-plus'
     import thingServices from '@/module/flow/thing'
-    import todoCtrl from '@/ts/controller/todo/todoCtrl';
+    import {todoCtrl} from '@/ts/coreIndex'
     const statusMap = {
       1: {
         color: 'blue',

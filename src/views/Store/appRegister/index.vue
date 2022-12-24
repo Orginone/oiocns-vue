@@ -82,7 +82,7 @@
     import { ElMessage, FormRules } from 'element-plus'
     import { useRouter } from 'vue-router'
     import { useCommonStore } from '@/store/common'
-    import userCtrl from '@/ts/controller/setting/userCtrl';
+    import {userCtrl} from '@/ts/coreIndex'
 
     const commonStore = useCommonStore()
     const router = useRouter()

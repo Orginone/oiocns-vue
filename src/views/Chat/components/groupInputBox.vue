@@ -37,7 +37,7 @@
 <script lang="ts" setup>
 import { ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'
-import { chat } from '@/ts/controller/chat'
+import {chatCtrl as chat} from '@/ts/coreIndex'
 
 const inputRef = ref(null)
 const faceBtnRef = ref(null)

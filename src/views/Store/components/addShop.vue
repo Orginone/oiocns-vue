@@ -59,7 +59,7 @@
 <script setup lang="ts">
   import diytab from '@components/diyTable/index.vue'
   import { ref, reactive, onMounted, nextTick } from 'vue'
-  import userCtrl from '@/ts/controller/setting/userCtrl';
+  import {userCtrl} from '@/ts/coreIndex'
 
   const diyTable = ref(null)
   // 表格展示数据

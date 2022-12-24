@@ -2,7 +2,7 @@ import authority from '@/utils/authority'
 import API from '@/services'
 import { useUserStore } from '@/store/user'
 import { ElMessage } from 'element-plus'
-import appCtrl from '@/ts/controller/store/appCtrl';
+import {appCtrl} from '@/ts/coreIndex'
 
 const store = useUserStore()
 type TreeData = {
