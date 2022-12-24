@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 import $services from '@/services'
 import { ElMessage } from 'element-plus'
-import {USERCTRL} from '@/ts/coreIndex'
+import {userCtrl} from '@/ts/coreIndex'
 // import { type } from 'os'
-import { ICompany,SpaceType } from '@/ts/core/target/itarget';
+import { ICompany,SpaceType } from '@/ts/coreIndex';
 
 type QueryInfoType = {
   id: string
@@ -54,7 +54,7 @@ export const useUserStore = defineStore({
   getters: { },
   actions: {
     async setCurSpace(dataId: string){
-      USERCTRL.setCurSpace(dataId);
+      userCtrl.setCurSpace(dataId);
       this.copyCompanys.forEach(d=>{
         if(d.id==dataId){
           this.workspaceData = Object.assign({},d);
@@ -63,7 +63,7 @@ export const useUserStore = defineStore({
     },
     async updateUserInfo(data: { username: string; password: string }) {
       // 获取用户登录信息
-      const res: ResultType = await USERCTRL.login(data.username, data.password)
+      const res: ResultType = await userCtrl.login(data.username, data.password)
       if (res.success) {
         this.userInfo = res.data
         this.userToken = res.data.accessToken
@@ -98,7 +98,7 @@ export const useUserStore = defineStore({
       }
     },
     async getCompanyList(current: number, workspaceId: string, lazyLoad: boolean) {
-      await USERCTRL.user
+      await userCtrl.user
       .getJoinedCompanys()
         .then((res: ICompany[]) => {
           if (!res) {
@@ -107,13 +107,13 @@ export const useUserStore = defineStore({
             return
           }
           const all: SpaceType[] =
-            USERCTRL.user?.joinedCompany?.map((item) => {
+            userCtrl.user?.joinedCompany?.map((item) => {
               return item.spaceData;
             }) || [];
-          all.unshift(USERCTRL.user.spaceData);
+          all.unshift(userCtrl.user.spaceData);
           
           this.userCompanys = all.filter((item) => {
-            return item.id != USERCTRL.space.spaceData.id;
+            return item.id != userCtrl.space.spaceData.id;
           })
 
           this.copyCompanys = Object.assign([],all);

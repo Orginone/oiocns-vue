@@ -50,7 +50,7 @@ import DiyTable from '@/components/diyTable/index.vue'
 import { reactive, ref, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Search } from '@element-plus/icons-vue'
-import {USERCTRL} from '@/ts/coreIndex'
+import {userCtrl} from '@/ts/coreIndex'
 const props = defineProps<{
   tabHeight: number,
 }>()
@@ -187,7 +187,7 @@ const getOrgUsers = async(filter?: string) => {
   if (filter && filter.trim() != '') {
     data = { ...data, ...{ filter } }
   }
-  const personData = await USERCTRL.space.loadMembers({
+  const personData = await userCtrl.space.loadMembers({
     offset: 0,
     limit: 10,
     filter: ''

@@ -150,7 +150,7 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { TabsPaneContext } from 'element-plus'
   import moment from 'moment'
-  import { chat } from '@/ts/controller/chat'
+  import {chatCtrl as chat} from '@/ts/coreIndex'
   import { ElTable } from 'element-plus'
   import OrderSevice from '@/module/store/order'
   import type { OrderListType, CancelType } from './order'

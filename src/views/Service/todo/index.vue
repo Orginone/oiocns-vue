@@ -73,7 +73,7 @@
     import DiyTable from '@/components/diyTable/index.vue'
     import { ElMessage, ElMessageBox } from 'element-plus'
     import type { TabsPaneContext } from 'element-plus'
-    import { chat } from '@/ts/controller/chat'
+    import {chatCtrl as chat} from '@/ts/coreIndex'
     
     import thingServices from '@/module/flow/thing'
   

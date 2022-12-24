@@ -48,8 +48,8 @@
 <script lang="ts" setup>
 import { ref,toRefs,reactive,onMounted } from 'vue'
 import { FormRules } from 'element-plus'
-import userCtrl from '@/ts/controller/setting/userCtrl';
-import appCtrl from '@/ts/controller/store/appCtrl';
+import {userCtrl} from '@/ts/coreIndex'
+import {appCtrl} from '@/ts/coreIndex'
 import {ElMessage} from "element-plus";
 
 const props = defineProps({

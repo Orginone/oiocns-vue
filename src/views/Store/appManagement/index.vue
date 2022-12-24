@@ -10,7 +10,7 @@
     import management from './components/management.vue'
     import { ref, reactive, onMounted, nextTick } from 'vue'
     import { useRouter, useRoute } from 'vue-router'
-    import appCtrl from '@/ts/controller/store/appCtrl';
+    import {appCtrl} from '@/ts/coreIndex'
 
     const router = useRouter()
     const info = ref<Object>();

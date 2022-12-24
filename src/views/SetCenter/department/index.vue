@@ -206,7 +206,7 @@
   <CreateTeamModal 
     :title="activeModal"
     v-model:visible="visible"
-    :current="store.currentSelectItme?.intans || USERCTRL.company"
+    :current="store.currentSelectItme?.intans || userCtrl.company"
     v-model:typeNames="createOrEdit"
     :handleCancel="handleCancel()"
     @handleOk="handleOk"
@@ -250,7 +250,7 @@ import AssignedPerson from '@/components/searchs/index.vue'
 import { setCenterStore } from '@/store/setting'
 const store = setCenterStore()
 import QrCodeCustom from '@/components/qrCode/index.vue'
-import {TargetType, USERCTRL} from '@/ts/coreIndex'
+import {TargetType, userCtrl} from '@/ts/coreIndex'
 import CreateTeamModal from '../GlobalComps/createTeam.vue';
 import identityModal from './components/identityModal.vue';
 
@@ -322,7 +322,7 @@ const getOrgUsers = async(filter?: string) => {
   if (filter && filter.trim() != '') {
     data = { ...data, ...{ filter } }
   }
-  const personData = await USERCTRL.space.loadMembers({
+  const personData = await userCtrl.space.loadMembers({
     offset: 0,
     limit: 10,
     filter: ''
@@ -605,7 +605,7 @@ proxy?.$Bus.on('clickBus', (id) => {
   } else if(id === '2203') {  // 单位创建部门
     activeModal.value = '新建'
     visible.value = true
-    createOrEdit.value = ((USERCTRL.company.subTeamTypes.join('|')).split('|'))
+    createOrEdit.value = ((userCtrl.company.subTeamTypes.join('|')).split('|'))
   }
 })
 

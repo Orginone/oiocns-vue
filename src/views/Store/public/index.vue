@@ -77,7 +77,7 @@ import {
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/user";
 import DiyTable from "@/components/diyTable/index.vue";
-import appCtrl from '@/ts/controller/store/appCtrl';
+import {appCtrl} from '@/ts/coreIndex'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const router = useRouter();
