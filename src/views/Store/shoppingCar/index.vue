@@ -39,7 +39,7 @@
     import { ref, reactive, onMounted, nextTick } from 'vue'
     import { ElMessage, ElMessageBox } from 'element-plus'
     import { PAGE_SIZES, PAGE_NUM } from '@/constant'
-    import marketCtrl from '@/ts/controller/store/marketCtrl';
+    import {marketCtrl} from '@/ts/coreIndex';
 
     const dialogVisible = ref<boolean>(true)
     const diyTable = ref(null)

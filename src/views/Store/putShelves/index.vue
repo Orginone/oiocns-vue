@@ -65,7 +65,7 @@
     import { onMounted, reactive, ref } from 'vue'
     import detailBox from './../components/detailBox.vue'
     import { useRoute ,useRouter} from 'vue-router'
-    import marketCtrl from '@/ts/controller/store/marketCtrl';
+    import {marketCtrl} from '@/ts/coreIndex';
 
     const route = useRoute()
     const router = useRouter()
@@ -81,7 +81,7 @@
     const productItem = ref<any>();
     // 获取我的应用列表
     const getProductList = () => {
-      marketCtrl.Market.getOwnProducts(false).then((res:any)=>{
+      marketCtrl.target.getOwnProducts(false).then((res:any)=>{
         let arr:any = []
         res.forEach((element:any) => {
           if(element.prod.id == route.query.id){

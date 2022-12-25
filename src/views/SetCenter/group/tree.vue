@@ -91,7 +91,7 @@ import searchGroup from '@/components/searchs/index.vue'
 import { Search } from '@element-plus/icons-vue'
 import authority from '@/utils/authority'
 import { useUserStore } from '@/store/user'
-import {USERCTRL} from '@/ts/coreIndex';
+import {userCtrl} from '@/ts/coreIndex';
 import { setCenterStore } from '@/store/setting'
 import CreateTeamModal from '../GlobalComps/createTeam.vue';
 const store = useUserStore()
@@ -142,7 +142,7 @@ const clickBus = (e:any)=>{
   if (id === '2101') { //  单位创建集团
     activeModal.value = '新增|集团'
     visible.value = true
-    current.value = USERCTRL.company
+    current.value = userCtrl.company
   } else if(id === '2102') {
     friendDialog.value = true;
   } else if(id === '2103') {
@@ -167,7 +167,7 @@ const checksSearch=(val:any)=>{
   }
 }
 const addGroupFun = async(arr:any) => {
-  const success = await USERCTRL.company.applyJoinGroup(arr.join(','))
+  const success = await userCtrl.company.applyJoinGroup(arr.join(','))
   if (success) {
     ElMessage({
       message: '申请成功',
@@ -233,7 +233,7 @@ let addGroupList: any = []
 
 // 查询集团列表
 const getGroupList = async() => {
-  const groups = await USERCTRL.company.getJoinedGroups(false);
+  const groups = await userCtrl.company.getJoinedGroups(false);
     myGroupList = []
     addGroupList = []
     groups.length && groups.forEach((item: any) => {
@@ -293,7 +293,7 @@ const filterNode = (value: string, data: any) => {
 // 加载集团树
 // const loadOrgTree = async (id?: string)=>{
 //   let treeData: any = []
-//   const groups = await USERCTRL.company.getJoinedGroups(false).then((res: any) => {
+//   const groups = await userCtrl.company.getJoinedGroups(false).then((res: any) => {
 //     // orgTree.value = []
 //     // orgTree.value.push(newObj)
 //     cascaderTree.value = [res.data]

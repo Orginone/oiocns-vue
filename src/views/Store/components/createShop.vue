@@ -53,7 +53,7 @@ import { ref, reactive, onMounted, nextTick ,getCurrentInstance} from "vue";
 import type { FormInstance } from 'element-plus'
 import { useUserStore } from '@/store/user'
 import { storeToRefs } from 'pinia'
-import marketCtrl from '@/ts/controller/store/marketCtrl';
+import {marketCtrl} from '@/ts/coreIndex';
 
 const instance = getCurrentInstance();
 

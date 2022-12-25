@@ -145,10 +145,8 @@
   import SearchDialog from './searchDialog.vue'
   import headImg from '@/components/headImg.vue'
   import { useDark } from '@vueuse/core'
-  // import { chat } from '@/module/chat/orgchat'
-  // import { CommunicateModel as chat } from '@/oiocns-ts/src';
-  import { CommunicateModel as chat, WorkModel as todo } from '@orginone/oiocns-ts';
-  import { USERCTRL ,TargetType} from '@/ts/coreIndex'
+  import { chatCtrl as chat, todoCtrl as todo } from '@/ts/coreIndex';
+  import { userCtrl ,TargetType} from '@/ts/coreIndex'
 
   const isDark = useDark()
   const store = useUserStore()
@@ -188,7 +186,7 @@
 
     todo.subscribe(async () => {
       console.warn("触发全局订阅回调");
-      const count = await todo.TaskCount();
+      const count = await todo.getTaskCount();
       state.mainMenus[1].count = count;
     });
   })
@@ -249,7 +247,7 @@
     searchDialog.value = true
   }
   const joinSubmit = (arr: any) => {
-    USERCTRL.user
+    userCtrl.user
       .applyJoinCompany(arr.join(''), TargetType.Company)
       .then((isSuc:boolean) => {
         if (isSuc) {
