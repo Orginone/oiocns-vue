@@ -486,7 +486,7 @@
 
   // 提交表单
   const submitAll = async () => {
-    const res = await application.submitAll(state.departData, resource.value,radio.value,)
+    const res = await application.submitAll(state.departData, resource.value,radio.value,typePD.value)
     ElMessage({
       type: 'success',
       message: typePD.value == 1 ? '分配成功' : '共享成功'
@@ -537,7 +537,6 @@
     })
   }
   const handleBoxClick = (hisData: any, dataList: any, data: any) => {
-    console.log('aaaaaaa',hisData,dataList,data)
     let result = hisData.some((item: any) => {
       return item.id == data.id
     })
@@ -630,7 +629,6 @@
   const handleNodeClick = async (node: any, load: boolean, search?: string) => {
 
     if (node) {
-      console.log('aaaa',appCtrl.curProduct,node)
       centerTreeShow.value = true
       const item: ITarget = node.item;
       // sumbitSwitch(node)
