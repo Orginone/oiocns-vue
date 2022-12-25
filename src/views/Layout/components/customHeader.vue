@@ -83,7 +83,7 @@
           :key="index"
           :title="item.name"
         >
-          <el-badge :value="item.count || 0" :hidden="!item.showCount">
+          <el-badge :value="item.count" :hidden="!item.count">
             <i class="icon-list iconfont" :class="item.icon" ></i>
           </el-badge>
         </li>
@@ -173,9 +173,9 @@
 
   const state = reactive({
     mainMenus: [
-      { name: '沟通', icon: 'icon-message', path: '/chat', showCount: true, count: 0 },
-      { name: '办事', icon: 'icon-todo', path: '/service', showCount: true, count: 0 },
-      { name: '仓库', icon: 'icon-store', path: '/store' },
+      { name: '沟通', icon: 'icon-message', path: '/chat', count: 0 },
+      { name: '办事', icon: 'icon-todo', path: '/service', count: 0 },
+      { name: '仓库', icon: 'icon-store', path: '/store' 
       { name: '设置', icon: 'icon-setting', path: '/setCenter' },  
     ]
   })
