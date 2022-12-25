@@ -220,7 +220,7 @@ const handleCommand = (
   item: any
 ) => {
   selectProductItem.value = item;
-  console.log("selectProductItem", selectProductItem.value);
+  // console.log("selectProductItem", selectProductItem.value);
   dialogTitle.value = '当前流程:' + item.name
   switch (command) {
     case "bind": //绑定应用
@@ -244,7 +244,6 @@ const handleCommand = (
         };
         processCtrl.setCondtionData(contionData);
         router.push({ path: "/SetCenter/wflow", query:{contionData:JSON.stringify(contionData)}});
-        // console.log(contionData,'contionData')
         return new Promise<boolean>((resolve) => {
           resolve(true);
         });

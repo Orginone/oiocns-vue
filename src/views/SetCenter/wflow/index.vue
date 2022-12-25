@@ -96,7 +96,7 @@
       </el-form>
     </div>
     <div class="wflow-component-box" v-else>
-      <Wflow @changeScale="changeScale"></Wflow>
+      <Wflow></Wflow>
     </div>
   </div>
 </template>
@@ -163,7 +163,6 @@ const router = useRouter();
 
 onMounted(() => {
   let data = proxy.$route.query.contionData?JSON.parse(proxy.$route.query.contionData):{}
-  console.log(data)
   if(data?.name){
     active.value = 1
     state.workFlowForm = data
