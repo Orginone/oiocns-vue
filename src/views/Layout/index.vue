@@ -157,7 +157,22 @@
       }else if (router.currentRoute.value.name === 'group') {
         showMenu.value = false;
         return;
-      }else if (router.currentRoute.value.name !== 'unit') {
+      }else if (router.currentRoute.value.name === 'unit') {
+        const ret = findMenu(router.currentRoute.value, allMenuItems.value);
+        if (!ret) {
+          showMenu.value = false;
+          return;
+        }
+        if(store?.workspaceData?.name == '个人空间') {
+          menuArr.state = ret.top.children.splice(1);
+          router.push('/setCenter/unitMain')
+        } else {
+          menuArr.state = ret.top.children;
+        }
+        titleArr.state = ret.top;
+        showMenu.value = true;
+        return;
+      } else if (router.currentRoute.value.name !== 'unit') {
         let currentRouteName: any = router.currentRoute.value.name
         const jsonData: any = setTree
         if (['unit', 'group', 'data' , 'resource' , 'authority'].includes(currentRouteName)) {
@@ -165,6 +180,13 @@
           menuArr.state = jsonData[currentRouteName]
           showMenu.value = true;
           return;
+        } else {
+          const ret = findMenu(router.currentRoute.value, allMenuItems.value);
+          if(store?.workspaceData?.name == '个人空间') {
+            menuArr.state = ret.top.children.splice(1);
+          } else {
+            menuArr.state = ret.top.children;
+          }
         }
       }
     }
@@ -220,6 +242,7 @@
     }
     titleArr.state = ret.top;
     menuArr.state = ret.top.children;
+    console.log('menuArr.state: ', menuArr.state);
     showMenu.value = true;
   }
   let router = useRouter()

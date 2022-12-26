@@ -380,12 +380,6 @@ watch(props.tabHeight, () => {
   padding: 10px 0;
   .btn-check{
     padding: 8px 16px;
-    color: #154ad8;
-  }
-  .btn-check:hover{
-    background: #154ad8;
-    color: #fff;
-    padding: 8px  16px;
   }
   .search {
     width: 50%;

@@ -232,7 +232,7 @@ const toIdentity = () => {
   box-sizing: border-box;
 }
 .text-remark {
-  max-height: 60px;
+  max-height: 100px;
   overflow-y: auto;
 }
 </style>

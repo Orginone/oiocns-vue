@@ -312,12 +312,6 @@ watch(()=> selectItem.value, (newValue)=> {
   }
   .btn-check{
     padding: 8px 16px;
-    color: #154ad8;
-  }
-  .btn-check:hover{
-      background: #154ad8;
-      color: #fff;
-      padding: 8px  16px;
   }
 }
 .el-dropdown-link{

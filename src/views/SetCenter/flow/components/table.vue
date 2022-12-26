@@ -312,9 +312,7 @@ const refresh = () =>{
         width: 100%;
         height: 400px;
         .btn-check{
-          font-size: 14px;
           padding: 8px 16px;
-          color: #154ad8;
         }
       }
       .bindApp-box{
