@@ -12,27 +12,27 @@
             <div class="line" :style="active==index?'background:#154AD8':''" v-if="index<1"></div>
           </div>
         </div>
-        <div></div>
-        <!-- <div class="publish" v-if="active == 1">
+        <!-- <div></div> -->
+        <div class="publish" v-if="active == 1">
           <el-button size="small" type="primary" @click="publish">
             <el-icon>
               <Promotion />
             </el-icon>发布
           </el-button>
           <span class="scale">
-            <el-button size="small" @click="changeScale(scale -10)" :disabled="scale <= 40">
+            <el-button size="small" @click="changeScale(state.scale -10)" :disabled="scale <= 40">
               <el-icon>
                 <Minus />
               </el-icon>
             </el-button>
-            <span>{{ scale }}%</span>
-            <el-button size="small" @click="changeScale(scale +10)" :disabled="scale >= 150">
+            <span>{{ state.scale }}%</span>
+            <el-button size="small" @click="changeScale(state.scale +10)" :disabled="scale >= 150">
               <el-icon>
                 <Plus />
               </el-icon>
             </el-button>
           </span>
-        </div> -->
+        </div>
       </div>
     </div>
     <div class="form-box" v-if="active == 0">
@@ -96,7 +96,10 @@
       </el-form>
     </div>
     <div class="wflow-component-box" v-else>
-      <Wflow></Wflow>
+      <!-- <Wflow></Wflow> -->
+      <!-- <div class="layout-body"> -->
+				<FormProcessDesign v-show="state.activeSelect === 'processDesign'" :scale="state.scale"/>
+			<!-- </div> -->
     </div>
   </div>
 </template>
@@ -105,7 +108,11 @@
 import { ref,reactive,toRefs,computed, getCurrentInstance ,ComponentInternalInstance, onMounted } from 'vue'
 import Wflow from "@/components/wflow/ProcessDesign.vue";
 import { ElMessage, ElMessageBox, FormRules } from "element-plus";
+import userCtrl from '@/ts/controller/setting/userCtrl';
+import processCtrl from '@/ts/controller/setting/processCtrl';
 import { useRouter } from "vue-router";
+import { deepClone } from '@/ts/base/common';
+import FormProcessDesign from '@/components/wflow/layout/FormProcessDesign.vue'
 
 const active = ref(0)
 const stepsArr = reactive([{title:'基本信息'},{title:'流程设计'}])
@@ -119,6 +126,7 @@ const {
 const { proxy } = getCurrentInstance()
 
 const state = reactive({
+  activeSelect: 'processDesign',
   workFlowForm: {
     name:'',
     fields:'',
@@ -128,23 +136,30 @@ const state = reactive({
       type:''
     }]
   },
+  scale:100
+})
+
+const props = defineProps({
+  contionData: {
+    type: Object
+  }
 })
 
 const options = [
   {
-    value: 'Option1',
+    value: 'STRING',
     label: '字符串',
   },
   {
-    value: 'Option2',
+    value: 'NUMERIC',
     label: '数字',
   },
   {
-    value: 'Option3',
+    value: 'DICT',
     label: '枚举',
   },
   {
-    value: 'Option4',
+    value: 'DATE',
     label: '日期',
   }
 ]
@@ -162,7 +177,7 @@ const router = useRouter();
 
 
 onMounted(() => {
-  let data = proxy.$route.query.contionData?JSON.parse(proxy.$route.query.contionData):{}
+  let data = props.contionData?props.contionData:{}
   if(data?.name){
     active.value = 1
     state.workFlowForm = data
@@ -171,29 +186,30 @@ onMounted(() => {
   }
 })
 
+//放大缩小
+const changeScale=(val:number)=>{
+  state.scale = val
+}
+
+const emit = defineEmits(['exit'])
+
 //返回
 const exit = () => {
-  ElMessageBox.confirm('未发布的内容将不会被保存，是否直接退出 ?', '提示', {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(() => {
-    router.push("/SetCenter/flow");
-  })
+  emit('exit')
 };
 
 const addConfig = () => { // 新增
   state.workFlowForm.labels.push({
-      label: '',
-      value: '',
-      type:''
+    label: '',
+    value: '',
+    type:''
   })
 }
 
-const removeConfig = (item) => { // 删除
+const removeConfig = (item:object) => { // 删除
   const index = state.workFlowForm.labels.indexOf(item)
   if (index !== -1) {
-      state.workFlowForm.labels.splice(index, 1)
+    state.workFlowForm.labels.splice(index, 1)
   }
 }
 
@@ -215,8 +231,8 @@ const submitForm = () => { // 点击确定按钮，输出行内数据
   formRef.value.validate(async (valid: any, fields: any) => {
     if (valid) {
       active.value++
-      var config = state.workFlowForm.labels;
-      console.log(config);
+      const config = state.workFlowForm;
+      processCtrl.setCondtionData(config);
     } else {
       console.log('error submit!', fields)
     }
@@ -224,8 +240,28 @@ const submitForm = () => { // 点击确定按钮，输出行内数据
 }
 
 // 发布
-const publish = () => {
-  
+const publish = async() => {
+  processCtrl.currentTreeDesign.name = processCtrl.conditionData.name;
+  processCtrl.currentTreeDesign.fields = processCtrl.conditionData.fields;
+  processCtrl.currentTreeDesign.remark = JSON.stringify(
+    processCtrl.conditionData.labels,
+  );
+  /**要发布的数据 */
+  const currentData = deepClone(processCtrl.currentTreeDesign);
+  if (currentData.belongId) {
+    delete currentData.belongId;
+  }
+  const result = await userCtrl.space.publishDefine(currentData);
+  if (result) {
+    ElMessage({
+      message: result.id ? '编辑成功' : '发布成功',
+      type: 'success'
+    })
+    // 清理数据
+    emit('exit')
+  } else {
+    return false;
+  }
 };
 
 const size = ref('')

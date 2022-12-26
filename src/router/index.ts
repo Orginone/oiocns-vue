@@ -310,17 +310,6 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
       {
-        path: '/setCenter/wflow',
-        name: 'wflow',
-        component: () => import('@/views/SetCenter/wflow/index.vue'),
-        meta: {
-          title: '流程设计',
-          icon: 'Postcard',
-          searchType: '2',
-          id: "setCenter.flow"
-        }
-      },
-      {
         path: '/setCenter/standard',
         name: 'standard',
         component: () => import('@/views/SetCenter/standard/index.vue'),
