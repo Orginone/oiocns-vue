@@ -189,7 +189,10 @@ const showList = computed((): ImMsgType[] => {
     name: "置顶会话"
   }
   topGroup.chats = []
-  let showInfoArr = chat.chats.value
+  console.log(chat);
+  console.log(chat.groups);
+  
+  let showInfoArr = chat.groups
   showInfoArr = showInfoArr.map((child: ImMsgType) => {
     let chats = child.chats.filter((item: ImMsgChildType) => {
       let matched = (!searchValue.value ||

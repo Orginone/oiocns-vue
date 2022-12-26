@@ -1,6 +1,6 @@
 <template>
   <div class="group-content-wrap" ref="nodeRef" @scroll="scrollEvent">
-    <template v-for="(item, index) in chat.curMsgs.value" :key="item.fromId">
+    <template v-for="(item, index) in chat.chat?.messages" :key="item.fromId">
       <!-- 聊天间隔时间3分钟则 显示时间 -->
       <div class="chats-space-Time" v-if="isShowTime(index)">
         <span>
@@ -13,14 +13,14 @@
         <span class="reWrite" v-if="item.allowEdit" @click="handleReWrite(item.msgBody)">重新编辑</span>
       </div>
 
-      <div class="group-content-left con" v-else-if="item.fromId !== chat.userId.value">
+      <div class="group-content-left con" v-else-if="item.fromId !== chat.userId">
         <el-popover placement="top-end" :width="155" trigger="click" :hide-after="100" v-model:visible="item.edit"
           @show="editShow(item)">
           <template #reference>
             <div class="con-body">
               <HeadImg :name="chat.getName(item.fromId)" :label="''" />
               <div class="con-content">
-                <span v-if="chat.curChat.value.typeName!=='人员'" class="con-content-name">{{
+                <span v-if="chat.chat.target.typeName!=='人员'" class="con-content-name">{{
                 chat.getName(item.fromId)
                 }}</span>
                 <div class="con-content-link"></div>
@@ -101,7 +101,7 @@ const canDelete = (item: any) => {
   if (item.chatId) {
     return true
   }
-  return item.spaceId === chat.userId.value
+  return item.spaceId === chat.userId
 }
 
 const recallMsg = (item: any) => {

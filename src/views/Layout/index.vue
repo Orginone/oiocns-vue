@@ -163,13 +163,13 @@
           showMenu.value = false;
           return;
         }
-        if(store?.workspaceData?.name == '个人空间') {
-          menuArr.state = ret.top.children.splice(1);
+        titleArr.state = ret.top;
+        if(store?.workspaceData?.typeName == '人员') {
+          menuArr.state = [ret.top.children[1]];
           router.push('/setCenter/unitMain')
         } else {
           menuArr.state = ret.top.children;
         }
-        titleArr.state = ret.top;
         showMenu.value = true;
         return;
       } else if (router.currentRoute.value.name !== 'unit') {
@@ -182,11 +182,12 @@
           return;
         } else {
           const ret = findMenu(router.currentRoute.value, allMenuItems.value);
-          if(store?.workspaceData?.name == '个人空间') {
-            menuArr.state = ret.top.children.splice(1);
+          if(store?.workspaceData?.typeName == '人员') {
+            menuArr.state = [ret.top.children[1]];
           } else {
             menuArr.state = ret.top.children;
           }
+          return;
         }
       }
     }
@@ -242,7 +243,6 @@
     }
     titleArr.state = ret.top;
     menuArr.state = ret.top.children;
-    console.log('menuArr.state: ', menuArr.state);
     showMenu.value = true;
   }
   let router = useRouter()

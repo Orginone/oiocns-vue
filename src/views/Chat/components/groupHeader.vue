@@ -1,23 +1,23 @@
 <template>
   <div class="group-header-wrap">
     <ul class="user flex">
-      <HeadImg :name="chat.curChat.value?.name" :label="''" />
+      <HeadImg :name="chat.chat.target.typeName" :label="''" />
       <li class="user-info">
         <div class="user-info-top flex">
           <p class="user-info-top-name"
-            >{{ chat.curChat.value?.name
-            }}<span v-if="chat.curChat.value?.personNum > 0"
-              >({{ chat.curChat.value?.personNum }}人)</span
+            >{{ chat.chat.target.name
+            }}<span v-if="chat.chat.target.typeName !== '人员'"
+              >({{ chat.chat.personCount }}人)</span
             ></p
           >
-          <el-tag size="small">{{ chat.curChat.value?.label }}</el-tag>
+          <el-tag size="small">{{ chat.chat.target.label }}</el-tag>
         </div>
       </li>
     </ul>
     <span class="btn-box">
       <el-icon
         class="add-btn btn"
-        v-if="chat.curChat.value?.typeName !== '人员'"
+        v-if="chat.chat.target.typeName !== '人员'"
         :size="20"
         @click="handleAddFun()"
       >
@@ -31,8 +31,8 @@
 
   <el-dialog customClass="QrDialog" v-model="dialogVisible" title="邀请好友" width="30%">
     <p>方式一：共享二维码，邀请好友</p>
-    <div class="QrDiv" :key="chat.curChat.value.id">
-      <QrCodeCustom :qrText="chat.curChat.value?.name" />
+    <div class="QrDiv" :key="chat.chat.target.id">
+      <QrCodeCustom :qrText="chat.chat.target?.name" />
     </div>
     <p>方式二：共享链接，邀请好友</p>
     <div class="share-link">展示链接...</div>

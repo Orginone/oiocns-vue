@@ -6,12 +6,12 @@
     <!-- 右侧展示主体 -->
     <div class="chart-page">
       <!-- 头部 -->
-      <GroupHeaderVue v-if="chat.curChat.value !== null" @viewDetail="handleViewDetail" />
+      <GroupHeaderVue v-if="chat.chat" @viewDetail="handleViewDetail" />
       <!-- 聊天区域 -->
       <GroupContent class="chart-content" ref="contentWrapRef" @handleReWrite="reWrite"
-        v-show="chat.curChat.value != null" />
+        v-show="chat.chat" />
       <!-- 输入区域 -->
-      <GroupInputBox ref="inputBox" class="chart-input" v-show="chat.curChat.value != null" />
+      <GroupInputBox ref="inputBox" class="chart-input" v-show="chat.chat" />
     </div>
     <!-- 详情 -->
     <GroupDetail v-if="isShowDetail" :clearHistoryMsg="clearHistoryMsg" />
@@ -33,9 +33,12 @@ const contentWrapRef = ref(null)
 const inputBox = ref(null)
 
 onMounted(() => {
-  chat.onMessage((data: any) => {
-    contentWrapRef.value.goPageEnd()
-  })
+  console.log(chat);
+  console.log(chat.chat);
+  
+  // chat.onMessage((data: any) => {
+  //   contentWrapRef.value.goPageEnd()
+  // })
 })
 
 const openChanged = (item: any) => {
@@ -48,7 +51,7 @@ const reWrite = (str: string) => {
 
 onBeforeUnmount(() => {
   // 离开页面关闭链接
-  chat.onMessage(null)
+  // chat.onMessage(null)
 })
 // 展示详情页
 const handleViewDetail = () => {

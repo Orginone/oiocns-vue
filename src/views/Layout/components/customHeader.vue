@@ -135,7 +135,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref,reactive, computed, onMounted } from 'vue'
+  import { ref,reactive, computed, onMounted, getCurrentInstance } from 'vue'
   import { storeToRefs } from 'pinia'
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/store/user'
@@ -322,10 +322,12 @@
     //     }
     //   })
   }
+  const { proxy } = getCurrentInstance()
   const switchCompany = (data: { id: string }) => {
     handleClose();
     modelIsShow.value = false
     store.setCurSpace(data.id)
+    proxy?.$Bus.emit('refreshNav')
     // $services.person
     //   .changeWorkspace({
     //     data: {
