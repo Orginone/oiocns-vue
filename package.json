@@ -14,7 +14,7 @@
     "@kangc/v-md-editor": "^2.3.15",
     "@microsoft/signalr": "^6.0.7",
     "@msgpack/msgpack": "^2.8.0",
-    "@orginone/oiocns-ts": "^1.1.1",
+    "@orginone/oiocns-ts": "^1.1.9",
     "@types/qrcode": "^1.5.0",
     "@vueuse/core": "^9.6.0",
     "@wcjiang/notify": "^2.1.0",
@@ -74,50 +74,5 @@
     "vue-eslint-parser": "^9.0.3",
     "vue-router": "^4.1.2",
     "vue-tsc": "^0.38.4"
-  },
-  
-  "vite":{ 
-    "optimizeDeps":{
-      "includs":[
-        "@element-plus/icons-vue",
-        "axios",
-        "element-plus/es",
-        "element-plus/es/components/header/style/index",
-        "element-plus/es/components/drawer/style/index",
-        "element-plus/es/components/image/style/index",
-        "element-plus/es/components/table/style/index",
-        "element-plus/es/components/radio/style/index",
-        "element-plus/es/components/checkBox/style/index",
-        "element-plus/es/components/checkBox-group/style/index",
-        "element-plus/es/components/time-picker/style/index",
-        "element-plus/es/components/date-picker/style/index",
-        "element-plus/es/components/pagination/style/index",
-        "element-plus/es/components/table-column/style/index",
-        "element-plus/es/components/drawer/style/index",
-        "element-plus/es/components/switch/style/index",
-        "element-plus/es/components/form/style/index",
-        "element-plus/es/components/form-item/style/index",
-        "element-plus/es/components/select/style/index",
-        "element-plus/es/components/tree/style/index",
-        "element-plus/es/components/dialog/style/index",
-        "element-plus/es/components/button/style/index",
-        "element-plus/es/components/input/style/index",
-        "element-plus/es/components/container/style/index",
-        "element-plus/es/components/main/style/index",
-        "element-plus/es/components/tabs/style/index",
-        "element-plus/es/components/tabs-pane/style/index",
-        "element-plus/es/components/tooltip/style/index",
-        "element-plus/es/components/config-provider/style/index",
-        "element-plus/es/components/row/style/index",
-        "element-plus/es/components/space/style/index",
-        "element-plus/es/components/dropdown/style/index",
-        "element-plus/es/components/dropdown-menu/style/index",
-        "element-plus/es/components/dropdown-item/style/index",
-        "element-plus/es/components/link/style/index",
-        "element-plus/es/components/col/style/index",
-        "element-plus/es/components/icon/style/index",
-        "element-plus/es/components/menu/style/index"
-      ]
-    }
   }
 }

@@ -69,7 +69,7 @@ import { ref } from "vue";
 import { setCenterStore } from '@/store/setting'
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Search } from '@element-plus/icons-vue'
-import { USERCTRL, TargetType } from '@/ts/coreIndex';
+import { userCtrl, TargetType } from '@/ts/coreIndex';
 const store = setCenterStore()
 store.$subscribe(
 (_, state) => {
@@ -242,7 +242,7 @@ const getOrgUsers = async(filter?: string) => {
   if (filter && filter.trim() != '') {
     data = { ...data, ...{ filter } }
   }
-  const personData = await USERCTRL.space.loadMembers({
+  const personData = await userCtrl.space.loadMembers({
     offset: 0,
     limit: 10,
     filter: ''

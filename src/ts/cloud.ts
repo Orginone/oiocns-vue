@@ -1,5 +1,5 @@
-import DocController from "@/ts/controller/store/docsCtrl"
-import { IFileSystemItem } from "@/ts/core";
+import {docsCtrl as DocController} from "@orginone/oiocns-ts"
+import {IFileSystemItem}  from "@orginone/oiocns-ts";
 
 /**
  * 云盘

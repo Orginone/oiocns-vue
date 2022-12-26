@@ -70,8 +70,8 @@
   import authority from '@/utils/authority'
   import { useUserStore } from '@/store/user'
   import { Application } from './app.ts'
-  import userCtrl from '@/ts/controller/setting/userCtrl';
-  import appCtrl from '@/ts/controller/store/appCtrl';
+  import {userCtrl} from '@/ts/coreIndex'
+  import {appCtrl} from '@/ts/coreIndex'
 
   const typePD: any = computed(() => {
     if (props.dialogType == '1') {
@@ -462,7 +462,6 @@
   const handleNodeClick = async (node: any, load: boolean, search?: string) => {
 
     if (node) {
-      console.log('aaaa',appCtrl.curProduct,node)
       centerTreeShow.value = true
       const item: ITarget = node.item;
       console.log(radio.value,await item.selectAuthorityTree())

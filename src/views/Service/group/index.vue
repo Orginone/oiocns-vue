@@ -77,7 +77,7 @@
   import searchGroup from '@/components/searchs/index.vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { TabsPaneContext } from 'element-plus'
-  import { chat } from '@/module/chat/orgchat'
+  import {chatCtrl as chat} from '@/ts/coreIndex'
   
   import thingServices from '@/module/flow/thing'
 

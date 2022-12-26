@@ -66,15 +66,14 @@
   import setTree from './json/setTree.json';
   // import serviceJson from './json/service.json';
   // import userJosn from './json/user.json';
-  // import { chat } from '@/module/chat/orgchat'
-  import { WorkModel as todo } from '@orginone/oiocns-ts';
+  import { todoCtrl as todo } from '@/ts/coreIndex';
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
   import { anystore } from '@/hubs/anystore'
   // import {MarketModel} from "@/ts/market";
-  import marketCtrl from '@/ts/controller/store/marketCtrl';
-  import thingCtrl from '@/ts/controller/thing'
-  import {INullSpeciesItem} from "@/ts/core";
+  import {marketCtrl} from '@/ts/coreIndex';
+  import {thingCtrl} from '@/ts/coreIndex'
+  import {INullSpeciesItem} from '@/ts/coreIndex';
 
   const { proxy } = getCurrentInstance()
   const store = useUserStore()
@@ -252,18 +251,28 @@
   };
   // 获取商店分类
   const getMenu = () => {
-    anystore.subscribed('STORE_MENU'+store.workspaceData.id, 'user', (data) => {
+      const id = appCtrl.subscribePart('STORE_MENU', () => {
+        //   setCustomMenu([...appCtrl.spacies]);
+            console.log('appCtrl.spacies',appCtrl.spacies)
+      });
+    
+    
+    // console.log('id',id)
+    // return () => {
+    //   return appCtrl.unsubscribe(id);
+    // };
+    // anystore.subscribed('STORE_MENU'+store.workspaceData.id, 'user', (data) => {
+    //   console.log('dataaa',data)
       let newJSON = JSON.parse(JSON.stringify(storeJson))
-      console.log('newJSON',newJSON)
-        if(data?.data?.species.length>0){
-          menuData.data = data.data.species;          
-          dataFilter(menuData.data)
-          newJSON[2].children = menuData.data;
-        }
+    //     if(data?.data?.species.length>0){
+    //       menuData.data = data.data.species;          
+    //       dataFilter(menuData.data)
+    //       newJSON[2].children = menuData.data;
+    //     }
         titleArr.state = newJSON[0]
         menuArr.state = newJSON
-        btnType.value = 'STORE_USER_MENU'
-    })
+    //     btnType.value = 'STORE_USER_MENU'
+    // })
   }
 
   function getUuid() {

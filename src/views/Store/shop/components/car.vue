@@ -44,7 +44,7 @@
     import { ref, reactive, onMounted, nextTick } from 'vue'
     import { ElMessage, ElMessageBox } from 'element-plus'
     import { PAGE_SIZES, PAGE_NUM } from '@/constant'
-    import marketCtrl from '@/ts/controller/store/marketCtrl';
+    import {marketCtrl} from '@/ts/coreIndex';
     import img1 from '@/assets/img/group22.png'
 
     const diyTable = ref(null)

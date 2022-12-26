@@ -322,9 +322,9 @@ import opened from "./components/opened.vue";
 import appDetail from "./components/appDetail.vue";
 import ShareComponent from "./components/shareComponents.vue";
 import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
-import marketCtrl from '@/ts/controller/store/marketCtrl';
-import appCtrl from '@/ts/controller/store/appCtrl';
-import userCtrl from '@/ts/controller/setting/userCtrl';
+import {marketCtrl} from '@/ts/coreIndex';
+import {appCtrl} from '@/ts/coreIndex'
+import {userCtrl} from '@/ts/coreIndex'
 import { useCommonStore } from '@store/common'
 import img1 from '@/assets/img/group22.png'
 
@@ -471,7 +471,6 @@ const title = ref<string>("");
 onMounted(() => {
   // 获取列表
   getProductList(); 
-  console.log('marketCtrl.shopinglist',marketCtrl.shopinglist)
 });
 
 const commonStore = useCommonStore()
@@ -497,7 +496,7 @@ const handleUpdate = (page: any) => {
 };
 // 获取我的应用列表
 const getProductList = () => {
-  marketCtrl.Market.getOwnProducts(false).then((res:any)=>{
+  marketCtrl.target.getOwnProducts(false).then((res:any)=>{
     state[`ownProductList`] = res ;
     state['appList'] = res;
     diyTable.value.state.page.total = res.length

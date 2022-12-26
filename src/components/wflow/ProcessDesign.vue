@@ -49,9 +49,13 @@
     provide
 	} from 'vue';
 	import $services from '@/services'
+<<<<<<< HEAD
 	import processCtrl from '@/ts/controller/setting/processCtrl';
 	import userCtrl from '@/ts/controller/setting/userCtrl';
 	// import processCtrl from '@/ts/controller/setting/processCtrl';
+=======
+	import {userCtrl} from '@/ts/coreIndex'
+>>>>>>> ceee3480319b4ab0576673c70327d8756081dee0
 	import LayoutHeader from './layout/LayoutHeader.vue';
 	// import FormDesign from './layout/FormDesign.vue'
 	import FormProcessDesign from './layout/FormProcessDesign.vue'

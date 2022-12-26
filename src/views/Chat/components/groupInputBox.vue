@@ -15,7 +15,6 @@
             <li>
               <img class="emoji" v-for="index in 36" :key="index" :src="`/emo/${index}.png`" alt=""
                 @click="handleImgChoosed(`/emo/${index}.png`)" />
-
             </li>
           </ul>
         </el-popover>
@@ -38,7 +37,7 @@
 <script lang="ts" setup>
 import { ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'
-import { chat } from '@/module/chat/orgchat'
+import {chatCtrl as chat} from '@/ts/coreIndex'
 
 const inputRef = ref(null)
 const faceBtnRef = ref(null)
