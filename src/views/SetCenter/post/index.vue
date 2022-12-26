@@ -25,7 +25,7 @@
   import { getCurrentInstance, computed } from "vue";
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { useUserStore } from '@/store/user'
-  import { USERCTRL, TargetType } from '@/ts/coreIndex';
+  import { userCtrl, TargetType } from '@/ts/coreIndex';
   import { setCenterStore } from '@/store/setting'
   const settingStore = setCenterStore()
   const userStore = useUserStore()
@@ -57,7 +57,7 @@
       isUpdate.value = false
       activeModal.value = '新增|岗位'
       visible.value = true
-      current.value = USERCTRL.company
+      current.value = userCtrl.company
     } else if (id == '2009') {
       isUpdate.value = true
       formData = settingStore.currentSelectItme

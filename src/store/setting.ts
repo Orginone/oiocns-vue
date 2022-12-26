@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import {USERCTRL} from '@/ts/coreIndex';
+import {userCtrl} from '@/ts/coreIndex';
 
 type SettingStoreType = {
   unitInfo: any,
@@ -34,7 +34,7 @@ export const setCenterStore = defineStore({
       return this.departmentInfo
     },
     async GetIdentities() {
-      const stations = await USERCTRL.company.getStations(false);
+      const stations = await userCtrl.company.getStations(false);
       let data: { label: string; key: string; object: any, [key: string]: any }[] = [];
       stations.forEach((a) => {
         data.push({
@@ -77,7 +77,7 @@ export const setCenterStore = defineStore({
         }
         return result;
       };
-      const depts = await USERCTRL.company.loadSubTeam(reload);
+      const depts = await userCtrl.company.loadSubTeam(reload);
       const data = [];
       if (depts.length > 0) {
         for (const child of depts) {

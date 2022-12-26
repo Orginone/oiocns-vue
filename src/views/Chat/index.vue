@@ -25,7 +25,7 @@ import GroupHeaderVue from './components/groupHeader.vue'
 import GroupInputBox from './components/groupInputBox.vue'
 import GroupContent from './components/groupContent.vue'
 import GroupDetail from './components/groupDetail.vue'
-import { chat } from '@/ts/controller/chat'
+import {chatCtrl as chat} from '@/ts/coreIndex'
 const isShowDetail = ref<boolean>(false)
 
 //内容展示 dom节点

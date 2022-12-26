@@ -65,13 +65,12 @@
 import { useUserStore } from '@/store/user'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { appstore } from '@/module/store/app'
+// import { appstore } from '@/module/store/app'
 import { computed,onMounted,ref,reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import img1 from '@/assets/img/group22.png'
-import marketCtrl from '@/ts/controller/store/marketCtrl'
+import {marketCtrl} from '@/ts/coreIndex'
 import { useCommonStore } from '@store/common'
-// import { WorkModel } from '@/ts/core'
 
 const store = useUserStore()
 const router = useRouter()
@@ -105,45 +104,44 @@ const state = reactive({
 const appList = ref<ProductType[]>([])
 
 const getAppList = async () => {
-  marketCtrl.Market.getOwnProducts(false).then((res)=>{
-    console.log('res',res)
-    let arr:any = []
-    res.forEach(element => {
-      let obj = {
-        name: element.prod.name,
-        updateTime:element.prod.updateTime,
-        createTime:element.prod.createTime,
-        typeName:element.prod.typeName,
-        updateUser:element.prod.updateUser,
-        authority:element.prod.authority,
-        belongId:element.prod.belongId,
-        code:element.prod.code,
-        source:element.prod.source,
-        remark:element.prod.remark,
-        icon:img1
-      }
-      arr.push(obj)
-    });
-    appList.value = arr;
-  })
+  let res:any[] = marketCtrl.alwaysUseApps;
+  let arr:any = []
+  res.forEach(element => {
+    let obj = {
+      name: element.prod.name,
+      updateTime:element.prod.updateTime,
+      createTime:element.prod.createTime,
+      typeName:element.prod.typeName,
+      updateUser:element.prod.updateUser,
+      authority:element.prod.authority,
+      belongId:element.prod.belongId,
+      code:element.prod.code,
+      source:element.prod.source,
+      remark:element.prod.remark,
+      icon:img1
+    }
+    arr.push(obj)
+  });
+  appList.value = arr;
 }
 
 //常用应用跳转
 const commonStore = useCommonStore()
 const handleChooseItem = async (app: any) => {
-  const { result = [], total = 0 } = await appstore.queryOwnResource(app.id)
-  if (total === 0) {
+  //TODO 改为最新的方式 add by liuwei 2022-12-24
+  // const { result = [], total = 0 } = await appstore.queryOwnResource(app.id)
+  // if (total === 0) {
     return ElMessage({
       type: 'error',
       message: '该应用资源缺失,请联系管理员'
     })
-  }
-  const { link } = result[0]
-  let data = { type: '', appInfo: app, icon: img1, link, path: '/online' }
-  data.type = 'app'
-  commonStore.iframeLink = data.link
-  commonStore.appInfo = data.appInfo
-  router.push(data.path)
+  // }
+  // const { link } = result[0]
+  // let data = { type: '', appInfo: app, icon: img1, link, path: '/online' }
+  // data.type = 'app'
+  // commonStore.iframeLink = data.link
+  // commonStore.appInfo = data.appInfo
+  // router.push(data.path)
 }
 
 // 页面跳转

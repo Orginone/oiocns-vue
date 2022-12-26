@@ -102,8 +102,8 @@
   import appInfo from "./components/appInfo.vue"
   import car from "./components/car.vue"
 
-  import marketCtrl from '@/ts/controller/store/marketCtrl';
-  import userCtrl from '@/ts/controller/setting/userCtrl';
+  import {marketCtrl} from '@/ts/coreIndex';
+  import {userCtrl} from '@/ts/coreIndex'
 
   const diyTable = ref(null)
   const valuee = ref<any>('');

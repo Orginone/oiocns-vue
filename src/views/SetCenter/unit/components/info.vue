@@ -122,7 +122,7 @@ import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router';
 import authority from '@/utils/authority'
-import userCtrl from '@/ts/controller/setting/userCtrl'
+import {userCtrl} from '@/ts/coreIndex'
 
 const info = computed(()=> userCtrl.company?.target)
 

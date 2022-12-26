@@ -18,9 +18,9 @@
 import { defineComponent } from 'vue'
 import { ElConfigProvider,ElMessage } from 'element-plus'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
-import { logger, LoggerLevel } from '@/ts/base/common';
+import { logger,LoggerLevel } from '@/ts/coreIndex';
 
-logger.onLogger = (level, msg) => {
+logger.onLogger = (level:LoggerLevel, msg:any) => {
   switch (level) {
     case LoggerLevel.info:
       ElMessage({
