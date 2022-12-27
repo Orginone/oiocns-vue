@@ -70,7 +70,7 @@ import {
 import { debounce } from '@/utils/tools'
 import HeadImg from '@/components/headImg.vue'
 import moment from 'moment'
-import {chat} from '@/module/chat/orgchat'
+import {chatCtrl as chat} from '@/ts/coreIndex'
 import { ElMessage } from 'element-plus'
 
 // dom节点

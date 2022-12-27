@@ -53,7 +53,8 @@ import { ref, reactive, onMounted, nextTick ,getCurrentInstance} from "vue";
 import type { FormInstance } from 'element-plus'
 import { useUserStore } from '@/store/user'
 import { storeToRefs } from 'pinia'
-import marketServices from "@/module/store/market"
+import {marketCtrl} from '@/ts/coreIndex';
+
 const instance = getCurrentInstance();
 
 const props = defineProps({
@@ -94,16 +95,13 @@ const createShop = async (formEl: FormInstance | undefined) =>{
       }
   })
   if (!isValidate) return
-  await marketServices.creatMarket({
+  
+  const market = await marketCtrl.Market.createMarket({
       name: form.name,
       code: form.code,
       samrId: store.queryInfo.id,
-      authId:
-      store.workspaceData.type === 2
-          ? store.workspaceData.authId
-          : store.queryInfo.team.authId, // 空间为组织单位时取组织单位 的authId
       remark: form.remark,
-      public: form.public
+      ispublic: form.public
   });
   closeDialog(false)
   instance?.proxy?.$Bus.emit('clickBus',1050)

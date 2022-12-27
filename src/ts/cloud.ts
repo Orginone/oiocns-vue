@@ -1,4 +1,5 @@
-import { StoreModel } from "@orginone/oiocns-ts"
+import {docsCtrl as DocController} from "@orginone/oiocns-ts"
+import {IFileSystemItem}  from "@orginone/oiocns-ts";
 
 /**
  * 云盘
@@ -11,7 +12,7 @@ class Cloud {
    * 私有构造方法，禁止外部实例化
    */
   constructor() {
-    this.DocModel = StoreModel.getDocsSubModel()
+    this.DocModel = DocController
     this.ListMode = 2
   }
 
@@ -19,7 +20,7 @@ class Cloud {
    * 获取左侧目录树
    * @returns 目录树结构
    */
-  public GetLeftTree = async (data: any) => {
+  public GetLeftTree = async (data: FileObject) => {
     let children
     children = await this.GetExpandTree(data)
     data.dirChildren = children
@@ -30,9 +31,9 @@ class Cloud {
    * @param refresh
    * @constructor
    */
-  private GetExpandTree = async (data: any) => {
+  private GetExpandTree = async (data: FileObject) => {
     await data.loadChildren(false)
-    let arr = data.children
+    let arr = data.children as FileObject[]
     let children: any[] = []
     for (const el of arr) {
       if (el.target.isDirectory) {
@@ -42,6 +43,14 @@ class Cloud {
     }
     return children.length > 0 ? children : []
   }
+}
+
+/**
+ * 文件对象
+ */
+export interface FileObject extends IFileSystemItem {
+  dirChildren: IFileSystemItem[]
+  isLeaf: boolean
 }
 
 const cloud = new Cloud()

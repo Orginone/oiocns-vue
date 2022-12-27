@@ -4,10 +4,6 @@
       <el-tab-pane label="单位列表" name="companies">
       </el-tab-pane>
       <Companies :tabHeight="props.tabHeight" :selectItem="selectItem"></Companies>
-
-      <!-- <el-tab-pane label="角色体系" name="identity">
-        <Authority :selectItem="selectItem"></Authority>
-      </el-tab-pane> -->
     </el-tabs>
   </div>
 </template>

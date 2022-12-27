@@ -24,7 +24,7 @@ import Info from './info.vue'
 import Body from './body.vue'
 import Breadcrumb from '@/components/divBreadcrumb/index.vue'
 
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const info = ref(null);
 const body = ref(null);
@@ -39,9 +39,6 @@ const nodeClick = (selectItem: any) => {
       tabHeight.value = container.value.clientHeight - 62 - infoWrap.value.clientHeight
     }
   }, 100);
-}
-const goBack = () => {
-  window.history.go(-1)
 }
 const refresh = () => {
   unitTree.value.refresh();
@@ -65,16 +62,8 @@ window.addEventListener('resize', function () {
     tabHeight.value = container.value.clientHeight - 62 - infoWrap.value.clientHeight
   }
 })
-watch(
-  () => screenHeight.value,
-  (newValue, oldValue) => {
-
-  },
-  { immediate: true }
-)
 // 拖拽移动实现
 const dragControllerDiv = () => {
-
   let resize = document.getElementsByClassName('resize')
   let left = document.getElementsByClassName('left')
   let mid = document.getElementsByClassName('mid')

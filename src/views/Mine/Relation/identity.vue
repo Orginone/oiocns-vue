@@ -13,7 +13,7 @@
   import DiyTable from "@/components/diyTable/index.vue";
   import { useUserStore } from "@/store/user";
   import { storeToRefs } from "pinia";
-  import {CommunicateModel as chat} from '@orginone/oiocns-ts';
+  import { chatCtrl as chat} from '@/ts/coreIndex';
 import _ from 'lodash';
 import { useAsyncComputed } from '@/hooks/useAsyncComputed';
 

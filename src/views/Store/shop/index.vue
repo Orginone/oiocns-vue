@@ -1,22 +1,5 @@
 <template>
   <div class="main">
-    <!-- <div class="nav-list">
-      <div class="nav-title">选择分类</div>
-      <el-select v-model="valuee" placeholder="Select">
-        <el-option-group
-          v-for="group in optionsList"
-          :key="group.label"
-          :label="group.label"
-        >
-          <el-option
-            v-for="item in group.options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-option-group>
-      </el-select>
-    </div> -->
     <div class="content">
       <div class="table">
         <diytab
@@ -34,7 +17,10 @@
           :tableHead="tableHead"
         >
         <template #buttons>
-            <el-button class="btn-check" type="primary" @click="goBuyCar()" link>购物车</el-button>
+            <el-button class="btn-check" type="primary" @click="goBuyCar()" link>
+              购物车
+              <el-badge :value="carNum" class="item"> </el-badge>
+            </el-button>
           </template>
           <template #price="scope">
               ￥{{scope.row.price||"0.00"}}
@@ -98,6 +84,9 @@
     <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog', false)"/>
     <addShop :addDialog="dialogType.addDialog" @checksSearch="checksSearch" @closeDialog="closeDialog('addDialog', false)"/>
     <appInfo :infoDialog="dialogType.infoDialog" :infoDetail="infoDetail.info" @closeDialog="closeDialog('infoDialog', false)"></appInfo>
+    <el-drawer v-model="showCar" title="购物车" size="300">
+        <car></car>
+    </el-drawer>
   </div>
   
 </template>
@@ -108,14 +97,13 @@
   import { useRouter } from 'vue-router'
   import $services from '@/services'
   import { ElMessage, ElMessageBox } from 'element-plus'
-  import { appstore } from '@/module/store/app'
   import createShop from "../components/createShop.vue";
   import addShop from "../components/addShop.vue";
-  import marketServices from "@/module/store/market"
   import appInfo from "./components/appInfo.vue"
-  import marketCtrl from '@/ts/controller/store/marketCtrl';
-  // import {MarketModel} from "@/ts/market";
-  import { IMarket } from '@/ts/core';
+  import car from "./components/car.vue"
+
+  import {marketCtrl} from '@/ts/coreIndex';
+  import {userCtrl} from '@/ts/coreIndex'
 
   const diyTable = ref(null)
   const valuee = ref<any>('');
@@ -150,20 +138,20 @@
       type: 'warning'
     })
     .then(async() => {
-      await marketServices.deleteMarket(id);
+      await  marketCtrl.Market.deleteMarket(id) 
       router.go(0);
     })
     .catch(() => { })
   }
   const goBuyCar = ()=>{
-    router.push({path: "/store/shoppingCar" });
+    showCar.value = true;
   }
   const checkList = reactive<any>([])
   const selectionChange = (val: any) => {
     checkList.value = val
   }
   const options = ref<any>({
-    checkBox: false,
+    checkBox: true,
     order: true,
     selectLimit: 1,
     noPage:false,
@@ -180,7 +168,6 @@
     dialogType[type] = key;
   };
   const router = useRouter()
-  const shopcarNum = ref(0)
 
   // 表格展示数据
   const pageStore = reactive({
@@ -191,7 +178,9 @@
   })
   // 软件开放市场信息
   const softShareInfo = ref<MarketType>({} as MarketType)
-
+  // 购物车
+  const showCar = ref<boolean>(false);
+  const carNum = ref<number>(0);
   const state = reactive({
     myAppList: []
   })
@@ -250,44 +239,41 @@ const buyThings = (item:any) => {
 }
   onMounted(() => {
     getMarketInfo()
-    getShopcarNum()
+    pageStore.tableData = marketCtrl.shopinglist
+    carNum.value =  marketCtrl.shopinglist.length || 0
+    if(marketCtrl.shopinglist.length ==0){
+      setTimeout(() => {
+        pageStore.tableData = marketCtrl.shopinglist
+        carNum.value =  marketCtrl.shopinglist.length || 0
+      },2000);
+    }
   })
   //加入购物车
   const joinShopCar = async (item: any) => {
     marketCtrl.joinApply(item);
+    pageStore.tableData = marketCtrl.shopinglist
+    carNum.value =  marketCtrl.shopinglist.length || 0
   }
   // 加入商店
-  const checksSearch = (val:any)=>{
+  const checksSearch = async (val:any)=>{
     let selectId: any[] = []
     console.log('selectId',val)
 
     val.value.forEach((el: { id: any }) => {
       selectId.push(el.id)
     })
-    $services.appstore
-    .applyJoin({
-      data: {
-        id: selectId[0]
-      }
-    })
-    .then((res: ResultType) => {
-      if (res.success) {
-        ElMessage({
-          message: '加入成功',
-          type: 'success'
-        })
-        closeDialog('addDialog',false)
-      }
-    })
+    if(await userCtrl.user.applyJoinMarket(selectId[0])){
+      ElMessage({
+        message: '加入成功',
+        type: 'success'
+      })
+      closeDialog('addDialog',false)
+    }
   }
   // 详情弹窗
   const requireItem = (item:Object) => {
     dialogType.infoDialog = true;
     infoDetail.info = item;
-  }
-  // 获取购物车数量
-  const getShopcarNum = async () => {
-    shopcarNum.value = await appstore.getShopcarNum()
   }
 
   // 搜索功能-关键词
@@ -313,26 +299,6 @@ const buyThings = (item:any) => {
       storeList.value = res;
       getAppList(res[0])
     })
-  }
-
-  const GoPage = (path: string) => {
-    router.push(path)
-  }
-  const getShopData = () => {
-    $services.appstore
-      .merchandise({
-        data: {
-          id: router.currentRoute.value.query.id,
-          offset: 0,
-          limit: 20,
-          filter:'',
-        }
-      })
-      .then((res: ResultType) => {
-        if (res.code == 200) {
-          state.myAppList = res.data.result || []
-        }
-      })
   }
   watch(() => router.currentRoute.value.fullPath, () => {
       //监听路由
@@ -416,15 +382,6 @@ const buyThings = (item:any) => {
         background: #fff;
         display: flex;
         height:calc(100vh - 100px);
-        .btn-check{
-          padding: 8px 16px;
-          color: #154ad8;
-        }
-        .btn-check:hover{
-            background: #154ad8;
-            color: #fff;
-            padding: 8px  16px;
-        }
         .table-tabs{
           min-width: 300px;
           .el-menu--horizontal{

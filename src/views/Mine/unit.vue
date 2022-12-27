@@ -62,7 +62,7 @@
     import searchCompany from '@/components/searchs/index.vue'
     import CreateUnitDialog from '@/views/Layout/components/createUnitDialog.vue'
     import DiyTable from '@/components/diyTable/index.vue'
-    import {chat} from '@/module/chat/orgchat'
+    import {chatCtrl as chat} from '@/ts/coreIndex'
     import authority from '@/utils/authority'
   
     const store = useUserStore()

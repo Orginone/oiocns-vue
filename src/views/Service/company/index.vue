@@ -87,11 +87,9 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { TabsPaneContext } from 'element-plus'
   import searchCompany from '@/components/searchs/index.vue'
-  // import { chat } from '@/module/chat/orgchat'
+  // import {chatCtrl as chat} from '@/ts/coreIndex'
   
-  // import thingServices from '@/module/flow/thing'
-
-  import {WorkModel} from "@/oiocns-ts";
+  import {todoCtrl} from '@/ts/coreIndex';
 
   // 申请加入单位弹窗控制
   const searchDialog = ref<boolean>(false)
@@ -201,8 +199,8 @@
   var getAllApprovalList = async () => {
     // await ThingServices.getAllApproval('0')
     // tableData.value = ThingServices.approvalList.length && ThingServices.approvalList.filter(i => i?.team?.target?.typeName === '单位')
-    await WorkModel.waitUntilInitialized();
-    const res = await WorkModel.OrgTodo.getTodoList(true);
+    await todoCtrl.waitUntilInitialized();
+    const res = await todoCtrl.OrgTodo.getTodoList(true);
     tableData.value = res.map(d => {
       d.Data.pass = d.pass;
       d.Data.reject = d.reject;
@@ -212,8 +210,8 @@
 
   // 查询我的申请
   var getApplyList = async () => {
-    await WorkModel.waitUntilInitialized();
-    const res = await WorkModel.OrgTodo.getApplyList({
+    await todoCtrl.waitUntilInitialized();
+    const res = await todoCtrl.OrgTodo.getApplyList({
       offset:0,
       limit: 20,
       filter: ""

@@ -108,6 +108,87 @@ class thingServices {
       },
       {
         prop: 'target.name',
+        label: '发起人',
+        name: 'target.name',
+        type: 'slot',
+      },
+      {
+        prop: 'createTime',
+        label: '过期时间',
+        name: 'createTime'
+      },
+      {
+        type: 'slot',
+        prop: 'option',
+        label: '操作',
+        name: 'option'
+      }
+  ]
+  public companyHead :Array<Object> = [
+    {
+      prop: 'flowInstance.flowRelation.productId',
+      label: '事项',
+      name: 'productId',
+      type: 'slot',
+   },
+   {
+      type: 'slot',
+      prop: 'content',
+      label: '说明',
+      name: 'content'
+    },
+    {
+      prop: 'target.name',
+      label: '发起人',
+      name: 'target.name',
+      type: 'slot',
+    },
+    {
+      prop: 'createTime',
+      label: '发起时间',
+      name: 'createTime'
+    },
+    {
+      type: 'slot',
+      prop: 'option',
+      label: '操作',
+      name: 'option'
+    }
+  ]
+  public shopHead :Array<Object> =[
+    {
+      prop: 'flowInstance.flowRelation.productId',
+      label: '事项',
+      name: 'productId',
+      type: 'slot',
+   },
+   {
+      type: 'slot',
+      prop: 'content',
+      label: '说明',
+      name: 'content'
+    },
+    {
+      prop: 'target.name',
+      label: '发起人',
+      name: 'target.name',
+      type: 'slot',
+    },
+    {
+      prop: 'createTime',
+      label: '过期时间',
+      name: 'createTime'
+    },
+    {
+      type: 'slot',
+      prop: 'option',
+      label: '操作',
+      name: 'option'
+    }
+  ]
+  public orderHead :Array<Object> = [
+      {
+        prop: 'target.name',
         label: '申请人',
         name: 'target.name',
         type: 'slot',

@@ -4,7 +4,7 @@
       <div class="title">{{title}}信息</div>
       <div class="box-btns">
         <el-button small link type="primary" @click="handleUpdate">编辑</el-button>
-        <el-button small link type="primary" @click="handleUpdate">权限管理</el-button>
+        <el-button small link type="primary" @click="handleAuthority">权限管理</el-button>
         <!-- <el-button small link type="primary" v-if="authority.IsSpaceRelationAdmin()" @click="handleUpdate">编辑
         </el-button>
         <el-button small link type="primary" v-if="allowEdit()" @click="toAuth">角色管理</el-button>
@@ -14,22 +14,17 @@
     <div class="tab-list">
       <el-descriptions :column="2" border>
         <el-descriptions-item :label="`${title}名称`" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{currentData?.data?.team.name}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{currentData?.name}}</el-descriptions-item>
         <el-descriptions-item :label="`${title}编码`" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{currentData?.data?.code}}</el-descriptions-item>
-        <el-descriptions-item :label="'我的岗位'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{authority.GetTargetIdentitys(currentData?.data?.id)}}
-        </el-descriptions-item>
-        <el-descriptions-item :label="'团队编码'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{currentData?.data?.team.code}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{currentData?.code || ''}}</el-descriptions-item>
         <el-descriptions-item :label="'创建人'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{chat.getName(currentData?.data?.createUser)}}
+          label-class-name="my-label" class-name="my-content">{{currentData?.createUser || ''}}
         </el-descriptions-item>
         <el-descriptions-item :label="'创建时间'" label-align="center" align="center" width="150px"
-          label-class-name="my-label" class-name="my-content">{{currentData?.data?.createTime}}</el-descriptions-item>
+          label-class-name="my-label" class-name="my-content">{{currentData?.createTime || ''}}</el-descriptions-item>
         <el-descriptions-item label="描述" width="150px" :span="2" label-align="center" align="center">
           <div class="text-remark">
-            {{currentData?.data?.team.remark}}
+            {{currentData?.team.remark}}
           </div>
         </el-descriptions-item>
       </el-descriptions>
@@ -37,16 +32,21 @@
     </div>
   </div>
 
-  <el-dialog v-model="dialogVisible" :title="'请编辑' + title + '信息'" width="50%">
-    <el-form-item :label="title + '名称'">
-      <el-input v-model="formData.name" :placeholder="'请输入' + title + '名称'" clearable />
+  <el-dialog v-model="dialogVisible" :title="'请编辑' + title + '信息'" width="30%">
+    <el-form-item label="部门名称" style="width: 100%">
+      <el-input v-model="formData.teamName" placeholder="请输入" clearable style="width: 100%" />
     </el-form-item>
-    <el-form-item :label="title + '编号'">
-      <el-input v-model="formData.code" :placeholder="'请输入' + title + '描述'" clearable />
+    <el-form-item label="部门简称" style="width: 100%">
+      <el-input v-model="formData.name" placeholder="请输入" clearable style="width: 100%" />
     </el-form-item>
-    <el-form-item :label="title + '描述'">
-      <el-input v-model="formData.teamRemark" :placeholder="'请输入' + title + '描述'" :autosize="{ minRows: 5 }"
-        type="textarea" clearable />
+    <el-form-item label="部门编号" style="width: 100%">
+      <el-input v-model="formData.code" placeholder="请输入" clearable style="width: 100%" />
+    </el-form-item>
+    <el-form-item label="部门标识" style="width: 100%">
+      <el-input v-model="formData.teamCode" placeholder="请输入" clearable style="width: 100%" />
+    </el-form-item>
+    <el-form-item label="部门简介" style="width: 100%">
+      <el-input v-model="formData.teamRemark" :autosize="{ minRows: 5 }" placeholder="请输入" type="textarea" clearable />
     </el-form-item>
     <template #footer>
       <span class="dialog-footer">
@@ -55,15 +55,16 @@
       </span>
     </template>
   </el-dialog>
+  <authorityModal
+    v-model:visible="visible"
+  />
 </template>
 <script lang="ts" setup>
-import $services from '@/services'
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
+import authorityModal from './authorityModal.vue';
 import router from '@/router';
-import {chat} from '@/module/chat/orgchat'
 import authority from '@/utils/authority'
-import DepartmentServices from '@/module/relation/department'
 import { setCenterStore } from '@/store/setting'
 const store: any = setCenterStore()
 const allowEdit = () => {
@@ -76,10 +77,10 @@ const allowEdit = () => {
 let selectItem = ref<any>({})
 let dialogVisible = ref<boolean>(false)
 let formData: any = ref({})
-const service  = new DepartmentServices()
 
-const currentData = computed(() => store.currentSelectItme)
-const title = computed(() => currentData.value.data?.typeName ?? '部门')
+const currentData = computed(() => store.currentSelectItme?.intans?.target)
+const current = computed(() => store.currentSelectItme?.intans)
+const title = computed(() => currentData.value?.typeName ?? '部门')
 
 // 获取单位
 const selectItemChange = (data: any) => {
@@ -89,18 +90,29 @@ defineExpose({ selectItemChange });
 
 // 修改信息
 const handleUpdate = () => {
-  if (!currentData.value.id) {
+  if (!currentData.value?.id) {
     ElMessage.warning('请左侧选择部门或者工作组！')
     return
   }
-  formData.value = currentData.value.data
+  formData.value = {
+    name: currentData.value.name,
+    teamName: currentData.value.team?.name,
+    teamCode: currentData.value.team?.code,
+    code: currentData.value?.code,
+    teamRemark: currentData.value.team?.remark
+  }
   dialogVisible.value = true
+}
+
+const visible = ref(false)
+// 权限管理
+const handleAuthority = ()=> {
+  visible.value = true
 }
 
 // 保存
 const update = async () => {
-  const data = { ...formData.value, ...currentData.value.data, parentId:  store.unitInfo?.id };
-  const val =  await service.upDateDempartment(data)
+  const val = await current.value?.update({acatar: '', ...formData.value})
   dialogVisible.value = false
   ElMessage.success('信息修改成功!')
   selectItem.value.data = val

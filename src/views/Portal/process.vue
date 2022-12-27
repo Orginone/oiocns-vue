@@ -68,7 +68,7 @@
   import { ElMessage } from 'element-plus'
   import { useAppwfConfig } from '@/store/wflow'
   import thingServices from '@/module/flow/thing'
-import { chat } from '@/module/chat/orgchat';
+import {chatCtrl as chat} from '@/ts/coreIndex';
 
   const ThingServices  = new thingServices()
     const activeName = ref('first');

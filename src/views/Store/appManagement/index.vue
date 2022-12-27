@@ -9,15 +9,25 @@
     import detail from './components/detail.vue'
     import management from './components/management.vue'
     import { ref, reactive, onMounted, nextTick } from 'vue'
-    import { appstore, Application } from '@/module/store/app'
     import { useRouter, useRoute } from 'vue-router'
+    import {appCtrl} from '@/ts/coreIndex'
+
     const router = useRouter()
     const info = ref<Object>();
     const getInfo = async () =>{
       console.log('router.currentRoute.value.query.id',router.currentRoute.value.query.id)
       const id:string= router.currentRoute.value.query.id.toString();
-      info.value = await appstore.queryInfo(id)
-      console.log('data',info)
+      if(!appCtrl.curProduct){
+        router.go(-1)
+      }else{
+        let obj = {
+          name: appCtrl.curProduct.prod.name,
+          remark: appCtrl.curProduct.prod.remark,
+          createUser: appCtrl.curProduct.prod.createUser,
+          createTime: appCtrl.curProduct.prod.createTime,          
+        }
+        info.value = obj;
+      }
     }
     onMounted(() => {
       getInfo();

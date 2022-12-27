@@ -1,8 +1,6 @@
-// import {WorkModel} from "@orginone/oiocns-ts"
 
-import USERCTRL from '@/ts/controller/setting/userCtrl'
+import {userCtrl,thingCtrl,marketCtrl,todoCtrl,appCtrl,chatCtrl,TargetType,ICompany,SpaceType,logger,LoggerLevel,INullSpeciesItem} from '@orginone/oiocns-ts'
 
-import { companyTypes, DomainTypes, TargetType} from '@/ts/core/enum';
-// import { ICompany} from '@/ts/core/target/itarget';
 
-export {USERCTRL,TargetType}
+export {userCtrl,thingCtrl,marketCtrl,todoCtrl,appCtrl,chatCtrl,logger,LoggerLevel,TargetType}
+export type {ICompany,SpaceType,INullSpeciesItem}

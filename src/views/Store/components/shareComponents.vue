@@ -107,7 +107,8 @@
         ></Author>
       </div>
     </div>
-    <div class="footer" v-if="radio == '1'">
+    <!-- v-if="radio == '1'" -->
+    <div class="footer" >
       <el-button type="primary" @click="submitAll">确认</el-button>
       <el-button class="footer-btn" @click="closeDialog">取消</el-button>
     </div>
@@ -116,16 +117,14 @@
 
 <script setup lang="ts">
   // @ts-nocheck
-  import InfiniteScroll from 'element-plus'
   import { onMounted, ref, reactive, toRefs, watch, nextTick, computed, onUnmounted } from 'vue'
-  import { ElMessage, ElMessageBox } from 'element-plus'
-  import API from '@/services'
+  import { ElMessage } from 'element-plus'
   import Author from './author.vue'
-  import authority from '@/utils/authority'
   import { useUserStore } from '@/store/user'
-  import { Application } from '@/module/store/app.ts'
-  import type { TabsPaneContext } from 'element-plus'
-  import { AnyAaaaRecord } from 'dns'
+  import { Application } from './app.ts'
+  import {userCtrl} from '@/ts/coreIndex'
+  import {appCtrl} from '@/ts/coreIndex'
+
   const typePD: any = computed(() => {
     if (props.dialogType == '1') {
       return 1
@@ -137,7 +136,6 @@
       }
     }
   })
-  console.log('props',props)
   const application = new Application(props.info.id, typePD.value)
   interface Tree {
     id: string
@@ -185,7 +183,7 @@
     disabled: 'disabled'
   }
   const friendNodeClass = (data: any, node: any) => {
-    if (data.disabled) {
+    if (data?.disabled) {
       return 'penultimate'
     }
     return null
@@ -217,23 +215,25 @@
       state.personsData = []
       state.identitysData = []
       nextTick(() => {
-        if (newValue == '1') {
-          let arr: any[] = []
-          state.departData.forEach((el) => {
-            if (el.type == 'add' || el.type == 'has') {
-              arr.push(el.id)
-            }
-          })
-          leftTree.value.setCheckedKeys(arr, true)
-        }
+        // if (newValue == '1') {
+        //   let arr: any[] = []
+        //   state.departData.forEach((el) => {
+        //     if (el.type == 'add' || el.type == 'has') {
+        //       arr.push(el.id)
+        //     }
+        //   })
+        //   leftTree.value.setCheckedKeys(arr, true)
+        // }
+        getHistoryData();
       })
     }
   )
   const customNodeClass = (data: Tree, node: Node) => {
-    if (data.authAdmin === false || data?.data?.authAdmin === false) {
-      return 'penultimate'
-    }
-    return null
+    console.log('data',data)
+    // if (data.authAdmin === false || data?.data?.authAdmin === false) {
+    //   return 'penultimate'
+    // }
+    return 'aa'
   }
   watch(
     () => resource.value,
@@ -252,13 +252,13 @@
       }
     }
   )
-  watch(
-    () => searchValue.value,
-    (newValue, oldValue) => {
-      console.log(newValue)
-      handleNodeClick(state.loadID, false, newValue)
-    }
-  )
+  // watch(
+  //   () => searchValue.value,
+  //   (newValue, oldValue) => {
+  //     console.log(newValue)
+  //     handleNodeClick(state.loadID, false, newValue)
+  //   }
+  // )
   watch(
     () => searchLeftValue.value,
     (newValue, oldValue) => {
@@ -294,11 +294,11 @@
         state.way = [
           {
             id: '1',
-            label: '按集团共享'
+            label: '按集团分配'
           },
           {
             id: '2',
-            label: '按角色共享'
+            label: '按角色分配'
           },
           {
             id: '3',
@@ -314,7 +314,7 @@
         state.way = [
           {
             id: '1',
-            label: '按群组共享'
+            label: '按组织共享'
           },
           {
             id: '2',
@@ -322,17 +322,18 @@
           },
           {
             id: '3',
-            label: '按身份分配'
+            label: '按身份共享'
           },
           {
             id: '4',
-            label: '按人员分配'
+            label: '按人员共享'
           }
         ]
         getFriendsList()
       }
     }
   })
+  
 
   onUnmounted(() => {
     sumbitSwitch(state.switchData, true)
@@ -346,7 +347,7 @@
 
   // 获取群组信息
   const getFriendsList = async () => {
-    cascaderTree.value = await application.getJoinedCohorts()
+    cascaderTree.value = userCtrl.buildTargetTree(await userCtrl.getTeamTree())
     getHistoryData()
   }
 
@@ -387,10 +388,9 @@
     switch (radio.value) {
       case '1':
         setTimeout(async () => {
-          state.departHisData = await application.getHistoryData(
-            radio.value,
-            typePD !== 3 ? resource.value : ''
-          )
+          let data1 =  await appCtrl.curProduct.queryExtend('组织','0');
+          state.departHisData =  data1.result || []
+
           let arr: any[] = []
           state.departHisData.forEach((el) => {
             arr.push(el.id)
@@ -401,11 +401,8 @@
         }, 300)
         break
       case '2':
-        state.authorHisData = await application.getHistoryData(
-          radio.value,
-          typePD !== 3 ? resource.value : '',
-          data
-        )
+        let data2 =  await appCtrl.curProduct.queryExtend('职权','0');
+        state.authorHisData =  data2.result || []
         state.authorData = JSON.parse(JSON.stringify(state.authorHisData))
         let arrAu: any[] = []
         state.authorData.forEach((el) => {
@@ -417,12 +414,9 @@
         }
         break
       case '3':
-        state.identitysHisData = await application.getHistoryData(
-          radio.value,
-          typePD !== 3 ? resource.value : '',
-          data
-        )
-        state.identitysData = JSON.parse(JSON.stringify(state.identitysHisData))
+        let data3 =  await appCtrl.curProduct.queryExtend('身份','0');
+        state.identitysHisData = data3.result || []
+        state.identitysData = state.identitysHisData
         let arrId: any[] = []
         state.identitysData.forEach((el) => {
           el.type = 'has'
@@ -433,12 +427,9 @@
         }
         break
       case '4':
-        state.personsHisData = await application.getHistoryData(
-          radio.value,
-          typePD !== 3 ? resource.value : '',
-          data
-        )
-        state.personsData = JSON.parse(JSON.stringify(state.personsHisData))
+        let data4 = await appCtrl.curProduct.queryExtend('人员','0');        
+        state.personsHisData =  data4.result || []
+        state.personsData = state.personsHisData
         let arrPe: any[] = []
         state.personsData.forEach((el) => {
           el.type = 'has'
@@ -467,7 +458,7 @@
           await application.sumbitSwitch(
             state.authorData,
             state.switchData.id,
-            '角色',
+            '职权',
             resource.value
           )
           break
@@ -475,7 +466,7 @@
           await application.sumbitSwitch(
             state.identitysData,
             state.switchData.id,
-            '岗位',
+            '身份',
             resource.value
           )
           break
@@ -495,7 +486,7 @@
 
   // 提交表单
   const submitAll = async () => {
-    const res = await application.submitAll(state.departData, resource.value)
+    const res = await application.submitAll(state.departData, resource.value,radio.value,)
     ElMessage({
       type: 'success',
       message: typePD.value == 1 ? '分配成功' : '共享成功'
@@ -546,6 +537,7 @@
     })
   }
   const handleBoxClick = (hisData: any, dataList: any, data: any) => {
+    console.log('aaaaaaa',hisData,dataList,data)
     let result = hisData.some((item: any) => {
       return item.id == data.id
     })
@@ -571,15 +563,15 @@
       dataList.push(data)
     }
   }
-  // 左侧树点击事件
+  // 组织左侧树点击事件
   const handleCheckChange = (data: any, checked: boolean, indeterminate: any) => {
-    console.log('点击左侧', data, checked, indeterminate)
     if (checked) {
       if (radio.value == '1') {
         let result = state.departHisData.some((item: any) => {
           return item.id == data.id
         })
         for (let i = 0; i < state.departData.length; i++) {
+          console.log(state.departData[i].id,data.id)
           if (state.departData[i].id == data.id) {
             if (data.type == 'add') {
               return
@@ -624,47 +616,63 @@
       }
     }
   }
+  const handleTreeData = (node: any, belongId: string) => {
+    node.disabled = !(node.belongId && node.belongId == belongId);
+    if (node.children) {
+      node.nodes = node.children.map((child: any) => {
+        return handleTreeData(child, belongId);
+      });
+    }
+    //判断是否有操作权限
+    return { ...node._authority, node };
+  };
+  // 除组织外的左侧树点击事件
   const handleNodeClick = async (node: any, load: boolean, search?: string) => {
-    if (node && node.data && authority.IsApplicationAdmin([node.data.id, node.data.belongId])) {
+
+    if (node) {
+      console.log('aaaa',appCtrl.curProduct,node)
       centerTreeShow.value = true
-      sumbitSwitch(node)
-      state.switchData = node
-      if (typeof load == 'object' && typeof search == 'object') {
-        searchValue.value = ''
-      }
-      if (typeof load !== 'boolean') {
-        page.currentPage = 1
-      } else if (typeof search == 'string') {
-        page.currentPage = 1
-      }
+      const item: ITarget = node.item;
+      // sumbitSwitch(node)
+      // state.switchData = node
+      // if (typeof load == 'object' && typeof search == 'object') {
+      //   searchValue.value = ''
+      // }
+      // if (typeof load !== 'boolean') {
+      //   page.currentPage = 1
+      // } else if (typeof search == 'string') {
+      //   page.currentPage = 1
+      // }
+      console.log(radio.value,await node.item.selectAuthorityTree())
       switch (radio.value) {
         case '2':
           state.loadID = node
-          const centerData = await application.getAuthorityTree(node, search)
-          state.centerTree = [centerData]
-          getHistoryData(node)
+          const centerData =await node.item.selectAuthorityTree();
+          let data = handleTreeData(centerData)
+          state.centerTree = [data]
+          // getHistoryData(node)
           break
         case '3':
           state.loadID = node
-          const res = await application.getIdentities(node, page, search)
+          const res = await node.item.getIdentitys()
           if (load == true) {
             state.centerTree.concat(res)
           } else {
             state.centerTree = res
           }
-          getHistoryData(node)
+          // getHistoryData(node)
           break
         case '4':
           state.loadID = node
-          const result = await application.getPerson(node, page, search)
+          const result = await node.item.loadMembers({ limit: 10000,offset: 0, filter: '', })
           if (result) {
             if (load == true) {
-              state.centerTree.concat(result)
+              state.centerTree.concat(result.result)
             } else {
-              state.centerTree = result
+              state.centerTree = result.result
             }
-            getHistoryData(node)
-          } else {
+            // getHistoryData(node)
+          } else {            
             state.centerTree = []
             state.personsData = []
           }
@@ -762,12 +770,13 @@
     }
   }
   const searchResource = async () => {
-    tabs.value = await application.searchResource()
-    resource.value = tabs.value[0].id
+    tabs.value = props.info.resource || []
+    resource.value = tabs.value[0]?.id
   }
   let cascaderTree = ref<OrgTreeModel[]>([])
   const getCompanyTree = async () => {
-    cascaderTree.value = await application.getCompanyTree()
+    console.log('userCtrl.buildTargetTree(await userCtrl.getTeamTree(false))',userCtrl.buildTargetTree(await userCtrl.getTeamTree(false)))
+    cascaderTree.value = userCtrl.buildTargetTree(await userCtrl.getTeamTree(false))
     getHistoryData()
   }
 </script>

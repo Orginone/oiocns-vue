@@ -24,7 +24,7 @@
 
 <script lang="ts" setup>
   import { reactive, onMounted, ref } from 'vue'
-  import { appstore } from '@/module/store/app'
+  // import { appstore } from '@/module/store/app'
   import { useRouter } from 'vue-router'
   import { ElMessage } from 'element-plus'
   import { useCommonStore } from '@store/common'
@@ -34,27 +34,27 @@
   const appList = ref<ProductType[]>([])
   const commonStore = useCommonStore()
   const handleChooseItem = async (app: any) => {
-    const { result = [], total = 0 } = await appstore.queryOwnResource(app.id)
-    if (total === 0) {
-      return ElMessage({
-        type: 'error',
-        message: '该应用资源缺失,请联系管理员'
-      })
-    }
-    const { link } = result[0]
-    let data = { type: '', appInfo: app, icon: img1, link, path: '/online' }
-    data.type = 'app'
-    commonStore.iframeLink = data?.link
-    router.push(data.path)
+    // const { result = [], total = 0 } = await appstore.queryOwnResource(app.id)
+    // if (total === 0) {
+    //   return ElMessage({
+    //     type: 'error',
+    //     message: '该应用资源缺失,请联系管理员'
+    //   })
+    // }
+    // const { link } = result[0]
+    // let data = { type: '', appInfo: app, icon: img1, link, path: '/online' }
+    // data.type = 'app'
+    // commonStore.iframeLink = data?.link
+    // router.push(data.path)
   }
-  const getAppList = async () => {
-    const result = await appstore.searchUsefulProduct()
-    appList.value = result.map((item: any) => {
-      return { ...item, icon: img1 }
-    })
-  }
+  // const getAppList = async () => {
+  //   const result = await appstore.searchUsefulProduct()
+  //   appList.value = result.map((item: any) => {
+  //     return { ...item, icon: img1 }
+  //   })
+  // }
   onMounted(() => {
-    getAppList()
+    // getAppList()
   })
 </script>
 

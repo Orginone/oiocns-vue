@@ -17,7 +17,6 @@
                 <span class="el-dropdown-link"> ··· </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="handleChooseItem(item)">打开</el-dropdown-item>
                     <el-dropdown-item @click="jumpDetail(item)">详情</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -35,60 +34,42 @@
 
 <script setup lang="ts">
 import { reactive, onMounted, ref } from 'vue'
-import { appstore } from '@/module/store/app'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useCommonStore } from '@store/common'
 import img1 from '@/assets/img/group22.png'
-// import {MarketModel} from "@/ts/market";
-import marketCtrl from '@/ts/controller/store/marketCtrl';
+import {marketCtrl} from '@/ts/coreIndex';
 
 const emit = defineEmits(['joinFriend'])
 const router = useRouter()
 const appList = ref<ProductType[]>([])
 const commonStore = useCommonStore()
-const handleChooseItem = async (app: any) => {
-  const { result = [], total = 0 } = await appstore.queryOwnResource(app.id)
-  if (total === 0) {
-    return ElMessage({
-      type: 'error',
-      message: '该应用资源缺失,请联系管理员'
-    })
-  }
-  const { link } = result[0]
-  let data = { type: '', appInfo: app, icon: img1, link, path: '/online' }
-  data.type = 'app'
-  commonStore.iframeLink = data.link
-  commonStore.appInfo = data.appInfo
-  router.push(data.path)
-}
+
 const jumpDetail = (item:any)=>{
   router.push('/store/appManagement?id='+item.id)
 }
 const getAppList = async () => {
-  marketCtrl.Market.getOwnProducts(false).then((res)=>{
-    console.log('res',res)
-    let arr:any = []
-    res.forEach(element => {
-      let obj = {
-        name: element.prod.name,
-        updateTime:element.prod.updateTime,
-        createTime:element.prod.createTime,
-        typeName:element.prod.typeName,
-        updateUser:element.prod.updateUser,
-        authority:element.prod.authority,
-        belongId:element.prod.belongId,
-        code:element.prod.code,
-        source:element.prod.source,
-        remark:element.prod.remark,
-        icon:img1
-      }
-      arr.push(obj)
-    });
-    appList.value = arr;
+  let res: any[] = marketCtrl.alwaysUseApps;
+  let arr:any = []
+  res.forEach(element => {
+    let obj = {
+      name: element.prod.name,
+      updateTime:element.prod.updateTime,
+      createTime:element.prod.createTime,
+      typeName:element.prod.typeName,
+      updateUser:element.prod.updateUser,
+      authority:element.prod.authority,
+      belongId:element.prod.belongId,
+      code:element.prod.code,
+      source:element.prod.source,
+      remark:element.prod.remark,
+      icon:img1
+    }
+    arr.push(obj)
   })
- 
+  appList.value = arr;
 }
+
 onMounted(() => {
   getAppList()
 })

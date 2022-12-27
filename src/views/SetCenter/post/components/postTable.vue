@@ -27,7 +27,6 @@
             <span class="el-dropdown-link"> ··· </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="showDiong">调整岗位</el-dropdown-item>
                 <el-dropdown-item @click="removeFrom(scope.row)" style="color: #f67c80" >移出岗位</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -38,7 +37,7 @@
         </template>
       </diytab>
     </div>
-    <el-dialog v-model="giveDialog" @close="hideGiveDialog" :title="'给人员 => ' + store.currentSelectItme.name  + ' 岗位'" width="50%">
+    <el-dialog v-model="giveDialog" @close="hideGiveDialog" title="指派岗位" width="50%">
       <el-input v-model="giveSearch" class="search" placeholder="搜索用户" @input="giveSearchChange">
         <template #prefix>
           <el-icon class="el-input__icon">
@@ -67,17 +66,15 @@
 // @ts-nocheck
 import diytab from "@/components/diyTable/index.vue";
 import { ref } from "vue";
-import $services from '@/services'
 import { setCenterStore } from '@/store/setting'
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Search } from '@element-plus/icons-vue'
-import identityServices from '@/module/relation/identity'
+import { userCtrl, TargetType } from '@/ts/coreIndex';
 const store = setCenterStore()
-const IdentityServices = new identityServices()
 store.$subscribe(
 (_, state) => {
   if(state.currentSelectItme.label === '岗位管理') return
-  getUsers(state.currentSelectItme)
+  getUsers(store.currentSelectItme?.object)
 },
 { detached: false }
 )
@@ -139,9 +136,13 @@ const selectionChange = (val: any) => {
 }
 
 // 加载岗位下的用户
-const getUsers = async (currentData = store.currentSelectItme) => {
+const getUsers = async (currentData = store.currentSelectItme.object) => {
   if(currentData){
-    const backData =  await IdentityServices.getIdentityPerson(currentData?.id)
+    const backData =  await currentData?.loadMembers({
+      filter: "",
+      limit: 20,
+      offset: 0
+  })
     if(backData.result){
       tableData.value =backData.result;
       pageStore.total = backData.total
@@ -163,11 +164,11 @@ const removeFrom = (row: any) => {
       type: 'warning'
     }
   ).then(async () => {
-    const data = await IdentityServices.removeIdentity(store.currentSelectItme?.id, row.id)
+    const data = await store.currentSelectItme.object?.removeMember(row)
     if(data){
       getUsers()
       ElMessage({
-        message: '操作成功',
+        message: '移除成功',
         type: 'success'
       })
     }
@@ -219,7 +220,7 @@ const giveSearchChange = (e: string) => {
 // 指派岗位
 const showGiveDialog = () => {
   pageStore.currentPage =1;
-  if (!store.currentSelectItme.name) {
+  if (!store.currentSelectItme.object?.target?.name) {
     ElMessage({
       type: 'warning',
       message: '请选择岗位'
@@ -230,39 +231,38 @@ const showGiveDialog = () => {
   getOrgUsers()
 }
 
+
 // 加载单位所有用户
-const getOrgUsers = (filter?: string) => {
-  
+const getOrgUsers = async(filter?: string) => {
   let data = {
-    id: store.currentSelectItme.id,
     offset: (pageStore.currentPage - 1) * pageStore.pageSize,
-    limit: pageStore.pageSize
+    limit: pageStore.pageSize,
+    filter: ''
   }
   if (filter && filter.trim() != '') {
     data = { ...data, ...{ filter } }
   }
-  $services.company.getPersons({
-      data,
-  }).then((res: ResultType) => {
-    if (res.code == 200 && res.success) {
-      // 去除已分配到岗位
-      let us = res.data.result || []
-      let userIds = []
-      if (tableData.value) {
-        userIds = tableData.value.map((u: any) => u.id);
-      }
-      const set: Set<string> = new Set(userIds)
-      companyUsers.value = us.filter((u: any) => !set.has(u.id))
-      pageStore.total = res.data.total - userIds.length
-      giveTable.value.state.page.total = pageStore.total;
-    }
-  })
+  const personData = await userCtrl.space.loadMembers({
+    offset: 0,
+    limit: 10,
+    filter: ''
+  });
+
+  let us = personData.result || []
+  let userIds = []
+  if (tableData.value) {
+    userIds = tableData.value.map((u: any) => u.id);
+  }
+  const set: Set<string> = new Set(userIds)
+  companyUsers.value = us.filter((u: any) => !set.has(u.id))
+  pageStore.total = personData.total - userIds.length
+  giveTable.value.state.page.total = pageStore.total;
 }
 
 // 给人员岗位
 const giveIdentity = async () => {
   const userIds = giveTable?.value?.state?.multipleSelection.map((u: any) => u.id);
-  const data = await IdentityServices.giveIdentity(store.currentSelectItme?.id, userIds)
+  const data = await store.currentSelectItme.object?.pullMembers(userIds, TargetType.Person)
   if (data) {
     ElMessage({
       message: '分配成功',
@@ -275,6 +275,9 @@ const giveIdentity = async () => {
 
 </script>
 <style lang="scss" scoped>
+  :deep .el-table th.el-table__cell {
+    background-color: #eceffb!important;
+  }
   .el-dropdown-link{
     padding: 2px 10px;
     cursor: pointer;

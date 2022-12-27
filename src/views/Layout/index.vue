@@ -66,17 +66,17 @@
   import setTree from './json/setTree.json';
   // import serviceJson from './json/service.json';
   // import userJosn from './json/user.json';
-  // import { chat } from '@/module/chat/orgchat'
-  import { WorkModel as todo } from '@orginone/oiocns-ts';
-  import marketServices from "@/module/store/market"
-
+  import { todoCtrl as todo } from '@/ts/coreIndex';
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
   import { anystore } from '@/hubs/anystore'
   // import {MarketModel} from "@/ts/market";
-  import marketCtrl from '@/ts/controller/store/marketCtrl';
+  import {marketCtrl} from '@/ts/coreIndex';
+  import {thingCtrl} from '@/ts/coreIndex'
+  import {INullSpeciesItem} from '@/ts/coreIndex';
 
   const { proxy } = getCurrentInstance()
+  const store = useUserStore()
 
   const btnType = ref<string>('');
   const addMenuDialog = ref<boolean>(false);
@@ -110,7 +110,7 @@
 
   // 路由控制，单独匹配的话需要增加 showMenu.value = true;
   function getNavData2() { 
-
+    btnType.value='';//默认为空
     if(router.currentRoute.value.path.indexOf('setCenter') != -1){
       if (router.currentRoute.value.name === 'department') {
           titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
@@ -160,7 +160,7 @@
       }else if (router.currentRoute.value.name !== 'unit') {
         let currentRouteName: any = router.currentRoute.value.name
         const jsonData: any = setTree
-        if (['unit', 'group', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
+        if (['unit', 'group', 'data' , 'resource' , 'authority'].includes(currentRouteName)) {
           titleArr.state= jsonData[currentRouteName][0]
           menuArr.state = jsonData[currentRouteName]
           showMenu.value = true;
@@ -174,11 +174,24 @@
       return;
     }
     // end-文档相关
+
+    // start-标准设置相关
+    if (router.currentRoute.value.path.indexOf('setCenter/standard') != -1) {
+      titleArr.state = {icon: 'PriceTag',title: '标准设置', "backFlag": true}
+      getStandardSpecies()
+      showMenu.value = true;
+      return;
+    }
+    // end-标准设置相关
+
     if(router.currentRoute.value.path.indexOf('store/shop') != -1){
       getShopList();
       showMenu.value = true;
+      console.log('a')
+
       return
     }
+
     if(router.currentRoute.value.path.indexOf('store/appManagement') != -1){
       titleArr.state = storeJson[0]
       menuArr.state = storeJson
@@ -221,10 +234,12 @@
   const menuData = reactive({
     data:[]
   });
+
+  //数据过滤
   const dataFilter = (data:any)=>{
     if(data.length>0){
       data.forEach((element:any) => {
-        element.url = '/store?id='+element.id
+        element.isStoreMenu = true;
         element.label = element.title
         if(element.children.length>0){
           dataFilter(element.children)
@@ -236,11 +251,11 @@
   };
   // 获取商店分类
   const getMenu = () => {
-    anystore.subscribed(`selfAppMenu`, 'user', (data) => {
+    anystore.subscribed('STORE_MENU'+store.workspaceData.id, 'user', (data) => {
       let newJSON = JSON.parse(JSON.stringify(storeJson))
-        if(data?.data?.length>0){
-          console.log('data',data.data)
-          menuData.data = data.data;
+      console.log('newJSON',newJSON)
+        if(data?.data?.species.length>0){
+          menuData.data = data.data.species;          
           dataFilter(menuData.data)
           newJSON[2].children = menuData.data;
         }
@@ -328,6 +343,30 @@
     menuText.value = '';
     addMenuDialog.value = false;
   }
+
+  // 获取数据标准分类
+  interface SpeciesObject extends INullSpeciesItem {
+    structure: boolean
+    label: string
+  }
+  const getStandardSpecies = ()=>{
+    const teamSpecies: SpeciesObject = thingCtrl.teamSpecies as SpeciesObject
+    if(teamSpecies) {
+      teamSpecies.structure = true
+      const treeData = [teamSpecies]
+      treeLabel(treeData)
+      menuArr.state = treeData
+      function treeLabel(arr: any[]) {
+        arr.forEach((el) => {
+          el.label = el.name
+          delete el.parent
+          treeLabel(el.children || [])
+        })
+      }
+    } else {
+      menuArr.state = []
+    }
+  }
   
   // 获取我的商店列表
   const getShopList = async ()=>{
@@ -343,7 +382,7 @@
           myList.push(obj)
       })
       let newObj:any =  {
-        label: "商城分类",
+        label: "商店分类",
         structure: true,
         isPenultimate: true,
         btns:[{
@@ -358,7 +397,7 @@
     let shopstoreJson = JSON.parse(JSON.stringify(storeJson))
     showMenu.value = true;
     shopstoreJson[2] = newObj
-    titleArr.state = shopstoreJson[0]
+    titleArr.state = {icon: 'User',title: '商店', "backFlag": true}
     menuArr.state = shopstoreJson
     })
     

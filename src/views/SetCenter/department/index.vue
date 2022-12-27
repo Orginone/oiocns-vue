@@ -44,8 +44,19 @@
         </template>
         <template #buttons>
           <el-button class="btn-check" type="primary" link @click="handleShare()">分享部门</el-button>
+          <el-upload
+            ref="uploadRef"
+            :show-file-list="false"
+            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            :auto-upload="false"
+          >
+          <template #trigger>
+            <el-button class="btn-check" link type="primary" @click="uploadExcel">导入成员</el-button>
+          </template>
+          </el-upload>
           <el-button v-if="checkList.length" @click="setPost('', 1)" class="btn-check" type="primary" link>岗位设置</el-button>
-          <el-button class="btn-check" type="primary" link @click="showAssignDialog">添加成员</el-button>
+          <el-button class="btn-check" type="primary" link @click="handleIdentity()">身份设置</el-button>
+          <el-button class="btn-check" type="primary" link @click="showGiveDialog">添加成员</el-button>
           <el-button class="btn-check" type="primary" link @click="viewApplication">查看申请</el-button>
         </template>
         <template #operate="scope">
@@ -53,10 +64,10 @@
             <span class="el-dropdown-link"> ··· </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="reviseInfo(scope.row)">修改信息</el-dropdown-item>
+                <!-- <el-dropdown-item @click="reviseInfo(scope.row)">修改信息</el-dropdown-item> -->
                 <el-dropdown-item @click="changeDepartment(scope.row)">变更部门</el-dropdown-item>
                 <el-dropdown-item @click="setPost(scope.row, 2)">岗位设置</el-dropdown-item>
-                <el-dropdown-item @click="showDiong">停用</el-dropdown-item>
+                <!-- <el-dropdown-item @click="showDiong">停用</el-dropdown-item> -->
                 <el-dropdown-item @click="removeFrom(scope.row)" style="color: #f67c80">移出成员</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -68,45 +79,6 @@
       </diytab>
     </div>
   </div>
-  <el-dialog v-model="deptDialogVisible" title="请录入部门信息" width="40%" center append-to-body @close="dialogHide">
-    <div>
-      <el-form-item label="部门名称" style="width: 100%">
-        <el-input v-model="formData.name" placeholder="请输入" clearable style="width: 100%" />
-      </el-form-item>
-      <el-form-item label="部门编号" style="width: 100%">
-        <el-input v-model="formData.code" placeholder="请输入" clearable style="width: 100%" />
-      </el-form-item>
-      <el-form-item label="部门简介" style="width: 100%">
-        <el-input v-model="formData.remark" :autosize="{ minRows: 5 }" placeholder="请输入" type="textarea" clearable />
-      </el-form-item>
-    </div>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogHide">取消</el-button>
-        <el-button type="primary" @click="createDept">确认</el-button>
-      </span>
-    </template>
-  </el-dialog>
-
-  <el-dialog v-model="jobDialogVisible" title="请录入工作组信息" width="40%" center append-to-body @close="dialogHide">
-    <div>
-      <el-form-item label="工作组名称" style="width: 100%">
-        <el-input v-model="formData.name" placeholder="请输入" clearable style="width: 100%" />
-      </el-form-item>
-      <el-form-item label="工作组编号" style="width: 100%">
-        <el-input v-model="formData.code" placeholder="请输入" clearable style="width: 100%" />
-      </el-form-item>
-      <el-form-item label="工作组简介" style="width: 100%">
-        <el-input v-model="formData.remark" :autosize="{ minRows: 5 }" placeholder="请输入" type="textarea" clearable />
-      </el-form-item>
-    </div>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogHide">取消</el-button>
-        <el-button type="primary" @click="createJob">确认</el-button>
-      </span>
-    </template>
-  </el-dialog>
 
   <el-dialog v-model="personDialogVisible" title="修改信息" width="40%" append-to-body @close="dialogHide">
     <el-form
@@ -153,7 +125,7 @@
   <el-dialog
     v-model="createDeptDialogVisible"
     title="变更部门"
-    width="40%"
+    width="30%"
     append-to-body
     @close="dialogHide"
   >
@@ -166,12 +138,14 @@
         <el-input disabled v-model="currentData.team.name" />
       </el-form-item>
       <el-form-item label="所属部门" style="width: 100%">
-        <el-cascader
-          :props="cascaderProps"
-          :options="cascaderTree"
+        <el-tree-select
           v-model="formData.parentId"
+          :data="cascaderTree"
+          check-strictly
+          @node-click="handleSelectTree(_, $event)"
+          :render-after-expand="false"
           style="width: 100%"
-          placeholder="请选择"
+          :default-expand-all="true"
         />
       </el-form-item>
     </el-form>
@@ -202,9 +176,9 @@
         >
           <el-option
             v-for="item in postOptions"
-            :key="item.id"
+            :key="item.key"
             :label="item.label"
-            :value="item.id"
+            :value="item.key"
           />
         </el-select>
       </el-form-item>
@@ -229,31 +203,170 @@
       </span>
     </template>
   </el-dialog>
+  <CreateTeamModal 
+    :title="activeModal"
+    v-model:visible="visible"
+    :current="store.currentSelectItme?.intans || userCtrl.company"
+    v-model:typeNames="createOrEdit"
+    :handleCancel="handleCancel()"
+    @handleOk="handleOk"
+  />
   <AssignedPerson v-if="assignDialog" :checkList='tableData' :id="company.id" :selectLimit='0' :serachType='5'
     @closeDialog="hideAssignDialog" @checksSearch='checksCompanySearch' />
+  <el-dialog v-model="giveDialog" @close="hideGiveDialog" title="添加人员" width="50%">
+    <el-input v-model="giveSearch" class="search" placeholder="搜索用户" @input="giveSearchChange">
+      <template #prefix>
+        <el-icon class="el-input__icon">
+          <Search />
+        </el-icon>
+      </template>
+    </el-input>
+    <DiyTable ref="giveTable" :hasTableHead="true" :tableData="companyUsers" :options="{
+      expandAll: false,
+      checkBox: true,
+      order: true,
+      selectLimit:0,
+      noPage: false
+    }" @handleUpdate="giveTableChange" :tableHead="columns" :style="{height: '350px'}">
+    </DiyTable>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="hideGiveDialog">取消</el-button>
+        <el-button type="primary" @click="giveIdentity">确认</el-button>
+      </span>
+    </template>
+  </el-dialog>
+  <identityModal
+    v-model:visible="identityVisible"
+  />
 </template>
 <script lang="ts" setup>
 // @ts-nocheck
 import Info from "./components/info.vue";
 import diytab from "@/components/diyTable/index.vue";
-import $services from '@/services'
-import { ref, onMounted, getCurrentInstance, onBeforeMount } from "vue";
+import { ref, onMounted, getCurrentInstance, onBeforeMount, computed } from "vue";
 import { useRouter } from 'vue-router'
 import AssignedPerson from '@/components/searchs/index.vue'
 import { setCenterStore } from '@/store/setting'
 const store = setCenterStore()
-import DepartmentServices from '@/module/relation/department'
-const departmentServices = new DepartmentServices()
-import identityServices from '@/module/relation/identity'
-const IdentityServices = new identityServices()
 import QrCodeCustom from '@/components/qrCode/index.vue'
+import {TargetType, userCtrl} from '@/ts/coreIndex'
+import CreateTeamModal from '../GlobalComps/createTeam.vue';
+import identityModal from './components/identityModal.vue';
 
-import {USERCTRL} from '@/ts/coreIndex'
-const cascaderProps = {
-  checkStrictly: true,
-  value: 'id',
-  emitPath: false,
+const uploadRef = ref()
+
+const identityVisible = ref(false)
+// 权限管理
+const handleIdentity = ()=> {
+  identityVisible.value = true
 }
+
+let companyUsers = ref<any>([])
+const giveDialog = ref<boolean>(false)
+const giveTable = ref(null)
+const columns = ref([
+  {
+    prop: 'code',
+    label: '账号',
+    width: '180',
+  },
+  {
+    prop: 'name',
+    label: '姓名',
+    width: '240',
+    name: 'name',
+  },
+  {
+    prop: 'team.code',
+    label: '手机号',
+    width: '330',
+    name: 'teamCode',
+  }
+])
+const hideGiveDialog = () => {
+  giveDialog.value = false
+  getUsers()
+}
+// 过滤数据
+const giveSearch = ref('')
+const giveTableChange = (page: any) => {
+  pageStore.currentPage = page.currentPage
+  pageStore.pageSize = page.pageSize
+  getOrgUsers()
+}
+// 分配页面搜索用户变化
+const giveSearchChange = (e: string) => {
+  getOrgUsers(e)
+}
+// 指派岗位
+const showGiveDialog = () => {
+  pageStore.currentPage =1;
+  if (!store.currentSelectItme.intans?.target?.name) {
+    ElMessage({
+      type: 'warning',
+      message: '请选择岗位'
+    })
+    return false
+  }
+  giveDialog.value = true
+  getOrgUsers()
+}
+// 加载单位所有用户
+const getOrgUsers = async(filter?: string) => {
+  let data = {
+    offset: (pageStore.currentPage - 1) * pageStore.pageSize,
+    limit: pageStore.pageSize,
+    filter: ''
+  }
+  if (filter && filter.trim() != '') {
+    data = { ...data, ...{ filter } }
+  }
+  const personData = await userCtrl.space.loadMembers({
+    offset: 0,
+    limit: 10,
+    filter: ''
+  });
+
+  let us = personData.result || []
+  let userIds = []
+  if (tableData.value) {
+    userIds = tableData.value.map((u: any) => u.id);
+  }
+  const set: Set<string> = new Set(userIds)
+  companyUsers.value = us.filter((u: any) => !set.has(u.id))
+  pageStore.total = personData.total - userIds.length
+  giveTable.value.state.page.total = pageStore.total;
+}
+// 添加成员
+const giveIdentity = async () => {
+  const userIds = giveTable?.value?.state?.multipleSelection.map((u: any) => u.id);
+  const data = await store.currentSelectItme.intans?.pullMembers(userIds, TargetType.Person)
+  if (data) {
+    ElMessage({
+      message: '添加成功',
+      type: 'success'
+    })
+    hideGiveDialog()
+    getUsers(store.currentSelectItme?.intans)
+  }
+}
+
+const activeModal = ref('')
+const createOrEdit = ref()
+const visible = ref(false)
+const handleCancel = () => {
+  // visible.value = true
+}
+const handleOk = (newItem) => {
+  console.log('newItem: ', newItem);
+  if(newItem) {
+    ElMessage.success('创建成功!')
+    visible.value = false
+    proxy?.$Bus.emit('refreshNav')
+  }
+}
+
 let cascaderTree = ref<OrgTreeModel[]>([])
 const router = useRouter()
 
@@ -271,15 +384,13 @@ const subscribe = store.$subscribe(
       * */
     // 在此处监听store中值的变化，当变化为某个值的时候，做一些业务操作
     if(state.currentSelectItme.label === '部门管理') return
-    getUsers(state.currentSelectItme?.data)
+    getUsers(store.currentSelectItme?.intans)
   },
   { detached: false }
     // detached:布尔值，默认是 false，正常情况下，当订阅所在的组件被卸载时，订阅将被停止删除，
     // 如果设置detached值为 true 时，即使所在组件被卸载，订阅依然在生效
 )
 
-let deptDialogVisible = ref<boolean>(false)
-let jobDialogVisible = ref<boolean>(false)
 let personDialogVisible = ref<boolean>(false)
 let createDeptDialogVisible = ref<boolean>(false)
 let setPostDialogVisible = ref<boolean>(false)
@@ -297,39 +408,9 @@ let currentData = ref<any>({})
 //关闭弹窗清空
 const dialogHide = () => {
   formData.value = { parentId: store.currentSelectItme?.id }
-  deptDialogVisible.value = false
-  jobDialogVisible.value = false
   personDialogVisible.value = false
   createDeptDialogVisible.value = false
   setPostDialogVisible.value = false
-}
-let isUnit = ref<boolean>(true)
-// 创建部门
-const createDept = () => {
-  $services.company.createDepartment({
-    data: {
-      id: formData.value.id,
-      code: formData.value.code,
-      name: formData.value.name,
-      parentId: isUnit.value ? store.unitInfo?.id : store.currentSelectItme?.id,
-      teamName: formData.value.name,
-      teamRemark: formData.value.remark
-    }
-  }).then((res: ResultType) => {
-    if (res.success) {
-      dialogHide()
-      ElMessage({
-        message: res.msg,
-        type: 'success'
-      })
-      proxy?.$Bus.emit('refreshNav')
-    } else {
-      ElMessage({
-        message: res.msg,
-        type: 'error'
-      })
-    }
-  })
 }
 
 // 分享集团
@@ -344,7 +425,6 @@ const postValue = ref('')
 const getPostList = () => {
   setCenterStore().GetIdentities().then((treeData)=> {
     postOptions.value = treeData ?? []
-    console.log('treeData: ', treeData);
   })
 }
 // 设置岗位type 1：多选设置岗位  2：人员列表设置岗位
@@ -358,13 +438,15 @@ const setPost = (row: any, type: number) => {
 }
 // 给人员岗位
 const addPost = async () => {
+  if(!postValue.value) return
   let userIds = []
   if(setPostType.value === 1) {
     userIds = checkList.value.map((u: any) => u.id)
   } else {
     userIds = [currentData?.value?.id]
   }
-  const data = await IdentityServices.giveIdentity(postValue.value, userIds)
+  const current = postOptions.value.filter((obj: any) => postValue.value === obj.key)
+  const data = await current[0].object?.pullMembers(userIds, TargetType.Person)
   if (data) {
     ElMessage({
       message: '分配成功',
@@ -374,41 +456,33 @@ const addPost = async () => {
   }
 }
 
+let newDept = ref()
+
+const handleSelectTree = (_: any, info: {intans: any}) => {
+  newDept.value = info?.intans
+}
 // 变更部门
-const editDept = async ()=>{
-  let rowObj = {
-    name:currentData.value?.name,
-    id:currentData.value?.id,
-    typeName:store?.currentSelectItme?.data.typeName
+const editDept = async ()=> {
+  if(formData.value?.parentId === store.currentSelectItme?.value) {
+    dialogHide()
+    return
   }
-  let url: string;
-    if (rowObj.typeName == '部门') {
-      url = 'removeFromDepartment'
-    } else if (rowObj.typeName == '工作组') {
-      url = 'removeFromJob'
-    }
-    const data = await $services.company[url]({
-      data: {
-        id: store?.currentSelectItme?.data.id,
-        targetIds: [rowObj.id]
+  if (newDept.value) {
+    if (await store.currentSelectItme.intans?.removeMember(currentData.value)) {
+      if (await newDept.value.pullMember(currentData.value)) {
+        ElMessage({ message: '操作成功',type: 'success' })
+        getUsers(store.currentSelectItme?.intans)
+        dialogHide()
+      } else {
+        return false;
       }
-    })
-    if(data){
-      await assignDepartment(formData.value?.parentId, [currentData.value?.id])
-      ElMessage({
-        message: '操作成功',
-        type: 'success'
-      })
-      dialogHide()
     }
+  }
 }
 
-// 加载单位
-const loadOrgTree = () => {
-  $services.company.getCompanyTree({}).then((res: any)=>{
-    const orgTree = []
-    orgTree.push(res.data)
-    cascaderTree.value = filter(JSON.parse(JSON.stringify(orgTree)))
+function getSelectTree() {
+  store.loadTreeData(false).then((res: any[]) => {
+    cascaderTree.value = res
   })
 }
 
@@ -420,54 +494,28 @@ const filter = (nodes: OrgTreeModel[]): OrgTreeModel[] => {
   }
   return nodes;
 }
-// 创建工作组
-const createJob = () => {
-  $services.company.createJob({
-    data: {
-      id: formData.value.id,
-      code: formData.value.code,
-      name: formData.value.name,
-      parentId: store.currentSelectItme?.id,
-      teamName: formData.value.name,
-      teamRemark: formData.value.remark
-    }
-  }).then((res: ResultType) => {
-    if (res.success) {
-      dialogHide()
-      ElMessage({
-        message: res.msg,
-        type: 'success'
-      })
-      proxy?.$Bus.emit('refreshNav')
-    } else {
-      ElMessage({
-        message: res.msg,
-        type: 'error'
-      })
-    }
-  })
-}
+// 待提供接口
 const personUpdate = () => {
   const {id, code, name, thingId, teamName, teamCode, teamRemark } = personFormData.value
-  $services.person
-    .update({
-      data: { id, code, name, thingId, teamName, teamCode, teamRemark }
-    })
-    .then((res: ResultType) => {
-      if (res.success) {
-        dialogHide()
-        getUsers(store.currentSelectItme?.data)
-        ElMessage({
-          message: '更新成功',
-          type: 'success'
-        })
-      } else {
-        ElMessage({
-          message: res.msg,
-          type: 'warning'
-        })
-      }
-    })
+  // person
+  //   .update({
+  //     data: { id, code, name, thingId, teamName, teamCode, teamRemark }
+  //   })
+  //   .then((res: ResultType) => {
+  //     if (res.success) {
+  //       dialogHide()
+  //       getUsers(store.currentSelectItme?.intans)
+  //       ElMessage({
+  //         message: '更新成功',
+  //         type: 'success'
+  //       })
+  //     } else {
+  //       ElMessage({
+  //         message: res.msg,
+  //         type: 'warning'
+  //       })
+  //     }
+  //   })
   }
 
 const assignDialog = ref<boolean>(false)
@@ -477,57 +525,35 @@ const hideAssignDialog = () => {
 const showAssignDialog = () => {
   assignDialog.value = true
 }
-
-const checksCompanySearch = (val: any) => {
+// 添加成员
+const checksCompanySearch = async(val: any) => {
   if (val.value.length > 0) {
     let arr: Array<arrList> = []
     val.value.forEach((element: any) => {
       arr.push(element.id)
     });
-    assign(arr)
+    const current = store.currentSelectItme?.intans
+    if (await current.pullMembers(arr, TargetType.Person)) {
+      getUsers(current)
+      ElMessage({
+        message: '分配成功',
+        type: 'success'
+      })
+      hideAssignDialog()
+    }
   } else {
     assignDialog.value = false;
   }
 }
 
-// 分配人员
-const assign = (arr: any) => {
-  const userIds = arr
-  if (store.currentSelectItme?.data.typeName == '部门') {
-    assignDepartment(store.currentSelectItme.id, userIds)
-  } else if (store.currentSelectItme?.data.typeName == '工作组') {
-    assignJob(store.currentSelectItme.id, userIds)
-  }
-}
-//分配部门
-const assignDepartment =  async (id:string, targetIds: string[]) => {
-  const data = await departmentServices.assignDepartment(id,targetIds)
-  if(data){
-    ElMessage({
-      message: '分配成功',
-      type: 'success'
-    })
-    hideAssignDialog()
-    getUsers(store.currentSelectItme?.data)
-  }
-}
-//分配工作组
-const assignJob = async (id: string, targetIds: string[]) => {
-  const data = await departmentServices.assignJob(id,targetIds)
-  if(data){
-    ElMessage({
-      message: '分配成功',
-      type: 'success'
-    })
-    hideAssignDialog()
-    getUsers(store.currentSelectItme?.data)
-  }
-}
-
 // 加载用户
-const getUsers = async (currentData?) => {
+const getUsers = async (currentData?: any) => {
   if(currentData){
-    const backData =  await departmentServices.getUser(currentData)
+    const backData =  await currentData?.loadMembers({
+      filter: "",
+      limit: 20,
+      offset: 0
+  })
     if(backData.result){
       tableData.value =backData.result;
       pageStore.total = backData.total
@@ -556,25 +582,16 @@ const reviseInfo = (row: any) => {
 
 // 变更部门
 const changeDepartment = (row: any) => {
-  formData.value = { parentId: store.currentSelectItme?.id }
+  formData.value = { parentId: store.currentSelectItme?.value }
   currentData.value = row
   createDeptDialogVisible.value = true
 }
 
 // 移除人员
 const removeFrom = async (row: any) => {
-  let rowObj = {
-    name:row.name,
-    id:row.id,
-    typeName:store?.currentSelectItme?.data.typeName
-  }
-  const data =  await departmentServices.removePerson(rowObj,store?.currentSelectItme?.data.id)
-  if(data){
-    ElMessage({
-      message: '操作成功',
-      type: 'success'
-    })
-    getUsers(store.currentSelectItme?.data)
+  if(await store.currentSelectItme.intans?.removeMember(row)) {
+    ElMessage({ message: '移出成功',type: 'success' })
+    getUsers(store.currentSelectItme?.intans)
   }
 }
 
@@ -582,13 +599,13 @@ const { proxy } = getCurrentInstance()
 
 proxy?.$Bus.on('clickBus', (id) => {
   if(id === '2201') { // 部门创建子部门
-    isUnit.value = false
-    deptDialogVisible.value = true
-  } else if(id === '2202') { // 创建工作组
-    jobDialogVisible.value = true
+    activeModal.value = '新建'
+    visible.value = true
+    createOrEdit.value = store.currentSelectItme?.intans?.subTeamTypes
   } else if(id === '2203') {  // 单位创建部门
-    isUnit.value = true
-    deptDialogVisible.value = true
+    activeModal.value = '新建'
+    visible.value = true
+    createOrEdit.value = ((userCtrl.company.subTeamTypes.join('|')).split('|'))
   }
 })
 
@@ -647,13 +664,9 @@ const selectionChange = (val: any) => {
   checkList.value = val
 }
 //获取单位信息
-onMounted(() => {
-  debugger;
-  USERCTRL.company.getDepartments((res)=>{
-    console.log("res=>",res);
-  })
+onMounted(() => {  
   getPostList()
-  loadOrgTree()
+  getSelectTree()
 })
 // 获取单位信息
 onBeforeMount(()=> {
@@ -679,6 +692,9 @@ onBeforeMount(()=> {
     background:#1642cb;
     color: #fff;
   }
+  :deep .el-table th.el-table__cell {
+    background-color: #eceffb!important;
+  }
   .content {
     width: 100%;
     height: 100%;
@@ -702,9 +718,9 @@ onBeforeMount(()=> {
         color: #154ad8;
       }
       .btn-check:hover{
-          background: #154ad8;
-          color: #fff;
-          padding: 8px  16px;
+        background: #154ad8;
+        color: #fff;
+        padding: 8px  16px;
       }
       .body-tabs {
         margin: 0px 20px;

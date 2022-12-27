@@ -3,7 +3,6 @@ import vue from '@vitejs/plugin-vue'
 import * as path from 'path'
 // import styleImport from 'vite-plugin-style-import';
 import AutoImport from 'unplugin-auto-import/vite'
-
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { settings } from './src/config/index'
@@ -132,7 +131,7 @@ export default defineConfig(({ command, mode }) => {
         ? {
             '/orginone': {
               // target: 'http://localhost:800', // 后台接口
-              target: 'http://anyinone.com:7000', // 后台接口
+              target: 'http://anyinone.com:800', // 后台接口
               changeOrigin: true, // 是否允许跨域
               ws: true
             },

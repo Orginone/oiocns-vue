@@ -187,7 +187,7 @@ watch(
 :deep .el-drawer > .el-drawer__footer {
   border-top: 1px solid #f0f2f5;
 }
-::v-deep .el-drawer__body {
+:deep .el-drawer__body {
   overflow: hidden !important;
 }
 </style>

@@ -63,7 +63,6 @@
 </template>
 
 <script lang="ts" setup>
-  import $services from '@/services'
   import { ref, onMounted, reactive,nextTick, getCurrentInstance } from 'vue'
   import { storeToRefs } from 'pinia'
   import { useUserStore } from '@/store/user'
@@ -72,7 +71,7 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import friendJosn from '../json/friend.json';
   import type { TabsPaneContext } from 'element-plus'
-  import { chat } from '@/module/chat/orgchat'
+  import {chatCtrl as chat} from '@/ts/coreIndex'
   import searchFriend from '@/components/searchs/index.vue'
   import FriendServices from '@/module/relation/friend'
   const friendServices  = new FriendServices()

@@ -35,12 +35,11 @@
   </template>
   
   <script setup lang="ts">
-    import $services from '@/services'
     import diytab from '@/components/diyTable/index.vue'
     import { ref, reactive, onMounted, nextTick } from 'vue'
     import { ElMessage, ElMessageBox } from 'element-plus'
     import { PAGE_SIZES, PAGE_NUM } from '@/constant'
-    import marketCtrl from '@/ts/controller/store/marketCtrl';
+    import {marketCtrl} from '@/ts/coreIndex';
 
     const dialogVisible = ref<boolean>(true)
     const diyTable = ref(null)
@@ -82,6 +81,7 @@
   
     onMounted(() => {
       pageStore.tableData = marketCtrl.shopinglist
+      console.log('marketCtrl.shopinglist',marketCtrl.shopinglist)
       if(marketCtrl.shopinglist.length ==0){
         setTimeout(() => {
           pageStore.tableData = marketCtrl.shopinglist
