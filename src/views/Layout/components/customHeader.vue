@@ -3,8 +3,8 @@
     <!-- 左侧 -->
     <el-col class="head-title" :span="4">
       <div style="display: flex; align-items: center; height: 100%" @mouseleave="handleClose()">
-        <div class="select-item__imgSelect" style="margin-right: 5px">
-          {{ workHead() }}
+        <div  style="margin-right: 5px">
+          <TeamIcon :typeName="workspaceData?.share.typeName"/>
         </div>
         <div class="col-box" @click="onClickUnit">
           <div class="col-text">{{ workspaceData?.name || '' }}</div>
@@ -30,9 +30,10 @@
               @click="switchCompany(item)"
             >
               <div class="select-drop__flex">
-                <div class="select-item__imgSelect">
+                <!-- <div class="select-item__imgSelect">
                   {{ item.team ? item.team.name.slice(0, 1) : item.name.slice(0, 1) }}
-                </div>
+                </div> -->
+                <TeamIcon :typeName="item.typeName"/>
                 <div class="select-item__titleSelect">{{
                   item.team ? item.team.name : item.name
                 }}</div>
@@ -83,7 +84,7 @@
           :key="index"
           :title="item.name"
         >
-          <el-badge :value="item.count || 0" :hidden="!item.showCount">
+          <el-badge :value="item.count" :hidden="!item.count">
             <i class="icon-list iconfont" :class="item.icon" ></i>
           </el-badge>
         </li>
@@ -144,6 +145,7 @@
   import searchCompany from '@/components/searchs/index.vue'
   import SearchDialog from './searchDialog.vue'
   import headImg from '@/components/headImg.vue'
+  import TeamIcon from './TeamIcon.vue'
   import { useDark } from '@vueuse/core'
   import { chatCtrl as chat, todoCtrl as todo } from '@/ts/coreIndex';
   import { userCtrl ,TargetType} from '@/ts/coreIndex'
@@ -170,8 +172,8 @@
 
   const state = reactive({
     mainMenus: [
-      { name: '沟通', icon: 'icon-message', path: '/chat', showCount: true, count: 0 },
-      { name: '办事', icon: 'icon-todo', path: '/service', showCount: true, count: 0 },
+      { name: '沟通', icon: 'icon-message', path: '/chat', count: 0 },
+      { name: '办事', icon: 'icon-todo', path: '/service', count: 0 },
       { name: '仓库', icon: 'icon-store', path: '/store' },
       { name: '设置', icon: 'icon-setting', path: '/setCenter' },  
     ]

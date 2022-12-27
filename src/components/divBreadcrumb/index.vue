@@ -50,8 +50,8 @@
         </el-breadcrumb-item>
       </el-breadcrumb>
 
-      <el-row style="padding: 0 15px">
-        <el-row style="margin-right: 5px">
+      <el-row style="padding: 0 15px" id="app_breadcrumb_right">
+        <!-- <el-row style="margin-right: 5px">
           <transition name="el-zoom-in-center">
             <el-input
               v-show="showSearch"
@@ -75,7 +75,7 @@
         </el-button>
         <el-button type="text">
           <el-icon :size="18"><MoreFilled /></el-icon>
-        </el-button>
+        </el-button> -->
       </el-row>
       <!-- 搜索抽屉 -->
       <search-drawer v-model:showSearchDrawer="showSearchDrawer" />
