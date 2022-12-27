@@ -175,7 +175,7 @@
     mainMenus: [
       { name: '沟通', icon: 'icon-message', path: '/chat', count: 0 },
       { name: '办事', icon: 'icon-todo', path: '/service', count: 0 },
-      { name: '仓库', icon: 'icon-store', path: '/store' 
+      { name: '仓库', icon: 'icon-store', path: '/store' },
       { name: '设置', icon: 'icon-setting', path: '/setCenter' },  
     ]
   })
