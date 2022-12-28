@@ -4,7 +4,7 @@
     <el-col class="head-title" :span="4">
       <div style="display: flex; align-items: center; height: 100%" @mouseleave="handleClose()">
         <div  style="margin-right: 5px">
-          <TeamIcon :typeName="workspaceData?.share.typeName"/>
+          <TeamIcon v-if="workspaceData && workspaceData.typeName" :typeName="workspaceData.typeName"/>
         </div>
         <div class="col-box" @click="onClickUnit">
           <div class="col-text">{{ workspaceData?.name || '' }}</div>
