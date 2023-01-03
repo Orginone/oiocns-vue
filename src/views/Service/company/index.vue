@@ -222,6 +222,16 @@
     });
   }
 
+  var getDoneList = async () => {
+    await todoCtrl.waitUntilInitialized();
+    const res = await todoCtrl.OrgTodo.getDoList({
+      offset:0,
+      limit: 20,
+      filter: ""
+    });
+    tableData.value = res.map(d => d.Data);
+  }
+
   // 当前menu默认active
   const flowActive = ref<string>('1')
   // menu 切换方法
@@ -230,6 +240,13 @@
     flowSwitch(key)
   }
   const flowSwitch  = async (key: string) => {
+    if (key == '1') {
+      getAllApprovalList();
+    }else if(key =='2'){
+      getDoneList();
+    }else if(key =='3'){
+      getApplyList();
+    }
     // if(key == '1'){
     //   await ThingServices.queryTask()
     //   tableData.value =ThingServices.taskList

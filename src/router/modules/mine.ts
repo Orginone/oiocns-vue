@@ -43,7 +43,7 @@ const Mine: RouteRecordRaw[] = [
       {
         path: '/mine/cohort',
         name: 'cohort1',
-        component: () => import('@/views/Relation/cohort/index.vue'),
+        component: () => import('@/views/Mine/cohort/index.vue'),
         meta: {
           title: '单位群组',
           id: "mine.my-cohort"
@@ -52,7 +52,7 @@ const Mine: RouteRecordRaw[] = [
       {
         path: '/mine/friend',
         name: 'friend1',
-        component: () => import('@/views/Relation/friend/index.vue'),
+        component: () => import('@/views/Mine/friend/index.vue'),
         meta: {
           title: '我的好友',
           id: "mine.my-friend"
