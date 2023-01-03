@@ -6,7 +6,7 @@
           <el-radio v-for="t in approvalTypes" :label="t.type" :key="t.type">{{ t.name }}</el-radio>
         </el-radio-group> -->
         <div v-if="nodeProps.assignedType === 'USER'">
-          <el-button size="small" icon="el-icon-plus" type="primary" @click="selectUser(1)" round>选择人员</el-button>
+          <el-button size="small" type="primary" @click="selectUser(1)" round>选择人员</el-button>
           <org-items v-model="nodeProps.assignedUser"/>
         </div>
   
@@ -41,11 +41,11 @@
           </el-form-item>
         </div>
         <div v-else-if="nodeProps.assignedType === 'JOB'">
-          <el-button size="small" icon="el-icon-plus" type="primary" @click="selectJob(2)" round>选择岗位</el-button>
+          <el-button size="small" type="primary" @click="selectJob(1)" round>选择身份</el-button>
           <org-items v-model="nodeProps.role"/>
         </div>
         <div v-else-if="nodeProps.assignedType === 'DENTITY'">
-          <el-button size="small" icon="el-icon-plus" type="primary" @click="selectDentity(3)" round>选择身份</el-button>
+          <el-button size="small" type="primary" @click="selectDentity(3)" round>选择身份</el-button>
         </div>
         <div v-else-if="nodeProps.assignedType === 'FORM_USER'">
           <el-form-item label="选择表单联系人项" prop="text" class="approve-end">
@@ -148,7 +148,8 @@
     <!-- <searchIdentity  v-if="identityDialog"  :selectLimit='0' @closeDialog="closeIdentityDialog" :serachType='7' @checksSearch='checksIdentitySearch'/> -->
     <!-- <org-picker :title="pickerTitle" multiple :type="orgPickerType" ref="orgPicker" :selected="orgPickerSelected"
                 @ok="selected"/> -->
-      <el-dialog  v-model="nodeProps.friendDialogmode"  custom-class="share-dialog" :title="nodeProps.friendDialogmode==1?'选择人员':'选择岗位'" width="1000px" draggable :close-on-click-modal="false">
+    <el-dialog v-model="nodeProps.friendDialogmode"  custom-class="share-dialog" :title="nodeProps.friendDialogmode==1?'添加身份':'选择岗位'" width="650px" draggable :close-on-click-modal="false">
+      <Indentity></Indentity>
         <!-- <chooseOperator  v-show="nodeProps.friendDialogmode==1 && spaceType=='单位'" @closeDialog="nodeProps.friendDialogmode = 0"  @submit="checksSearch" @submitPersonNum="setNum" :radio="'4'"  :way="[ 
         {
           id: '4',
@@ -164,30 +165,32 @@
         }]"></chooseOperator>
         <chooseOperatorPersonal v-show="nodeProps.friendDialogmode==1 && spaceType=='人员'" dialogType="1" @closeDialog="nodeProps.friendDialogmode = 0" :info="selectProductItem" :type="4" @submit="checksSearch" @submitPersonNum="setNum"></chooseOperatorPersonal>
         <chooseOperatorPersonal v-show="nodeProps.friendDialogmode==3 && spaceType=='人员'" dialogType="1" @closeDialog="nodeProps.friendDialogmode = 0" :info="selectProductItem" :type="3" @submit="checksSearch" @submitPersonNum="setNum"></chooseOperatorPersonal> -->
-      </el-dialog>
+    </el-dialog>
   </div>
 </template>
 
 
 
 <script lang="ts">
-  import {
-    ref,
-    toRefs,
-    reactive,
-    computed,
-    onMounted,
-    defineComponent,
-    getCurrentInstance,
-    ComponentInternalInstance
-  } from 'vue';
+import {
+  ref,
+  toRefs,
+  reactive,
+  computed,
+  onMounted,
+  defineComponent,
+  getCurrentInstance,
+  ComponentInternalInstance
+} from 'vue';
   // import searchFriend from '@/components/searchs/index.vue'
   // import chooseOperator from '@/views/Market/components/chooseOperator.vue'
   // import chooseOperatorPersonal from '@/views/Market/components/chooseOperatorPersonal.vue'
+import Indentity from '../../flowComponents/indentity.vue'
 import { relative } from 'path/posix';
 import { title } from 'process';
 import authority from '@/utils/authority'
 import { ElMessage } from 'element-plus'
+import processCtrl from '@/ts/controller/setting/processCtrl';
   // import OrgPicker from "@/components/common/OrgPicker";
   export default defineComponent({
     name: 'ApprovalNodeConfig',
@@ -203,7 +206,9 @@ import { ElMessage } from 'element-plus'
     setup(props, { emit }) {
       const { appContext  } = getCurrentInstance() as ComponentInternalInstance;
       const proxy = appContext.config.globalProperties;
-      //
+      
+      const selectedNode = processCtrl.currentNode;
+
       const state = reactive({
         showOrgSelect: false,
         orgPickerSelected: [],
@@ -284,6 +289,8 @@ import { ElMessage } from 'element-plus'
         proxy.$pinia.state.value.appwfConfig.selectedNode.props.friendDialogmode = value;
       };
       const selectJob = (value:any) => {
+        selectedNode.props.assignedType = 'JOB';
+        processCtrl.setCurrentNode(selectedNode);
         state.orgPickerSelected = props.config.assignedUser
         state.orgPickerType = 'job'
         proxy.$pinia.state.value.appwfConfig.selectedNode.props.friendDialogmode = value;

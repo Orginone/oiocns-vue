@@ -100,9 +100,7 @@
         return proxy.$pinia.state.value.appwfConfig?.selectedNode;
       });
 
-
       const state = reactive({
-        // scale: 100,
         selected: {},
         showInput: false,
         showConfig: false,

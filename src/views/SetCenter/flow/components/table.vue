@@ -1,6 +1,6 @@
 <template>
   <div class="content box">
-    <div class="body" ref="bodyWrap">
+    <div class="body" ref="bodyWrap" v-if="!state.addOrEdit">
       <div class="table-box">
         <DiyTable
           :style="{ width: '100%' }"
@@ -89,6 +89,7 @@
         <BindAppList ref="childRefs" :bindAppMes="state.bindAppMes" @showDialog="openShareDialog()"></BindAppList>
       </div>
     </div>
+    <Wflow v-if="state.addOrEdit" :contionData="state.contionData" @exit="exit"></Wflow>
     <el-dialog
       v-if="dialogType.bindVisible"
       v-model="dialogType.bindVisible"
@@ -111,6 +112,7 @@
 import DiyTable from "@/components/diyTable/index.vue";
 import BindAppList from "./bindAppList.vue";
 import BindDialog from "./bindDialog.vue";
+import Wflow from "../wflow/index.vue";
 import { ref, reactive, onMounted } from "vue";
 import {userCtrl} from '@/ts/coreIndex'
 import {processCtrl} from '@/ts/coreIndex'
@@ -121,6 +123,8 @@ type StateType = {
   dataList: any[]; //表格数据
   tableHead: any[]; //表头
   bindAppMes: { name: string; id: string };
+  addOrEdit:boolean;
+  contionData:{name: string; labels:object; fields:string}
 };
 
 const state: StateType = reactive({
@@ -154,7 +158,13 @@ const state: StateType = reactive({
       name: 'operate'
     }
   ],
-  bindAppMes:{name:'',id:''}
+  bindAppMes:{name:'',id:''},
+  addOrEdit:false,
+  contionData:{
+    name: '',
+    labels: [{ label: '', value: '', type: '' }],
+    fields: '',
+  }
 });
 
 // 表格展示数据
@@ -181,10 +191,6 @@ const options = ref<any>({
 const router = useRouter();
 const diyTable = ref(null);
 
-const addNew = () =>{
-  router.push("/SetCenter/wflow");
-}
-
 onMounted(() => {
   initData()
 })
@@ -194,13 +200,19 @@ const initData = async () =>{
   const result = await userCtrl.space.getDefines(false);
   if (result) {
     for(var i = 0;i<result.length;i++){
-      result[i].remarks = JSON.parse(result[i].remark || '{}')[0].label
+      result[i].remarks = JSON.parse(result[i].content || '{}').fields
     }
     state.bindAppMes = result[0] || {}
     state[`dataList`] = result ;
     diyTable.value.state.page.total = result.length
   }
 }
+
+//新增绑定
+const addNew = () =>{
+  state.addOrEdit = true
+}
+
 //分页
 const handleUpdate = (page: any) => {
   pageStore.currentPage = page.currentPage
@@ -242,7 +254,8 @@ const handleCommand = (
           fields: editorDataMes.fields,
         };
         processCtrl.setCondtionData(contionData);
-        router.push({ path: "/SetCenter/wflow", query:{contionData:JSON.stringify(contionData)}});
+        state.contionData = contionData;
+        state.addOrEdit = true
         return new Promise<boolean>((resolve) => {
           resolve(true);
         });
@@ -262,7 +275,13 @@ const handleDel = (item: any) => {
     type: "warning",
   })
     .then(async () => {
-      
+      if (await userCtrl.space.deleteDefine(item.id)) {
+        initData();
+        ElMessage({
+					message: '删除成功！',
+					type: 'success'
+				})
+      }
     })
     .catch(() => {});
 };
@@ -283,6 +302,52 @@ const closeDialog = (key: boolean) => {
 const refresh = () =>{
   childRefs.value.initData()
 }
+
+//退出
+const exit = (key: boolean) => {
+  ElMessageBox.confirm('未发布的内容将不会被保存，是否直接退出 ?', '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    state.addOrEdit = false;
+    initData()
+    clearForm()
+  })
+};
+
+const clearForm = () => {
+  processCtrl.setProcessDesignTree({
+    name: '',
+    code: 'code',
+    remark: '',
+    fields: '',
+    resource: {
+      nodeId: 'ROOT',
+      parentId: null,
+      type: 'ROOT',
+      name: '发起人',
+      children: {
+        nodeId: 'node_590719745693',
+        parentId: 'ROOT',
+        props: {},
+        type: 'CONDITIONS',
+        name: '条件分支',
+      },
+    },
+  });
+  processCtrl.setCondtionData({
+    name: '',
+    labels: [{ label: '', value: '', type: '' }],
+    fields: '',
+  });
+  state.contionData = {
+    name: '',
+    labels: [{ label: '', value: '', type: '' }],
+    fields: '',
+  };
+};
+
 
 </script>
 <style lang="scss" scoped>
