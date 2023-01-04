@@ -74,10 +74,10 @@
   import {chatCtrl as chat} from '@/ts/coreIndex'
   import searchFriend from '@/components/searchs/index.vue'
   import FriendServices from '@/module/relation/friend'
-  const friendServices  = new FriendServices()
-  
+
   import thingServices from '@/module/flow/thing'
 
+  const friendServices  = new FriendServices()
   const ThingServices  = new thingServices()
   const instance = getCurrentInstance()
   const route = useRoute()

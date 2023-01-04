@@ -124,7 +124,7 @@ class thingServices {
         name: 'option'
       }
   ]
-  public companyHead :Array<Object> = [
+  public friendHead :Array<Object> = [
     {
       prop: 'flowInstance.flowRelation.productId',
       label: '事项',
