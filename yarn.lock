@@ -348,10 +348,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     "fastq" "^1.6.0"
 
-"@orginone/oiocns-ts@^1.1.9":
-  "integrity" "sha512-GeUVmdeQRa24h3sSbJvyH5GYuyah9Ut4+ljJ6KaoNVbWoNpsAp81+7XdFNFnpmCiNWd1gUwBFewrLtBBF/Aamg=="
-  "resolved" "https://registry.npmjs.org/@orginone/oiocns-ts/-/oiocns-ts-1.1.9.tgz"
-  "version" "1.1.9"
+"@orginone/oiocns-ts@^1.1.10":
+  "integrity" "sha512-g9m6s0yFYF9cjCeeOyBVjK1Aa5nkaDRdfPgGOvBQx78OXpTgLjJZYUKF2q6E4Q5e8x8DR/n5EyEHW/PSIs+47g=="
+  "resolved" "https://registry.npmjs.org/@orginone/oiocns-ts/-/oiocns-ts-1.1.10.tgz"
+  "version" "1.1.10"
 
 "@popperjs/core@npm:@sxzz/popperjs-es@^2.11.7":
   "integrity" "sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ=="
