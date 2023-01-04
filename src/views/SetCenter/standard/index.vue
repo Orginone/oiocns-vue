@@ -278,7 +278,7 @@
     isEditAttr.value = false
     attrFormDialog.value = true
     state.belongTreeData = await userCtrl.getTeamTree()
-    const authData = await userCtrl.company.selectAuthorityTree(false)
+    const authData = await userCtrl.company.loadAuthorityTree(false)
     state.authTreeData = authData ? [authData] : [];
     
     state.attrForm = {public:true,valueType:"描述型"}
@@ -320,7 +320,7 @@
   const editAttr = async (attr) => {
     isEditAttr.value = true
     state.belongTreeData = await userCtrl.getTeamTree()
-    const authData = await userCtrl.company.selectAuthorityTree(false)
+    const authData = await userCtrl.company.loadAuthorityTree(false)
     state.authTreeData = authData ? [authData] : [];
     attrFormDialog.value = true
     state.attrForm = attr

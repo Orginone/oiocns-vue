@@ -643,11 +643,11 @@
       // } else if (typeof search == 'string') {
       //   page.currentPage = 1
       // }
-      console.log(radio.value,await node.item.selectAuthorityTree())
+      console.log(radio.value,await node.item.loadAuthorityTree())
       switch (radio.value) {
         case '2':
           state.loadID = node
-          const centerData =await node.item.selectAuthorityTree();
+          const centerData =await node.item.loadAuthorityTree();
           let data = handleTreeData(centerData)
           state.centerTree = [data]
           // getHistoryData(node)
