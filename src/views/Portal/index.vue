@@ -67,7 +67,7 @@
                 </el-icon>
               </template>
               <div class="tree" @drag="drag(item)" @dragend="dragend(item)" draggable="true" unselectable="on"
-                @click="addUserProtal(item)" v-for="item in ohterData.userComplist" :key="item.url">
+                @click="addUserProtal(item)" v-for="item in otherData.userComplist" :key="item.url">
                 <div class="row" style="padding: 5px 0; display: flex; justify-content: space-between">
                   <div class="el-icon-setting listContain_item" style="margin: 5px 5px 0 5px">{{
                       item.name
@@ -150,6 +150,8 @@ import $services from '@/services'
 import { useUserStore } from '@/store/user'
 import { useAnyData } from '@/store/anydata'
 import { useRouter, useRoute } from 'vue-router'
+import { portalCtrl, logger } from '@/ts/coreIndex';
+import _ from 'lodash'
 
 export default defineComponent({
   components: {
@@ -165,6 +167,7 @@ export default defineComponent({
   setup() {
     onMounted(() => {
       state.componentList = testData // 系统组件组件列表
+      state.layout = otherData.activeSchema.temps; 
     })
     // 定义变量位置
     const state = reactive({
@@ -244,7 +247,7 @@ export default defineComponent({
       // }
     })
     const store = useUserStore()
-    const ohterData = useAnyData() // 用户附属信息
+    const otherData = useAnyData() // 用户附属信息
     const router = useRouter()
     const route = useRoute()
     let base = ref(null)
@@ -299,9 +302,9 @@ export default defineComponent({
         let params = {
 
           workspaceId: store.workspaceData.id,
-          content: ohterData.userComplist.filter(el => el.id !== item.id)
+          content: otherData.userComplist.filter(el => el.id !== item.id)
         }
-        const resState = ohterData.updateUserSpace(params)
+        const resState = otherData.updateUserSpace(params)
         if (resState) {
           ElMessage({
             message: '删除成功',
@@ -335,17 +338,17 @@ export default defineComponent({
       state.dialogShow.map((el) => {
         if (el.key === 'user') {
           el.value = true
-          el.sendData = ohterData.userComplist // state.userComponentList
+          el.sendData = otherData.userComplist // state.userComponentList
         }
       })
     }
     // 获取首页layout布局
     const getLayout = () => {
-      const nowEditLayout = route.query.onValue
-      const nowLayout = ohterData?.homeComplist.length > 0 ? ohterData?.homeComplist.find(n => n.name === parseInt(nowEditLayout)) : null
-      console.log('首页layout布局', nowLayout)
-      state.layout = nowLayout ? [...nowLayout.temps] : []
-     
+      // const nowEditLayout = route.query.onValue
+      // const nowLayout = otherData?.homeComplist.length > 0 ? otherData?.homeComplist.find(n => n.name === parseInt(nowEditLayout)) : null
+      // console.log('首页layout布局', nowLayout)
+      // state.layout = nowLayout ? [...nowLayout.temps] : []
+      state.layout = _.cloneDeep(otherData.activeSchema.temps)
     }
     // 确认按钮
     // const submitHome = () => {
@@ -449,11 +452,22 @@ export default defineComponent({
     }
     // 保存模板事件
     const handleSave = () => {
-      const saveDialog = state.dialogShow.find(el => el.key === 'save')
-      if (saveDialog) {
-        saveDialog.value = true
-        saveDialog.sendData = state.layout // 所含模块
+      // const saveDialog = state.dialogShow.find(el => el.key === 'save')
+      // if (saveDialog) {
+      //   saveDialog.value = true
+      //   saveDialog.sendData = state.layout // 所含模块
+      // }
+
+      const newSchema = _.cloneDeep(otherData.activeSchema)
+      newSchema.temps = state.layout
+      const params = {
+        workspaceId: store.workspaceData.id,
+        oldVal: otherData.activeSchema,
+        newVal: newSchema
       }
+
+      portalCtrl.updatePortal(params)
+      router.push({ path: '/setCenter/unitMain' })
     }
 
     // 点击用户组件事件
@@ -653,7 +667,7 @@ export default defineComponent({
       // addprotalCustom,
       // handleDeleteCustomList,
       move,
-      ohterData,
+      otherData,
       MenuStyle,
       base,
       ...toRefs(state)
