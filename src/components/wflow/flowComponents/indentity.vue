@@ -14,14 +14,15 @@
         />
       </div>
       <div class="rightContent">      
-        <el-input  placeholder="搜索内容" />
+        <el-input v-model="identitysText" placeholder="搜索内容" />
         <el-tree
           v-if="state.identitys"
-          ref="treeRef"
+          ref="identitysRef"
           class="filter-tree"
           :data="state.identitys"
-          :props="defaultProps"
           default-expand-all
+          @node-click="onCheck"
+          :filter-node-method="identitysNode"
         />
       </div>
     </div>
@@ -33,9 +34,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref,reactive, onMounted, watch } from 'vue'
-import userCtrl from '@/ts/controller/setting/userCtrl'
+import { ref,reactive, onMounted, watch, getCurrentInstance, ComponentInternalInstance } from 'vue'
+import {userCtrl,processCtrl} from '@/ts/coreIndex'
 import { ElTree } from 'element-plus'
+
+const { appContext  } = getCurrentInstance() as ComponentInternalInstance;
+const proxy = appContext.config.globalProperties;
 
 interface Tree {
   id: number
@@ -44,19 +48,17 @@ interface Tree {
 }
 
 const filterText = ref('')
+const identitysText = ref('')
 const treeRef = ref<InstanceType<typeof ElTree>>()
+const identitysRef = ref<InstanceType<typeof ElTree>>()
 
 const state = reactive({
   data:[],
   resultData:[],
   identitys:[],
-  current:{}
+  current:{},
+  currentData:{label: String, id: Number}
 })
-
-const defaultProps = {
-  label: 'title',
-  id:'key'
-}
 
 onMounted(() => {
   loadTeamTree()
@@ -77,7 +79,6 @@ const buildTargetTree = (targets:[{id:string,name:string,subTeam:any[]}]) => {
         label:item.name,
         item: item,
         isLeaf: item.subTeam.length === 0,
-        icon: '',
         children: buildTargetTree(item.subTeam),
       });
     }
@@ -89,8 +90,16 @@ watch(filterText, (val) => {
   treeRef.value!.filter(val)
 })
 
+watch(identitysText, (val) => {
+  identitysRef.value!.filter(val)
+})
 
 const filterNode = (value: string, data: Tree) => {
+  if (!value) return true
+  return data.label.includes(value)
+}
+
+const identitysNode = (value: string, data: Tree) => {
   if (!value) return true
   return data.label.includes(value)
 }
@@ -116,14 +125,61 @@ const handleNodeClick = async(info:any)=> {
     loadTeamTree();
     const result = (await item.getIdentitys()).map((i) => {
       return {
-        title: i.name,
-        key: i.id,
+        label: i.name,
+        id: i.id,
         data: i.target,
       };
     });
     state.identitys = result
-    console.log(state.identitys)
   }
+}
+
+// 中间树形点击事件
+const onCheck = (info:any) => {
+  console.log(info,'info')
+  state.currentData = info
+  let newArr:any = []
+  newArr.push({name:info.label,id:info.id})
+  proxy.$pinia.state.value.appwfConfig.selectedNode.props.assignedUser = newArr
+  // console.log(proxy.$pinia.state.value.appwfConfig.selectedNode.props.assignedUser)
+  // const item = getIdentityItem(info.id);
+  // if (state.current && item) {
+  //   if (info.checked) {
+  //     state.identitys.push(item.data);
+  //   } else {
+  //     state.identitys = state.identitys.filter((i: any) => {
+  //       return i.id != item.key;
+  //     });
+  //   }
+  // }
+};
+
+const getIdentityItem = (id: string | number) => {
+  for (const item of state.identitys) {
+    if (item.id === id) {
+      return item;
+    }
+  }
+  return undefined;
+};
+
+const emit = defineEmits([
+  'closeDialog',
+])
+
+const closeDialog = () => {
+  emit('closeDialog', false)
+}
+
+const selectedNode = processCtrl.currentNode;
+
+const sure = () => {
+  console.log(state.currentData.label)
+  selectedNode.props.assignedUser = [
+    { name: state.currentData.label, id: state.currentData.id },
+  ];
+  processCtrl.setCurrentNode(selectedNode);
+  closeDialog();
 }
 
 </script>
@@ -147,6 +203,9 @@ const handleNodeClick = async(info:any)=> {
     display: flex;
     flex-direction: column;
   }
+}
+:deep .el-input__wrapper{
+  border-radius: 16px;
 }
 .dialog-body{
   border: 1px solid #ebeef5;

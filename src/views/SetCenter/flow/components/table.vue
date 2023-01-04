@@ -114,8 +114,7 @@ import BindAppList from "./bindAppList.vue";
 import BindDialog from "./bindDialog.vue";
 import Wflow from "../wflow/index.vue";
 import { ref, reactive, onMounted } from "vue";
-import {userCtrl} from '@/ts/coreIndex'
-import {processCtrl} from '@/ts/coreIndex'
+import {processCtrl,userCtrl} from '@/ts/coreIndex'
 import { useRouter } from "vue-router";
 import { stat } from "fs";
 

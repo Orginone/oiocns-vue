@@ -17,7 +17,7 @@
       </el-form-item> -->
     <!-- </el-form> -->
     <div>
-      <el-button type="primary" size="small" icon="el-icon-plus" style="margin: 0 15px 15px 0" round @click="addConditionGroup" v-if="selectedNode.type == 'CONDITION'">
+      <el-button type="primary" size="small" style="margin: 0 15px 15px 0" round @click="addConditionGroup" v-if="selectedNode.type == 'CONDITION'">
         添加条件
       </el-button>
       <!-- <span class="item-desc">只有必填选项才能作为审批条件</span> -->
@@ -39,6 +39,7 @@
   } from 'vue';
   // import draggable from "vuedraggable";
   import GroupItem from "./ConditionGroupItemConfigNew.vue"
+  import {processCtrl} from '@/ts/coreIndex'
   
   export default defineComponent({
     name: 'ConditionNodeConfig',
@@ -85,6 +86,17 @@
       // });
       //
       const addConditionGroup = () => {
+        // console.log(processCtrl.currentNode)
+        // processCtrl.currentNode?.conditions?.push({
+        //   pos: processCtrl.currentNode?.conditions.length + 1,
+        //   paramKey: '',
+        //   paramLabel: '',
+        //   key: '',
+        //   label: '',
+        //   type: 'NUMERIC',
+        //   val: null,
+        // });
+        // processCtrl.setCurrentNode(processCtrl.currentNode);
         proxy.$pinia.state.value.appwfConfig.selectedNode.conditions.push({
           pos: proxy.$pinia.state.value.appwfConfig.selectedNode.conditions.length + 1,
           paramKey:"",
