@@ -103,6 +103,8 @@ function resetPass() {
 }
 
 onMounted(() => {
+  console.log(11111111122222222222333333333);
+  
   store.getQueryInfo(store.userToken);
 });
 </script>

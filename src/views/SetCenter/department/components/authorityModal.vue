@@ -190,7 +190,7 @@
 
   // 加载角色树
   const loadAuthorityTree = async () => {
-    const res = await current.value?.selectAuthorityTree()
+    const res = await current.value?.loadAuthorityTree()
     authorityTree.value = []
     authorityTree.value.push(res)
     cascaderTree.value = authorityTree.value

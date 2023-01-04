@@ -464,7 +464,7 @@
     if (node) {
       centerTreeShow.value = true
       const item: ITarget = node.item;
-      console.log(radio.value,await item.selectAuthorityTree())
+      console.log(radio.value,await item.loadAuthorityTree())
 
       state.loadID = node
       const centerData = await item.getIdentitys()

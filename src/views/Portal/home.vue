@@ -9,7 +9,7 @@
       @edit="handleTabsEdit"
     >
       <el-tab-pane :closable="false" :label="'工作台'" :name="0"> -->
-        <TheHome />
+        <TheHome v-if="isDefaultLayout" />
       <!-- </el-tab-pane>
       <el-tab-pane
         v-for="item in userOtherData.homeComplist"
@@ -60,6 +60,46 @@
         </div>
       </el-tab-pane>
     </el-tabs> -->
+        <grid-layout
+            v-else
+            ref="gridlayout"
+            :layout="usingSchema.temps"
+            :col-num="12"
+            :row-height="27.5"
+            :is-draggable="state.gridLayoutSet.draggable"
+            :is-resizable="state.gridLayoutSet.resizable"
+            :vertical-compact="true"
+            :margin="[4, 4]"
+            :use-css-transforms="true"
+            :use-style-cursor="false"
+          >
+            <grid-item
+              v-for="items in usingSchema.temps"
+              :x="items.x"
+              :y="items.y"
+              :w="items.w"
+              :h="items.h"
+              :i="items.i"
+              :key="items.i"
+              :use-style-cursor="false"
+            >
+              <div style="height: 100%; overflow: hidden">
+                <TheSandBox
+                  v-if="items.type == 'iframe'"
+                  :cover="false"
+                  :containLink="items.contain_link"
+                  :type="items.type"
+                ></TheSandBox>
+                <TheComponentList
+                  v-else
+                  :cover="false"
+                  :containLink="items.contain_link"
+                  :type="items.type"
+                >
+                </TheComponentList>
+              </div>
+            </grid-item>
+          </grid-layout>
   </div>
 </template>
 
@@ -68,11 +108,13 @@
   // import TheSandBox from '@/components/sandBox/index.vue'
   // import TheComponentList from '@/components/protal/index.vue'
   import { ElMessage, TabPanelName, ElMessageBox } from 'element-plus'
-  import { onMounted, reactive, ref, onBeforeUnmount } from 'vue'
+  import { onMounted, reactive, ref, onBeforeUnmount, computed } from 'vue'
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/store/user'
   import { useAnyData } from '@/store/anydata'
   import { anystore } from '@/hubs/anystore'
+  import TheComponentList from '@/components/protal/index.vue'
+  import TheSandBox from '@/components/sandBox/index.vue'
 
   const router = useRouter()
   const store = useUserStore()
@@ -99,6 +141,14 @@
       //   content: []
       // }
     }
+  })
+
+  const isDefaultLayout = computed(() => {
+    return userOtherData.isDefaultLayout
+  })
+
+  const usingSchema = computed(() => {
+    return userOtherData.usingSchema
   })
 
   onMounted(() => {
