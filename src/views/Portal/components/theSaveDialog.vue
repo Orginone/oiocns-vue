@@ -38,6 +38,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { reactive, ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { nanoid } from 'nanoid'
+import { portalCtrl } from "@/ts/coreIndex";
 const ruleFormRef = ref<FormInstance>()
 const emit = defineEmits(['closeDialog'])
 const props = defineProps({
@@ -125,7 +126,8 @@ const handleClick = async (formEl: FormInstance | undefined) => {
   })
 }
 const saveData = async (params: { workspaceId: string, userId: string, content: any }, message: string) => {
-  otherData.updateHomeSpace(params)
+  console.log(params, message);
+  // otherData.updateHomeSpace(params)
   ElMessage({
     message: message + '成功',
     type: 'success'
