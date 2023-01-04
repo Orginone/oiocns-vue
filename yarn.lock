@@ -350,7 +350,7 @@
 
 "@orginone/oiocns-ts@^1.1.10":
   "integrity" "sha512-g9m6s0yFYF9cjCeeOyBVjK1Aa5nkaDRdfPgGOvBQx78OXpTgLjJZYUKF2q6E4Q5e8x8DR/n5EyEHW/PSIs+47g=="
-  "resolved" "https://registry.npmjs.org/@orginone/oiocns-ts/-/oiocns-ts-1.1.10.tgz"
+  "resolved" "https://registry.npmmirror.com/@orginone/oiocns-ts/-/oiocns-ts-1.1.10.tgz"
   "version" "1.1.10"
 
 "@popperjs/core@npm:@sxzz/popperjs-es@^2.11.7":
@@ -1922,10 +1922,10 @@
     "graphlib" "^2.1.8"
     "lodash" "^4.17.15"
 
-"dayjs@^1.11.3":
-  "integrity" "sha512-Zj/lPM5hOvQ1Bf7uAvewDaUcsJoI6JmNqmHhHl3nyumwe0XHwt8sWdOVAPACJzCebL8gQCi+K49w7iKWnGwX9g=="
-  "resolved" "https://registry.npmmirror.com/dayjs/-/dayjs-1.11.4.tgz"
-  "version" "1.11.4"
+"dayjs@^1.11.3", "dayjs@^1.11.7":
+  "integrity" "sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ=="
+  "resolved" "https://registry.npmmirror.com/dayjs/-/dayjs-1.11.7.tgz"
+  "version" "1.11.7"
 
 "debug@^2.2.0":
   "integrity" "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA=="

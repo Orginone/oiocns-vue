@@ -471,6 +471,8 @@ const title = ref<string>("");
 onMounted(() => {
   // 获取列表
   getProductList(); 
+  console.log('marketCtrl', marketCtrl);
+  console.log('userCtrl', userCtrl)
   console.log('marketCtrl.shopinglist',marketCtrl.shopinglist)
 });
 
@@ -498,6 +500,8 @@ const handleUpdate = (page: any) => {
 // 获取我的应用列表
 const getProductList = () => {
   marketCtrl.target.getOwnProducts(false).then((res:any)=>{
+
+    
     state[`ownProductList`] = res ;
     state['appList'] = res;
     diyTable.value.state.page.total = res.length

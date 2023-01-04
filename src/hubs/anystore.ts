@@ -81,6 +81,7 @@ export default class AnyStore extends Object {
             this.isconnecting = true
             this.connection.start().then(() => {
                 this.isconnecting = false
+                
                 this.connection.invoke("TokenAuth", accessToken, "user").then(() => {
                     this.authed.value = true
                     this._resubscribed()
@@ -174,10 +175,10 @@ export default class AnyStore extends Object {
      * @returns {ResultType} 变更结果
      */
     public async set(key: string, setData: any, domain: string) {
-        if (this.authed.value) {
+        // if (this.authed.value) {
             return await this.connection.invoke<ResultType>("Set", key, setData, domain)
-        }
-        return BadRequst
+        // }
+        // return BadRequst
     }
     /**
      * 删除对象
