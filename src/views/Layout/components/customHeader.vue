@@ -132,6 +132,7 @@
       :search="SearchInfo"
       @closeDialog="closeDialog"
     ></SearchDialog>
+    <SetIndexDialog v-if="item.key == 'setIndex' && item.value" :dialogShow="item" @closeDialog="closeDialog"></SetIndexDialog>
   </template>
 </template>
 
@@ -144,6 +145,7 @@
   import CreateUnitDialog from './createUnitDialog.vue'
   import searchCompany from '@/components/searchs/index.vue'
   import SearchDialog from './searchDialog.vue'
+  import SetIndexDialog from './setIndexDialog.vue'
   import headImg from '@/components/headImg.vue'
   import TeamIcon from './TeamIcon.vue'
   import { useDark } from '@vueuse/core'
@@ -225,6 +227,10 @@
     {
       key: 'search',
       value: false
+    },
+    {
+      key: 'setIndex',
+      value: false,
     }
   ])
   const showSearchInfo = () => {
@@ -350,7 +356,8 @@
     //   })
   }
   const toWork = () => {
-    router.push('/workHome')
+    // router.push('/workHome')
+    dialogShow[3].value = true
   }
   const toUserSetting = () => {
     router.push('/mine')

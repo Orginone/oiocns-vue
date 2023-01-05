@@ -112,14 +112,14 @@
                   <el-dropdown-item
                     link
                     type="primary"
-                    @click="goDetail(scope.row.prod.id)"
+                    @click="goDetail(scope.row.prod)"
                   >
                     查看详情
                   </el-dropdown-item>
                   <el-dropdown-item
                     link
                     type="primary"
-                    @click="goPublic(scope.row.prod.id)">
+                    @click="goPublic(scope.row.prod)">
                     上架列表
                   </el-dropdown-item>
                   <el-dropdown-item
@@ -140,7 +140,7 @@
                       scope.row.prod.resourcesList.length > 0
                     "
                   >
-                    <el-dropdown trigger="hover" placement="top-end">
+                    <!-- <el-dropdown trigger="hover" placement="top-end">
                       流程业务
                       <template #dropdown>
                         <el-dropdown-menu
@@ -154,7 +154,7 @@
                           >
                         </el-dropdown-menu>
                       </template>
-                    </el-dropdown>
+                    </el-dropdown> -->
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -216,7 +216,7 @@
                               <el-dropdown-item
                                 link
                                 type="primary"
-                                @click="goDetail(item.prod.id)"
+                                @click="goDetail(item.prod)"
                               >
                                 查看详情
                               </el-dropdown-item>
@@ -379,9 +379,9 @@ const goBuy = () => {
   router.push("/store/shop");
 };
 //去应用详情
-const goDetail = (id: string) => {
-  appCtrl.setCurProduct(id);
-  router.push({ path: "/store/appManagement", query: { id: id } });
+const goDetail = (item: any) => {
+  appCtrl.setCurProduct(item);
+  router.push({ path: "/store/appManagement", query: { id: item.id } });
 };
 type StateType = {
   ownProductList: any[]; //我的应用
@@ -471,6 +471,9 @@ const title = ref<string>("");
 onMounted(() => {
   // 获取列表
   getProductList(); 
+  console.log('marketCtrl', marketCtrl);
+  console.log('userCtrl', userCtrl)
+  console.log('marketCtrl.shopinglist',marketCtrl.shopinglist)
 });
 
 const commonStore = useCommonStore()
@@ -497,6 +500,8 @@ const handleUpdate = (page: any) => {
 // 获取我的应用列表
 const getProductList = () => {
   marketCtrl.target.getOwnProducts(false).then((res:any)=>{
+
+    
     state[`ownProductList`] = res ;
     state['appList'] = res;
     diyTable.value.state.page.total = res.length
@@ -569,11 +574,11 @@ const handleSetting = (id:string) => {
   console.log('id',id)
 };
 // 去上架列表
-const goPublic = (id:string) => {
-  appCtrl.setCurProduct(id);
+const goPublic = (item:any) => {
+  appCtrl.setCurProduct(item);
   router.push({
     path: "/store/public",
-    query: { id:id},
+    query: { id:item.id},
   });
 };
 //  打开集团选择弹窗

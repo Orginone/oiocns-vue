@@ -144,7 +144,7 @@ const cascaderProps = {
 
 // 加载角色树
 const loadAuthorityTree = async () => {
-  const data = await current.value.selectAuthorityTree()
+  const data = await current.value.loadAuthorityTree()
   if(data){
     authorityTree.value = []
     authorityTree.value.push(data)
