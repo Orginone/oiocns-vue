@@ -115,7 +115,8 @@
 
       const nodeSelected = (node: any) => {
         state._flowRecords = node?._flowRecords
-        node?._disabled ? state.dialogTableVisible = true : state.showConfig = true
+        node?.type == "CONCURRENT" ? '' : node?._disabled? state.dialogTableVisible = true : state.showConfig = true
+        // node?._disabled ? state.dialogTableVisible = true : state.showConfig = true
       }
 
       const handleClose = () => {

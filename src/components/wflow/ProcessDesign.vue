@@ -345,7 +345,6 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					
 						$services.wflow.createDefine({
 							data: design
 						}).then((res: ResultType) => {

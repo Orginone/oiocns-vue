@@ -89,7 +89,7 @@
         <BindAppList ref="childRefs" :bindAppMes="state.bindAppMes" @showDialog="openShareDialog()"></BindAppList>
       </div>
     </div>
-    <Wflow v-if="state.addOrEdit" :contionData="state.contionData" @exit="exit"></Wflow>
+    <Wflow v-if="state.addOrEdit" :contionData="state.contionData" @exit="exit" @clearData="clearData"></Wflow>
     <el-dialog
       v-if="dialogType.bindVisible"
       v-model="dialogType.bindVisible"
@@ -300,6 +300,13 @@ const closeDialog = (key: boolean) => {
 //刷新绑定应用列表
 const refresh = () =>{
   childRefs.value.initData()
+}
+
+//清理数据
+const clearData = () =>{
+  state.addOrEdit = false;
+  initData()
+  clearForm()
 }
 
 //退出

@@ -189,7 +189,7 @@ const changeScale=(val:number)=>{
   state.scale = val
 }
 
-const emit = defineEmits(['exit'])
+const emit = defineEmits(['exit','clearData'])
 
 //返回
 const exit = () => {
@@ -256,7 +256,7 @@ const publish = async() => {
       type: 'success'
     })
     // 清理数据
-    emit('exit')
+    emit('clearData')
   } else {
     return false;
   }
