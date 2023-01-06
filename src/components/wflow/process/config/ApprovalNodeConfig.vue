@@ -149,7 +149,7 @@
     <!-- <org-picker :title="pickerTitle" multiple :type="orgPickerType" ref="orgPicker" :selected="orgPickerSelected"
                 @ok="selected"/> -->
     <el-dialog v-model="nodeProps.friendDialogmode"  custom-class="share-dialog" :title="nodeProps.friendDialogmode==1?'添加身份':'选择岗位'" width="650px" draggable :close-on-click-modal="false">
-      <Indentity></Indentity>
+      <Indentity @closeDialog="closeDialog"></Indentity>
         <!-- <chooseOperator  v-show="nodeProps.friendDialogmode==1 && spaceType=='单位'" @closeDialog="nodeProps.friendDialogmode = 0"  @submit="checksSearch" @submitPersonNum="setNum" :radio="'4'"  :way="[ 
         {
           id: '4',
@@ -190,7 +190,7 @@ import { relative } from 'path/posix';
 import { title } from 'process';
 import authority from '@/utils/authority'
 import { ElMessage } from 'element-plus'
-import processCtrl from '@/ts/controller/setting/processCtrl';
+import {processCtrl} from '@/ts/coreIndex'
   // import OrgPicker from "@/components/common/OrgPicker";
   export default defineComponent({
     name: 'ApprovalNodeConfig',

@@ -108,10 +108,8 @@
 import { ref,reactive,toRefs,computed, getCurrentInstance ,ComponentInternalInstance, onMounted } from 'vue'
 import Wflow from "@/components/wflow/ProcessDesign.vue";
 import { ElMessage, ElMessageBox, FormRules } from "element-plus";
-import userCtrl from '@/ts/controller/setting/userCtrl';
-import processCtrl from '@/ts/controller/setting/processCtrl';
+import {userCtrl,processCtrl} from '@/ts/coreIndex'
 import { useRouter } from "vue-router";
-import { deepClone } from '@/ts/base/common';
 import FormProcessDesign from '@/components/wflow/layout/FormProcessDesign.vue'
 
 const active = ref(0)
@@ -191,7 +189,7 @@ const changeScale=(val:number)=>{
   state.scale = val
 }
 
-const emit = defineEmits(['exit'])
+const emit = defineEmits(['exit','clearData'])
 
 //返回
 const exit = () => {
@@ -247,7 +245,7 @@ const publish = async() => {
     processCtrl.conditionData.labels,
   );
   /**要发布的数据 */
-  const currentData = deepClone(processCtrl.currentTreeDesign);
+  const currentData = processCtrl.currentTreeDesign;
   if (currentData.belongId) {
     delete currentData.belongId;
   }
@@ -258,7 +256,7 @@ const publish = async() => {
       type: 'success'
     })
     // 清理数据
-    emit('exit')
+    emit('clearData')
   } else {
     return false;
   }

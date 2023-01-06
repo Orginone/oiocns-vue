@@ -73,7 +73,7 @@
   // import {MarketModel} from "@/ts/market";
   import {marketCtrl} from '@/ts/coreIndex';
   import {thingCtrl} from '@/ts/coreIndex'
-  import {INullSpeciesItem} from '@/ts/coreIndex';
+  import {INullSpeciesItem, appCtrl} from '@/ts/coreIndex';
 
   const { proxy } = getCurrentInstance()
   const store = useUserStore()

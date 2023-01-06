@@ -49,7 +49,6 @@
       });
       //
       const content = computed(() => {
-        
         if (props.config.props.shouldAdd) {
           return '由发起人指定'
         } else if (props.config && !!props.config.props && !!props.config.props.assignedUser && props.config

@@ -49,18 +49,12 @@
     provide
 	} from 'vue';
 	import $services from '@/services'
-<<<<<<< HEAD
-	import processCtrl from '@/ts/controller/setting/processCtrl';
-	import userCtrl from '@/ts/controller/setting/userCtrl';
-	// import processCtrl from '@/ts/controller/setting/processCtrl';
-=======
-	import {userCtrl} from '@/ts/coreIndex'
->>>>>>> ceee3480319b4ab0576673c70327d8756081dee0
+	import {userCtrl,processCtrl} from '@/ts/coreIndex';
+	import {deepClone} from '@orginone/oiocns-ts'
 	import LayoutHeader from './layout/LayoutHeader.vue';
 	// import FormDesign from './layout/FormDesign.vue'
 	import FormProcessDesign from './layout/FormProcessDesign.vue'
 	// import FormProSetting from './layout/FormProcessDesign.vue'
-	import { deepClone } from '@/ts/base/common';
 	import LayoutPreview from './layout/LayoutPreview.vue';
 	import { formatDate } from '@/utils/index'
 	import { useAppwfConfig } from '@/store/wflow';
@@ -351,7 +345,6 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					
 						$services.wflow.createDefine({
 							data: design
 						}).then((res: ResultType) => {

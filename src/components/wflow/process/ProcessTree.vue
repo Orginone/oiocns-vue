@@ -30,8 +30,8 @@
     CC_PROPS,
     DELAY_PROPS,
     TRIGGER_PROPS,
-  } from '@/ts/controller/setting/processType';
-  import processCtrl from '@/ts/controller/setting/processCtrl';
+  } from './DefaultNodeProps';
+	import {processCtrl} from '@/ts/coreIndex';
 
   export default defineComponent({
     name: 'ProcessTree',
@@ -392,7 +392,7 @@
           }
           parentNode.children.children = afterNode;
         }
-        console.log(parentNode)
+        // console.log(parentNode)
         // ctx.$forceUpdate()
       };
       const insertApprovalNode = (parentNode: any) => {
@@ -729,7 +729,8 @@
 
   .add-branch-btn {
     position: absolute;
-    width: 80px;
+    width: 90px;
+    margin-left: 5px;
 
     .add-branch-btn-el {
       z-index: 999;

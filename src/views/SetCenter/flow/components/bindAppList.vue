@@ -22,8 +22,7 @@
 
 <script lang="ts" setup>
 import { reactive, onMounted,toRefs } from 'vue'
-import {userCtrl} from '@/ts/coreIndex'
-import {appCtrl} from '@/ts/coreIndex'
+import {userCtrl,appCtrl} from '@/ts/coreIndex'
 import {ElMessageBox, ElMessage} from "element-plus";
 
 type StateType = {
