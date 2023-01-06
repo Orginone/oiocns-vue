@@ -66,14 +66,11 @@
   import setTree from './json/setTree.json';
   // import serviceJson from './json/service.json';
   // import userJosn from './json/user.json';
-  import { appCtrl,userCtrl, todoCtrl as todo } from '@/ts/coreIndex';
+  import { appCtrl,userCtrl,thingCtrl,marketCtrl,INullSpeciesItem, todoCtrl as todo } from '@/ts/coreIndex';
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
   import { anystore } from '@/hubs/anystore'
   // import {MarketModel} from "@/ts/market";
-  import {marketCtrl} from '@/ts/coreIndex';
-  import {thingCtrl} from '@/ts/coreIndex'
-  import {INullSpeciesItem, appCtrl} from '@/ts/coreIndex';
 
   const { proxy } = getCurrentInstance()
   const store = useUserStore()
