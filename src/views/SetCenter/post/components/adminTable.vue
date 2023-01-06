@@ -179,8 +179,10 @@ const removeFrom = (row: any) => {
 watch(
   () => store.currentSelectItme,
   (newValue, _) => {
-    if(newValue.label === '岗位管理') return
-    getUsers()
+    if(newValue){
+      if(newValue.label === '岗位管理') return
+      getUsers()
+    }
   },
   { immediate: false }
 );

@@ -66,7 +66,7 @@
   import setTree from './json/setTree.json';
   // import serviceJson from './json/service.json';
   // import userJosn from './json/user.json';
-  import { todoCtrl as todo } from '@/ts/coreIndex';
+  import { appCtrl,userCtrl, todoCtrl as todo } from '@/ts/coreIndex';
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
   import { anystore } from '@/hubs/anystore'
@@ -86,14 +86,16 @@
   
   onMounted(() => {
     todo.subscribe(async () => {
+      return
       console.warn("触发全局订阅回调");
-      
+
       const header = allMenuItems.value.find(m => m.id == "service");
       for (const todomenu of header?.children || []) {
         if (todomenu.id == "service.friendApply") {
           // 未提供好友待办
           todomenu.num = 0;
         } else if (todomenu.id == "service.company") {
+          console.log(todo.OrgTodo)
           todomenu.num = (await todo.OrgTodo?.getCount()) ?? 0;
         } else if (todomenu.id == "service.group") {
           // 未提供集团待办
@@ -253,11 +255,11 @@
   const getMenu = () => {
       const id = appCtrl.subscribePart('STORE_MENU', () => {
         //   setCustomMenu([...appCtrl.spacies]);
-            console.log('appCtrl.spacies',appCtrl.spacies)
+            // console.log('appCtrl.spacies',appCtrl.spacies)
       });
     
     
-    // console.log('id',id)
+    console.log('id',id)
     // return () => {
     //   return appCtrl.unsubscribe(id);
     // };
@@ -381,7 +383,7 @@
   // 获取我的商店列表
   const getShopList = async ()=>{
     let myList:any = []
-    marketCtrl.Market.getJoinMarkets().then((res)=>{
+    userCtrl.space.getJoinMarkets().then((res)=>{
       res.forEach(element => {
           let obj:any= {
             ...element.market,

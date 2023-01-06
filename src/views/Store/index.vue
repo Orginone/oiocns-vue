@@ -112,14 +112,14 @@
                   <el-dropdown-item
                     link
                     type="primary"
-                    @click="goDetail(scope.row.prod)"
+                    @click="goDetail(scope.row)"
                   >
                     查看详情
                   </el-dropdown-item>
                   <el-dropdown-item
                     link
                     type="primary"
-                    @click="goPublic(scope.row.prod)">
+                    @click="goPublic(scope.row)">
                     上架列表
                   </el-dropdown-item>
                   <el-dropdown-item
@@ -216,7 +216,7 @@
                               <el-dropdown-item
                                 link
                                 type="primary"
-                                @click="goDetail(item.prod)"
+                                @click="goDetail(item)"
                               >
                                 查看详情
                               </el-dropdown-item>
@@ -546,7 +546,7 @@ const handleCommand = (
   item: any
 ) => {
   selectProductItem.value = item;
-  appCtrl.setCurProduct(item.prod.id)
+  appCtrl.setCurProduct(item)
   console.log("selectProductItem", selectProductItem.value);
   switch (command) {
     case "share": //分享

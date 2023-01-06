@@ -73,8 +73,12 @@ import { userCtrl, TargetType } from '@/ts/coreIndex';
 const store = setCenterStore()
 store.$subscribe(
 (_, state) => {
-  if(state.currentSelectItme.label === '岗位管理') return
-  getUsers(store.currentSelectItme?.object)
+  if(state.currentSelectItme){
+    if(state.currentSelectItme){
+      if(state.currentSelectItme.label === '岗位管理') return
+      getUsers(store.currentSelectItme?.object)
+    }
+  }
 },
 { detached: false }
 )

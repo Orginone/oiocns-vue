@@ -310,7 +310,7 @@
       }
       .createdTop {
         width: 100%;
-        padding: 20px;
+        padding: 0 20px;
         display: flex;
         justify-content: space-between;
         background: var(--el-bg-color);

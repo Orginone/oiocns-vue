@@ -383,8 +383,13 @@ const subscribe = store.$subscribe(
       *
       * */
     // 在此处监听store中值的变化，当变化为某个值的时候，做一些业务操作
-    if(state.currentSelectItme.label === '部门管理') return
-    getUsers(store.currentSelectItme?.intans)
+    console.log('state.currentSelectItme',state.currentSelectItme,store.currentSelectItme)
+
+    if(state.currentSelectItme){
+      if(state.currentSelectItme.label === '部门管理') return
+      getUsers(store.currentSelectItme?.intans)
+    }
+    
   },
   { detached: false }
     // detached:布尔值，默认是 false，正常情况下，当订阅所在的组件被卸载时，订阅将被停止删除，
