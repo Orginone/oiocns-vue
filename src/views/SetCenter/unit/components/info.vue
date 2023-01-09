@@ -118,14 +118,18 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed,onMounted} from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router';
 import authority from '@/utils/authority'
 import {userCtrl} from '@/ts/coreIndex'
 
-const info = computed(()=> userCtrl.company?.target)
-
+const info = ref<any>({})
+onMounted(()=>{
+  setTimeout(() => {
+    info.value =  userCtrl.company?.target
+  }, 600);
+})
 const allowEdit = () => {
   return selectItem.value.id &&
     authority.IsRelationAdmin([

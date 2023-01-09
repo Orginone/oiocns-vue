@@ -18,7 +18,7 @@
           <h4>岗位人员</h4>
         </template>
         <template #buttons>
-          <el-button class="btn-check" @click="showGiveDialog" type="primary" link>指派岗位
+          <el-button @click="showGiveDialog" type="primary" link>指派岗位
             <!-- <span style="transform: scale(1.5);">+</span> -->
           </el-button>
         </template>

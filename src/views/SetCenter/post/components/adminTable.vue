@@ -4,8 +4,8 @@
       <diytab
         :style="{ width: '100%' }"
         ref="diyTable"
-        :hasTabs="true"
         :hasTitle="true"
+        tableName="关联角色"
         :hasTableHead="true"
         :tableData="tableData"
         :options="options"
@@ -18,7 +18,7 @@
           <h4>关联角色</h4>
         </template>
         <template #buttons>
-          <el-button @click="addRole()" class="btn-check" type="primary" link>
+          <el-button @click="addRole()"  type="primary" link>
             添加身份
           </el-button>
         </template>
@@ -213,16 +213,6 @@ watch(
       display: flex;
       flex-direction: column;
       flex: 1;
-      .btn-check{
-        font-size: 14px;
-        padding: 8px 16px;
-        color: #154ad8;
-      }
-      .btn-check:hover{
-          background: #154ad8;
-          color: #fff;
-          padding: 8px  16px;
-      }
     }
   }
 </style>

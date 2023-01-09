@@ -69,7 +69,7 @@
   import type { TabsPaneContext } from 'element-plus'
   // import thingServices from '@/module/flow/thing'
   import {todoCtrl} from '@/ts/coreIndex'
-  const statusMap = {
+  const statusMap:any = {
     1: {
       color: 'blue',
       text: '待处理',
@@ -176,27 +176,32 @@
     if(!tab){
       tab.index= '0';
     }
+    let listData = todoCtrl.MarketTodo;
+    console.log('listData',listData)
+    let todoList:any = []
+    let doList:any = []
+    listData.forEach((element:any) => {
+      todoList.push(...element?._todoList)
+      doList.push(...element?._doList)
+    });
     if (tab.index== '0') {
-      const list = await todoCtrl.MarketTodo['getTodoList'](false);
-      state.list = list || []
+      state.list = todoList
       diyTable.value.state.page.total = state.list.length
 
     } else if (tab.index =='1'){
-      const list = await todoCtrl.MarketTodo['getDoList']({
-        limit:pageStore.pageSize,
-        offset:pageStore.currentPage,
-        filter:""
-      });
-      state.list = list || []
+      state.list = doList
       diyTable.value.state.page.total = state.list.length
     }else {
-      const list = await todoCtrl.MarketTodo['getApplyList']({
+   
+      // state.list = list || []
+      // diyTable.value.state.page.total = state.list.length
+      const list = await listData[0].getApplyList({
         limit:pageStore.pageSize,
         offset:pageStore.currentPage,
         filter:""
       });
-      state.list = list || []
-      diyTable.value.state.page.total = state.list.length
+      state.list = list.result
+      diyTable.value.state.page.total = list.total
     }
     console.log('state', state.list)
   };
@@ -257,8 +262,8 @@
     })
   }
   onMounted(() => {
-   nextTick(()=>{
-      loadList({
+   setTimeout(() => {
+    loadList({
           uid: 0,
           slots: undefined,
           props: undefined,
@@ -267,8 +272,8 @@
           index: '0',
           isClosable: false
       },);
-      activeName.value = '0';
-   })
+   }, 1000);
+    activeName.value = '0';
   });
 </script>
 

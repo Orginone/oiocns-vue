@@ -335,6 +335,7 @@
     handleClose();
     modelIsShow.value = false
     store.setCurSpace(data.id)
+    location.reload()
     // $services.person
     //   .changeWorkspace({
     //     data: {
