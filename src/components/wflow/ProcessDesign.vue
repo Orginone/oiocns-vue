@@ -3,8 +3,8 @@
 		<!-- <el-dialog fullscreen v-model="isShowDialog" append-to-body :close-on-click-modal="false" width="1080px"
 			:show-close="false"> -->
 			<!-- <template #title> -->
-				<LayoutHeader v-model="activeSelect" @changeVersion="changeVersion" @activeChange="activeChange" @exit="exit" @preview="preview"
-					@publish="validateDesign" @changeScale="changeScale"></LayoutHeader>
+				<!-- <LayoutHeader v-model="activeSelect" @changeVersion="changeVersion" @activeChange="activeChange" @exit="exit" @preview="preview"
+					@publish="validateDesign" @changeScale="changeScale"></LayoutHeader> -->
 			<!-- </template> -->
 			<div class="layout-body">
 				<!-- <FormBaseSetting ref="baseSetting" v-show="activeSelect === 'baseSetting'" /> -->
@@ -49,7 +49,8 @@
     provide
 	} from 'vue';
 	import $services from '@/services'
-	import {userCtrl} from '@/ts/coreIndex'
+	import {userCtrl,processCtrl} from '@/ts/coreIndex';
+	import {deepClone} from '@orginone/oiocns-ts'
 	import LayoutHeader from './layout/LayoutHeader.vue';
 	// import FormDesign from './layout/FormDesign.vue'
 	import FormProcessDesign from './layout/FormProcessDesign.vue'
@@ -112,9 +113,9 @@
 				scale:100,
 				isShowDialog: false,
 				isNew: true,
-      			timer: null,
+      	timer: null,
 				activeSelect: 'processDesign',
-      			validStep: 0,
+      	validStep: 0,
 				validVisible: false,
 				validResult: null,
 				validOptions: [
@@ -242,7 +243,6 @@
 
 			// 应用id      资源id         
 			const startDesign= async (obj:any)=>{
-				
 				await getBindedFlow(obj)
 				await getFlowList(obj)
 				stores.setForm(obj);
@@ -345,7 +345,6 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					
 						$services.wflow.createDefine({
 							data: design
 						}).then((res: ResultType) => {
@@ -415,30 +414,50 @@
 				// })
 			};
 
-			
-			const validateDesign = () => {
-				
-				state.validVisible = true;
-				state.validStep = 0;
-				showValiding();
-				stopTimer();
-				state.timer = setInterval(() => {
+			const validateDesign = async() => {
+				processCtrl.currentTreeDesign.name = processCtrl.conditionData.name;
+				processCtrl.currentTreeDesign.fields = processCtrl.conditionData.fields;
+				processCtrl.currentTreeDesign.remark = JSON.stringify(
+					processCtrl.conditionData.labels,
+				);
+				/**要发布的数据 */
+				const currentData = deepClone(processCtrl.currentTreeDesign);
+				if (currentData.belongId) {
+					delete currentData.belongId;
+				}
+				const result = await userCtrl.space.publishDefine(currentData);
+				if (result) {
+					ElMessage({
+						message: result.id ? '编辑成功' : '发布成功',
+						type: 'success'
+					})
+					// 清理数据
+					// await initData();
+					// clearForm();
+				} else {
+					return false;
+				}
+				// state.validVisible = true;
+				// state.validStep = 0;
+				// showValiding();
+				// stopTimer();
+				// state.timer = setInterval(() => {
+				// 	state.validResult.errs = ProcessDesignRef.value.validate()
 					
-					state.validResult.errs = ProcessDesignRef.value.validate()
-					
-					if (Array.isArray(state.validResult.errs) && state.validResult.errs.length === 0) {
-						state.validStep++;
-						if (state.validStep >= state.validOptions.length) {
-							stopTimer()
-							showValidFinish(true, null)
-						}
-					} else {
-					stopTimer()
-						state.validOptions[state.validStep].status = 'error'
-						showValidFinish(false, getDefaultValidErr())
-					}
-				}, 300)
+				// 	if (Array.isArray(state.validResult.errs) && state.validResult.errs.length === 0) {
+				// 		state.validStep++;
+				// 		if (state.validStep >= state.validOptions.length) {
+				// 			stopTimer()
+				// 			showValidFinish(true, null)
+				// 		}
+				// 	} else {
+				// 	stopTimer()
+				// 		state.validOptions[state.validStep].status = 'error'
+				// 		showValidFinish(false, getDefaultValidErr())
+				// 	}
+				// }, 300)
 			};
+			
 			const getDefaultValidErr = () => {
 				switch (state.validStep) {
 					case 0:

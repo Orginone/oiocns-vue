@@ -18,7 +18,6 @@
   const isMySpace = ref<boolean>(workspaceData.value.id == queryInfo.value.id)
   // 当前路由
   const currentRouter = computed(()=> router.currentRoute.value.fullPath)
- 
   router.push(currentRouter.value)
 
 </script>

@@ -21,9 +21,9 @@
       <template #header="{  titleId, titleClass }">
         <el-input v-model="selectedNode.name" size="default" v-show="showInput" style="width: 300px"
           @blur="showInput = false" @keyup.enter.native="showInput = false"></el-input>
-      <el-link :id="titleId" :class="titleClass" v-show="!showInput" @click="showInput = true">
-        {{selectedNode.name}}<el-icon class="el-icon--right"><Edit /></el-icon>
-      </el-link>
+        <el-link :id="titleId" :class="titleClass" v-show="!showInput" @click="showInput = true">
+          {{selectedNode.name}}<el-icon class="el-icon--right"><Edit /></el-icon>
+        </el-link>
       <!-- <el-link v-show="!showInput" @click="showInput = true" style="font-size: 16px">
           <i class="el-icon-edit" style="margin-right: 10px"></i>
           {{selectedNode.name}}
@@ -100,9 +100,7 @@
         return proxy.$pinia.state.value.appwfConfig?.selectedNode;
       });
 
-
       const state = reactive({
-        // scale: 100,
         selected: {},
         showInput: false,
         showConfig: false,
@@ -117,7 +115,8 @@
 
       const nodeSelected = (node: any) => {
         state._flowRecords = node?._flowRecords
-        node?._disabled ? state.dialogTableVisible = true : state.showConfig = true
+        node?.type == "CONCURRENT" ? '' : node?._disabled? state.dialogTableVisible = true : state.showConfig = true
+        // node?._disabled ? state.dialogTableVisible = true : state.showConfig = true
       }
 
       const handleClose = () => {

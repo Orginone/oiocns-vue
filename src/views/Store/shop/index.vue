@@ -84,7 +84,7 @@
     <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog', false)"/>
     <addShop :addDialog="dialogType.addDialog" @checksSearch="checksSearch" @closeDialog="closeDialog('addDialog', false)"/>
     <appInfo :infoDialog="dialogType.infoDialog" :infoDetail="infoDetail.info" @closeDialog="closeDialog('infoDialog', false)"></appInfo>
-    <el-drawer v-model="showCar" title="购物车" size="300">
+    <el-drawer v-model="showCar" title="购物车" width="30%">
         <car></car>
     </el-drawer>
   </div>
@@ -138,7 +138,7 @@
       type: 'warning'
     })
     .then(async() => {
-      await  marketCtrl.Market.deleteMarket(id) 
+      await marketCtrl.target.deleteMarket(id) 
       router.go(0);
     })
     .catch(() => { })
@@ -233,7 +233,7 @@ const buyThings = (item:any) => {
   }).then(() => {
     
     setTimeout(async () => {
-      await marketCtrl.buyShoping([item]);
+      await marketCtrl.createOrder([item]);
     }, 1)
   }).catch(()=>{})
 }
@@ -250,7 +250,7 @@ const buyThings = (item:any) => {
   })
   //加入购物车
   const joinShopCar = async (item: any) => {
-    marketCtrl.joinApply(item);
+    marketCtrl.appendStaging(item);
     pageStore.tableData = marketCtrl.shopinglist
     carNum.value =  marketCtrl.shopinglist.length || 0
   }
@@ -295,7 +295,7 @@ const buyThings = (item:any) => {
 
   // 获取共享仓库信息
   const getMarketInfo = async () => {
-    marketCtrl.Market.getJoinMarkets().then((res)=>{
+    userCtrl.space.getJoinMarkets().then((res)=>{
       storeList.value = res;
       getAppList(res[0])
     })

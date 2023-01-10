@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%; background: #fff">
+  <div class="menu-side" style="height: 100%; background: #fff">
     <div class="title">
       <component v-show="titleData.backFlag" @click="goBack" :is="'ArrowLeft'" style="width: 16px;height: 16px;cursor:pointer;position: absolute;left: 20px;"></component>
       <component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;
@@ -13,7 +13,7 @@
       >
         <template #title>
           <component :is="item.icon" style="width: 16px;height: 16px;"></component>&nbsp;
-          <span style="font-size: 13px;color: #909399;">{{ item.name }}</span>
+          <span style="font-size: 14px;color: #909399;">{{ item.name }}</span>
         </template>
         <el-menu-item
           v-for="val in item.children"
@@ -59,7 +59,7 @@
               </template>
               <div v-if="btnType=='STORE_USER_MENU'">
                 <div class="btn-bus" :style="{cursor: 'pointer'}" >
-                  <div class="row-btn" @click="storeBus(1,$event)"  :data-index="node.key">创建分类</div>
+                  <div class="row-btn" @click="storeBus(1,$event)" :data-index="node.key">创建分类</div>
                   <div class="row-btn" @click="storeBus(2,$event)" :data-index="node.key">删除分类</div>
                 </div>
               </div>  
@@ -206,7 +206,22 @@ const handleSelect = (key: any) => {
   instance?.proxy?.$Bus.emit('selectBtn', key)
 }
 </script>
-
+<style lang="scss">
+.menu-side{
+  .el-menu{
+    border: 0;
+  }
+  .el-sub-menu__title{
+    height: 40px;
+    line-height: 40px;
+  }
+  .el-menu-item{
+    height: 45px;
+    line-height: 45px;
+  }
+}
+ 
+</style>
 <style lang="scss" scoped>
   *{font-family: '微软雅黑';}
   .title{
@@ -217,7 +232,6 @@ const handleSelect = (key: any) => {
     background: #f9fbfe;
     font-size: 16px;
   }
-
   .row-btn{
     text-align: center;
     line-height: 27px;
@@ -260,11 +274,6 @@ const handleSelect = (key: any) => {
   :deep .el-sub-menu__icon-arrow{
     display: none;
   }
-  :deep .el-menu-item{
-    height: 45px;
-    width: 180px;
-  }
-
   // :deep .no-penultimate > .el-tree-node__content{
     // font-weight: 800;
   // }

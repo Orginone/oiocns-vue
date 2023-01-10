@@ -81,14 +81,11 @@
   
     onMounted(() => {
       pageStore.tableData = marketCtrl.shopinglist
-      console.log('marketCtrl.shopinglist',marketCtrl.shopinglist)
       if(marketCtrl.shopinglist.length ==0){
         setTimeout(() => {
           pageStore.tableData = marketCtrl.shopinglist
         },2000);
       }
-      console.log('marketCtrl',)
-
       // getTableList()
     })
     const checkList = reactive<any>([])

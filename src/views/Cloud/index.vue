@@ -177,6 +177,7 @@
   import {ElMessageBox, ElMessage, UploadProps, UploadRequestOptions} from "element-plus";
   import {useUserStore} from "@store/user";
   import {formatBytes, formatDate, zipFileName} from '@/utils'
+  import { MenuItemType } from '@/typings/globelType';
   const store = useUserStore()
 
   const navRef = ref(null)
@@ -217,17 +218,40 @@
     }
   }
 
+    /** 查找菜单 */
+  const findMenuItemByKey: any = (items: MenuItemType[], key: string) => {
+    for (const item of items) {
+      if (item.key === key) {
+        return item;
+      } else if (Array.isArray(item.children)) {
+        const find = findMenuItemByKey(item.children, key);
+        if (find) {
+          return find;
+        }
+      }
+    }
+    return undefined;
+  };
+
   // 刷新当前目录
   const refreshCurrent = async () => {
-    state.currentLay = null
-    await Cloud.DocModel.current.loadChildren(true)
-    state.currentLay = Cloud.DocModel.current
+    // state.currentLay = null
+    const item = findMenuItemByKey(state.breadcrumb, Cloud.DocModel.currentKey);
+    if (item) {
+      state.currentLay = item
+    } else {
+      state.currentLay = state.breadcrumb[0];
+    }
+    state.currentLay.loadChildren(true)
+    // ElMessage.success('刷新成功')
+    // await Cloud.DocModel.current.loadChildren(true)
   }
 
   // 打开文件
   const clickFile = async (item: FileObject) => {
-    await Cloud.DocModel.open(item.key)
-    state.currentLay = Cloud.DocModel.current
+    // await Cloud.DocModel.open(item.key)
+    Cloud.DocModel.currentKey = item.key
+    state.currentLay = item
     navRef.value.checkedNode(item)
   }
 
@@ -249,8 +273,8 @@
   // 自定义文件上传
   const customUpload = async (options: UploadRequestOptions) => {
     const file = options.file as File
-    await Cloud.DocModel.upload(state.currentLay.key, file.name, file, async (res: any) => {
-      if(res.finished == res.size) {
+    await state.currentLay.upload(file.name, file, async (res: any) => {
+      if(res > 0) {
         ElMessage.success('上传成功')
         await refreshCurrent()
       }
@@ -286,7 +310,7 @@
       return false
     }
     createFileDialog.value = false
-    const addLay = await Cloud.DocModel.current.create(state.fileName)
+    const addLay = await state.currentLay.create(state.fileName) 
     ElMessage.success('创建成功')
     // 追加节点
     navRef.value.appendNode(addLay, state.currentLay)
@@ -335,6 +359,7 @@
     ElMessage.success('复制成功')
     onContent()
     state.operateItem = null
+    await refreshCurrent()
   }
 
   // 确认移动文件
@@ -345,6 +370,7 @@
     ElMessage.success('移动成功')
     onContent()
     state.operateItem = null
+    await refreshCurrent()
   }
 
   // 右键展开文件操作栏

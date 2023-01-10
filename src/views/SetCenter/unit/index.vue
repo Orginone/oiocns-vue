@@ -11,7 +11,7 @@
 </template>
 <script lang="ts" setup>
   import Info from './components/info.vue'
-  import User from './components/User.vue'
+  // import User from './components/User.vue'
   import { ref, onMounted } from 'vue'
   import { useUserStore } from '@/store/user'
   import { storeToRefs } from 'pinia'
