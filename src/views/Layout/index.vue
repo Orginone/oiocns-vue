@@ -385,7 +385,7 @@
           let obj:any= {
             ...element.market,
             label:element.market.name,
-            url:'/store/shop?id='+element.market.id,
+            shopLink:element.market.id,
             btns:[{  "name":"删除商店", "id":"1021" },{  "name":"用户管理",  "id":"1022"}]
           }
           myList.push(obj)

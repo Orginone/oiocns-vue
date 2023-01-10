@@ -96,7 +96,7 @@ const createShop = async (formEl: FormInstance | undefined) =>{
   })
   if (!isValidate) return
   
-  const market = await marketCtrl.Market.createMarket({
+  const market = await marketCtrl.target.createMarket({
       name: form.name,
       code: form.code,
       samrId: store.queryInfo.id,

@@ -4,7 +4,7 @@
         <div class="table">
           <el-checkbox-group v-model="checkList"  @change="handleCheckList">
            <div class="item" v-for="item in pageStore.tableData" >
-            <el-checkbox  :key="item" :label="item">
+            <el-checkbox  :key="item.id" :label="item.id">
               <div class="item-detail">
                 <img :src="img1" alt="">
                 <div class="detail-row">
@@ -12,7 +12,7 @@
                     商品名称：{{ item.caption }}
                   </div>
                   <div class="car-item">
-                    购买类型：{{ item.sellAuth }}
+                    应用权限：{{ item.sellAuth }}
                   </div>
                 </div>
               </div>
@@ -92,8 +92,12 @@
     const checkAll = ref<any>([]);
     const checkList = ref<any>([]);
     // 全选
-    const handleCheckAllChange = (val: boolean) => {
-      checkList.value = val ? pageStore.tableData : []
+    const handleCheckAllChange = (val: any) => {
+      let arr:any = [];
+      pageStore.tableData.forEach((element,index) => {
+        arr.push(element.id);
+      });
+      checkList.value = val ? arr : []
       isIndeterminate.value = false
     }
   
@@ -123,7 +127,7 @@
     if(!item?.length){
         item = [item]
     }
-    await marketCtrl.deleApply(item);
+    await item.deleApply(item);
     pageStore.tableData = marketCtrl.shopinglist
   }
   //批量购买
@@ -135,17 +139,16 @@
     deleteStaging(checkList.value)
   }
   //创建订单(批量)
-  const createOrderByStaging = async (item:any) => {
-
+  const createOrderByStaging = async (arr:any) => {
+    if(arr.length<=0){
+      ElMessage.warning('请选择商品')
+    }
     ElMessageBox.confirm('此操作将生成交易订单。是否确认?', '确认订单', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'success'
     }).then(async () => {
-        if(!item?.length){
-           item = [item]
-        }
-        await marketCtrl.buyShoping(item);
+        await marketCtrl.createOrder(arr);
         pageStore.tableData = marketCtrl.shopinglist
     }).catch(()=>{})
   }

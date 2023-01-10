@@ -470,10 +470,9 @@ const state: StateType = reactive({
 const title = ref<string>("");
 onMounted(() => {
   // 获取列表
-  getProductList(); 
-  console.log('marketCtrl', marketCtrl);
-  console.log('userCtrl', userCtrl)
-  console.log('marketCtrl.shopinglist',marketCtrl.shopinglist)
+  setTimeout(() => {
+    getProductList(); 
+  }, 600);
 });
 
 const commonStore = useCommonStore()
@@ -500,9 +499,8 @@ const handleUpdate = (page: any) => {
 // 获取我的应用列表
 const getProductList = () => {
   marketCtrl.target.getOwnProducts(false).then((res:any)=>{
-
-    
-    state[`ownProductList`] = res ;
+    console.log('res',res)
+    state[`ownProductList`] = res; 
     state['appList'] = res;
     diyTable.value.state.page.total = res.length
   })

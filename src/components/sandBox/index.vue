@@ -29,7 +29,6 @@
   const props = defineProps<IfrType>()
   const loading = ref<boolean>(true)
   const myIframe = ref()
-
   // iframe加载完成时向iframe传递数据
   const load = () => {
     console.log('子页面加载完成')

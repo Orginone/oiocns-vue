@@ -257,8 +257,6 @@ const buyThings = (item:any) => {
   // 加入商店
   const checksSearch = async (val:any)=>{
     let selectId: any[] = []
-    console.log('selectId',val)
-
     val.value.forEach((el: { id: any }) => {
       selectId.push(el.id)
     })
@@ -287,9 +285,8 @@ const buyThings = (item:any) => {
       offset:pageStore.currentPage
     }
     item?.getMerchandise(page).then((res:any)=>{
-      state.myAppList = res.result;
-      console.log('state.myApp',state.myAppList)
-      diyTable.value.state.page.total = res.total
+      state.myAppList = res.result || [];
+      diyTable.value.state.page.total = res?.total || 0
     })
   }
 
@@ -300,11 +297,10 @@ const buyThings = (item:any) => {
       getAppList(res[0])
     })
   }
-  watch(() => router.currentRoute.value.fullPath, () => {
-      //监听路由
-      let id = router.currentRoute.value.query.id
+  instance?.proxy?.$Bus.on("shopLink", (shopItem:any) => {
+    //监听路由
       let item = storeList.value.filter((item:any) => {
-          return item.market.id == id;
+          return item.market.id == shopItem.id;
       });
       getAppList(item[0]) 
   })
