@@ -6,7 +6,7 @@ const settings: any = {
   // 是否开启代理，本地需要开，线上环境关闭
   proxyFlag: true,
   // 端口
-  port: 8000,
+  port: 8888,
   // 是否开启https
   https: false,
   // 扩展端口
