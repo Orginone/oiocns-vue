@@ -1,17 +1,32 @@
 <template>
   <div class="cohort-wrap">
     <el-aside class="custom-group-silder-menu" width="300px">
-      <GroupSideBarVue :clearHistoryMsg="clearHistoryMsg" @openChanged="openChanged" />
+      <GroupSideBarVue
+        :clearHistoryMsg="clearHistoryMsg"
+        :chatRef="chatRef"
+        v-model:imgKey="imgKey"
+        @openChanged="openChanged"
+      />
     </el-aside>
     <!-- 右侧展示主体 -->
-    <div class="chart-page">
+    <div v-show="chatRef.chat" class="chart-page">
       <!-- 头部 -->
-      <GroupHeaderVue v-if="chat.curChat.value !== null" @viewDetail="handleViewDetail" />
+      <GroupHeaderVue
+        v-if="chatRef.chat"
+        :chatRef="chatRef"
+        :imgKey="imgKey"
+        @viewDetail="handleViewDetail"
+      />
       <!-- 聊天区域 -->
-      <GroupContent class="chart-content" ref="contentWrapRef" @handleReWrite="reWrite"
-        v-show="chat.curChat.value != null" />
+      <GroupContent
+        v-if="chatRef.chat"
+        class="chart-content"
+        ref="contentWrapRef"
+        :chatRef="chatRef"
+        @handleReWrite="reWrite"
+      />
       <!-- 输入区域 -->
-      <GroupInputBox ref="inputBox" class="chart-input" v-show="chat.curChat.value != null" />
+      <GroupInputBox v-show="chatRef.chat" ref="inputBox" class="chart-input" />
     </div>
     <!-- 详情 -->
     <GroupDetail v-if="isShowDetail" :clearHistoryMsg="clearHistoryMsg" />
@@ -19,50 +34,50 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, onBeforeUnmount } from 'vue'
-import GroupSideBarVue from './components/groupSideBar.vue'
-import GroupHeaderVue from './components/groupHeader.vue'
-import GroupInputBox from './components/groupInputBox.vue'
-import GroupContent from './components/groupContent.vue'
-import GroupDetail from './components/groupDetail.vue'
-import {chatCtrl as chat} from '@/ts/coreIndex'
-const isShowDetail = ref<boolean>(false)
+import { onMounted, ref, onBeforeUnmount } from "vue";
+import GroupSideBarVue from "./components/groupSideBar.vue";
+import GroupHeaderVue from "./components/groupHeader.vue";
+import GroupInputBox from "./components/groupInputBox.vue";
+import GroupContent from "./components/groupContent.vue";
+import GroupDetail from "./components/groupDetail.vue";
+import { chatCtrl } from "@/ts/coreIndex";
+const isShowDetail = ref<boolean>(false);
+
+/**
+ * 获取 chatController 实例化对象
+ */
+const chatRef = ref<any>({});
+setTimeout(() => {
+  chatRef.value = chatCtrl;
+}, 600);
+
+const imgKey = ref<number>(0)
 
 //内容展示 dom节点
-const contentWrapRef = ref(null)
-const inputBox = ref(null)
-
-onMounted(() => {
-  chat.onMessage((data: any) => {
-    contentWrapRef.value.goPageEnd()
-  })
-})
+const contentWrapRef = ref(null);
+const inputBox = ref(null);
 
 const openChanged = (item: any) => {
-  contentWrapRef.value.goPageEnd()
-}
+  contentWrapRef.value.goPageEnd();
+};
 
 const reWrite = (str: string) => {
-  inputBox.value.reWrite(str)
-}
+  inputBox.value.reWrite(str);
+};
 
-onBeforeUnmount(() => {
-  // 离开页面关闭链接
-  chat.onMessage(null)
-})
 // 展示详情页
 const handleViewDetail = () => {
-  isShowDetail.value = !isShowDetail.value
-}
+  isShowDetail.value = !isShowDetail.value;
+};
 
 //清空历史记录
 const clearHistoryMsg = () => {
   //TODO
-}
+};
 </script>
 
 <style lang="scss">
-@import './components/qqface.scss';
+@import "./components/qqface.scss";
 
 .custom-group-silder-menu.el-aside {
   height: 100%;
