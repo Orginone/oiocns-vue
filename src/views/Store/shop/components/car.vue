@@ -1,5 +1,5 @@
 <template>
-    <div class="main">
+    <div class="main car-main">
       <div class="content">
         <div class="table">
           <el-checkbox-group v-model="checkList"  @change="handleCheckList">
@@ -46,6 +46,8 @@
     import { PAGE_SIZES, PAGE_NUM } from '@/constant'
     import {marketCtrl} from '@/ts/coreIndex';
     import img1 from '@/assets/img/group22.png'
+
+    const emit = defineEmits(['reLoad'])
 
     const diyTable = ref(null)
     // 表格展示数据
@@ -119,9 +121,6 @@
         hasChildren: 'hasChildren'
       }
     })
-  // 表格分页数据
-  const pagination: { current: number; limit: number } = reactive({ current: 1, limit: PAGE_NUM })
-
   //从购物车移除
   const deleteStaging = async (item: any) => {
     if(!item?.length){
@@ -129,6 +128,7 @@
     }
     await item.deleApply(item);
     pageStore.tableData = marketCtrl.shopinglist
+    emit('reLoad')
   }
   //批量购买
   const batchPay = async(item:any)=>{
@@ -137,6 +137,7 @@
   //批量删除   
   const batchDelete =async (item:any) => {
     deleteStaging(checkList.value)
+    emit('reLoad')
   }
   //创建订单(批量)
   const createOrderByStaging = async (arr:any) => {
@@ -150,19 +151,23 @@
     }).then(async () => {
         await marketCtrl.createOrder(arr);
         pageStore.tableData = marketCtrl.shopinglist
+        emit('reLoad')
     }).catch(()=>{})
   }
     
   </script>
   <style lang="scss">
-    .el-dropdown-link{
-      padding: 2px 10px;
-      cursor: pointer;
-      border-radius: 10px;
-    }
-    .el-dropdown-link:hover{
-      background:#1642cb;
-      color: #fff;
+    .car-main{
+      .el-dropdown-link{
+        padding: 2px 10px;
+        cursor: pointer;
+        border-radius: 10px;
+      }
+      .el-dropdown-link:hover{
+        background:#1642cb;
+        color: #fff;
+      }
+    
     }
   </style>
   <style lang="scss" scoped>
@@ -174,8 +179,11 @@
       border: 0 !important;
       .content{
         width:calc(100vw - 150px);
+        // height:calc(100vh - 50px);
         display: flex;
         flex-direction: column;
+        background: #EFF4F9;
+        overflow-y: auto;
         .table{
           display: flex;
           flex: 1;
@@ -183,15 +191,15 @@
             width: 100%;
           }
           .item{
-            width: 100%;
             height: 100px;
             background: #fff;
-            border-radius: 3px;
+            border-radius: 8px;
             border: 1px solid #f0f4f8;
-            margin-bottom: 10px;
             display: flex;
             font-size: 14px;
-            padding: 10px;
+            padding: 10px 15px;
+            margin: 20px;
+            margin-bottom: 10px;
           }
           .el-checkbox{
             width: 100%;
@@ -221,10 +229,11 @@
         .foot{
             background: #fff;
             display: flex;
-            height: 40px;
+            height: 50px;
             justify-content: space-between;
             align-items: center;
-            padding-right:10px;
+            padding:10px 20px;
+            box-sizing: border-box;
             .foot-left{
               display: flex;
               flex-direction: row-reverse;

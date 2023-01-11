@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div class="main shop-main">
     <div class="content">
       <div class="table">
         <diytab
@@ -84,8 +84,8 @@
     <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog', false)"/>
     <addShop :addDialog="dialogType.addDialog" @checksSearch="checksSearch" @closeDialog="closeDialog('addDialog', false)"/>
     <appInfo :infoDialog="dialogType.infoDialog" :infoDetail="infoDetail.info" @closeDialog="closeDialog('infoDialog', false)"></appInfo>
-    <el-drawer v-model="showCar" title="购物车" width="30%">
-        <car></car>
+    <el-drawer v-model="showCar" title="购物车" width="500"  :append-to-body="false">
+        <car @reLoad=reLoad()></car>
     </el-drawer>
   </div>
   
@@ -104,6 +104,7 @@
 
   import {marketCtrl} from '@/ts/coreIndex';
   import {userCtrl} from '@/ts/coreIndex'
+  import moment from 'moment'
 
   const diyTable = ref(null)
   const valuee = ref<any>('');
@@ -208,7 +209,8 @@
     {
       prop: 'createTime',
       label: '创建时间',
-      width:'200'
+      width:'200',
+      formatter: (row: any, column: any) => moment(row.createTime).format('YYYY/MM/DD HH:mm:ss')
     },
     {
       type: 'slot',
@@ -297,6 +299,11 @@ const buyThings = (item:any) => {
       getAppList(res[0])
     })
   }
+  // 刷新购物车红点
+  const reLoad = () => {
+    pageStore.tableData = marketCtrl.shopinglist
+    carNum.value =  marketCtrl.shopinglist.length || 0
+  }
   instance?.proxy?.$Bus.on("shopLink", (shopItem:any) => {
     //监听路由
       let item = storeList.value.filter((item:any) => {
@@ -330,7 +337,7 @@ const buyThings = (item:any) => {
     background:#1642cb;
     color: #fff;
   }
-  .main{
+  .shop-main{
     .el-input__wrapper{
       box-shadow: 0 0 0 0;
       border-radius: 30px;
@@ -338,6 +345,13 @@ const buyThings = (item:any) => {
     }
     .el-select .el-input.is-focus,.el-select .el-input .el-input__wrapper{
       box-shadow: 0 0 0 0;
+    }
+    .el-drawer__header{
+      margin-bottom: 0;
+    }
+    .el-drawer__body{
+      background: #EFF4F9;
+      padding: 0;
     }
   }
 </style>

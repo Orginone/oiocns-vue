@@ -7,12 +7,13 @@
       ref="myIframe"
       allow="payment"
       allowfullscreen="true"
-      :src="props.containLink"
+      src="http://192.168.1.188/#/login"
       width="100%"
       height="100%"
       frameborder="0"
       @load="load"
     ></iframe>
+    <!--    :src="props.containLink" -->
     <div class="txt" v-else>暂无内容</div>
   </div>
 </template>
@@ -33,6 +34,8 @@
   const load = () => {
     console.log('子页面加载完成')
     loading.value = false
+    console.log(props.containLink);
+    
   }
   // 使用poseMessage 监听子页面消息,并回复
   usePostMessage(myIframe, props.appInfo, props.containLink)

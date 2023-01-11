@@ -327,6 +327,7 @@ import {appCtrl} from '@/ts/coreIndex'
 import {userCtrl} from '@/ts/coreIndex'
 import { useCommonStore } from '@store/common'
 import img1 from '@/assets/img/group22.png'
+import moment from 'moment'
 
 const { proxy } = getCurrentInstance()
 
@@ -456,6 +457,8 @@ const state: StateType = reactive({
       prop: "prod.createTime",
       label: "创建时间",
       width: "200",
+      formatter: (row: any, column: any) => moment(row.createTime).format('YYYY/MM/DD HH:mm:ss')
+
     },
     {
       type: "slot",
