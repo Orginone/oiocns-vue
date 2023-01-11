@@ -559,6 +559,7 @@ const getUsers = async (currentData?: any) => {
       limit: 20,
       offset: 0
   })
+  console.log(backData)
     if(backData.result){
       tableData.value =backData.result;
       pageStore.total = backData.total
@@ -649,6 +650,11 @@ const tableHead = ref([
     prop: 'team.code',
     label: '手机号',
     name: 'teamCode'
+  },
+  {
+    prop: 'team.remark',
+    label: '签名',
+    name: 'teamRemark'
   },
   {
     type: 'slot',

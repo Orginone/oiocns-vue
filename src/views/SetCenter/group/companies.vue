@@ -8,6 +8,7 @@
           :tableName="props.selectItem?.label ?? props.selectItem?.name" 
           :hasTableHead="true" 
           :tableData="companies"
+          :options="options"
           @handleUpdate="handleUpdate"
           :tableHead="tableHead"
         >
@@ -135,6 +136,15 @@ const pageStore = reactive({
 
 const diyTable = ref(null)
 
+const options = {
+  expandAll: false,
+  checkBox: false,
+  order: true,
+  switchType:false,
+  noPage: false,
+  selectLimit: 0
+}
+
 const tableHead = ref([
   {
     prop: 'name',
@@ -155,15 +165,15 @@ const tableHead = ref([
     label: '代码'
   },
   {
-    prop: 'team.code',
+    prop: 'team.remark',
     label: '简介',
-    name: 'teamCode'
+    name: 'teamRemark'
   },
-   {
-    prop: '',
-    label: '所属集团',
-    name: ''
-  },
+  //  {
+  //   prop: '',
+  //   label: '所属集团',
+  //   name: ''
+  // },
   {
     type: 'slot',
     label: '操作',

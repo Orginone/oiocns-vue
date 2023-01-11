@@ -1,6 +1,6 @@
 <template>
   <div class="cloud">
-    <NavList ref="navRef" @clickFileFromTree="clickFile"></NavList>
+    <NavList ref="navRef" @clickFileFromTree="clickFile" @selectOptions="selectHandle($event)"></NavList>
     <div class="cloudMainBox" @click="onContent">
       <div class="cloudBar" v-if="state.currentLay">
         <el-space size="default">
@@ -218,6 +218,29 @@
     }
   }
 
+  const selectHandle = (msg:any) =>{
+    const type = msg.type
+    const data = msg.data
+    if(type == 'add'){
+      state.currentLay = data
+      openCreateFileDialog()
+    }else if(type == 'refresh'){
+      refreshCurrent()
+    }else if(type == 'edit'){
+      state.operateItem = data
+      openEditFileDialog()
+    }else if(type == 'copy'){
+      state.operateItem = data
+      openCopyFileDialog()
+    }else if(type == 'move'){
+      state.operateItem = data
+      openMoveFileDialog()
+    }else if(type == 'del'){
+      state.operateItem = data
+      deleteFile()
+    }
+  }
+
     /** 查找菜单 */
   const findMenuItemByKey: any = (items: MenuItemType[], key: string) => {
     for (const item of items) {
@@ -327,6 +350,7 @@
     await state.operateItem.rename(state.fileName)
     ElMessage.success('修改成功')
     onContent()
+    await refreshCurrent()
   }
 
   // 删除文件
@@ -346,7 +370,7 @@
       }
       await state.operateItem.delete()
       ElMessage.success('删除成功')
-      await refreshCurrent()
+      // await refreshCurrent()
       onContent()
     }).catch(() => {})
   }
@@ -365,9 +389,13 @@
   // 确认移动文件
   const confirmMoveFile = async () => {
     moveFileDialog.value = false
+    navRef.value.appendNode(state.targetItem,state.operateItem.key)
+    navRef.value.removeNode(state.operateItem)
     await state.operateItem.move(state.targetItem)
     await clickFile(state.targetItem)
+    await state.operateItem.delete()
     ElMessage.success('移动成功')
+    // 追加节点
     onContent()
     state.operateItem = null
     await refreshCurrent()
@@ -406,7 +434,7 @@
   }
 
   onMounted(async () => {
-    await clickFile(Cloud.DocModel.current)
+    // await clickFile(Cloud.DocModel.current)
     showType.value = Cloud.ListMode
   })
 </script>

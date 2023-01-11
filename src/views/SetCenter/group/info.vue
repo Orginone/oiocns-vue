@@ -71,7 +71,7 @@ let selectItem = ref<any>({})
 
 // 获取单位树点击的信息
 const selectItemChange = (data: any) => {
-  console.log('data: ', data);
+  // console.log('data: ', data);
   selectItem.value = data?.item;
 };
 defineExpose({ selectItemChange });

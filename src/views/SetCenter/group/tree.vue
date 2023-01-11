@@ -274,7 +274,7 @@ const getGroupList = async() => {
       return { value: g.id, label: g.name }
     })
     orgTree.value.length && emit('nodeClick', orgTree.value[0]?.children[0])
-    nodeClick(orgTree.value[0]?.children[0])
+    // nodeClick(orgTree.value[0]?.children[0])
 }
 
 const nodeClick = (val: any, nodeAttribute?: any, event?: any) => {
