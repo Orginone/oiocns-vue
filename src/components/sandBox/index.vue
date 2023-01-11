@@ -7,7 +7,7 @@
       ref="myIframe"
       allow="payment"
       allowfullscreen="true"
-      src="http://192.168.1.188/#/login"
+      :src="props.containLink"
       width="100%"
       height="100%"
       frameborder="0"
