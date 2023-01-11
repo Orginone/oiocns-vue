@@ -175,6 +175,7 @@ watch(filterText, (val) => {
 })
 const instance = getCurrentInstance();
 const clickBus = (e:any)=>{
+  console.log('aaa',e.target.dataset.index)
   instance?.proxy?.$Bus.emit('clickBus', e.target.dataset.index)
 }
 const storeBus = (type:number,e:any)=>{
@@ -187,16 +188,15 @@ const filterNode = (value: string, data: any) => {
 
 // 路由跳转
 const jump = (val:any)=>{
-    if(val?.data?.isStoreMenu){
-      instance?.proxy?.$Bus.emit('storeMenu', val.data.items)
-    }else{
-      if(val.url){
-        router.push(val.url)
-      }else if (val.data.url){
-        router.push(val.data.url)
-      }
+  if(val?.data?.isStoreMenu){ //仓库分类事件
+    instance?.proxy?.$Bus.emit('storeMenu', val.data.items)
+  }else if(val?.data?.shopLink){ //商店分类跳转事件
+    instance?.proxy?.$Bus.emit('shopLink', val.data)
+  } else{ //普通url跳转
+    if(val.url){
+      router.push(val.url)
     }
-   
+  }
 }
 // 树点击事件
 const nodeClick = (val: any) => {

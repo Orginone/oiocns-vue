@@ -28,17 +28,14 @@ export class Application {
   /*
    *分发分享变量定义
    */
-  private appInfo: string
-  private opertion: number
+  private typePD: number
   private rootTreeId: string
   private parentIdMap: any = {}
   public cascaderTree: any
   public tabs: any
 
-  constructor(appInfo?: string, opertion?: number) {
-    this.appInfo = appInfo
-    this.opertion = opertion
-    console.log('thus',this)
+  constructor(typePD?: number) {
+    this.typePD = typePD
   }
   /**
    * 树形权限判断
@@ -58,7 +55,7 @@ export class Application {
    * 过滤掉工作组作为表单级联数据
    */
   private filter = (nodes: OrgTreeModel[]): OrgTreeModel[] => {
-    if (this.opertion == 1) {
+    if (this.typePD == 1) {
       nodes = nodes.filter((node) => node.data?.typeName !== '工作组')
     } else {
       nodes = nodes.filter(
@@ -87,7 +84,7 @@ export class Application {
         departDel.push(el.id)
       }
     })
-    let teamId = this.opertion == 1 ? this.rootTreeId : this.opertion == 2 ? resource : store.queryInfo.id
+    let teamId = this.typePD == 1 ? this.rootTreeId : this.typePD == 2 ? resource : store.queryInfo.id
     if(typePD ==3){
       teamId = '0';
     }
@@ -100,8 +97,6 @@ export class Application {
     }else if(destType == '4'){
       destType ='人员'
     }
-
-    console.log('departAdd',departAdd,'departDel',departDel)
     if (departAdd.length > 0) {
       await appCtrl.curProduct?.createExtend(
         teamId,
@@ -110,9 +105,6 @@ export class Application {
       );
     }
     if (departDel.length > 0) {
-      console.log('delete',teamId,
-      departDel,
-      destType)
        await appCtrl.curProduct?.deleteExtend(
         teamId,
         departDel,
@@ -137,7 +129,7 @@ export class Application {
         delData.push(el.id)
       }
     })
-    let teamId = this.opertion == 1 ? this.rootTreeId : this.opertion == 2 ? resource : store.queryInfo.id
+    let teamId = this.typePD == 1 ? this.rootTreeId : this.typePD == 2 ? resource : store.queryInfo.id
     if(!teamId){
       teamId = '0';
     }

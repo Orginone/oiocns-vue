@@ -14,178 +14,135 @@
           <el-menu-item index="2">售卖订单</el-menu-item>
         </el-menu>
       </div>
-      <div class="btnStyle">
-        <el-select
-          v-model="statusvalue"
-          filterable
-          placeholder="订单状态"
-          clearable
-          @change="getTableList(searchType)"
-          style="margin: 5px 5px 5px 15px"
-        >
-          <el-option
-            v-for="item in statusoptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </div>
-       <div class="tab-list">
-            <!-- 采购订单 -->
-            <DiyTable
-              v-show="switchType ==1"
-              ref="diyTable"
-              :tableData="state.orderMessage.list"
-              :tableHead="state.tableHeadBuy"
-              :total="state.orderMessage.total"
-              @handleUpdate="handleUpdate"
-              :options="options"
-            >
-              <template #expand="props">
-                <div style="margin-left: 50px">
-                  <DiyTable
-                    ref="diyTableDetail"
-                    :tableData="props.row.details"
-                    :tableHead="state.tableHeadBuyDetail"
-                    :options="options"
-                  >
-                    <template #merchandiseStatus="scope">
-                      <el-tag v-show="scope.row.merchandise">在售</el-tag>
-                      <el-tag class="ml-2" type="danger" v-show="!scope.row.merchandise">已下架</el-tag>
-                    </template>
+      <div class="tab-list">
+          <!-- 采购订单 -->
+          <DiyTable
+            v-show="switchType ==1"
+            ref="diyTable"
+            :tableData="state.orderMessage.list"
+            :tableHead="state.tableHeadBuy"
+            :total="state.orderMessage.total"
+            @handleUpdate="handleUpdate"
+            :options="options"
+          >
+            <template #expand="props">
+              <div style="margin-left: 50px">
+                <DiyTable
+                  ref="diyTableDetail"
+                  :tableData="props.row.details"
+                  :tableHead="state.tableHeadBuyDetail"
+                  :options="options"
+                >
+                  <template #merchandiseStatus="scope">
+                    <el-tag v-show="scope.row.merchandise">在售</el-tag>
+                    <el-tag class="ml-2" type="danger" v-show="!scope.row.merchandise">已下架</el-tag>
+                  </template>
 
-                    <template #operate="scope">
-                      <el-button link type="primary" @click="showPayList(scope.row)">支付记录</el-button>
-                      <el-button
-                        link
-                        small
-                        type="danger"
-                        class="btn"
-                        v-show="scope.row.status < 102"
-                        @click="cancelOrder('buy', scope.row.id)"
-                      >
-                        取消订单
-                      </el-button>
-                      <el-button
-                        link
-                        small
-                        type="primary"
-                        class="btn"
-                        v-show="scope.row.status == 102"
-                        @click="reject(scope.row.id)"
-                      >
-                        退货退款
-                      </el-button>
-                    </template>
-                  </DiyTable>
-                </div>
-              </template>
-              <template #operate="scope">
+                  <template #operate="scope">
+                    <el-button link type="primary" @click="showPayList(scope.row)">支付记录</el-button>
+                    <el-button
+                      link
+                      small
+                      type="danger"
+                      class="btn"
+                      v-show="scope.row.status < 102"
+                      @click="cancelOrder('buy', scope.row.id)"
+                    >
+                      取消订单
+                    </el-button>
+                    <el-button
+                      link
+                      small
+                      type="primary"
+                      class="btn"
+                      v-show="scope.row.status == 102"
+                      @click="reject(scope.row.id)"
+                    >
+                      退货退款
+                    </el-button>
+                  </template>
+                </DiyTable>
+              </div>
+            </template>
+            <template #operate="scope">
+              <el-button
+                link
+                small
+                type="danger"
+                class="btn"
+                v-show="scope.row.status < 102 && scope.row.details?.find((n:any) => n.status < 102)"
+                @click="cancelOrder('main', scope.row.id)"
+              >
+                取消订单 
+              </el-button>
+            </template>
+          </DiyTable>
+          <!--售卖订单 -->
+          <DiyTable
+            v-show ='(switchType ==2)'
+            ref="diyTable"
+            :hasTitle="true"
+            :tableData="state.orderMessage.list"
+            :tableHead="state.tableHeadSell"
+            :total="state.orderMessage.total"
+            @handleUpdate="searchSellList"
+            :options="options"
+          >
+            <template #merchandiseStatus="scope">
+              <el-tag v-show="scope.row.merchandise">在售</el-tag>
+              <el-tag class="ml-2" type="danger" v-show="!scope.row.merchandise">已下架</el-tag>
+            </template>
+
+            <template #operate="scope">
+              <el-space>
+                <el-button link type="success" @click="showPayList(scope.row)">支付记录</el-button>
+
+                <el-button
+                  link
+                  small
+                  type="primary"
+                  v-show="scope.row.status < 102 && scope.row.merchandise && scope.row.details?.find((n:any) => n.status < 102)"
+                  @click="delivery(scope.row.id)"
+                >
+                  确认交付
+                </el-button>
                 <el-button
                   link
                   small
                   type="danger"
-                  class="btn"
-                  @click="cancelOrder('main', scope.row.id)"
+                  v-show="scope.row.status < 102 && scope.row.details?.find((n:any) => n.status < 102)"
+                  @click="cancelOrder('sell', scope.row.id)"
                 >
                   取消订单
                 </el-button>
-              </template>
-            </DiyTable>
-            <!--售卖订单 -->
-            <DiyTable
-              v-show ='(switchType ==2)'
-              ref="diyTable"
-              :hasTitle="true"
-              :tableData="state.orderMessage.list"
-              :tableHead="state.tableHeadSell"
-              :total="state.orderMessage.total"
-              @handleUpdate="searchSellList"
-              :options="options"
-            >
-              <template #merchandiseStatus="scope">
-                <el-tag v-show="scope.row.merchandise">在售</el-tag>
-                <el-tag class="ml-2" type="danger" v-show="!scope.row.merchandise">已下架</el-tag>
-              </template>
-
-              <template #operate="scope">
-                <el-space>
-                  <el-button link type="success" @click="showPayList(scope.row)">支付记录</el-button>
-
-                  <el-button
-                    link
-                    small
-                    type="primary"
-                    v-show="scope.row.status < 102 && scope.row.merchandise"
-                    @click="delivery(scope.row.id)"
-                  >
-                    确认交付
-                  </el-button>
-                  <el-button
-                    link
-                    small
-                    type="danger"
-                    v-show="scope.row.status < 102"
-                    @click="cancelOrder('sell', scope.row.id)"
-                  >
-                    取消订单
-                  </el-button>
-                </el-space>
-              </template>
-            </DiyTable>
-            <payView v-if="payDialog.show" :order="payDialog.data" @close="closePay"></payView>
-            <payList v-if="payListDialog.show" :selectLimit="0" @closeDialog="closePayList" />
+              </el-space>
+            </template>
+          </DiyTable>
+          <payView v-if="payDialog.show" :order="payDialog.data" @close="closePay"></payView>
+          <payList v-if="payListDialog.show" :selectLimit="0" @closeDialog="closePayList" />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { ref, onMounted, reactive, nextTick, getCurrentInstance } from 'vue'
-  import { storeToRefs } from 'pinia'
-  import { useUserStore } from '@/store/user'
-  import { useRoute,useRouter } from 'vue-router'
+  import { ref, onMounted, reactive} from 'vue'
   import DiyTable from '@/components/diyTable/index.vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
-  import type { TabsPaneContext } from 'element-plus'
-  import moment from 'moment'
   import {chatCtrl as chat} from '@/ts/coreIndex'
-  import { ElTable } from 'element-plus'
   import OrderSevice from '@/module/store/order'
   import type { OrderListType, CancelType } from './order'
   import renderDict from '@/services/dict'
   import type { ListProps } from '@/module/store/order'
   import payView from './components/pay.vue'
   import payList from './components/list.vue'
+  import moment from 'moment'
 
-  const pageStore = reactive({
-    tableData: [],
-    total: 0
-  })
-  const router = useRouter()
-  const route = useRoute()
   const switchType = ref<number>(1);
   const searchType = ref<OrderListType>('buy')
   const payDialog = reactive({ show: false, data: {} })
   const payListDialog = reactive({ show: false, data: {} })
-
-  const orderTableRef = ref<InstanceType<typeof ElTable>>()
-  //点击行触发，选中或不选中复选框
-  const handleRowClick = (row: any) => {
-    orderTableRef.value!.toggleRowSelection(row, undefined)
-  }
   const statusvalue = ref('')
-  const statusoptions = [
-    { label: '全部', value: '' },
-    { label: '待交付', value: 1 },
-    //包含第三方监管和卖方的审核状态
-    { label: '已发货', value: 102 },
-    //后续可能有物流状态接入
-    { label: '买方取消订单', value: 220 },
-    { label: '卖方取消订单', value: 221 },
-    { label: '已退货', value: 222 }
-  ]
   const switchCheck = (key:any)=>{
     switchType.value = key
     if (switchType.value ==1) {
@@ -449,6 +406,7 @@
     })
     state.orderMessage.total = total
     state.orderMessage.list = data
+    console.log('data',data)
   }
   //查询支付列表
   const showPayList = async (data: any) => {

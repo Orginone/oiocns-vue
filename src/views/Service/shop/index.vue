@@ -26,7 +26,7 @@
             <el-tag type="info">{{scope.row._data.market.code}}</el-tag>
           </template>
           <template  #marketCode="scope" >
-            {{scope.row.Data.target ? scope.row.Data.target.name : '本人'}}
+            {{scope.row.Data.target ? scope.row.Data.target.name : scope.row.Data.targetId}}
           </template>
           <template  #status="scope" >
              <el-tag>{{statusMap[scope.row._data.status].text}}</el-tag>
@@ -214,15 +214,17 @@
         message: '审批完成',
         type: 'success'
       })
-      loadList({
-        uid: 0,
-        slots: undefined,
-        props: undefined,
-        paneName: '',
-        active: false,
-        index: activeName.value,
-        isClosable: false
-      },);
+      setTimeout(() => {
+        loadList({
+          uid: 0,
+          slots: undefined,
+          props: undefined,
+          paneName: '',
+          active: false,
+          index: activeName.value,
+          isClosable: false
+        },);
+      }, 200);
     })
   }
   // 拒绝
@@ -232,15 +234,17 @@
         message: '审批完成',
         type: 'success'
       })
-      loadList({
-        uid: 0,
-        slots: undefined,
-        props: undefined,
-        paneName: '',
-        active: false,
-        index: activeName.value,
-        isClosable: false
-      },);
+      setTimeout(() => {
+        loadList({
+            uid: 0,
+            slots: undefined,
+            props: undefined,
+          paneName: '',
+          active: false,
+          index: activeName.value,
+          isClosable: false
+        },);
+      },200)
     })
   }
   // 取消
@@ -250,29 +254,31 @@
         message: '审批完成',
         type: 'success'
       })
-      loadList({
-        uid: 0,
-        slots: undefined,
-        props: undefined,
-        paneName: '',
-        active: false,
-        index: activeName.value,
-        isClosable: false
-      },);
-    })
-  }
-  onMounted(() => {
-   setTimeout(() => {
-    loadList({
+      setTimeout(() => {
+        loadList({
           uid: 0,
           slots: undefined,
           props: undefined,
           paneName: '',
           active: false,
-          index: '0',
+          index: activeName.value,
           isClosable: false
-      },);
-   }, 1000);
+        },);
+      },200)
+    })
+  }
+  onMounted(() => {
+    setTimeout(() => {
+      loadList({
+            uid: 0,
+            slots: undefined,
+            props: undefined,
+            paneName: '',
+            active: false,
+            index: '0',
+            isClosable: false
+        },);
+    }, 1000);
     activeName.value = '0';
   });
 </script>

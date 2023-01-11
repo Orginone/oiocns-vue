@@ -164,7 +164,7 @@ const state = reactive({
 const title = ref<string>("");
 onMounted(() => {
     // 获取列表
-    appCtrl.setCurProduct(router.currentRoute.value.query.id as string);
+    appCtrl.setCurProduct(router.currentRoute.value.query.id as any);
     setTimeout(() => {
         getProductList();
     }, 1000);
