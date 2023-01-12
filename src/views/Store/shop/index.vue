@@ -107,23 +107,7 @@
   import moment from 'moment'
 
   const diyTable = ref(null)
-  const valuee = ref<any>('');
   const instance = getCurrentInstance();
-  const optionsList = [
-    {
-      label: '功能分类',
-      options: [
-        {
-          value: 'caiwu',
-          label: '财务',
-        },
-        {
-          value: 'zichan',
-          label: '资产',
-        },
-      ],
-    },
-  ]
   const dialogType: any = reactive({
     createDialog: false, // 创建商店弹窗状态
     addDialog:false,//加入商店弹窗
@@ -217,14 +201,15 @@
       label: '操作',
       fixed: 'right',
       align: 'center',
-      width: '300',
+      width: '150',
       name: 'operate'
     }
   ]
+  const curItem = ref<any>({});
   const handleUpdate = (page: any) => {
     pageStore.currentPage = page.current
     pageStore.pageSize = page.pageSize
-    // getAppList()
+    getAppList(curItem.value)
   }
   //立即购买回调
 const buyThings = (item:any) => {
@@ -276,11 +261,9 @@ const buyThings = (item:any) => {
     infoDetail.info = item;
   }
 
-  // 搜索功能-关键词
-  const searchVal = ref<string>('') // 搜索关键词
-
   // 获取应用列表
   const getAppList = (item:any) =>{
+    console.log('aaaaa',item);
     let page = {
       filter:"",
       limit:pageStore.pageSize,
@@ -296,6 +279,7 @@ const buyThings = (item:any) => {
   const getMarketInfo = async () => {
     userCtrl.space.getJoinMarkets().then((res)=>{
       storeList.value = res;
+      curItem.value = res[0];
       getAppList(res[0])
     })
   }
@@ -310,6 +294,7 @@ const buyThings = (item:any) => {
           return item.market.id == shopItem.id;
       });
       getAppList(item[0]) 
+      curItem.value = item[0];
   })
   instance?.proxy?.$Bus.on("clickBus", (num) => {
     if(num =='1020'){ //创建商店

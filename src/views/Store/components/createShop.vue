@@ -1,5 +1,5 @@
 <template>
-  <el-dialog class="create-shop-box" :show-close="false" append-to-body v-model="props.createDialog" title="新建商店" width="550px"  @close="closeDialog(false)">
+  <el-dialog class="create-shop-box" top="3vh" :show-close="false" append-to-body v-model="props.createDialog" title="新建商店" width="550px"  @close="closeDialog(false)">
     <el-form ref="formRef"  label-position="top" class="from-box" :model="form">
       <div class="from-content">
           <div class="from-left">
@@ -26,10 +26,10 @@
                   <el-switch v-model="form.public" active-text="是" inactive-text="否" inline-prompt></el-switch>
               </el-form-item>
           </div>
-          <div class="from-right">
+          <!-- <div class="from-right">
               <div class="head-img">头像</div>
               <div class="head-text">商店封面</div>
-          </div>
+          </div> -->
       </div>
       <el-form-item label="商店简介" prop="remark" :rules="[
         { required: true, message: '请输入商店简介' },

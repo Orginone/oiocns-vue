@@ -294,7 +294,7 @@
       :close-on-click-modal="false"
     >
       <ShareComponent
-        dialogType="2"
+        dialogType="3"
         :type="store.workspaceData.type"
         @closeDialog="closeDialog('shareVisible', false)"
         :info="selectProductItem"
@@ -548,7 +548,6 @@ const handleCommand = (
 ) => {
   selectProductItem.value = item;
   appCtrl.setCurProduct(item)
-  console.log("selectProductItem", selectProductItem.value);
   switch (command) {
     case "share": //分享
       openShareDialog();

@@ -122,7 +122,7 @@ export default defineConfig(({ command, mode }) => {
       // 是否使用https请求
       https: settings.https,
       // 扩展访问端口
-      host: settings.host,
+      host: '0.0.0.0',
       hmr: true,
       watch: {
         usePolling: true // WSL必须,否则热更新无效

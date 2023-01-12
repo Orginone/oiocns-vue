@@ -126,7 +126,7 @@
     if(!item?.length){
         item = [item]
     }
-    await item.deleApply(item);
+    await marketCtrl.deleteStaging(item);
     pageStore.tableData = marketCtrl.shopinglist
     emit('reLoad')
   }

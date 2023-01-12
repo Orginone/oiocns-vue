@@ -1,5 +1,6 @@
 <template>
   <div class="cohortLayout">
+    {{typePD}} -- {{activeName}}
     <div class="cohortLayout-header" v-if="typePD !== 3">
       <div class="cohortLayout-header-text"
         >{{ typePD == 1 ? '请选择资源：' : '请选择集团：' }}
@@ -124,15 +125,11 @@
   import {userCtrl} from '@/ts/coreIndex'
   import {appCtrl} from '@/ts/coreIndex'
 
-  const typePD: any = computed(() => { //共享typePD==3 分配typePD ==1  2==？？
+  const typePD: any = computed(() => { //共享typePD==3 分配 typePD ==1
     if (props.dialogType == '1') {
       return 1
     } else {
-      if (props.type == 2) {
-        return 2
-      } else {
-        return 3
-      }
+      return 3
     }
   })
   const application = new Application(typePD.value)
@@ -205,9 +202,9 @@
     () => radio.value,
     async (newValue, oldValue) => {
       
-      if (!cascaderTree.value[0].children || cascaderTree.value[0].children.length == 0) {
-        await sumbitSwitch(state.switchData, true, oldValue)
-      }
+      // if (!cascaderTree.value[0].children || cascaderTree.value[0].children.length == 0) {
+      //   await submitAll(state.switchData, true, oldValue)
+      // }
       centerTreeShow.value = false
       state.centerTree = []
       state.authorData = []
@@ -237,17 +234,17 @@
     () => resource.value,
     async (newValue, oldValue) => {
       
-      await sumbitSwitch(state.switchData, true)
-      state.centerTree = []
-      state.authorData = []
-      state.departData = []
-      state.personsData = []
-      state.identitysData = []
-      if (radio.value == '1') {
-        clearTreeType(cascaderTree.value)
-        leftTree.value.setCheckedKeys([])
-        getHistoryData()
-      }
+      // await submitAll(state.switchData, true)
+      // state.centerTree = []
+      // state.authorData = []
+      // state.departData = []
+      // state.personsData = []
+      // state.identitysData = []
+      // if (radio.value == '1') {
+      //   clearTreeType(cascaderTree.value)
+      //   leftTree.value.setCheckedKeys([])
+      //   getHistoryData()
+      // }
     }
   )
   // watch(
@@ -266,75 +263,34 @@
   const props = defineProps<createInfo>()
 
   onMounted(() => {
+    state.way = [
+      {
+        id: '1',
+        label: '按组织共享'
+      },
+      {
+        id: '2',
+        label: '按职权共享'
+      },
+      {
+        id: '3',
+        label: '按身份共享'
+      },
+      {
+        id: '4',
+        label: '按人员共享'
+      }
+    ]
     if (typePD.value == 1) {
       searchResource()
       getCompanyTree()
-      state.way = [
-        {
-          id: '1',
-          label: '按部门分配'
-        },
-        {
-          id: '2',
-          label: '按角色分配'
-        },
-        {
-          id: '3',
-          label: '按岗位分配'
-        },
-        {
-          id: '4',
-          label: '按人员分配'
-        }
-      ]
     } else {
       if (typePD.value == 2) {
-        state.way = [
-          {
-            id: '1',
-            label: '按集团分配'
-          },
-          {
-            id: '2',
-            label: '按角色分配'
-          },
-          {
-            id: '3',
-            label: '按岗位分配'
-          },
-          {
-            id: '4',
-            label: '按单位分配'
-          }
-        ]
         getGroupList()
       } else {
-        state.way = [
-          {
-            id: '1',
-            label: '按组织共享'
-          },
-          {
-            id: '2',
-            label: '按角色共享'
-          },
-          {
-            id: '3',
-            label: '按身份共享'
-          },
-          {
-            id: '4',
-            label: '按人员共享'
-          }
-        ]
         getFriendsList()
       }
     }
-  })
-  
-
-  onUnmounted(() => {
-    sumbitSwitch(state.switchData, true)
   })
 
   const emit = defineEmits(['closeDialog'])
@@ -422,7 +378,6 @@
         })
         console.log('state.centerTree',state.centerTree)
         if (state.centerTree.length > 0) {
-          console.log('aaaaa',arrId)
           centerTree.value.setCheckedKeys(arrId, true)
         }
         break
@@ -449,41 +404,6 @@
     if (!value) return true
     return data.label.includes(value)
   }
-  //提交
-  const sumbitSwitch = async (data, bol?: boolean, oldRadio?: number) => {
-    // 当radio！=1 时切换左侧树调用提交接口
-    if (state.switchData !== data || bol) {
-      switch (oldRadio ? oldRadio : radio.value) {
-        case '2':
-          await application.sumbitSwitch(
-            state.authorData,
-            state.switchData.id,
-            '职权',
-            resource.value
-          )
-          break
-        case '3':
-          await application.sumbitSwitch(
-            state.identitysData,
-            state.switchData.id,
-            '身份',
-            resource.value
-          )
-          break
-        case '4':
-          await application.sumbitSwitch(
-            state.personsData,
-            state.switchData.id,
-            '人员',
-            resource.value
-          )
-          break
-        default:
-          break
-      }
-    }
-  }
-
   // 提交表单
   const submitAll = async () => {
     await application.submitAll(state.departData, resource.value,radio.value,typePD.value)
@@ -565,7 +485,6 @@
   }
   // 组织左侧树点击事件
   const handleCheckChange = (data: any, checked: boolean, indeterminate: any) => {
-    console.log('点击左侧')
     if (checked) {
       if (radio.value == '1') {
         let result = state.departHisData.some((item: any) => {
@@ -632,7 +551,6 @@
     if (node) {
       centerTreeShow.value = true
       const item: ITarget = node.item;
-      // sumbitSwitch(node)
       // state.switchData = node
       // if (typeof load == 'object' && typeof search == 'object') {
       //   searchValue.value = ''

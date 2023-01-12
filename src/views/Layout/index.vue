@@ -186,8 +186,6 @@
     if(router.currentRoute.value.path.indexOf('store/shop') != -1){
       getShopList();
       showMenu.value = true;
-      console.log('a')
-
       return
     }
 

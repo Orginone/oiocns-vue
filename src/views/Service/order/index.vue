@@ -96,12 +96,11 @@
             <template #operate="scope">
               <el-space>
                 <el-button link type="success" @click="showPayList(scope.row)">支付记录</el-button>
-
                 <el-button
                   link
                   small
                   type="primary"
-                  v-show="scope.row.status < 102 && scope.row.merchandise && scope.row.details?.find((n:any) => n.status < 102)"
+                  v-show="scope.row.status < 100"
                   @click="delivery(scope.row.id)"
                 >
                   确认交付
@@ -145,13 +144,21 @@
   const statusvalue = ref('')
   const switchCheck = (key:any)=>{
     switchType.value = key
+    pageStore.currentPage = 0;
+    pageStore.pageSize = 20;
     if (switchType.value ==1) {
       getTableList('buy')
     } else {
       getTableList('sell')
     }
   }
-
+  // 表格展示数据
+  const pageStore = reactive({
+    tableData: [],
+    currentPage: 0,
+    pageSize: 20,
+    total: 0
+  })
   onMounted(() => {
     if (switchType.value ==1) {
       getTableList('buy')
@@ -172,6 +179,8 @@
     selectLimit: 0
   }
   const handleUpdate = (page: any) => {
+    pageStore.currentPage = page.current
+    pageStore.pageSize = page.pageSize
     getTableList(searchType.value)
   }
   const state = reactive({
@@ -235,15 +244,12 @@
         prop: 'marketId',
         label: '市场名称',
         formatter: (row: any, column: any) => {
-          return row.marketId ? chat.getName(row.marketId) : null
+          return row.marketId ? row.marketId : '-'
         }
       },
       {
-        prop: 'sellerId',
+        prop: 'belongId',
         label: '卖方名称',
-        formatter: (row: any, column: any) => {
-          return row.sellerId ? chat.getName(row.sellerId) : null
-        }
       },
       {
         prop: 'status',
@@ -287,16 +293,15 @@
       {
         prop: 'marketId',
         label: '市场名称',
-        minWidth: '120',
+        minWidth: '200',
         formatter: (row: any, column: any) => {
-          return row.marketId ? chat.getName(row.marketId) : '-'
+          return row.marketId ? row.marketId : '-'
         }
       },
       {
         prop: 'belongId',
         label: '买方名称',
         minWidth: '200',
-        formatter: (row: any, column: any) => chat.getName(row.belongId)
       },
       {
         prop: 'sellAuth',
@@ -351,10 +356,10 @@
     searchType.value = type
     switch (type) {
       case 'buy':
-        searchBuyList({ current: 0, pageSize: 20 })
+        searchBuyList({  pageSize:pageStore.pageSize, current:pageStore.currentPage })
         break
       case 'sell':
-        searchSellList({ current: 0, pageSize: 20 })
+        searchSellList({  pageSize:pageStore.pageSize, current:pageStore.currentPage })
         break
     }
   }
