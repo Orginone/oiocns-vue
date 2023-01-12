@@ -10,9 +10,9 @@
           <el-select v-model="condition.paramKey" class="m-2" placeholder="请选择参数" size="small" style="width:150px;margin-right: 5px;" @change="val => {paramChange(val, condition);}">
             <el-option
               v-for="item in formFields"
-              :key="item.code"
-              :label="item.name"
-              :value="item.code"
+              :key="item.value"
+              :label="item.label"
+              :value="item.label"
             />
           </el-select>
           <el-select v-model="condition.key" class="m-2" placeholder="判断条件" size="small" style="width:80px;margin-right: 5px;" @change="(val,item) => {keyChange(val, item, condition);}">
@@ -151,7 +151,6 @@
         }
       };
       const paramChange = (val:any, condition:any) =>{
-        
         for(let field of DefaultProps.getFormFields()){
           if(field.code==val){
             condition.paramLabel = field.name

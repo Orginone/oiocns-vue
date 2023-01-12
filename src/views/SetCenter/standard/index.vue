@@ -1,7 +1,20 @@
 <template>
     <div class="main">
-      <div class="content">
-        <div class="detail" v-if="currentData.target">
+      <div class="content" v-if="currentData.target">
+        <div class="header">
+          <el-menu
+            :default-active="activeIndex"
+            mode="horizontal"
+            @select="handleSelect"
+          >
+            <el-menu-item index="1">基本信息</el-menu-item>
+            <el-menu-item index="2">分类特征</el-menu-item>
+            <el-menu-item index="3">分类字典</el-menu-item>
+            <!-- <el-menu-item index="4">业务标准</el-menu-item> -->
+          </el-menu>
+        </div>
+        
+        <div class="detail" v-if="activeIndex == 1">
           <el-descriptions
               class="margin-top"
               :title="`${currentData.name}的基本信息`"
@@ -40,7 +53,7 @@
             </el-descriptions-item>
           </el-descriptions>
         </div>
-        <div class="table">
+        <div class="table" v-if="activeIndex == 2">
           <DiyTable
               :style="{ width: '100%' }"
               ref="diyTable"
@@ -52,7 +65,7 @@
               @handleUpdate="handleUpdate"
               :tableHead="tableHead"
           >
-            <template #slot-tabs>
+            <!-- <template #slot-tabs>
               <div class="table-tabs">
                 <el-menu
                     :default-active="`1`"
@@ -63,7 +76,7 @@
                   <el-menu-item index="1">全部</el-menu-item>
                 </el-menu>
               </div>
-            </template>
+            </template> -->
             <template #buttons>
               <el-button class="btn-check" type="primary" text link @click="openAttrFormDialog">新增特性</el-button>
             </template>
@@ -82,6 +95,9 @@
               <!-- <card></card> -->
             </template>
           </DiyTable>
+        </div>
+        <div class="dict" v-if="activeIndex == 3">
+          <Dict></Dict>
         </div>
       </div>
       <!-- 特性提交表单 -->
@@ -146,6 +162,7 @@
 <script lang="ts" setup>
   // @ts-nocheck
   import DiyTable from "@/components/diyTable/index.vue";
+  import Dict from './components/dict.vue'
   import {computed, nextTick, reactive, ref, watch} from "vue";
   import { setCenterStore } from '@/store/setting'
   import { userCtrl,thingCtrl } from "@/ts/coreIndex";
@@ -165,6 +182,11 @@
   const attrFormDialog = ref(false)
   const isEditAttr =  ref(false)
   const attrFormRef = ref<FormInstance>()
+  const activeIndex = ref<string>('1'); //table nav index
+
+  const handleSelect = (key: string) => {
+    activeIndex.value = key
+  }
 
   const state = reactive({
     tableData: [],
@@ -358,15 +380,14 @@
         display: flex;
         flex-direction: column;
         flex-wrap: nowrap;
-        max-height: 300px;
-        min-height: 130px;
+        height: 100%;
         padding: 12px;
         margin-top:3px;
       }
       .table {
         background: #fff;
         margin-top: 3px;
-        height: calc(100vh - 290px);
+        height: 100%;
 
         .btn-check {
           padding: 8px 16px;
@@ -394,6 +415,16 @@
             background: #fff;
           }
         }
+      }
+      .dict{
+        background: #fff;
+        overflow-x: auto;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        height: 100%;
+        padding: 12px;
+        margin-top:3px;
       }
     }
   }

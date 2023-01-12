@@ -117,6 +117,7 @@ import { ref, reactive, onMounted } from "vue";
 import {processCtrl,userCtrl} from '@/ts/coreIndex'
 import { useRouter } from "vue-router";
 import { stat } from "fs";
+import DefaultProps from "@/components/wflow/process/DefaultNodeProps"
 
 type StateType = {
   dataList: any[]; //表格数据
@@ -252,6 +253,7 @@ const handleCommand = (
           labels: JSON.parse(editorDataMes.remark || '{}'),
           fields: editorDataMes.fields,
         };
+        DefaultProps.setFormFields(contionData.labels) 
         processCtrl.setCondtionData(contionData);
         state.contionData = contionData;
         state.addOrEdit = true

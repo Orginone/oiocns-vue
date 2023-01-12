@@ -76,7 +76,7 @@ const add = async(val: any) => {
         message: '添加成功',
         type: 'success'
       })
-    getUsers
+    getUsers()
   }
 }
 

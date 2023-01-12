@@ -5,14 +5,14 @@
     </div>
     <div class="body" ref="bodyWrap">
       <div class="body-tabs">
-        <el-menu
-        :default-active="tableActiveIndex"
-        mode="horizontal"
-      >
-        <el-menu-item index="1">部门成员</el-menu-item>
-        <el-menu-item index="2">部门应用</el-menu-item>
-      </el-menu>
-      <hr >
+        <!-- <el-menu
+          :default-active="tableActiveIndex"
+          mode="horizontal"
+        >
+          <el-menu-item index="1">部门成员</el-menu-item>
+          <el-menu-item index="2">部门应用</el-menu-item>
+        </el-menu> -->
+      <!-- <hr > -->
       </div>
       <diytab
         :style="{ width: '100%' }"
@@ -28,7 +28,7 @@
         @selectionChange="selectionChange"
         :tableHead="tableHead"
       >
-        <template #slot-tabs>
+        <!-- <template #slot-tabs>
           <div class="table-tabs">
             <el-menu
               :default-active="tableActiveIndex2"
@@ -41,7 +41,7 @@
               <el-menu-item index="3">未开通</el-menu-item>
             </el-menu>
           </div>
-        </template>
+        </template> -->
         <template #buttons>
           <el-button class="btn-check" type="primary" link @click="handleShare()">分享部门</el-button>
           <el-upload

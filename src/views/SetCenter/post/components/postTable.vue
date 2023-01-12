@@ -102,23 +102,28 @@ const options = ref<any>({
 })
 const tableHead = ref([
   {
-    prop: 'name',
-    label: '人员名称',
-  },
-  {
-    prop: 'nickname',
-    label: '所属部门',
-    name: 'nickname'
+    prop: 'code',
+    label: '账号',
   },
   {
     prop: 'name',
-    label: '职务',
+    label: '昵称',
     name: 'name'
+  },
+  {
+    prop: 'team.name',
+    label: '姓名',
+    name: 'teamName'
   },
   {
     prop: 'team.code',
     label: '手机号',
     name: 'teamCode'
+  },
+   {
+    prop: 'team.remark',
+    label: '签名',
+    name: 'teamRemark'
   },
   {
     type: 'slot',
@@ -148,6 +153,7 @@ const getUsers = async (currentData = store.currentSelectItme.object) => {
       offset: 0
   })
     if(backData.result){
+      console.log(backData.result)
       tableData.value =backData.result;
       pageStore.total = backData.total
     }else{
