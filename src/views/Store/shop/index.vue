@@ -84,7 +84,7 @@
     <createShop :createDialog="dialogType.createDialog" @closeDialog="closeDialog('createDialog', false)"/>
     <addShop :addDialog="dialogType.addDialog" @checksSearch="checksSearch" @closeDialog="closeDialog('addDialog', false)"/>
     <appInfo :infoDialog="dialogType.infoDialog" :infoDetail="infoDetail.info" @closeDialog="closeDialog('infoDialog', false)"></appInfo>
-    <el-drawer v-model="showCar" title="购物车" width="500"  :append-to-body="false">
+    <el-drawer v-model="showCar" title="购物车" :size="300" :append-to-body="false">
         <car @reLoad=reLoad()></car>
     </el-drawer>
   </div>
