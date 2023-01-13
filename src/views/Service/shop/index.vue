@@ -186,11 +186,11 @@
     });
     if (tab.index== '0') {
       state.list = todoList
-      diyTable.value.state.page.total = state.list.length
+      diyTable.value.state.page.total = state?.list?.length || 0
 
     } else if (tab.index =='1'){
       state.list = doList
-      diyTable.value.state.page.total = state.list.length
+      diyTable.value.state.page.total = state?.list?.length || 0
     }else {
    
       // state.list = list || []
@@ -239,10 +239,10 @@
             uid: 0,
             slots: undefined,
             props: undefined,
-          paneName: '',
-          active: false,
-          index: activeName.value,
-          isClosable: false
+            paneName: '',
+            active: false,
+            index: activeName.value,
+            isClosable: false
         },);
       },200)
     })

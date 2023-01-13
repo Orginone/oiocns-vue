@@ -9,14 +9,7 @@
                   { min: 3, message: '商店名称至少有3个字', trigger: 'blur' },
                   ]">
                   <el-input v-model.number="form.name" type="text" autocomplete="off" />
-              </el-form-item>
-              <!-- TODO  商店类型怎么传输怎么定义需要和后台沟通-->
-              <!-- <el-form-item label="商店类型" prop="code" :rules="[
-                  { required: true, message: '请输入商店编码，以便其他查询' },
-                  ]">
-                  <el-input v-model.number="form.code" type="text" autocomplete="off" />
-              </el-form-item> -->
-             
+              </el-form-item>             
               <el-form-item label="商店编码" prop="code" :rules="[
                   { required: true, message: '请输入商店编码，以便其他查询' },
                   ]">

@@ -1,15 +1,14 @@
 <template>
   <div class="cohortLayout">
-    {{typePD}} -- {{activeName}}
     <div class="cohortLayout-header" v-if="typePD !== 3">
       <div class="cohortLayout-header-text"
-        >{{ typePD == 1 ? '请选择资源：' : '请选择集团：' }}
+        >{{ '请选择资源：'}}
       </div>
       <div class="cohortLayout-header-tabs">
         <el-tabs v-model="activeName" class="demo-tabs">
-          <el-tab-pane v-for="(item, index) in tabs" :key="item?.id || item?.resource.id" :name="index">
+          <el-tab-pane v-for="(item, index) in tabs" :key=" item.id" :name="index">
             <template #label>
-              <div slot="label" @click="handleTabClick(item?.id||item?.resource.id)">{{ item?.name||item?.resource.name }}</div>
+              <div slot="label" >{{item.name }}</div>
             </template>
           </el-tab-pane>
         </el-tabs>
@@ -38,7 +37,7 @@
           v-if="radio == '1'"
           ref="leftTree"
           node-key="id"
-          :data="cascaderTree"
+          :data="state.cascaderTree"
           :props="typePD !== 3 ? { class: customNodeClass } : unitProps"
           :check-strictly="true"
           :default-expand-all="true"
@@ -49,7 +48,7 @@
         <el-tree
           v-else
           ref="leftTree"
-          :data="cascaderTree"
+          :data="state.cascaderTree"
           :key="radio"
           :highlight-current="true"
           :expand-on-click-node="false"
@@ -125,7 +124,7 @@
   import {userCtrl} from '@/ts/coreIndex'
   import {appCtrl} from '@/ts/coreIndex'
 
-  const typePD: any = computed(() => { //共享typePD==3 分配 typePD ==1
+  const typePD: any = computed(() => { //共享 typePD==3  分配 typePD ==1
     if (props.dialogType == '1') {
       return 1
     } else {
@@ -162,7 +161,8 @@
       label: ''
     },
     way: [],
-    switchData: {}, // 存储左侧树形数据
+    cascaderTree:[],//组织树
+    switchId: '',//左侧选中的id
     departData: [], // 集团分配右侧数据
     departHisData: [], // 集团分配历史数据
     centerTree: [], // 分配中间树形
@@ -194,10 +194,6 @@
     currentPage: 1,
     pageSize: 20
   })
-  const handleCurrent: any = computed(() => {
-    return (page.currentPage - 1) * page.pageSize
-  })
-
   watch(
     () => radio.value,
     async (newValue, oldValue) => {
@@ -247,13 +243,6 @@
       // }
     }
   )
-  // watch(
-  //   () => searchValue.value,
-  //   (newValue, oldValue) => {
-  //     console.log(newValue)
-  //     handleNodeClick(state.loadID, false, newValue)
-  //   }
-  // )
   watch(
     () => searchLeftValue.value,
     (newValue, oldValue) => {
@@ -285,11 +274,7 @@
       searchResource()
       getCompanyTree()
     } else {
-      if (typePD.value == 2) {
-        getGroupList()
-      } else {
-        getFriendsList()
-      }
+      getOrgTree()
     }
   })
 
@@ -299,27 +284,22 @@
     emit('closeDialog')
   }
 
-  // 获取好友信息
-  const getFriendsList = async () => {
-    cascaderTree.value = userCtrl.buildTargetTree(await userCtrl.getTeamTree())
+  // 获取共享时组织树
+  const getOrgTree = async () => {
+    state.cascaderTree = userCtrl.buildTargetTree(await userCtrl.getTeamTree())
     getHistoryData()
   }
 
-  // 获取集团数据
-  const getGroupList = async () => {
-    tabs.value = await application.searchResource()
-    if(tabs.value[0]){
-      resource.value = tabs.value[0].id
-      await getGroupTree()
+  // 获取分配时左侧的组织树
+  const getCompanyTree = async () => {
+    let data = userCtrl.buildTargetTree(await userCtrl.getTeamTree(false));
+    if(data||data.length){
+      data.forEach(element => {
+        element.label = element.name
+      });
     }
-  }
-  //获取群组
-  const getGroupTree = async (val?: boolean) => {
-    const res = await application.getGroupTree(resource.value)
-    cascaderTree.value.push(res)
-    if (!val) {
-      await getHistoryData()
-    }
+    state.cascaderTree = data
+    getHistoryData()
   }
 
   // 清除树形中的type
@@ -368,7 +348,6 @@
         break
       case '3':
         let data3 =  await appCtrl.curProduct.queryExtend('身份','0');
-        console.log('data3data3data3',data3);
         state.identitysHisData = data3.result || []
         state.identitysData = state.identitysHisData
         let arrId: any[] = []
@@ -376,7 +355,6 @@
           el.type = 'has'
           arrId.push(el.id)
         })
-        console.log('state.centerTree',state.centerTree)
         if (state.centerTree.length > 0) {
           centerTree.value.setCheckedKeys(arrId, true)
         }
@@ -404,16 +382,28 @@
     if (!value) return true
     return data.label.includes(value)
   }
+
   // 提交表单
   const submitAll = async () => {
-    await application.submitAll(state.departData, resource.value,radio.value,typePD.value)
-    // ElMessage({
-    //   type: 'success',
-    //   message: typePD.value == 1 ? '分配成功' : '共享成功'
-    // })
+    let data = {
+      list: state.departData, // 操作的项的集合
+      destType:radio.value, //选中的(共享/分配)的方式类型
+      resource: activeName.value,//选中的资源id
+      switchId:state.switchId,//左侧选中的项的id
+      curResourceId: tabs?.value[(activeName-1)||0]?.id || 0, //当前选中的资源id，只在分配时用到
+    }
+
+    if(radio.value == 2){
+      data.list = state.authorData
+    }else if (radio.value == 3){
+      data.list = state.identitysData
+    }else if(radio.value == 4){
+      data.list = state.personsData
+    }
+    await application.submitAll(data)
     closeDialog()
-    
   }
+
   // 中间树形滚动加载事件
   const load = () => {
     if (radio.value == '3') {
@@ -421,9 +411,9 @@
       handleNodeClick(state.loadID, true)
     }
   }
+
   // 中间树形点击事件
   const centerAuthorClick = (data: any, checked: boolean, indeterminate: any) => {
-    console.log('点击中间')
     if (checked) {
       if (radio.value == '2') {
         handleBoxClick(state.authorHisData, state.authorData, data)
@@ -442,6 +432,8 @@
       }
     }
   }
+
+  //处理中间树删除状态
   const handleBoxCancelClick = (hisData: any, dataList: any, data: any) => {
     let result = hisData.some((item: any) => {
       return item.id == data.id
@@ -457,6 +449,8 @@
       }
     })
   }
+
+  //处理中间树增加状态
   const handleBoxClick = (hisData: any, dataList: any, data: any) => {
     let result = hisData.some((item: any) => {
       return item.id == data.id
@@ -470,7 +464,6 @@
         }
       }
     }
-
     if (result) {
       data.type = 'has'
       dataList.forEach((el: any) => {
@@ -483,6 +476,7 @@
       dataList.push(data)
     }
   }
+
   // 组织左侧树点击事件
   const handleCheckChange = (data: any, checked: boolean, indeterminate: any) => {
     if (checked) {
@@ -535,6 +529,8 @@
       }
     }
   }
+
+  // 暂留
   const handleTreeData = (node: any, belongId: string) => {
     node.disabled = !(node.belongId && node.belongId == belongId);
     if (node.children) {
@@ -545,21 +541,13 @@
     //判断是否有操作权限
     return { ...node._authority, node };
   };
+
   // 除组织外的左侧树点击事件
   const handleNodeClick = async (node: any, load: boolean, search?: string) => {
-    console.log('除组织外左侧点击')
     if (node) {
       centerTreeShow.value = true
       const item: ITarget = node.item;
-      // state.switchData = node
-      // if (typeof load == 'object' && typeof search == 'object') {
-      //   searchValue.value = ''
-      // }
-      // if (typeof load !== 'boolean') {
-      //   page.currentPage = 1
-      // } else if (typeof search == 'string') {
-      //   page.currentPage = 1
-      // }
+      state.switchId = node.id
       switch (radio.value) {
         case '2':
           state.loadID = node
@@ -598,11 +586,7 @@
     }
   }
 
-  const handleTabClick = (id: string) => {
-    resource.value = id
-    cascaderTree.value = []
-    getGroupTree(true)
-  }
+  // 除组织外右侧值状态变动的显示
   const delContentAuth = (item: any) => {
     if (radio.value == '2') {
       if (item.type == 'del') {
@@ -666,6 +650,8 @@
       }
     }
   }
+
+  // 组织右侧值状态变动的显示
   const delContent = (item: any) => {
     if (item.type == 'del') {
       return
@@ -685,6 +671,8 @@
       })
     }
   }
+
+  // 获取分配时应用的资源信息
   const searchResource = async () => {
     let arr = [];
     appCtrl.curProduct.resource.forEach(element => {
@@ -697,17 +685,7 @@
     tabs.value = arr || [];
     resource.value = arr[0]?.id
   }
-  let cascaderTree = ref<OrgTreeModel[]>([])
-  const getCompanyTree = async () => {
-    let data = userCtrl.buildTargetTree(await userCtrl.getTeamTree(false));
-    if(data||data.length){
-      data.forEach(element => {
-        element.label = element.name
-      });
-    }
-    cascaderTree.value = data
-    getHistoryData()
-  }
+ 
 </script>
 <style>
   .penultimate > .el-tree-node__content {

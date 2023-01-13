@@ -67,73 +67,67 @@ export class Application {
     }
     return nodes
   }
-
-  /**
-   *@desc 提交radio = 1 时的方法
-   *@param data 提交的数据
-   *@param resource 所选择的资源信息
-   */
-  public async submitAll(data: any, resource?: any,destType:string = '组织',typePD?:number) {
+  
+  public async submitAll(data: any) {
     let departAdd: any[] = []
     let departDel: any[] = []
 
-    data.forEach((el: any) => {
+    data.list.forEach((el: any) => {
       if (el.type == 'add') {
         departAdd.push(el.id)
       } else if (el.type == 'del') {
         departDel.push(el.id)
       }
     })
-    let teamId = this.typePD == 1 ? this.rootTreeId : this.typePD == 3 ? resource : store.queryInfo.id
-    if(typePD ==3){
-      teamId = '0';
+
+    if(data.destType == '1'){
+      data.destType ='组织'
+    }else if(data.destType == '2'){
+      data.destType ='职权'
+    }else if(data.destType == '3'){
+      data.destType ='身份'
+    }else if(data.destType == '4'){
+      data.destType ='人员'
     }
-    if(destType == '1'){
-      destType ='组织'
-    }else if(destType == '2'){
-      destType ='职权'
-    }else if(destType == '3'){
-      destType ='身份'
-    }else if(destType == '4'){
-      destType ='人员'
-    }
-    if(typePD ==3){
+    if(this.typePD ==3){
       if (departAdd.length > 0) {
         await appCtrl.curProduct?.createExtend(
-          '0',
+          data.destType == '组织' ? '0' : data?.switchId,
           departAdd,
-          destType
+          data.destType
         );
       }
       if (departDel.length > 0) {
          await appCtrl.curProduct?.deleteExtend(
-          '0',
+          data.destType == '组织' ? '0' :  data?.switchId,
           departDel,
-          destType
+          data.destType
         );
       }
     }else{
-      // TODO 根据资源类型判断
-      // const getCurResource = () => {
-      //   return appCtrl.curProduct?.resource?.find(
-      //     (R: any) => R.resource.id === resourceId,
-      //   );
-      // };
-      await appCtrl.curProduct?.deleteExtend(
-        appCtrl.curProduct.id,
-        departDel,
-        destType
-      );
+      const getCurResource = () => {
+        return appCtrl.curProduct?.resource?.find(
+          (R: any) => R.resource.id === data.curResourceId,
+        );
+      };
+      let item = getCurResource();
+      if (departAdd.length > 0) {
+        await item?.createExtend(
+          data?.switchId,
+          departAdd,
+          data.destType
+        );
+      }
+      if (departDel.length > 0) {
+         await item?.deleteExtend(
+          data?.switchId,
+          departDel,
+          data.destType
+        );
+      }
     }
     
   }
-  /**
-   *@desc 提交radio != 1 时的方法
-   *@param data 所选中的数据
-   *@param switchData 接口所需teamid数据
-   *@param destType 区分分发分享的类型
-   *@param resource 所选中的资源信息
-   */
 
   private handleTreeData(node: any, belongId: string) {
     node.disabled = !(node.belongId && node.belongId == belongId)
