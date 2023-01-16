@@ -36,7 +36,7 @@
   </div>
 
   <el-dialog
-    customClass="QrDialog"
+    class="QrDialog"
     v-model="dialogVisible"
     title="邀请好友"
     width="30%"
@@ -63,15 +63,10 @@ import { ref } from "vue";
 import QrCodeCustom from "@/components/qrCode/index.vue";
 const emit = defineEmits(["viewDetail", "addUserOrCohort"]);
 
-const props = withDefaults(
-  defineProps<{
+const props = defineProps<{
     chatRef: any;
     imgKey: number;
-  }>(),
-  {
-    imgKey: 0,
-  }
-);
+  }>()
 
 const handleMoreFun = () => {
   emit("viewDetail");

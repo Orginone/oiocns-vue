@@ -26,7 +26,13 @@
         @handleReWrite="reWrite"
       />
       <!-- 输入区域 -->
-      <GroupInputBox v-show="chatRef.chat" ref="inputBox" class="chart-input" />
+      <GroupInputBox
+        v-show="chatRef.chat"
+        ref="inputBox"
+        class="chart-input"
+        :chatRef="chatRef"
+        @initContentScroll="openChanged"
+      />
     </div>
     <!-- 详情 -->
     <GroupDetail v-if="isShowDetail" :clearHistoryMsg="clearHistoryMsg" />
@@ -34,7 +40,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, onBeforeUnmount } from "vue";
+import {  ref } from "vue";
 import GroupSideBarVue from "./components/groupSideBar.vue";
 import GroupHeaderVue from "./components/groupHeader.vue";
 import GroupInputBox from "./components/groupInputBox.vue";
@@ -51,13 +57,13 @@ setTimeout(() => {
   chatRef.value = chatCtrl;
 }, 600);
 
-const imgKey = ref<number>(0)
+const imgKey = ref<number>(0);
 
 //内容展示 dom节点
 const contentWrapRef = ref(null);
 const inputBox = ref(null);
 
-const openChanged = (item: any) => {
+const openChanged = () => {
   contentWrapRef.value.goPageEnd();
 };
 

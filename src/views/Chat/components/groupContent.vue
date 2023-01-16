@@ -1,6 +1,6 @@
 <template>
   <div class="group-content-wrap" ref="nodeRef" @scroll="scrollEvent">
-    <template v-for="(item, index) in chatRef.chat.messages" :key="item.fromId">
+    <template v-for="(item, index) in messages" :key="item.fromId">
       <!-- 聊天间隔时间3分钟则 显示时间 -->
       <div class="chats-space-Time" v-if="isShowTime(index)">
         <span>
@@ -43,7 +43,7 @@
                   >{{ chatRef.getName(item.fromId) }}</span
                 >
                 <div class="con-content-link"></div>
-                <div class="con-content-txt" v-html="item.msgBody"></div>
+                <div class="con-content-txt" v-html="item.showTxt"></div>
               </div>
             </div>
           </template>
@@ -72,7 +72,7 @@
             <div class="con-body">
               <div class="con-content">
                 <div class="con-content-link"></div>
-                <div class="con-content-txt" v-html="item.msgBody"></div>
+                <div class="con-content-txt" v-html="item.showTxt"></div>
               </div>
               <HeadImg :name="chatRef.getName(item.fromId)" />
             </div>
@@ -103,6 +103,9 @@ import {
   reactive,
   onBeforeUnmount,
   inject,
+  watch,
+  computed,
+  watchEffect,
 } from "vue";
 import { debounce } from "@/utils/tools";
 import HeadImg from "@/components/headImg.vue";
@@ -110,8 +113,18 @@ import moment from "moment";
 import { ElMessage } from "element-plus";
 
 const props = defineProps<{
-  chatRef: any
-}>()
+  chatRef: any;
+}>();
+
+const messages = ref(props.chatRef.chat.messages);
+
+watch(
+  () => props.chatRef,
+  () => {
+    messages.value = props.chatRef.chat.messages;
+  },
+  { deep: true }
+);
 
 // dom节点
 const nodeRef = ref(null);
@@ -153,15 +166,15 @@ const recallMsg = (item: any) => {
   }
   props.chatRef.chat.reCallMessage(item).catch(() => {
     ElMessage({
-        type: "warning",
-        message: "只能撤回2分钟内发送的消息",
-      });
-  })
+      type: "warning",
+      message: "只能撤回2分钟内发送的消息",
+    });
+  });
 };
 
 const deleteMsg = (item: any) => {
   item.edit = false;
-  props.chatRef.chat.deleteMessage(item)
+  props.chatRef.chat.deleteMessage(item);
 };
 
 const isShowTime = (index: number) => {
@@ -196,8 +209,11 @@ const showChatTime = (chatDate: moment.MomentInput) => {
 // 实时滚动条高度
 const scrollTop = debounce(async () => {
   let scroll = nodeRef.value.scrollTop;
-  if (props.chatRef.chat && props.chatRef.chat.messages.length > 0 && scroll < 20) {
-    
+  if (
+    props.chatRef.chat &&
+    props.chatRef.chat.messages.length > 0 &&
+    scroll < 20
+  ) {
     let beforeHeight = nodeRef.value.scrollHeight;
     let count = await props.chatRef.chat.messages.length;
     if (count > 0) {

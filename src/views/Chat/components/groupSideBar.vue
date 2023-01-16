@@ -125,18 +125,18 @@
           <ul
             class="group-con"
             v-for="item in chatList"
-            :key="item.target.id"
+            :key="`${item.spaceId}-${item.target.id}`"
             v-show="val.name === 'zero'"
           >
             <li class="group-con-item">
-              <!-- v-show="['370224204936777729']?.includes(item.id)" -->
               <div
                 class="con-body"
                 :class="{
                   'top-session': item.isToping,
                   active:
-                      chatRef.chat.spaceId === item.spaceId &&
-                      chatRef.chat.target.id === item.target.id,
+                    chatRef.chat &&
+                    chatRef.chat.spaceId === item.spaceId &&
+                    chatRef.chat.target.id === item.target.id,
                 }"
                 @contextmenu.prevent.stop="(e: MouseEvent) => handleContextClick(e, item)"
                 @click="personnelContent(item.target)"
@@ -217,7 +217,7 @@ import { ElMessage } from "element-plus";
 import searchFriend from "@/components/searchs/index.vue";
 import FriendServices from "@/module/relation/friend";
 import Loading from "@/views/Layout/components/loading.vue";
-import _ from 'lodash'
+import _ from "lodash";
 
 const routerParams = useRoute().params;
 const friendServices = new FriendServices();
@@ -235,11 +235,11 @@ const tabData = ref([
 ]);
 const chatsValue = ref<string>("");
 
-const emit = defineEmits(["openChanged", 'update:imgKey']);
+const emit = defineEmits(["openChanged", "update:imgKey"]);
 const props = defineProps<{
-  chatRef: any,
-  imgKey: number
-}>()
+  chatRef: any;
+  imgKey: number;
+}>();
 // 会话列表搜索关键字
 const searchValue = ref<string>("");
 
@@ -279,11 +279,11 @@ const personnelContent = (val) => {
 };
 
 // 右侧头像组件 key 值更新
-const updateKey = ref(0)
+const updateKey = ref(0);
 const openChanged = async (child: any) => {
   await props.chatRef.setCurrent(child);
   updateKey.value++;
-  emit('update:imgKey', updateKey.value)
+  emit("update:imgKey", updateKey.value);
   emit("openChanged", child);
 };
 
@@ -319,7 +319,7 @@ const filterBySearch = (val: any) => {
     item.target.name.includes(val)
   );
 
-  const temGroupList = _.cloneDeep(groupStandardList)
+  const temGroupList = _.cloneDeep(groupStandardList);
   groupList.value = temGroupList.value.map((item: any) => {
     item.chats = item.chats.filter((chat: any) =>
       chat.target.name.includes(val)
@@ -350,7 +350,7 @@ const getChatList = (val: any) => {
  * 获取通讯录
  */
 const getGroupList = (val: any) => {
-  const tempGroups = val.groups;
+  const tempGroups = _.cloneDeep(val.groups);
   tempGroups.forEach((item: any) => {
     item.chats = handlePhotoLink(item.chats);
   });
