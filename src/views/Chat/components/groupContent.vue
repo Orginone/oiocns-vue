@@ -35,7 +35,12 @@
         >
           <template #reference>
             <div class="con-body">
-              <HeadImg :name="chatRef.getName(item.fromId)" :label="''" />
+              <HeadImg
+                :name="chatRef.getName(item.fromId)"
+                :limit="1"
+                :is-square="false"
+                :label="''"
+              />
               <div class="con-content">
                 <span
                   v-if="chatRef.chat.target.typeName !== '人员'"
@@ -74,7 +79,12 @@
                 <div class="con-content-link"></div>
                 <div class="con-content-txt" v-html="item.showTxt"></div>
               </div>
-              <HeadImg :name="chatRef.getName(item.fromId)" />
+              <HeadImg
+                :name="chatRef.getName(item.fromId)"
+                :limit="1"
+                :is-square="false"
+                :label="''"
+              />
             </div>
           </template>
           <div class="flex justify-space-between mb-3 flex-wrap gap-3">
