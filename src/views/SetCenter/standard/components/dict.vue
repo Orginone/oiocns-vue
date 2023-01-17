@@ -140,7 +140,6 @@
   // @ts-nocheck
   import DiyTable from "@/components/diyTable/index.vue";
   import {reactive, ref,onMounted, watch} from "vue";
-
   import {FormRules,FormInstance,ElMessage,ElTree } from "element-plus";
   import { Search } from '@element-plus/icons-vue'
   import {userCtrl,dictionaryCtrl, Dict} from '@/ts/coreIndex'
