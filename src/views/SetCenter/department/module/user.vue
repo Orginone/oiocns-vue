@@ -257,7 +257,7 @@ watch(selectItem, () => {
 </script>
 
 <style lang='scss' scoped>
-:deep .el-table th.el-table__cell {
+:deep(.el-table th.el-table__cell) {
   background-color: #eceffb!important;
 }
 .card {

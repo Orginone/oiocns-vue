@@ -179,15 +179,15 @@ watch(
     }
   }
 }
-:deep .el-drawer > .el-drawer__header {
+:deep(.el-drawer > .el-drawer__header) {
   background-color: #ffffff !important;
   height: 60px !important;
   border-bottom: 1px solid #f0f2f5;
 }
-:deep .el-drawer > .el-drawer__footer {
+:deep(.el-drawer > .el-drawer__footer){
   border-top: 1px solid #f0f2f5;
 }
-:deep .el-drawer__body {
+:deep(.el-drawer__body) {
   overflow: hidden !important;
 }
 </style>

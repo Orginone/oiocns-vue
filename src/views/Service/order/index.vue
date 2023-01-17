@@ -618,7 +618,7 @@
       position: absolute;
       right: 30px;
       top: 20px;
-      :deep .el-button{
+      :deep(.el-button){
         width: 80px;
       }
     }
