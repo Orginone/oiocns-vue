@@ -39,18 +39,18 @@ const tableData = ref<any[]>([]);
 const showSearch = ref(false);
 const searchText = ref("");
 async function loadData() {
-  const res = await $services.company.getAssignedDepartments({
-    data: {
-      offset: 0,
-      limit: 20,
-      filter: searchText.value || null
-    }
-  });
-  tableData.value = res.data.result || [];
-  const rows: Ref<any>[] = tableData.value.map(d => ref<any>(d));
-  for (const row of rows) {
-    useAsyncComputed(row, "belongId", "belongName", async v => chat.getName(v))
-  }  
+  // const res = await $services.company.getAssignedDepartments({
+  //   data: {
+  //     offset: 0,
+  //     limit: 20,
+  //     filter: searchText.value || null
+  //   }
+  // });
+  // tableData.value = res.data.result || [];
+  // const rows: Ref<any>[] = tableData.value.map(d => ref<any>(d));
+  // for (const row of rows) {
+  //   useAsyncComputed(row, "belongId", "belongName", async v => chat.getName(v))
+  // }  
 }
 onMounted(() => {
   loadData();

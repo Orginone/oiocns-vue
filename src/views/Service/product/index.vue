@@ -194,15 +194,17 @@
           message: '审批完成',
           type: 'success'
         })
-        loadList({
-          uid: 0,
-          slots: undefined,
-          props: undefined,
-          paneName: '',
-          active: false,
-          index: activeName.value,
-          isClosable: false
-        },);
+        setTimeout(() => {
+          loadList({
+            uid: 0,
+            slots: undefined,
+            props: undefined,
+            paneName: '',
+            active: false,
+            index: activeName.value,
+            isClosable: false
+          },);
+        },200)
       })
     }
     // 拒绝
@@ -212,15 +214,17 @@
           message: '审批完成',
           type: 'success'
         })
-        loadList({
-          uid: 0,
-          slots: undefined,
-          props: undefined,
-          paneName: '',
-          active: false,
-          index: activeName.value,
-          isClosable: false
-        },);
+        setTimeout(() => {
+          loadList({
+            uid: 0,
+            slots: undefined,
+            props: undefined,
+            paneName: '',
+            active: false,
+            index: activeName.value,
+            isClosable: false
+          },);
+        },200)
       })
     }
     // 取消
@@ -230,15 +234,17 @@
           message: '审批完成',
           type: 'success'
         })
-        loadList({
-          uid: 0,
-          slots: undefined,
-          props: undefined,
-          paneName: '',
-          active: false,
-          index: activeName.value,
-          isClosable: false
-        },);
+        setTimeout(() => {
+          loadList({
+            uid: 0,
+            slots: undefined,
+            props: undefined,
+            paneName: '',
+            active: false,
+            index: activeName.value,
+            isClosable: false
+          },);
+        },200)
       })
     }
     onMounted(() => {

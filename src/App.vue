@@ -19,6 +19,7 @@ import { defineComponent } from 'vue'
 import { ElConfigProvider,ElMessage } from 'element-plus'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import { logger,LoggerLevel } from '@/ts/coreIndex';
+import moment from 'moment'
 
 logger.onLogger = (level:LoggerLevel, msg:any) => {
   switch (level) {
@@ -67,7 +68,6 @@ export default defineComponent({
 }
 .el-drawer >.el-drawer__header  {
   padding-bottom: 20px !important;
-  margin-bottom: 12px !important;
 }
 // 文字提示添加customized主题
 .el-popper.is-customized {

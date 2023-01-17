@@ -294,7 +294,7 @@
       :close-on-click-modal="false"
     >
       <ShareComponent
-        dialogType="2"
+        dialogType="3"
         :type="store.workspaceData.type"
         @closeDialog="closeDialog('shareVisible', false)"
         :info="selectProductItem"
@@ -327,6 +327,7 @@ import {appCtrl} from '@/ts/coreIndex'
 import {userCtrl} from '@/ts/coreIndex'
 import { useCommonStore } from '@store/common'
 import img1 from '@/assets/img/group22.png'
+import moment from 'moment'
 
 const { proxy } = getCurrentInstance()
 
@@ -456,6 +457,8 @@ const state: StateType = reactive({
       prop: "prod.createTime",
       label: "创建时间",
       width: "200",
+      formatter: (row: any, column: any) => moment(row.createTime).format('YYYY/MM/DD HH:mm:ss')
+
     },
     {
       type: "slot",
@@ -470,10 +473,9 @@ const state: StateType = reactive({
 const title = ref<string>("");
 onMounted(() => {
   // 获取列表
-  getProductList(); 
-  console.log('marketCtrl', marketCtrl);
-  console.log('userCtrl', userCtrl)
-  console.log('marketCtrl.shopinglist',marketCtrl.shopinglist)
+  setTimeout(() => {
+    getProductList(); 
+  }, 600);
 });
 
 const commonStore = useCommonStore()
@@ -500,9 +502,8 @@ const handleUpdate = (page: any) => {
 // 获取我的应用列表
 const getProductList = () => {
   marketCtrl.target.getOwnProducts(false).then((res:any)=>{
-
-    
-    state[`ownProductList`] = res ;
+    console.log('res',res)
+    state[`ownProductList`] = res; 
     state['appList'] = res;
     diyTable.value.state.page.total = res.length
   })
@@ -547,7 +548,6 @@ const handleCommand = (
 ) => {
   selectProductItem.value = item;
   appCtrl.setCurProduct(item)
-  console.log("selectProductItem", selectProductItem.value);
   switch (command) {
     case "share": //分享
       openShareDialog();

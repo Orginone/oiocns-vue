@@ -1,10 +1,10 @@
 <template>
-    <div class="main">
+    <div class="main car-main">
       <div class="content">
         <div class="table">
           <el-checkbox-group v-model="checkList"  @change="handleCheckList">
            <div class="item" v-for="item in pageStore.tableData" >
-            <el-checkbox  :key="item" :label="item">
+            <el-checkbox  :key="item.id" :label="item.id">
               <div class="item-detail">
                 <img :src="img1" alt="">
                 <div class="detail-row">
@@ -12,7 +12,7 @@
                     商品名称：{{ item.caption }}
                   </div>
                   <div class="car-item">
-                    购买类型：{{ item.sellAuth }}
+                    应用权限：{{ item.sellAuth }}
                   </div>
                 </div>
               </div>
@@ -46,6 +46,8 @@
     import { PAGE_SIZES, PAGE_NUM } from '@/constant'
     import {marketCtrl} from '@/ts/coreIndex';
     import img1 from '@/assets/img/group22.png'
+
+    const emit = defineEmits(['reLoad'])
 
     const diyTable = ref(null)
     // 表格展示数据
@@ -92,8 +94,12 @@
     const checkAll = ref<any>([]);
     const checkList = ref<any>([]);
     // 全选
-    const handleCheckAllChange = (val: boolean) => {
-      checkList.value = val ? pageStore.tableData : []
+    const handleCheckAllChange = (val: any) => {
+      let arr:any = [];
+      pageStore.tableData.forEach((element,index) => {
+        arr.push(element.id);
+      });
+      checkList.value = val ? arr : []
       isIndeterminate.value = false
     }
   
@@ -115,16 +121,14 @@
         hasChildren: 'hasChildren'
       }
     })
-  // 表格分页数据
-  const pagination: { current: number; limit: number } = reactive({ current: 1, limit: PAGE_NUM })
-
   //从购物车移除
   const deleteStaging = async (item: any) => {
     if(!item?.length){
         item = [item]
     }
-    await marketCtrl.deleApply(item);
+    await marketCtrl.deleteStaging(item);
     pageStore.tableData = marketCtrl.shopinglist
+    emit('reLoad')
   }
   //批量购买
   const batchPay = async(item:any)=>{
@@ -133,33 +137,37 @@
   //批量删除   
   const batchDelete =async (item:any) => {
     deleteStaging(checkList.value)
+    emit('reLoad')
   }
   //创建订单(批量)
-  const createOrderByStaging = async (item:any) => {
-
+  const createOrderByStaging = async (arr:any) => {
+    if(arr.length<=0){
+      ElMessage.warning('请选择商品')
+    }
     ElMessageBox.confirm('此操作将生成交易订单。是否确认?', '确认订单', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'success'
     }).then(async () => {
-        if(!item?.length){
-           item = [item]
-        }
-        await marketCtrl.buyShoping(item);
+        await marketCtrl.createOrder(arr);
         pageStore.tableData = marketCtrl.shopinglist
+        emit('reLoad')
     }).catch(()=>{})
   }
     
   </script>
   <style lang="scss">
-    .el-dropdown-link{
-      padding: 2px 10px;
-      cursor: pointer;
-      border-radius: 10px;
-    }
-    .el-dropdown-link:hover{
-      background:#1642cb;
-      color: #fff;
+    .car-main{
+      .el-dropdown-link{
+        padding: 2px 10px;
+        cursor: pointer;
+        border-radius: 10px;
+      }
+      .el-dropdown-link:hover{
+        background:#1642cb;
+        color: #fff;
+      }
+    
     }
   </style>
   <style lang="scss" scoped>
@@ -171,8 +179,11 @@
       border: 0 !important;
       .content{
         width:calc(100vw - 150px);
+        // height:calc(100vh - 50px);
         display: flex;
         flex-direction: column;
+        background: #EFF4F9;
+        overflow-y: auto;
         .table{
           display: flex;
           flex: 1;
@@ -180,15 +191,15 @@
             width: 100%;
           }
           .item{
-            width: 100%;
             height: 100px;
             background: #fff;
-            border-radius: 3px;
+            border-radius: 8px;
             border: 1px solid #f0f4f8;
-            margin-bottom: 10px;
             display: flex;
             font-size: 14px;
-            padding: 10px;
+            padding: 10px 15px;
+            margin: 20px;
+            margin-bottom: 10px;
           }
           .el-checkbox{
             width: 100%;
@@ -218,10 +229,11 @@
         .foot{
             background: #fff;
             display: flex;
-            height: 40px;
+            height: 50px;
             justify-content: space-between;
             align-items: center;
-            padding-right:10px;
+            padding:10px 20px;
+            box-sizing: border-box;
             .foot-left{
               display: flex;
               flex-direction: row-reverse;
