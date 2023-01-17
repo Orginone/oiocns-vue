@@ -26,7 +26,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, defineProps, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import diytab from "@/components/diyTable/index.vue";
 import { portalCtrl, logger } from "@/ts/coreIndex";
 import { useUserStore } from "@/store/user";

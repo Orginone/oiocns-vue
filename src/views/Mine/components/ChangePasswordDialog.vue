@@ -21,7 +21,7 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import { defineProps, ref, computed, reactive } from "vue";
+import { ref, computed, reactive } from "vue";
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import $services from '@/services';
 import { useUserStore } from '@/store/user'
