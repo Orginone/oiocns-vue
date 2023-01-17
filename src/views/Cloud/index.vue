@@ -272,9 +272,11 @@
 
   // 打开文件
   const clickFile = async (item: FileObject) => {
+    console.log(item)
     // await Cloud.DocModel.open(item.key)
     Cloud.DocModel.currentKey = item.key
     state.currentLay = item
+    console.log(state.currentLay)
     navRef.value.checkedNode(item)
   }
 

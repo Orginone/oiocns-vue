@@ -62,7 +62,6 @@
               :hasTableHead="true"
               :tableData="state.tableData"
               :options="options"
-              @handleUpdate="handleUpdate"
               :tableHead="tableHead"
           >
             <!-- <template #slot-tabs>
@@ -97,7 +96,7 @@
           </DiyTable>
         </div>
         <div class="dict" v-if="activeIndex == 3">
-          <Dict></Dict>
+          <Dict :info="currentData"></Dict>
         </div>
       </div>
       <!-- 特性提交表单 -->
@@ -165,10 +164,10 @@
   import Dict from './components/dict.vue'
   import {computed, nextTick, reactive, ref, watch} from "vue";
   import { setCenterStore } from '@/store/setting'
-  import { userCtrl,thingCtrl } from "@/ts/coreIndex";
+  import { userCtrl,thingCtrl  } from "@/ts/coreIndex";
 
-  import { PageRequest } from '@/ts/base/model';
   import {ElMessage,FormRules,FormInstance} from "element-plus";
+
   const store: any = setCenterStore()
 
   const currentData = computed(() => {
@@ -192,7 +191,7 @@
     tableData: [],
     attrForm: {public:true,valueType:"描述型"},
     belongTreeData: [],
-    authTreeData: []
+    authTreeData: [],
   })
   const options = ref<any>({
     checkBox: false,
@@ -263,12 +262,9 @@
     ],
   })
 
-
-
   const loadSpeciesAttrs = async (species) => {
     const page: PageRequest = {offset: 0, limit: 20, filter: ''}
     const res = await species.loadAttrs(userCtrl.space.id, page)
-    console.log(res)
     if (res && res.result) {
       for (const item of res.result) {
         const team = await userCtrl.findTeamInfoById(item.belongId);
@@ -348,9 +344,6 @@
     state.attrForm = attr
   }
 
-  const handleUpdate = (page: any) => {
-
-  }
 </script>
 <style lang="scss">
   .el-dropdown-link {

@@ -47,7 +47,7 @@ interface Tree {
   children?: Tree[]
 }
 
-const filterText = ref('')
+let filterText = ref('')
 const identitysText = ref('')
 const treeRef = ref<InstanceType<typeof ElTree>>()
 const identitysRef = ref<InstanceType<typeof ElTree>>()

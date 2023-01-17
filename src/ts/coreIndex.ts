@@ -1,4 +1,4 @@
-import {userCtrl,thingCtrl,marketCtrl,todoCtrl,appCtrl,chatCtrl,processCtrl,portalCtrl,TargetType,ICompany,SpaceType,logger,LoggerLevel,INullSpeciesItem} from '@orginone/oiocns-ts'
+import {userCtrl,thingCtrl,marketCtrl,todoCtrl,appCtrl,chatCtrl,processCtrl,portalCtrl,dictionaryCtrl,TargetType,ICompany,SpaceType,logger,LoggerLevel,INullSpeciesItem,Dict} from '@orginone/oiocns-ts'
 
-export {userCtrl,thingCtrl,marketCtrl,todoCtrl,appCtrl,chatCtrl,processCtrl,portalCtrl,logger,LoggerLevel,TargetType}
+export {userCtrl,thingCtrl,marketCtrl,todoCtrl,appCtrl,chatCtrl,processCtrl,portalCtrl,dictionaryCtrl,logger,LoggerLevel,TargetType,Dict}
 export type {ICompany,SpaceType,INullSpeciesItem}

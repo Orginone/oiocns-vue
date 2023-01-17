@@ -3,13 +3,38 @@
     <div class="left">
       <div class="header">
         <span>分类字典</span>
-        <el-icon class="add" @click="attrFormDialog = true"><Plus /></el-icon>
+        <el-icon class="add" @click="attrFormAdd('新增','')"><Plus /></el-icon>
       </div>
       <div class="search-wrap">
         <el-input class="search" v-model="filterText" placeholder="搜索" :prefix-icon="Search" />
-      </div>
-      <div class="data-list">
-
+        <el-tree
+          ref="treeRef"
+          :props="defaultProps"
+          :expand-on-click-node="false"
+          :highlight-current="true"
+          class="filter-tree"
+          :data="state.dictData"
+          default-expand-all
+          @node-click="getCurrentDict"
+          :filter-node-method="filterNode"
+        >
+          <template #default="{ data }">
+            <div class="folder-node">
+              <div class="node-label">
+                <span>{{data.name}}</span>
+              </div>
+              <el-dropdown>
+                <span class="el-dropdown-link"> ··· </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item @click="attrFormAdd('编辑',data)">编辑</el-dropdown-item>
+                    <el-dropdown-item @click.stop="delDict(data)" style="color: #f67c80">删除</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
+          </template>
+        </el-tree>
       </div>
     </div>
     <div class="right">
@@ -23,17 +48,18 @@
         :options="options"
         @handleUpdate="handleUpdate"
         :tableHead="tableHead"
+        :total="pageStore.total"
       >
         <template #buttons>
-          <el-button class="btn-check" type="primary" text link @click="addFormDialog=true">新增字典项</el-button>
+          <el-button class="btn-check" type="primary" text link @click="addFormAdd('新增','')">新增字典项</el-button>
         </template>
         <template #operate="scope">
           <el-dropdown>
             <span class="el-dropdown-link"> ··· </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>编辑</el-dropdown-item>
-                <el-dropdown-item style="color: #f67c80">删除</el-dropdown-item>
+                <el-dropdown-item @click="addFormAdd('编辑',scope.row)">编辑</el-dropdown-item>
+                <el-dropdown-item style="color: #f67c80" @click="delItem(scope.row)">删除</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -47,19 +73,19 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="字典名称" prop="name">
-              <el-input v-model="state.attrForm.name" placeholder="请输入"/>
+              <el-input v-model="state.attrForm.name" clearable placeholder="请输入"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="字典代码" prop="code">
-              <el-input v-model="state.attrForm.code" placeholder="请输入"/>
+              <el-input v-model="state.attrForm.code" clearable placeholder="请输入"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="选择制定组织" prop="belongId">
-              <el-tree-select v-model="state.attrForm.belongId" :data="state.belongTreeData" highlight-current default-expand-all check-strictly :props="{ label: 'name', value: 'id', children: 'subTeam'}" placeholder="请选择" />
+              <el-tree-select v-model="state.attrForm.belongId" clearable :data="state.belongTreeData" highlight-current default-expand-all check-strictly :props="{ label: 'name', value: 'id', children: 'subTeam'}" placeholder="请选择" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -77,23 +103,23 @@
 
     <!-- 新增字典项提交表单 -->
     <el-dialog v-model="addFormDialog" :title="`${isEditAdd ? '编辑' : '新增'}`" width="640px">
-      <el-form :model="state.addForm" :rules="rules" label-position="top" label-width="auto" ref="addrFormRef">
+      <el-form :model="state.addForm" :rules="addRules" label-position="top" label-width="auto" ref="addFormRef">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="名称" prop="name">
-              <el-input v-model="state.addForm.name" placeholder="请输入"/>
+              <el-input v-model="state.addForm.name" clearable placeholder="请输入"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="值" prop="code">
-              <el-input v-model="state.addForm.code" placeholder="请输入"/>
+            <el-form-item label="值" prop="value">
+              <el-input v-model="state.addForm.value" clearable placeholder="请输入"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="选择制定组织" prop="belongId">
-              <el-tree-select v-model="state.addForm.belongId" :data="state.belongTreeData" highlight-current default-expand-all check-strictly :props="{ label: 'name', value: 'id', children: 'subTeam'}" placeholder="请选择" />
+              <el-tree-select v-model="state.addForm.belongId" clearable :data="state.belongTreeData" highlight-current default-expand-all check-strictly :props="{ label: 'name', value: 'id', children: 'subTeam'}" placeholder="请选择" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -104,7 +130,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="addFormDialog = false">取消</el-button>
-          <el-button type="primary" @click="submitAddForm(addForm)">确定</el-button>
+          <el-button type="primary" @click="submitAddForm(addFormRef)">确定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -113,12 +139,21 @@
 <script lang="ts" setup>
   // @ts-nocheck
   import DiyTable from "@/components/diyTable/index.vue";
-  import {computed, nextTick, reactive, ref, watch} from "vue";
+  import {reactive, ref,onMounted, watch} from "vue";
 
-  import {ElMessage,FormRules,FormInstance} from "element-plus";
+  import {FormRules,FormInstance,ElMessage,ElTree } from "element-plus";
   import { Search } from '@element-plus/icons-vue'
+  import {userCtrl,dictionaryCtrl, Dict} from '@/ts/coreIndex'
+  import { PageRequest } from '@/ts/base/model';
+
+  interface Tree {
+    id: number
+    label: string
+    children?: Tree[]
+  }
 
   const filterText = ref('')
+  const treeRef = ref<InstanceType<typeof ElTree>>()
   const attrFormDialog = ref(false)
   const isEditAttr =  ref(false)
   const attrFormRef = ref<FormInstance>()
@@ -126,11 +161,36 @@
   const isEditAdd =  ref(false)
   const addFormRef = ref<FormInstance>()
 
+  watch(filterText, (val) => {
+    treeRef.value!.filter(val)
+  })
+
+  const filterNode = (value: string, data: Tree) => {
+    if (!value) return true
+    return data.name.includes(value)
+  }
+
+  const defaultProps = {
+    children: 'children',
+    label: 'name'
+  }
+
+  const props = defineProps({
+    info: {
+      type: Object
+    }
+  })
+
   const state = reactive({
     tableData:[],
     attrForm: {},
-    addForm:{}
+    addForm:{},
+    belongTreeData: [],
+    dictData:[],
+    attrEditData:{},
+    currentDict:null
   })
+
   const options = ref<any>({
     checkBox: false,
     order: true,
@@ -141,21 +201,22 @@
       hasChildren: 'hasChildren'
     }
   })
+
   const tableHead = ref([
     {
-      prop: 'code',
+      prop: 'name',
       label: '名称',
     },
     {
-      prop: 'name',
+      prop: 'value',
       label: '值',
     },
     {
-      prop: 'valueType',
+      prop: 'belongId',
       label: '创建人',
     },
     {
-      prop: 'speciesId',
+      prop: 'createTime',
       label: '创建时间',
     },
     {
@@ -168,6 +229,7 @@
     }
   ])
 
+  //添加分类字典规则
   const rules = reactive<FormRules>({
     name: [
       { required: true, message: '特性名称为必填项', trigger: 'blur' },
@@ -176,20 +238,168 @@
       { required: true, message: '特性代码为必填项', trigger: 'blur' },
     ],
     belongId: [
-      { required: true, message: '制定组织为必填项', trigger: 'blur' },
+      { required: true, message: '制定组织为必填项', trigger: 'change' },
+    ]
+  })
+
+  //添加字典项规则
+  const addRules = reactive<FormRules>({
+    name: [
+      { required: true, message: '字典项名称为必填项', trigger: 'blur' },
     ],
-    authId: [
-      { required: true, message: '管理职权为必填项', trigger: 'blur' },
+    value: [
+      { required: true, message: '字典项值为必填项', trigger: 'blur' },
     ],
-    public: [
-      { required: true, message: '向下级组织公开为必填项', trigger: 'blur' },
-    ],
-    valueType: [
-      { required: true, message: '特性类型为必填项', trigger: 'blur' },
-    ],
-    remark: [
-      { required: true, message: '特性定义为必填项', trigger: 'blur' },
-    ],
+    belongId: [
+      { required: true, message: '制定组织为必填项', trigger: 'change' },
+    ]
+  })
+
+  const pageStore = reactive({
+    currentPage: 1,
+    pageSize: 20,
+    total: 0,
+  });
+
+  //打开分类字典弹窗
+  const attrFormAdd = async (type:string,item:any) => {
+    state.attrForm = {}
+    if(type == '编辑'){
+      isEditAttr.value = true
+      // item.value = item.code
+      state.attrForm = Object.assign(item ? item : {}, state.attrForm)
+    }else{
+      isEditAttr.value = false
+    }
+    attrFormDialog.value = true
+    state.belongTreeData = await userCtrl.getTeamTree()
+  }
+
+  //打开字典项弹窗
+  const addFormAdd = async(type:string,item:any) =>{
+    state.addForm = {}
+    if(type == '编辑'){
+      isEditAdd.value = true
+      state.addForm = Object.assign(item ? item : {}, state.addForm);
+    }else{
+      isEditAdd.value = false
+    }
+    addFormDialog.value = true
+    state.belongTreeData = await userCtrl.getTeamTree()
+  }
+
+  //提交分类字典
+  const submitAttrForm = async (formEl: FormInstance | undefined) => {
+    formEl.validate(async (valid) => {
+      if (valid) {
+        if(!isEditAttr.value){
+          state.attrForm.speciesId = props.info.id
+          const success = await props.info.createDict(state.attrForm)
+          if(success) {
+            ElMessage.success({ message: '新增成功!'})
+            attrFormDialog.value = false
+            await loadDictsList()
+          }
+        }else{
+          const success = await props.info.updateDict(state.attrForm)
+          if(success) {
+            ElMessage.success({ message: '编辑成功!'})
+            attrFormDialog.value = false
+            await loadDictsList()
+          }
+        }
+      } else {
+        return false
+      }
+    })
+  }
+
+  //提交字典项
+  const submitAddForm = async (formEl: FormInstance | undefined) => {
+    formEl.validate(async (valid) => {
+      if (valid) {
+        if(state.currentDict){
+          if(!isEditAdd.value){
+            const success = await state.currentDict.createItem(state.addForm)
+              if(success) {
+                ElMessage.success({ message: '新增成功!'})
+                addFormDialog.value = false
+                await getDataList()
+              }
+          }else{
+            const success = await state.currentDict.updateItem(state.addForm)
+              if(success) {
+                ElMessage.success({ message: '编辑成功!'})
+                addFormDialog.value = false
+                await getDataList()
+              }
+          }
+        }else{
+          ElMessage.error({ message: '请先选择 左侧分类字典!'})
+        }
+      } else {
+        return false
+      }
+    })
+  }
+  
+  //获取字典分类列表
+  const loadDictsList = async() => {
+    const page: PageRequest = {offset: 0, limit: 10000, filter: ''}
+    const params = {
+      id: props.info.target.id,
+      spaceId: userCtrl.space.id,
+      page: page
+    }
+    const res = await dictionaryCtrl.getDictList(params)
+    let records: XDict[] = (res.data.result as XDict[]) || [];
+    state.dictData = records
+    // state.selectKey = records[0]?.id
+    // getCurrentDict(records[0])
+  }
+
+  //选择分类字典
+  const getCurrentDict = async (item: any) => {
+    state.currentDict = new Dict(item)
+    getDataList()
+  }
+
+  //获取字典项数据
+  const getDataList = async() =>{
+    const page: PageRequest = {offset: 0, limit: 20, filter: ''}
+    let res = await state.currentDict.loadItems(userCtrl.space.id, page);
+    state.tableData = res.result
+    pageStore.total = res.total
+  }
+
+  //分页
+  const handleUpdate = (page: any) => {
+    pageStore.currentPage = page.current;
+    pageStore.pageSize = page.pageSize;
+    getDataList();
+  };
+
+  //删除分类字典
+  const delDict = async() =>{
+    let success = await state.currentDict.delete(state.currentDict.id)
+    if(success) {
+      ElMessage.success({ message: '删除成功!'})
+      await loadDictsList()
+    }
+  } 
+
+  //删除字典项
+  const delItem = async(item) =>{
+    const newItem = new Dict(item)
+    let success = await state.currentDict.deleteItem(newItem.id)
+    if(success) {
+      ElMessage.success({ message: '删除成功!'})
+      await getDataList()
+    }
+  } 
+
+  onMounted(() => {
+    loadDictsList()
   })
 
 </script>
@@ -213,12 +423,42 @@
       }
     }
     .search-wrap{
+      width: 100%;
       margin-top: 10px;
     }
     .search {
       font-size: 12px;
       .el-input__inner {
         font-size: 12px;
+      }
+    }
+    .data-list{
+      width: 100%;
+      font-size: 14px;
+      padding: 8px;
+    }
+    .folder-node {
+      width: 160px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding-right: 10px;
+      justify-content: space-between;
+      .node-label {
+        display: flex;
+        align-items: center;
+        span {
+          margin-left: 5px;
+        }
+      }
+      .el-dropdown-link{
+        padding: 2px 10px;
+        cursor: pointer;
+        border-radius: 10px;
+      }
+      .el-dropdown-link:hover{
+        background:#1642cb;
+        color: #fff;
       }
     }
   }
