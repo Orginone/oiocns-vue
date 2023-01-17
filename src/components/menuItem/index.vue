@@ -271,22 +271,22 @@ const handleSelect = (key: any) => {
     }
   }
 
-  :deep .el-sub-menu__icon-arrow{
+  :deep(.el-sub-menu__icon-arrow){
     display: none;
   }
   // :deep .no-penultimate > .el-tree-node__content{
     // font-weight: 800;
   // }
 
-  :deep .is-penultimate > .el-tree-node__content {
+  :deep(.is-penultimate > .el-tree-node__content) {
     font-size: 10px;
     color: #909399;
   }
-  :deep .el-tree-node__content{
+  :deep(.el-tree-node__content){
     height: 40px;
   }
   // 去掉el-input自带边框
-  :deep .el-input__wrapper {
+  :deep(.el-input__wrapper) {
     margin: 15px;
     padding-left: 15px !important;
     box-sizing: border-box;
