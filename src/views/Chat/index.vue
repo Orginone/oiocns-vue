@@ -2,24 +2,22 @@
   <div class="cohort-wrap">
     <el-aside class="custom-group-silder-menu" width="300px">
       <GroupSideBarVue
-        :clearHistoryMsg="clearHistoryMsg"
+        @clearHistoryMsg="clearHistoryMsg"
         :chatRef="chatRef"
         v-model:imgKey="imgKey"
         @openChanged="openChanged"
       />
     </el-aside>
     <!-- 右侧展示主体 -->
-    <div v-show="chatRef.chat" class="chart-page">
+    <div v-if="chatRef.chat" class="chart-page">
       <!-- 头部 -->
       <GroupHeaderVue
-        v-if="chatRef.chat"
         :chatRef="chatRef"
         :imgKey="imgKey"
         @viewDetail="handleViewDetail"
       />
       <!-- 聊天区域 -->
       <GroupContent
-        v-if="chatRef.chat"
         class="chart-content"
         ref="contentWrapRef"
         :chatRef="chatRef"
@@ -27,7 +25,6 @@
       />
       <!-- 输入区域 -->
       <GroupInputBox
-        v-show="chatRef.chat"
         ref="inputBox"
         class="chart-input"
         :chatRef="chatRef"
@@ -35,12 +32,13 @@
       />
     </div>
     <!-- 详情 -->
-    <GroupDetail v-if="isShowDetail" :clearHistoryMsg="clearHistoryMsg" />
+    <GroupDetail v-if="isShowDetail" :chatRef="chatRef" />
   </div>
+  <!-- {{ test }} -->
 </template>
 
 <script lang="ts" setup>
-import {  ref } from "vue";
+import { ref, watch, reactive } from "vue";
 import GroupSideBarVue from "./components/groupSideBar.vue";
 import GroupHeaderVue from "./components/groupHeader.vue";
 import GroupInputBox from "./components/groupInputBox.vue";
@@ -52,10 +50,49 @@ const isShowDetail = ref<boolean>(false);
 /**
  * 获取 chatController 实例化对象
  */
+
+// class Baz {
+//   obj: any;
+//   constructor() {
+//     this.obj = reactive({
+//       foo: [],
+//     });
+//     setInterval(() => {
+//       this.receiveMessage();
+//     }, 2000);
+//   }
+//   receiveMessage() {
+//     this.obj.foo.push({ info: "我可真是个倒霉蛋" });
+//   }
+// }
+
+// const test = ref<any>();
+
+// setTimeout(() => {
+//   test.value = new Baz();
+// });
+
+// watch(
+//   () => test.value,
+//   () => {
+//     console.log("change");
+//   },
+//   { deep: true }
+// );
+
 const chatRef = ref<any>({});
+
 setTimeout(() => {
   chatRef.value = chatCtrl;
 }, 600);
+
+watch(
+  () => chatRef.value,
+  (val: any) => {
+    console.log("chatRef update", val);
+  },
+  { deep: true }
+);
 
 const imgKey = ref<number>(0);
 

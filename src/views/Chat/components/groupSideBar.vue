@@ -17,14 +17,8 @@
       ></el-button>
     </div>
     <ul class="context-text-wrap more" v-if="isMore">
-      <li class="context-menu-item" @click="chat.getChats()">
-        <el-icon><ChatRound /></el-icon>发起群聊
-      </li>
       <li class="context-menu-item" @click="dialogVisible = true">
         <el-icon><Plus /></el-icon>添加好友
-      </li>
-      <li class="context-menu-item" @click="chat.getChats()">
-        <el-icon><Refresh /></el-icon>刷新会话
       </li>
     </ul>
     <searchFriend
@@ -203,6 +197,7 @@
 <script lang="ts" setup name="groupSideBar">
 import {
   computed,
+  isReactive,
   onBeforeUnmount,
   onMounted,
   reactive,
@@ -266,7 +261,7 @@ const handleClick = (tab: any, event: Event) => {
   chatsValue.value = tab.props.label;
 };
 
-const personnelContent = (val) => {
+const personnelContent = (val: any) => {
   conversationChats.value.push(val);
   conversationChats.value = [...new Set(conversationChats.value)];
   activeName.value = "zero";

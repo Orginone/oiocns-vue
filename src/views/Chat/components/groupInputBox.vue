@@ -29,6 +29,21 @@
       <el-icon :size="20">
         <Microphone />
       </el-icon>
+
+      <el-upload
+        ref="uploadRef"
+        :show-file-list="false"
+        :http-request="customRequest"
+        :before-upload="beforeUpload"
+        :multiple="false"
+        style="display: flex"
+      >
+        <template #trigger>
+          <el-icon :size="20">
+            <Files />
+          </el-icon>
+        </template>
+      </el-upload>
     </div>
     <div class="input-content" @keyup.enter.stop>
       <div
@@ -48,6 +63,7 @@
 </template>
 
 <script lang="ts" setup>
+import { docsCtrl } from "@/ts/coreIndex";
 import { ElMessage } from "element-plus";
 import { onMounted, ref } from "vue";
 const props = defineProps<{
@@ -57,7 +73,48 @@ const props = defineProps<{
 const inputRef = ref(null);
 const faceBtnRef = ref(null);
 
-const emit = defineEmits(["submitInfo", "update:contentKey", "initContentScroll"]);
+const emit = defineEmits([
+  "submitInfo",
+  "update:contentKey",
+  "initContentScroll",
+]);
+
+const beforeUpload = (file: any) => {
+  const isImage = file.type.startsWith("image");
+  if (!isImage) {
+    ElMessage.error(`${file.name} 不是一个图片文件`);
+  }
+  return isImage;
+};
+const customRequest = async (options: any) => {
+  const file = options.file as File;
+  const docDir = await docsCtrl.home?.create("沟通");
+  if (docDir && file) {
+    const result = await docDir.upload(file.name, file, (p: number) => {
+      // return setTask({
+      //   finished: p,
+      //   size: file.size,
+      //   name: file.name,
+      //   group: docDir.name,
+      //   createTime: new Date(),
+      // });
+      return {
+        finished: p,
+        size: file.size,
+        name: file.name,
+        group: docDir.name,
+        createTime: new Date(),
+      };
+    });
+    // setTask(undefined);
+    if (result) {
+      await props.chatRef.chat?.sendMessage(
+        "图片",
+        JSON.stringify(result.shareInfo())
+      );
+    }
+  }
+};
 
 // 提交聊天内容
 const submit = async () => {
@@ -71,7 +128,7 @@ const submit = async () => {
   let message = text.join("").trim();
   if (message.length > 0) {
     await props.chatRef.chat.sendMessage("text", message);
-    emit("initContentScroll")
+    emit("initContentScroll");
   }
   document.getElementById("insterHtml").innerHTML = "";
 };
@@ -160,6 +217,10 @@ defineExpose({
 
 <style lang="scss">
 @import "./qqface.scss";
+
+.el-upload-list {
+  margin: 0;
+}
 
 .group-input-wrap {
   .textarea {

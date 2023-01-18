@@ -1,6 +1,6 @@
 <template>
   <div class="group-content-wrap" ref="nodeRef" @scroll="scrollEvent">
-    <template v-for="(item, index) in messages" :key="item.fromId">
+    <template v-for="(item, index) in messages" :key="`${item.fromId}${index}`">
       <!-- 聊天间隔时间3分钟则 显示时间 -->
       <div class="chats-space-Time" v-if="isShowTime(index)">
         <span>
@@ -35,12 +35,7 @@
         >
           <template #reference>
             <div class="con-body">
-              <HeadImg
-                :name="chatRef.getName(item.fromId)"
-                :limit="1"
-                :is-square="false"
-                :label="''"
-              />
+              <HeadImg :name="chatRef.getName(item.fromId)" :label="''" />
               <div class="con-content">
                 <span
                   v-if="chatRef.chat.target.typeName !== '人员'"
@@ -79,12 +74,7 @@
                 <div class="con-content-link"></div>
                 <div class="con-content-txt" v-html="item.showTxt"></div>
               </div>
-              <HeadImg
-                :name="chatRef.getName(item.fromId)"
-                :limit="1"
-                :is-square="false"
-                :label="''"
-              />
+              <HeadImg :name="chatRef.getName(item.fromId)" />
             </div>
           </template>
           <div class="flex justify-space-between mb-3 flex-wrap gap-3">

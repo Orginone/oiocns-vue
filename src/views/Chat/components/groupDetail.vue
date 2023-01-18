@@ -2,22 +2,22 @@
   <div class="group-detail-wrap">
     <el-row align="middle" style="padding-bottom: 12px">
       <el-col :span="4">
-        <HeadImg :name="chat.curChat.value?.name" :label="''" />
+        <HeadImg :name="chatRef.chat.target.name" :label="''" />
       </el-col>
       <el-col :span="20">
-        <h4 class="title">{{ chat.curChat.value?.name }}</h4>
-        <div class="base-info-desc">{{ chat.curChat.value?.remark }}</div>
+        <h4 class="title">{{ chatRef.chat.target.name }}</h4>
+        <div class="base-info-desc">{{ chatRef.chat.target.remark }}</div>
       </el-col>
     </el-row>
     <ul class="user-list">
-      <li class="li-search con" v-if="chat.curChat.value?.typeName !== '人员'">
-        <p class="li-search-con">组成员<span class="li-search-con-num">{{ chat.curChat.value?.personNum }}</span>人</p>
+      <li class="li-search con" v-if="chatRef.chat.target.typeName !== '人员'">
+        <p class="li-search-con">组成员<span class="li-search-con-num">{{ chatRef.chat.personCount }}</span>人</p>
         <el-input class="li-search-inp" placeholder="搜索" v-model="searchValue" prefix-icon="Search" />
       </li>
       <ul class="img-list con">
-        <li class="img-list-con img-list-add" @click="openDialogAdd" v-if="chat.curChat.value?.typeName === '群组'">+
+        <li class="img-list-con img-list-add" @click="openDialogAdd" v-if="chatRef.chat.target.typeName === '群组'">+
         </li>
-        <li class="img-list-con img-list-del" @click="openDialogDel" v-if="chat.curChat.value?.typeName === '群组'">
+        <li class="img-list-con img-list-del" @click="openDialogDel" v-if="chatRef.chat.target.typeName === '群组'">
           <el-icon>
             <SemiSelect />
           </el-icon>
@@ -26,35 +26,35 @@
           <HeadImg :name="item.name" :label="''" />
           <span class="img-list-con-name">{{ item.name }}</span>
         </li>
-        <span v-show="chat.curChat.value?.personNum > 10" class="img-list-more-btn"
-          @click="chat.getPersons(false)">查看更多</span>
+        <span v-show="chatRef.chat.personCount > 10" class="img-list-more-btn"
+          @click="chatRef.getPersons(false)">查看更多</span>
       </ul>
-      <li class="con setting-con border-b" v-if="chat.curChat.value?.typeName === '群组'">
+      <li class="con setting-con border-b" v-if="chatRef.chat.target.typeName === '群组'">
         <span class="con-label">我在本群昵称</span>
         <span class="con-value">测试昵称</span>
       </li>
-      <li class="con setting-con border-b" v-if="chat.curChat.value?.typeName === '群组'">
-        <span class="con-label">{{ `${chat.curChat.value?.typeName}备注` }}</span>
-        <span class="con-value">{{ chat.curChat.value?.remark }}</span>
+      <li class="con setting-con border-b" v-if="chatRef.chat.target.typeName === '群组'">
+        <span class="con-label">{{ `${chatRef.chat.target.typeName}备注` }}</span>
+        <span class="con-value">{{ chatRef.chat.target.remark }}</span>
       </li>
       <li class="con check-con">
         <el-checkbox v-model="state.isIgnoreMsg"
-          :label="chat.curChat.value?.typeName !== '人员' ? '设置群消息免打扰' : '设置免打扰'" />
+          :label="chatRef.chat.target.typeName !== '人员' ? '设置群消息免打扰' : '设置免打扰'" />
       </li>
       <li class="con check-con">
-        <el-checkbox v-model="state.isStick" :label="chat.curChat.value?.typeName !== '人员' ? '置顶该群' : '置顶会话'" />
+        <el-checkbox v-model="state.isStick" :label="chatRef.chat.target.typeName!== '人员' ? '置顶该群' : '置顶会话'" />
       </li>
     </ul>
-    <div class="footer" v-if="chat.curChat.value.spaceId === chat.userId.value">
-      <template v-if="chat.curChat.value?.typeName === '群组'">
+    <div class="footer" v-if="chatRef.chat.spaceId === chatRef.chat.userId">
+      <template v-if="chatRef.chat.target.typeName === '群组'">
         <el-button type="danger" plain>退出该群</el-button>
         <el-button type="danger">解散该群</el-button>
       </template>
-      <template v-if="chat.curChat.value?.typeName === '人员'">
+      <template v-if="chatRef.chat.target.typeName === '人员'">
         <el-button type="danger" plain>删除好友</el-button>
       </template>
       <template v-if="true">
-        <el-button type="danger" v-on:click="chat.clearMsg()" plain>清空聊天记录</el-button>
+        <el-button type="danger" v-on:click="chatRef.clearMsg()" plain>清空聊天记录</el-button>
       </template>
     </div>
   </div>
@@ -86,7 +86,7 @@
   </el-dialog>
   <el-dialog v-model="dialogVisibleDel" title="移出群聊" width="30%">
     <div class="invitateBox">
-      <div class="invitateBox-box" v-for="(item, index) in chat.qunPersons.value" :key="item.id"
+      <div class="invitateBox-box" v-for="(item, index) in chatRef.persons" :key="item.id"
         @click="onClickBoxDel(item, index)">
         <div class="invitateBox-flex">
           <HeadImg :name="item.name" :label="''" />
@@ -111,7 +111,11 @@ import $services from '@/services'
 import { ElMessage } from 'element-plus'
 import HeadImg from '@/components/headImg.vue'
 import { reactive, ref, computed } from 'vue'
-import {chatCtrl as chat} from '@/ts/coreIndex'
+
+const props = defineProps<{
+  chatRef: any;
+}>();
+
 // 会话列表搜索关键字
 const searchValue = ref<string>('')
 
@@ -162,7 +166,7 @@ const onClickBoxDel = (item: itemResult, index: number) => {
 }
 // 搜索人员
 const showPersons = computed((): itemResult[] => {
-  return chat.qunPersons.value.filter((item) => {
+  return props.chatRef.chat.persons.filter((item: any) => {
     if (searchValue.value && searchValue.value.length > 0) {
       return item.name.includes(searchValue.value)
     }
@@ -174,7 +178,7 @@ const submitInvite = () => {
   $services.cohort
     .pullPerson({
       data: {
-        id: chat.curChat.value?.id,
+        id: props.chatRef.target.id,
         targetIds: state.ids
       }
     })
@@ -185,7 +189,7 @@ const submitInvite = () => {
           type: 'success'
         })
         dialogVisible.value = false
-        chat.getPersons(true)
+        props.chatRef.getPersons(true)
       } else {
         ElMessage({
           message: '您不是群管理员',
@@ -199,7 +203,7 @@ const submitInviteDel = () => {
   $services.cohort
     .removePerson({
       data: {
-        id: chat.curChat.value?.id,
+        id: props.chatRef.target.id,
         targetIds: state.delids
       }
     })
@@ -210,7 +214,7 @@ const submitInviteDel = () => {
           type: 'success'
         })
         dialogVisibleDel.value = false
-        chat.getPersons(true)
+        props.chatRef.getPersons(true)
       } else {
         ElMessage({
           message: '您不是群管理员',
@@ -222,12 +226,12 @@ const submitInviteDel = () => {
 
 const openDialogAdd = () => {
   dialogVisible.value = true
-  chat.chats.value.forEach((item) => {
-    if (item.id === chat.userId.value) {
-      state.friendsData = item.chats.filter((c) => {
+  props.chatRef.chats.forEach((item: any) => {
+    if (item.id === props.chatRef.userId) {
+      state.friendsData = item.chats.filter((c: any) => {
         if (c.typeName === '人员') {
           let exist = false
-          chat.qunPersons.value.forEach((p) => {
+          props.chatRef.persons.forEach((p: any) => {
             if (c.id === p.id) {
               exist = true
             }
