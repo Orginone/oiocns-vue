@@ -54,9 +54,9 @@ const isShowDetail = ref<boolean>(false);
 // class Baz {
 //   obj: any;
 //   constructor() {
-//     this.obj = reactive({
+//     this.obj = {
 //       foo: [],
-//     });
+//     };
 //     setInterval(() => {
 //       this.receiveMessage();
 //     }, 2000);
