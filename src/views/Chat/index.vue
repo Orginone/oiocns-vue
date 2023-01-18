@@ -34,6 +34,7 @@
     <!-- 详情 -->
     <GroupDetail v-if="isShowDetail" :chatRef="chatRef" />
   </div>
+  <!-- {{ test }} -->
 </template>
 
 <script lang="ts" setup>
@@ -49,6 +50,36 @@ const isShowDetail = ref<boolean>(false);
 /**
  * 获取 chatController 实例化对象
  */
+
+// class Baz {
+//   obj: any;
+//   constructor() {
+//     this.obj = reactive({
+//       foo: [],
+//     });
+//     setInterval(() => {
+//       this.receiveMessage();
+//     }, 2000);
+//   }
+//   receiveMessage() {
+//     this.obj.foo.push({ info: "我可真是个倒霉蛋" });
+//   }
+// }
+
+// const test = ref<any>();
+
+// setTimeout(() => {
+//   test.value = new Baz();
+// });
+
+// watch(
+//   () => test.value,
+//   () => {
+//     console.log("change");
+//   },
+//   { deep: true }
+// );
+
 const chatRef = ref<any>({});
 
 setTimeout(() => {
