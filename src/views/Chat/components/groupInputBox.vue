@@ -35,7 +35,6 @@
         :show-file-list="false"
         :http-request="customRequest"
         :before-upload="beforeUpload"
-        :multiple="false"
         style="display: flex"
       >
         <template #trigger>

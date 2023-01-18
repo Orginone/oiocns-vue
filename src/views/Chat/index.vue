@@ -54,9 +54,9 @@ const isShowDetail = ref<boolean>(false);
 // class Baz {
 //   obj: any;
 //   constructor() {
-//     this.obj = reactive({
+//     this.obj = {
 //       foo: [],
-//     });
+//     };
 //     setInterval(() => {
 //       this.receiveMessage();
 //     }, 2000);
@@ -90,6 +90,13 @@ watch(
   () => chatRef.value,
   (val: any) => {
     console.log("chatRef update", val);
+    if(val.chat) {
+      val.chat.messages.forEach((item: any) => {
+        if(item.msgType === '图片') {
+          item.link = JSON.parse(item.showTxt).thumbnail
+        }
+      })
+    }
   },
   { deep: true }
 );

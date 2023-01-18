@@ -42,8 +42,20 @@
                   class="con-content-name"
                   >{{ chatRef.getName(item.fromId) }}</span
                 >
-                <div class="con-content-link"></div>
-                <div class="con-content-txt" v-html="item.showTxt"></div>
+                <!-- <div class="con-content-link"></div> -->
+                <div
+                  v-if="item.msgType === 'text'"
+                  class="con-content-txt"
+                  v-html="item.showTxt"
+                ></div>
+                <el-image
+                  v-if="item.msgType === '图片'"
+                  style="width: 100px; height: 100px;margin-left: 10px"
+                  :src="item.link"
+                  :zoom-rate="1.2"
+                  :preview-src-list="[item.link]"
+                  fit="cover"
+                />
               </div>
             </div>
           </template>
@@ -71,8 +83,20 @@
           <template #reference>
             <div class="con-body">
               <div class="con-content">
-                <div class="con-content-link"></div>
-                <div class="con-content-txt" v-html="item.showTxt"></div>
+                <!-- <div class="con-content-link"></div> -->
+                <div
+                  v-if="item.msgType === 'text'"
+                  class="con-content-txt"
+                  v-html="item.showTxt"
+                ></div>
+                <el-image
+                  v-if="item.msgType === '图片'"
+                  style="width: 100px; height: 100px;margin-left: 10px;margin-right: 10px"
+                  :src="item.link"
+                  :zoom-rate="1.2"
+                  :preview-src-list="[item.link]"
+                  fit="cover"
+                />
               </div>
               <HeadImg :name="chatRef.getName(item.fromId)" />
             </div>
@@ -239,6 +263,11 @@ defineExpose({
 });
 </script>
 <style>
+.con-content-img {
+  max-width: 100%;
+  max-height: 400px;
+}
+
 .con-content-txt img {
   max-width: 100%;
   max-height: 400px;
