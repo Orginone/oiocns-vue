@@ -13,19 +13,19 @@
         </el-select></span>
     </div>
     <div class="layout-header">
-      <el-menu :default-active="defaultActive" active-text-color="#154AD8" class="el-menu-demo" mode="horizontal"
+      <!-- <el-menu :default-active="defaultActive" active-text-color="#154AD8" class="el-menu-demo" mode="horizontal"
         :ellipsis="false" @select="handleSelect">
-        <!-- <el-menu-item index="baseSetting">① 基础信息</el-menu-item> -->
-        <!-- <el-menu-item index="formSetting">②③ 审批表单</el-menu-item> -->
+        <el-menu-item index="baseSetting">① 基础信息</el-menu-item>
+        <el-menu-item index="formSetting">②③ 审批表单</el-menu-item>
         <el-menu-item index="processDesign">流程设计</el-menu-item>
-        <!-- <el-menu-item index="proSetting">④ 扩展设置</el-menu-item> -->
-      </el-menu>
-      <div class="back">
-        <!-- <el-button size="default" @click="exit">
+        <el-menu-item index="proSetting">④ 扩展设置</el-menu-item>
+      </el-menu> -->
+      <!-- <div class="back">
+        <el-button size="default" @click="exit">
           <el-icon>
             <Back />
           </el-icon>退出
-        </el-button> -->
+        </el-button>
         <span>
           <el-input v-model="design.name" size="default" v-show="showInput" style="width: 300px"
           @blur="showInput = false" @keyup.enter.native="showInput = false"></el-input>
@@ -33,7 +33,7 @@
         <el-icon :size="20" color="#409EFC">
             <Stamp />
         </el-icon>流程名：{{design.name}}
-      </el-link>
+      </el-link> -->
       <!-- <span style="padding-left:10px;color:grey"> 业务名：{{form.formName ||  form.business || form.formId}}</span> -->
       
       <!-- <span style="padding-left:10px;color:grey" v-if="!bindOperateShow" @click="bindOperateShow=true">   <el-button size="small" type="primary" round>
@@ -50,8 +50,8 @@
             :value="item"
           />
         </el-select></span> -->
-        </span>
-      </div>
+        <!-- </span>
+      </div> -->
       <div class="publish">
         <!-- <el-button size="small" @click="preview">
           <el-icon>

@@ -181,6 +181,7 @@
     ]
   })
   onMounted(() => {
+    return 
     // TODO: 目前消息只有全局脏检查订阅，不能单独订阅
     chat.subscribe(() => {
       console.warn("触发全局订阅回调");
@@ -334,6 +335,7 @@
     handleClose();
     modelIsShow.value = false
     store.setCurSpace(data.id)
+    location.reload()
     // $services.person
     //   .changeWorkspace({
     //     data: {

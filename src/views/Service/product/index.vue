@@ -68,7 +68,7 @@
     import type { TabsPaneContext } from 'element-plus'
     import thingServices from '@/module/flow/thing'
     import {todoCtrl} from '@/ts/coreIndex'
-    const statusMap = {
+    const statusMap:any = {
       1: {
         color: 'blue',
         text: '待处理',
@@ -162,24 +162,26 @@
       if(!tab){
         tab.index= '0';
       }
+      let listData = todoCtrl.PublishTodo;
+      console.log('listData',listData,todoCtrl)
+      let todoList:any = []
+      let doList:any = []
+      listData.forEach((element:any) => {
+        todoList.push(...element?._todoList)
+        doList.push(...element?._doList)
+      });
       if (tab.index== '0') {
-        const list = await todoCtrl.PublishTodo['getTodoList'](false);
-        console.log('list',list)
-        state.list = list || []
+        state.list = todoList
       } else if (tab.index =='1'){
-        const list = await todoCtrl.PublishTodo['getDoList']({
-          limit:0,
-          offset:0,
-          filter:""
-        });
-        state.list = list || []
+        state.list = doList
       }else {
-        const list = await todoCtrl.PublishTodo['getApplyList']({
-          limit:0,
-          offset:0,
+        const list = await listData[0].getApplyList({
+          limit:pageStore.pageSize,
+          offset:pageStore.currentPage,
           filter:""
         });
-        state.list = list || []
+        state.list = list.result
+        diyTable.value.state.page.total = list.total
       }
       console.log('state', state.list)
     };
@@ -192,15 +194,17 @@
           message: '审批完成',
           type: 'success'
         })
-        loadList({
-          uid: 0,
-          slots: undefined,
-          props: undefined,
-          paneName: '',
-          active: false,
-          index: activeName.value,
-          isClosable: false
-        },);
+        setTimeout(() => {
+          loadList({
+            uid: 0,
+            slots: undefined,
+            props: undefined,
+            paneName: '',
+            active: false,
+            index: activeName.value,
+            isClosable: false
+          },);
+        },200)
       })
     }
     // 拒绝
@@ -210,15 +214,17 @@
           message: '审批完成',
           type: 'success'
         })
-        loadList({
-          uid: 0,
-          slots: undefined,
-          props: undefined,
-          paneName: '',
-          active: false,
-          index: activeName.value,
-          isClosable: false
-        },);
+        setTimeout(() => {
+          loadList({
+            uid: 0,
+            slots: undefined,
+            props: undefined,
+            paneName: '',
+            active: false,
+            index: activeName.value,
+            isClosable: false
+          },);
+        },200)
       })
     }
     // 取消
@@ -228,27 +234,31 @@
           message: '审批完成',
           type: 'success'
         })
-        loadList({
-          uid: 0,
-          slots: undefined,
-          props: undefined,
-          paneName: '',
-          active: false,
-          index: activeName.value,
-          isClosable: false
-        },);
+        setTimeout(() => {
+          loadList({
+            uid: 0,
+            slots: undefined,
+            props: undefined,
+            paneName: '',
+            active: false,
+            index: activeName.value,
+            isClosable: false
+          },);
+        },200)
       })
     }
     onMounted(() => {
-      loadList({
-          uid: 0,
-          slots: undefined,
-          props: undefined,
-          paneName: '',
-          active: false,
-          index: '0',
-          isClosable: false
-      },);
+      setTimeout(() => {
+        loadList({
+            uid: 0,
+            slots: undefined,
+            props: undefined,
+            paneName: '',
+            active: false,
+            index: '0',
+            isClosable: false
+        },);
+      },1000)
       activeName.value = '1';
     });
   </script>

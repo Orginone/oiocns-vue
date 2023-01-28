@@ -18,7 +18,7 @@
           <h4>岗位人员</h4>
         </template>
         <template #buttons>
-          <el-button class="btn-check" @click="showGiveDialog" type="primary" link>指派岗位
+          <el-button @click="showGiveDialog" type="primary" link>指派岗位
             <!-- <span style="transform: scale(1.5);">+</span> -->
           </el-button>
         </template>
@@ -73,8 +73,12 @@ import { userCtrl, TargetType } from '@/ts/coreIndex';
 const store = setCenterStore()
 store.$subscribe(
 (_, state) => {
-  if(state.currentSelectItme.label === '岗位管理') return
-  getUsers(store.currentSelectItme?.object)
+  if(state.currentSelectItme){
+    if(state.currentSelectItme){
+      if(state.currentSelectItme.label === '岗位管理') return
+      getUsers(store.currentSelectItme?.object)
+    }
+  }
 },
 { detached: false }
 )

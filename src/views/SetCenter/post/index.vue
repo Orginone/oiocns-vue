@@ -123,12 +123,12 @@
       box-sizing: border-box;
       overflow: hidden;
       .info {
-        height: calc(50%);
+        height: calc(45%);
         padding: 0 0 3px 0;
         box-sizing: border-box;
       }
       .body {
-        height: calc(50%);
+        height: calc(43%);
       }
     }
   }

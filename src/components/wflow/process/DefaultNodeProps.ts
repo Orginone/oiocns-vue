@@ -135,7 +135,7 @@ export const getResource:(resource:any,toInt:boolean)=> any = (resource:any,toIn
   return res
 }
 
-var  formFields:any[] = []
+var formFields:any[] = []
 
 export const setFormFields: (fields:any[]) => void = (fields:any[]) => { 
   formFields = fields

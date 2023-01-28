@@ -337,7 +337,7 @@ watch(filterText, (val) => {
   height: 100%;
   border: 0;
 }
-:deep .el-card__body{
+:deep(.el-card__body){
   padding: 0 !important;
 }
 
@@ -366,7 +366,7 @@ watch(filterText, (val) => {
 .row-btn:last-child{
   margin-bottom: 0;
 }
-:deep .el-tree-node__content {
+:deep(.el-tree-node__content) {
   height: 40px;
   position: relative;
 }
@@ -404,7 +404,7 @@ watch(filterText, (val) => {
   }
 }
 // 去掉el-input自带边框
-:deep .search .el-input__wrapper {
+:deep(.search .el-input__wrapper) {
     margin: 15px;
     padding-left: 15px !important;
     box-sizing: border-box;

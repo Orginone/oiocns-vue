@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%; background: #fff">
+  <div class="menu-side" style="height: 100%; background: #fff">
     <div class="title">
       <component v-show="titleData.backFlag" @click="goBack" :is="'ArrowLeft'" style="width: 16px;height: 16px;cursor:pointer;position: absolute;left: 20px;"></component>
       <component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;
@@ -13,7 +13,7 @@
       >
         <template #title>
           <component :is="item.icon" style="width: 16px;height: 16px;"></component>&nbsp;
-          <span style="font-size: 13px;color: #909399;">{{ item.name }}</span>
+          <span style="font-size: 14px;color: #909399;">{{ item.name }}</span>
         </template>
         <el-menu-item
           v-for="val in item.children"
@@ -59,7 +59,7 @@
               </template>
               <div v-if="btnType=='STORE_USER_MENU'">
                 <div class="btn-bus" :style="{cursor: 'pointer'}" >
-                  <div class="row-btn" @click="storeBus(1,$event)"  :data-index="node.key">创建分类</div>
+                  <div class="row-btn" @click="storeBus(1,$event)" :data-index="node.key">创建分类</div>
                   <div class="row-btn" @click="storeBus(2,$event)" :data-index="node.key">删除分类</div>
                 </div>
               </div>  
@@ -175,6 +175,7 @@ watch(filterText, (val) => {
 })
 const instance = getCurrentInstance();
 const clickBus = (e:any)=>{
+  console.log('aaa',e.target.dataset.index)
   instance?.proxy?.$Bus.emit('clickBus', e.target.dataset.index)
 }
 const storeBus = (type:number,e:any)=>{
@@ -187,16 +188,15 @@ const filterNode = (value: string, data: any) => {
 
 // 路由跳转
 const jump = (val:any)=>{
-    if(val?.data?.isStoreMenu){
-      instance?.proxy?.$Bus.emit('storeMenu', val.data.items)
-    }else{
-      if(val.url){
-        router.push(val.url)
-      }else if (val.data.url){
-        router.push(val.data.url)
-      }
+  if(val?.data?.isStoreMenu){ //仓库分类事件
+    instance?.proxy?.$Bus.emit('storeMenu', val.data.items)
+  }else if(val?.data?.shopLink){ //商店分类跳转事件
+    instance?.proxy?.$Bus.emit('shopLink', val.data)
+  } else{ //普通url跳转
+    if(val.url){
+      router.push(val.url)
     }
-   
+  }
 }
 // 树点击事件
 const nodeClick = (val: any) => {
@@ -206,7 +206,22 @@ const handleSelect = (key: any) => {
   instance?.proxy?.$Bus.emit('selectBtn', key)
 }
 </script>
-
+<style lang="scss">
+.menu-side{
+  .el-menu{
+    border: 0;
+  }
+  .el-sub-menu__title{
+    height: 40px;
+    line-height: 40px;
+  }
+  .el-menu-item{
+    height: 45px;
+    line-height: 45px;
+  }
+}
+ 
+</style>
 <style lang="scss" scoped>
   *{font-family: '微软雅黑';}
   .title{
@@ -217,7 +232,6 @@ const handleSelect = (key: any) => {
     background: #f9fbfe;
     font-size: 16px;
   }
-
   .row-btn{
     text-align: center;
     line-height: 27px;
@@ -257,27 +271,22 @@ const handleSelect = (key: any) => {
     }
   }
 
-  :deep .el-sub-menu__icon-arrow{
+  :deep(.el-sub-menu__icon-arrow){
     display: none;
   }
-  :deep .el-menu-item{
-    height: 45px;
-    width: 180px;
-  }
-
   // :deep .no-penultimate > .el-tree-node__content{
     // font-weight: 800;
   // }
 
-  :deep .is-penultimate > .el-tree-node__content {
+  :deep(.is-penultimate > .el-tree-node__content) {
     font-size: 10px;
     color: #909399;
   }
-  :deep .el-tree-node__content{
+  :deep(.el-tree-node__content){
     height: 40px;
   }
   // 去掉el-input自带边框
-  :deep .el-input__wrapper {
+  :deep(.el-input__wrapper) {
     margin: 15px;
     padding-left: 15px !important;
     box-sizing: border-box;

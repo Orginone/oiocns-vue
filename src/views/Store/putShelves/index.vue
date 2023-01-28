@@ -97,8 +97,8 @@
       getProductList();
     })
     // 获取市场列表
-    const getMarketOptions = async (queryStr?: string) => {
-      marketList.value = marketCtrl.Market.joinedMarkets
+    const getMarketOptions = () => {
+      marketList.value = marketCtrl.target.joinedMarkets
     }
 
     // 提交上架

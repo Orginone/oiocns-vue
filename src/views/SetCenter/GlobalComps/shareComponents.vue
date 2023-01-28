@@ -462,7 +462,6 @@
   const handleNodeClick = async (node: any, load: boolean, search?: string) => {
 
     if (node) {
-      console.log('aaaa',appCtrl.curProduct,node)
       centerTreeShow.value = true
       const item: ITarget = node.item;
       console.log(radio.value,await item.loadAuthorityTree())

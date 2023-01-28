@@ -1,5 +1,5 @@
 <template>
-  <el-dialog class="create-shop-box" :show-close="false" append-to-body v-model="props.createDialog" title="新建商店" width="550px"  @close="closeDialog(false)">
+  <el-dialog class="create-shop-box" top="3vh" :show-close="false" append-to-body v-model="props.createDialog" title="新建商店" width="550px"  @close="closeDialog(false)">
     <el-form ref="formRef"  label-position="top" class="from-box" :model="form">
       <div class="from-content">
           <div class="from-left">
@@ -9,14 +9,7 @@
                   { min: 3, message: '商店名称至少有3个字', trigger: 'blur' },
                   ]">
                   <el-input v-model.number="form.name" type="text" autocomplete="off" />
-              </el-form-item>
-              <!-- TODO  商店类型怎么传输怎么定义需要和后台沟通-->
-              <!-- <el-form-item label="商店类型" prop="code" :rules="[
-                  { required: true, message: '请输入商店编码，以便其他查询' },
-                  ]">
-                  <el-input v-model.number="form.code" type="text" autocomplete="off" />
-              </el-form-item> -->
-             
+              </el-form-item>             
               <el-form-item label="商店编码" prop="code" :rules="[
                   { required: true, message: '请输入商店编码，以便其他查询' },
                   ]">
@@ -26,10 +19,10 @@
                   <el-switch v-model="form.public" active-text="是" inactive-text="否" inline-prompt></el-switch>
               </el-form-item>
           </div>
-          <div class="from-right">
+          <!-- <div class="from-right">
               <div class="head-img">头像</div>
               <div class="head-text">商店封面</div>
-          </div>
+          </div> -->
       </div>
       <el-form-item label="商店简介" prop="remark" :rules="[
         { required: true, message: '请输入商店简介' },
@@ -96,7 +89,7 @@ const createShop = async (formEl: FormInstance | undefined) =>{
   })
   if (!isValidate) return
   
-  const market = await marketCtrl.Market.createMarket({
+  const market = await marketCtrl.target.createMarket({
       name: form.name,
       code: form.code,
       samrId: store.queryInfo.id,

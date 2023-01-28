@@ -26,7 +26,7 @@
             <el-tag type="info">{{scope.row._data.market.code}}</el-tag>
           </template>
           <template  #marketCode="scope" >
-            {{scope.row.Data.target ? scope.row.Data.target.name : '本人'}}
+            {{scope.row.Data.target ? scope.row.Data.target.name : scope.row.Data.targetId}}
           </template>
           <template  #status="scope" >
              <el-tag>{{statusMap[scope.row._data.status].text}}</el-tag>
@@ -69,7 +69,7 @@
   import type { TabsPaneContext } from 'element-plus'
   // import thingServices from '@/module/flow/thing'
   import {todoCtrl} from '@/ts/coreIndex'
-  const statusMap = {
+  const statusMap:any = {
     1: {
       color: 'blue',
       text: '待处理',
@@ -176,27 +176,36 @@
     if(!tab){
       tab.index= '0';
     }
+    let listData = todoCtrl.MarketTodo;
+    console.log('listData',listData)
+    let todoList:any = []
+    let doList:any = []
+    listData.forEach((element:any) => {
+      todoList.push(...element?._todoList)
+      doList.push(...element?._doList)
+    });
     if (tab.index== '0') {
-      const list = await todoCtrl.MarketTodo['getTodoList'](false);
-      state.list = list || []
-      diyTable.value.state.page.total = state.list.length
+      nextTick(()=>{
+        state.list = todoList
+        diyTable.value.state.page.total = state?.list?.length || 0
+      })
 
     } else if (tab.index =='1'){
-      const list = await todoCtrl.MarketTodo['getDoList']({
-        limit:pageStore.pageSize,
-        offset:pageStore.currentPage,
-        filter:""
-      });
-      state.list = list || []
-      diyTable.value.state.page.total = state.list.length
+      nextTick(()=>{
+        state.list = doList
+        diyTable.value.state.page.total = state?.list?.length || 0
+      })
     }else {
-      const list = await todoCtrl.MarketTodo['getApplyList']({
+   
+      // state.list = list || []
+      // diyTable.value.state.page.total = state.list.length
+      const list = await listData[0].getApplyList({
         limit:pageStore.pageSize,
         offset:pageStore.currentPage,
         filter:""
       });
-      state.list = list || []
-      diyTable.value.state.page.total = state.list.length
+      state.list = list.result
+      diyTable.value.state.page.total = list.total
     }
     console.log('state', state.list)
   };
@@ -209,15 +218,17 @@
         message: '审批完成',
         type: 'success'
       })
-      loadList({
-        uid: 0,
-        slots: undefined,
-        props: undefined,
-        paneName: '',
-        active: false,
-        index: activeName.value,
-        isClosable: false
-      },);
+      setTimeout(() => {
+        loadList({
+          uid: 0,
+          slots: undefined,
+          props: undefined,
+          paneName: '',
+          active: false,
+          index: activeName.value,
+          isClosable: false
+        },);
+      }, 200);
     })
   }
   // 拒绝
@@ -227,15 +238,17 @@
         message: '审批完成',
         type: 'success'
       })
-      loadList({
-        uid: 0,
-        slots: undefined,
-        props: undefined,
-        paneName: '',
-        active: false,
-        index: activeName.value,
-        isClosable: false
-      },);
+      setTimeout(() => {
+        loadList({
+            uid: 0,
+            slots: undefined,
+            props: undefined,
+            paneName: '',
+            active: false,
+            index: activeName.value,
+            isClosable: false
+        },);
+      },200)
     })
   }
   // 取消
@@ -245,30 +258,32 @@
         message: '审批完成',
         type: 'success'
       })
-      loadList({
-        uid: 0,
-        slots: undefined,
-        props: undefined,
-        paneName: '',
-        active: false,
-        index: activeName.value,
-        isClosable: false
-      },);
-    })
-  }
-  onMounted(() => {
-   nextTick(()=>{
-      loadList({
+      setTimeout(() => {
+        loadList({
           uid: 0,
           slots: undefined,
           props: undefined,
           paneName: '',
           active: false,
-          index: '0',
+          index: activeName.value,
           isClosable: false
-      },);
-      activeName.value = '0';
-   })
+        },);
+      },200)
+    })
+  }
+  onMounted(() => {
+    setTimeout(() => {
+      loadList({
+            uid: 0,
+            slots: undefined,
+            props: undefined,
+            paneName: '',
+            active: false,
+            index: '0',
+            isClosable: false
+        },);
+    }, 1000);
+    activeName.value = '0';
   });
 </script>
 

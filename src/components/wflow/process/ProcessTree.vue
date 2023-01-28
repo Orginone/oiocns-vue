@@ -25,6 +25,13 @@
   import DefaultProps from "./DefaultNodeProps"
 
   import { useAppwfConfig } from '@/store/wflow';
+  import {
+    APPROVAL_PROPS,
+    CC_PROPS,
+    DELAY_PROPS,
+    TRIGGER_PROPS,
+  } from './DefaultNodeProps';
+	import {processCtrl} from '@/ts/coreIndex';
 
   export default defineComponent({
     name: 'ProcessTree',
@@ -66,9 +73,18 @@
 
       const proxy = appContext.config.globalProperties;
 
-      
-
       const stores = useAppwfConfig(proxy.$pinia);
+
+      // console.log(stores)
+
+      /**组件渲染中变更dom   共享状态*/
+      const design = processCtrl.currentTreeDesign;
+      let currentDom = design.resource;
+      proxy.$pinia.state.value.appwfConfig.design.resource = currentDom
+
+      const addNodeMap = computed((state: any) => {
+        return proxy.$pinia.state.value.appwfConfig.addNodeMap
+      });
       
       const nodeMap = computed(() => {
         return proxy.$pinia.state.value.appwfConfig.nodeMap;
@@ -81,7 +97,11 @@
       const state = reactive({
         valid: true,
       });
+
       const getDomTree = (h: any, node: any) => {
+        if (!node || !node.nodeId) {
+          return [];
+        }
         toMapping(node);
         if(node?.type=='CC'){
           
@@ -90,7 +110,6 @@
         if (isPrimaryNode(node)) {
           //普通业务节点
           let childDoms: any = getDomTree(h, node.children)
-          
           decodeAppendDom(h, node, childDoms, { 
             _disabled: node?._disabled,
             _executable: node?._executable,
@@ -100,12 +119,13 @@
           return [h('div', {
             'class': {
               'primary-node': true
-            }
+            },
+            'key': getRandomId(),
           }, childDoms)];
         } else if (isBranchNode(node)) {
           let index = 0;
           //遍历分支节点，包含并行及条件节点
-          let branchItems = node.branches.map((branchNode: any) => {
+          let branchItems = node.branches?.map((branchNode: any) => {
             //处理每个分支内子节点
             toMapping(branchNode);
             
@@ -129,7 +149,7 @@
           })
           
           //插入添加分支/条件的按钮
-          branchItems.unshift(h('div', {
+          branchItems?.unshift(h('div', {
             'class': {
               'add-branch-btn': true
             },
@@ -338,7 +358,7 @@
         }
         switch (type) {
           case 'APPROVAL':
-            insertApprovalNode(parentNode, afterNode);
+            insertApprovalNode(parentNode);
             break;
           case 'CC':
             insertCcNode(parentNode);
@@ -372,15 +392,16 @@
           }
           parentNode.children.children = afterNode;
         }
+        // console.log(parentNode)
         // ctx.$forceUpdate()
       };
-      const insertApprovalNode = (parentNode: any, afterNode: any) => {
-        parentNode.children.name = '';
-        parentNode.children.props = deepCopy(DefaultProps.APPROVAL_PROPS);
+      const insertApprovalNode = (parentNode: any) => {
+        parentNode.children.name = '审批对象';
+        parentNode.children.props = deepCopy(APPROVAL_PROPS);
       };
       const insertCcNode = (parentNode: any) => {
         parentNode.children.name = '抄送对象';
-        parentNode.children.props = deepCopy(DefaultProps.CC_PROPS);
+        parentNode.children.props = deepCopy(CC_PROPS);
       };
       const insertConditionsNode = (parentNode: any) => {
         parentNode.children.name = '条件分支';
@@ -396,7 +417,7 @@
           // props: deepCopy(DefaultProps.CONDITION_PROPS),
           conditions: [],
           name: "条件1",
-          children: {}
+          // children: {}
         }, {
           nodeId: getRandomId(),
           parentId: parentNode.children.nodeId,
@@ -404,7 +425,7 @@
           // props: deepCopy(DefaultProps.CONDITION_PROPS),
           conditions: [],
           name: "条件2",
-          children: {}
+          // children: {}
         }];
       };
       const insertConcurrentsNode = (parentNode: any) => {
@@ -432,13 +453,13 @@
       };
       const insertDelayNode = (parentNode: any) => {
         parentNode.children.name = '延时处理';
-        parentNode.children.props = deepCopy(DefaultProps.DELAY_PROPS);
+        parentNode.children.props = deepCopy(DELAY_PROPS);
         // proxy.$set(parentNode.children, "name", "延时处理")
         // proxy.$set(parentNode.children, "props", proxy.$deepCopy(DefaultProps.DELAY_PROPS))
       };
       const insertTriggerNode = (parentNode: any) => {
         parentNode.children.name = '触发器';
-        parentNode.children.props = deepCopy(DefaultProps.TRIGGER_PROPS);
+        parentNode.children.props = deepCopy(TRIGGER_PROPS);
         // proxy.$set(parentNode.children, "name", "触发器")
         // proxy.$set(parentNode.children, "props", proxy.$deepCopy(DefaultProps.TRIGGER_PROPS))
       };
@@ -448,8 +469,8 @@
         }
         return getBranchEndNode(conditionNode.children);
       };
+      
       const addBranchNode = (node: any) => {
-        
         if (node.branches.length < 8) {
           node.branches.push({
             nodeId: getRandomId(),
@@ -510,23 +531,23 @@
           proxy.$message.warning("出现错误，找不到上级节点😥")
         }
       };
-      const validateProcess = () => {
-        state.valid = true
-        let err: any = []
-        validate(err, dom.value)
-        return err
-      };
-      const validateNode = (err: any, node: any) => {
-        var cmp:any = ctx.refs[node.nodeId];
-        if (cmp.validate) {
-          state.valid = cmp.validate(err)
-        }
-      };
-      //更新指定节点的dom
-      const nodeDomUpdate = (node: any) => {
-        var cmp:any = ctx.refs[node.nodeId];
-        cmp.$forceUpdate()
-      };
+      // const validateProcess = () => {
+      //   state.valid = true
+      //   let err: any = []
+      //   validate(err, dom.value)
+      //   return err
+      // };
+      // const validateNode = (err: any, node: any) => {
+      //   var cmp:any = ctx.refs[node.nodeId];
+      //   if (cmp.validate) {
+      //     state.valid = cmp.validate(err)
+      //   }
+      // };
+      // //更新指定节点的dom
+      // const nodeDomUpdate = (node: any) => {
+      //   var cmp:any = ctx.refs[node.nodeId];
+      //   cmp.$forceUpdate()
+      // };
       //给定一个起始节点，遍历内部所有节点
       const forEachNode = (parent: any, node: any, callback: any) => {
         if (isBranchNode(node)) {
@@ -542,24 +563,24 @@
         }
       };
       //校验所有节点设置
-      const validate = (err: any, node: any) => {
+      // const validate = (err: any, node: any) => {
         
-        if (isPrimaryNode(node)) {
-          validateNode(err, node)
-          validate(err, node.children)
-        } else if (isBranchNode(node)) {
-          //校验每个分支
-          node.branches.map((branchNode: any) => {
-            //校验条件节点
-            validateNode(err, branchNode)
-            //校验条件节点后面的节点
-            validate(err, branchNode.children)
-          })
-          validate(err, node.children)
-        } else if (isEmptyNode(node)) {
-          validate(err, node.children)
-        }
-      };
+      //   if (isPrimaryNode(node)) {
+      //     validateNode(err, node)
+      //     validate(err, node.children)
+      //   } else if (isBranchNode(node)) {
+      //     //校验每个分支
+      //     node.branches.map((branchNode: any) => {
+      //       //校验条件节点
+      //       validateNode(err, branchNode)
+      //       //校验条件节点后面的节点
+      //       validate(err, branchNode.children)
+      //     })
+      //     validate(err, node.children)
+      //   } else if (isEmptyNode(node)) {
+      //     validate(err, node.children)
+      //   }
+      // };
 
       const deepCopy = (obj: any) => {
         //判断 传入对象 为 数组 或者 对象
@@ -611,11 +632,11 @@
         getBranchEndNode,
         addBranchNode,
         delNode,
-        validateProcess,
-        validateNode,
-        nodeDomUpdate,
+        // validateProcess,
+        // validateNode,
+        // nodeDomUpdate,
         forEachNode,
-        validate,
+        // validate,
         deepCopy,
         ...toRefs(state),
       };
@@ -708,7 +729,8 @@
 
   .add-branch-btn {
     position: absolute;
-    width: 80px;
+    width: 90px;
+    margin-left: 5px;
 
     .add-branch-btn-el {
       z-index: 999;
