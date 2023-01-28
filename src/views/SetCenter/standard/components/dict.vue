@@ -437,7 +437,7 @@
       padding: 8px;
     }
     .folder-node {
-      width: 160px;
+      width: calc(15vw - 70px);
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -465,6 +465,9 @@
     padding-left: 10px;
     width: 100%;
   }
+}
+:deep .search-wrap .el-tree{
+  width: 100%;
 }
 // 去掉el-input自带边框
 :deep .search .el-input__wrapper {
