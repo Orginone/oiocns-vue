@@ -466,9 +466,6 @@
     width: 100%;
   }
 }
-:deep .search-wrap .el-tree{
-  width: 100%;
-}
 // 去掉el-input自带边框
 :deep .search .el-input__wrapper {
   margin: 5px;
