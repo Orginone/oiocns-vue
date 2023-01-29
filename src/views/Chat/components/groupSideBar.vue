@@ -358,12 +358,25 @@ const getGroupList = (val: any) => {
  */
 const handlePhotoLink = (arr: any) => {
   return arr.map((item: any) => {
-    if (item && item.target.photo) {
+    if (item && item.target.photo && isJsonString(item.target.photo)) {
       item.target.link = JSON.parse(item.target.photo).thumbnail;
     }
     return item;
   });
 };
+
+/**
+ * 判断是否为 json 
+ */
+const isJsonString = (str: string) => {
+  try {
+    if (typeof JSON.parse(str) == 'object') {
+      return true;
+    }
+  } catch (e) {}
+
+  return false
+}
 
 //根据搜索条件-输出展示列表
 const showList = ref([]);
