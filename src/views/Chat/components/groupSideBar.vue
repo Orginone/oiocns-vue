@@ -1,51 +1,95 @@
 <template>
   <div class="chart-side-wrap" @contextmenu.stop>
     <div class="group-side-bar-search flex" :size="4">
-      <el-input placeholder="搜索" v-model="searchValue" prefix-icon="Search" />
-      <el-button icon="CirclePlus" type="primary" link class="refresh" @click="targetIsMore" @focusout="isMoreClose"></el-button>
+      <el-input
+        placeholder="搜索"
+        v-model="searchValue"
+        prefix-icon="Search"
+        @input="filterBySearch"
+      />
+      <el-button
+        icon="CirclePlus"
+        type="primary"
+        link
+        class="refresh"
+        @click="targetIsMore"
+        @focusout="isMoreClose"
+      ></el-button>
     </div>
     <ul class="context-text-wrap more" v-if="isMore">
-      <li class="context-menu-item" @click="chat.getChats()"><el-icon><ChatRound /></el-icon>发起群聊</li>
-      <li class="context-menu-item" @click="dialogVisible = true"><el-icon><Plus /></el-icon>添加好友</li>
-      <li class="context-menu-item" @click="chat.getChats()"><el-icon><Refresh /></el-icon>刷新会话</li>
+      <li class="context-menu-item" @click="dialogVisible = true">
+        <el-icon><Plus /></el-icon>添加好友
+      </li>
     </ul>
-    <searchFriend v-if="dialogVisible" @closeDialog="dialogVisible = false" :serachType="1" @checksSearch="checksSearch" />
-    <div class="group-side-bar-wrap" @contextmenu.prevent="mousePosition.isShowContext = false">
+    <searchFriend
+      v-if="dialogVisible"
+      @closeDialog="dialogVisible = false"
+      :serachType="1"
+      @checksSearch="checksSearch"
+    />
+    <div
+      class="group-side-bar-wrap"
+      @contextmenu.prevent="mousePosition.isShowContext = false"
+    >
       <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-      <el-tab-pane v-for="val in tabData" :label="val.label" :name="val.name" :key="val.id">
-        <ul class="group-con" v-for="item in showList" :key="item.id" v-show="val.name !== 'zero'">
-          <li class="group-con-item">
-            <!-- 分组标题 -->
-            <div class="con-title flex justify-between" :class="[openIdArr.includes(item.id) ? 'active' : '']"
-              @click="handleOpenSpace(item.id)">
-              <span>{{ item.name }}({{ item?.chats?.length ?? 0 }}) </span>
-            </div>
-            <!-- 展开的分组下的人员 -->
-            <div v-show="openIdArr?.includes(item.id)">
-              <div class="con-body" :class="{
-                  'top-session': item.id === 'toping',
-                  'active':chat.curChat.value?.spaceId === item.id && chat.curChat.value?.id === child.id
-              }" v-for="child in item.chats" :key="child.id"
-                @contextmenu.prevent.stop="(e: MouseEvent) => handleContextClick(e, child)"  @click="personnelContent(child)">
-                <HeadImg :name="child.name" :label="child.label" />
-                <div class="group-con-dot" v-if="child.noRead > 0">
-                  <span>{{ child.noRead }}</span>
-                </div>
-                <div class="group-con-show" @click="openChanged(child)">
-                  <el-tooltip class="box-item" :disabled="child.name.length < 10" :content="child.name"
-                    placement="right-start">
-                    <p class="group-con-show-name">
-                      <span class="group-con-show-name-label">{{ child.name }}</span>
-                      <span class="group-con-show-name-time">{{ handleFormatDate(child.msgTime) }}
-                      </span>
-                    </p>
-                  </el-tooltip>
-                  <p class="group-con-show-msg">{{ child.showTxt }}</p>
+        <el-tab-pane
+          v-for="val in tabData"
+          :label="val.label"
+          :name="val.name"
+          :key="val.name"
+        >
+          <!-- 除了会话以外的 tab -->
+          <ul
+            class="group-con"
+            v-for="item in groupList"
+            :key="item.spaceId"
+            v-show="val.name !== 'zero'"
+          >
+            <li class="group-con-item">
+              <!-- 分组标题 -->
+              <div
+                class="con-title flex justify-between"
+                :class="[openIdArr.includes(item.spaceId) ? 'active' : '']"
+                @click="handleOpenSpace(item.spaceId)"
+              >
+                <span>{{ item.spaceName }}({{ item.chats.length ?? 0 }}) </span>
+              </div>
+              <!-- 展开的分组下的人员 -->
+              <div v-show="openIdArr?.includes(item.spaceId)">
+                <div
+                  class="con-body"
+                  v-for="child in item.chats"
+                  :key="child.chatId"
+                  @click="personnelContent(child)"
+                >
+                  <HeadImg
+                    :name="child.target.name"
+                    :label="child.target.label"
+                    :limit="1"
+                    :is-square="false"
+                    :url="child.target.link ? child.target.link : null"
+                  />
+                  <div class="group-con-dot" v-if="child.noReadCount">
+                    <span>{{ child.noReadCount }}</span>
+                  </div>
+                  <div class="group-con-show" @click="openChanged(child)">
+                    <el-tooltip
+                      class="box-item"
+                      :disabled="child.target.name.length < 10"
+                      :content="child.target.name"
+                      placement="right-start"
+                    >
+                      <p class="group-con-show-name">
+                        <span class="group-con-show-name-label">{{
+                          child.target.name
+                        }}</span>
+                      </p>
+                    </el-tooltip>
+                  </div>
                 </div>
               </div>
-            </div>
-            <!-- 如果该分组没有被打开 但是有未读消息 则把未读消息会话显示出来 -->
-            <!-- <div :class="[
+              <!-- 如果该分组没有被打开 但是有未读消息 则把未读消息会话显示出来 -->
+              <!-- <div :class="[
               'con-body',
               chat.curChat.value?.spaceId === item.id && chat.curChat.value?.id === child.id
                 ? 'active'
@@ -69,282 +113,378 @@
                 <p class="group-con-show-msg">{{ child.showTxt }}</p>
               </div>
             </div> -->
-          </li>
-        </ul>
-        <ul class="group-con" v-for="item in showList" :key="item.id" v-show="val.name === 'zero'">
-          <li class="group-con-item">
-            <div v-show="['370224204936777729']?.includes(item.id)">
-              <div class="con-body" :class="{
-                  'top-session': item.id === 'toping',
-                  'active':chat.curChat.value?.spaceId === item.id && chat.curChat.value?.id === child.id
-              }" v-for="child in item.chats" :key="child.id"
-                @contextmenu.prevent.stop="(e: MouseEvent) => handleContextClick(e, child)"  @click="personnelContent(child)">
-                <HeadImg :name="child.name" :label="child.label" />
-                <div class="group-con-dot" v-if="child.noRead > 0">
-                  <span>{{ child.noRead }}</span>
+            </li>
+          </ul>
+          <!-- 会话 tab -->
+          <ul
+            class="group-con"
+            v-for="item in chatList"
+            :key="`${item.spaceId}-${item.target.id}`"
+            v-show="val.name === 'zero'"
+          >
+            <li class="group-con-item">
+              <div
+                class="con-body"
+                :class="{
+                  'top-session': item.isToping,
+                  active:
+                    chatRef.chat &&
+                    chatRef.chat.spaceId === item.spaceId &&
+                    chatRef.chat.target.id === item.target.id,
+                }"
+                @contextmenu.prevent.stop="(e: MouseEvent) => handleContextClick(e, item)"
+                @click="personnelContent(item.target)"
+              >
+                <HeadImg
+                  :name="item.target.name"
+                  :label="item.target.label"
+                  :limit="1"
+                  :is-square="false"
+                  :url="item.target.link ? item.target.link : null"
+                />
+                <div class="group-con-dot" v-if="item.noReadCount > 0">
+                  <span>{{ item.noReadCount }}</span>
                 </div>
-                <div class="group-con-show" @click="openChanged(child)">
-                  <el-tooltip class="box-item" :disabled="child.name.length < 10" :content="child.name"
-                    placement="right-start">
+                <div class="group-con-show" @click="openChanged(item)">
+                  <el-tooltip
+                    class="box-item"
+                    :disabled="item.target.name.length < 10"
+                    :content="item.target.name"
+                    placement="right-start"
+                  >
                     <p class="group-con-show-name">
-                      <span class="group-con-show-name-label">{{ child.name }}</span>
-                      <span class="group-con-show-name-time">{{ handleFormatDate(child.msgTime) }}
+                      <span class="group-con-show-name-label">{{
+                        item.target.name
+                      }}</span>
+                      <span
+                        v-if="item.lastMessage"
+                        class="group-con-show-name-time"
+                        >{{ handleFormatDate(item.lastMessage.updateTime) }}
                       </span>
                     </p>
                   </el-tooltip>
-                  <p class="group-con-show-msg">{{ child.showTxt }}</p>
+                  <p v-if="item.lastMessage" class="group-con-show-msg">
+                    {{ item.lastMessage.showTxt }}
+                  </p>
                 </div>
               </div>
-            </div>
-          </li>
-        </ul>
-      </el-tab-pane>
-    </el-tabs>
+            </li>
+          </ul>
+        </el-tab-pane>
+      </el-tabs>
       <!-- 鼠标右键 -->
-      <ul class="context-text-wrap" v-show="mousePosition.isShowContext"
-        :style="{ left: `${mousePosition.left}px`, top: `${mousePosition.top}px` }">
-        <li class="context-menu-item" v-for="item in mousePosition.selectMenu" :key="item.value"
-          @click="handleContextChange(item)">{{
-          item.label }}</li>
+      <ul
+        class="context-text-wrap"
+        v-show="mousePosition.isShowContext"
+        :style="{
+          left: `${mousePosition.left}px`,
+          top: `${mousePosition.top}px`,
+        }"
+      >
+        <li
+          class="context-menu-item"
+          v-for="item in mousePosition.selectMenu"
+          :key="item.value"
+          @click="handleContextChange(item)"
+        >
+          {{ item.label }}
+        </li>
       </ul>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup name="groupSideBar">
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
-import { formatDate } from '@/utils/index'
-import HeadImg from '@/components/headImg.vue'
-import {chatCtrl as chat} from '@/ts/coreIndex'
-import { useRoute } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import searchFriend from '@/components/searchs/index.vue'
-import FriendServices from '@/module/relation/friend'
+import {
+  computed,
+  isReactive,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+} from "vue";
+import { formatDate } from "@/utils/index";
+import HeadImg from "@/components/headImg.vue";
+import { chatCtrl } from "@/ts/coreIndex";
+import { useRoute } from "vue-router";
+import { ElMessage } from "element-plus";
+import searchFriend from "@/components/searchs/index.vue";
+import FriendServices from "@/module/relation/friend";
+import Loading from "@/views/Layout/components/loading.vue";
+import _ from "lodash";
 
-const routerParams = useRoute().params
-const friendServices = new FriendServices()
+const routerParams = useRoute().params;
+const friendServices = new FriendServices();
 
-const groupChats = ref([])
-const friendsChats = ref([])
-const companyChats = ref([])
-const conversationChats = ref([])
+const groupChats = ref([]);
+const friendsChats = ref([]);
+const companyChats = ref([]);
+const conversationChats = ref([]);
 const tabData = ref([
-  {label:'会话',name:'zero'},
-  {label:'通讯录',name:'first'},
-  {label:'群组',name:'second'},
-  {label:'单位',name:'third'},
-  {label:'好友',name:'fourth'},
-])
-const chatsValue = ref<string>('')
+  { label: "会话", name: "zero" },
+  { label: "通讯录", name: "first" },
+  // { label: "群组", name: "second" },
+  // { label: "单位", name: "third" },
+  // { label: "好友", name: "fourth" },
+]);
+const chatsValue = ref<string>("");
 
-const emit = defineEmits(['openChanged'])
+const emit = defineEmits(["openChanged", "update:imgKey"]);
+const props = defineProps<{
+  chatRef: any;
+  imgKey: number;
+}>();
 // 会话列表搜索关键字
-const searchValue = ref<string>('')
+const searchValue = ref<string>("");
 
-const activeName = ref('first')
+const activeName = ref("zero");
 
 // 是否已加载--判断是否需要默认打开
-const isMounted = ref<boolean>(false)
+const isMounted = ref<boolean>(false);
 
-const isMore = ref<boolean>(false)
+const isMore = ref<boolean>(false);
 
-const dialogVisible = ref<boolean>(false)
+const dialogVisible = ref<boolean>(false);
 
-const targetIsMore = ()=>{
-  isMore.value = !isMore.value
-}
+const targetIsMore = () => {
+  isMore.value = !isMore.value;
+};
 
-const isMoreClose = ()=>{
-  setTimeout(()=>{
-    isMore.value = false
-  },200)
-}
+const isMoreClose = () => {
+  setTimeout(() => {
+    isMore.value = false;
+  }, 200);
+};
 
 const handleClick = (tab: any, event: Event) => {
-  chatsValue.value = tab.props.label
-}
+  chatsValue.value = tab.props.label;
+};
 
-const personnelContent = (val) => {
-  conversationChats.value.push(val)
-  conversationChats.value = [...new Set(conversationChats.value)]
-  activeName.value = 'zero'
-  chatsValue.value = '会话'
-  showList.value.forEach(item => {
-    if(chatsValue.value === '会话') {
-      item.chats = conversationChats.value
+const personnelContent = (val: any) => {
+  conversationChats.value.push(val);
+  conversationChats.value = [...new Set(conversationChats.value)];
+  activeName.value = "zero";
+  chatsValue.value = "会话";
+  showList.value.forEach((item) => {
+    if (chatsValue.value === "会话") {
+      item.chats = conversationChats.value;
     }
-  })
-}
+  });
+};
 
-const openChanged = async (child: ImMsgChildType) => {
-  await chat.setCurrent(child)
-  emit('openChanged', child)
-}
+// 右侧头像组件 key 值更新
+const updateKey = ref(0);
+const openChanged = async (child: any) => {
+  await props.chatRef.setCurrent(child);
+  updateKey.value++;
+  emit("update:imgKey", updateKey.value);
+  emit("openChanged", child);
+};
 
+/**
+ * 初始化会话列表
+ */
+const chatStandardList = ref<any>([]);
+const chatList = ref<any>([]);
+const groupStandardList = ref<any>([]);
+const groupList = ref<any>([]);
+
+watch(
+  () => props.chatRef,
+  (val) => {
+    chatList.value = getChatList(val);
+    chatStandardList.value = getChatList(val);
+    groupStandardList.value = getGroupList(val);
+    groupList.value = getGroupList(val);
+
+    openIdArr.value = [];
+    groupList.value.map((item: any) => {
+      item.isOpened && openIdArr.value.push(item.spaceId);
+    });
+  },
+  { deep: true }
+);
+
+/**
+ * input 输入筛选功能
+ */
+const filterBySearch = (val: any) => {
+  chatList.value = chatStandardList.value.filter((item: any) =>
+    item.target.name.includes(val)
+  );
+
+  const temGroupList = _.cloneDeep(groupStandardList);
+  groupList.value = temGroupList.value.map((item: any) => {
+    item.chats = item.chats.filter((chat: any) =>
+      chat.target.name.includes(val)
+    );
+    return item;
+  });
+};
+
+/**
+ * 获取会话列表，置顶排序
+ */
+const getChatList = (val: any) => {
+  let topChatList = val.chats
+    ? val.chats.filter((item: any) => item.isToping)
+    : [];
+
+  let normalChatList = val.chats
+    ? val.chats.filter((item: any) => !item.isToping)
+    : [];
+  let tempChats = [...topChatList, ...normalChatList];
+
+  tempChats = handlePhotoLink(tempChats);
+
+  return tempChats;
+};
+
+/**
+ * 获取通讯录
+ */
+const getGroupList = (val: any) => {
+  const tempGroups = _.cloneDeep(val.groups);
+  tempGroups.forEach((item: any) => {
+    item.chats = handlePhotoLink(item.chats);
+  });
+
+  return tempGroups;
+};
+
+/**
+ * 处理头像 url
+ */
+const handlePhotoLink = (arr: any) => {
+  return arr.map((item: any) => {
+    if (item && item.target.photo) {
+      item.target.link = JSON.parse(item.target.photo).thumbnail;
+    }
+    return item;
+  });
+};
 
 //根据搜索条件-输出展示列表
-const showList = computed((): ImMsgType[] => {
-  let topGroup: any = {
-    id: "toping",
-    name: "置顶会话"
-  }
-  topGroup.chats = []
-  let showInfoArr = chat.chats.value
-  showInfoArr = showInfoArr.map((child: ImMsgType) => {
-    let chats = child.chats.filter((item: ImMsgChildType) => {
-      let matched = (!searchValue.value ||
-        item.name.includes(searchValue.value) ||
-        item.msgBody?.includes(searchValue.value))
-      if (matched && item.isTop) {
-        topGroup.chats.push(item)
-      }
-      return matched && !item.isTop
-    })
-    groupChats.value = chats.filter(item => {
-      return item.label === '群组'
-    })
-    friendsChats.value = chats.filter(item => {
-      return item.label === '好友'
-    })
-    companyChats.value = chats.filter(item => {
-      return item.label === '单位'
-    })
-    return {
-      id: child.id,
-      name: child.name,
-      chats: chatsValue.value === '会话' ?
-      conversationChats.value : chatsValue.value === '群组' ? 
-      groupChats.value : chatsValue.value === '好友' ? 
-      friendsChats.value : chatsValue.value === '单位' ? 
-      companyChats.value : chats
-    }
-  })
-  // 首次进入页面默认打开第一个分组
-  if (!isMounted.value && openIdArr.value.length === 0 && showInfoArr.length > 0) {
-    // 当从关系-群组 进入会话携带id 则进入对应聊天室
-    if (routerParams.defaultOpenID) {
-      openIdArr.value.push(routerParams.spaceId as string)
-      const aimItem = showInfoArr
-        .find((item) => item.id == routerParams.spaceId)
-        ?.chats.find((item) => item.id == routerParams.defaultOpenID)
-      aimItem && openChanged(aimItem)
-    } else {
-      if (topGroup.chats.length < 1) {
-        openIdArr.value.push(showInfoArr[0].id)
-      }else{
-        openIdArr.value.push("toping")
-      }
-    }
-    isMounted.value = true
-  }
-  if (topGroup.chats.length > 0) {
-    return [topGroup, ...showInfoArr]
-  }
-  return showInfoArr
-})
+const showList = ref([]);
 
 // 时间处理
 const handleFormatDate = (timeStr: string) => {
-  const nowTime = new Date().getTime()
-  const showTime = new Date(timeStr).getTime()
+  const nowTime = new Date().getTime();
+  const showTime = new Date(timeStr).getTime();
 
   // 超过一天 展示 月/日
   if (nowTime - showTime > 3600 * 24 * 1000) {
-    return formatDate(timeStr, 'M月d日')
+    return formatDate(timeStr, "M月d日");
   }
   // 不超过一天 展示 时/分
-  return formatDate(timeStr, 'H:mm')
-}
+  return formatDate(timeStr, "H:mm");
+};
 
-type MenuItemType = { value: number; label: string }
+type MenuItemType = { value: number; label: string };
 const menuList: MenuItemType[] = [
-  { value: 1, label: '置顶会话' },
-  { value: 2, label: '清空信息' },
-  { value: 3, label: '取消置顶' },
+  { value: 1, label: "置顶会话" },
+  { value: 2, label: "清空信息" },
+  { value: 3, label: "取消置顶" },
   // { value: 4, label: '消息免打扰' },
-]
+];
 type arrList = {
-  id: string
-}
+  id: string;
+};
 
 const addFriends = (arr: Array<arrList>) => {
-  friendServices.applyJoin(arr)
-  dialogVisible.value = false
-}
+  friendServices.applyJoin(arr);
+  dialogVisible.value = false;
+};
 const checksSearch = (val: any) => {
   if (val.value.length > 0) {
-    let arr: Array<arrList> = []
+    let arr: Array<arrList> = [];
     val.value.forEach((element: any) => {
-      arr.push(element.id)
-    })
-    addFriends(arr)
+      arr.push(element.id);
+    });
+    addFriends(arr);
   } else {
-    dialogVisible.value = false
+    dialogVisible.value = false;
   }
-}
+};
 // 鼠标右键事件
 const mousePosition: {
-  left: number
-  top: number
-  isShowContext: boolean
-  selectedItem: ImMsgChildType,
-  selectMenu?: MenuItemType[]
-} = reactive({ left: 0, top: 0, isShowContext: false, selectedItem: {} as ImMsgChildType })
-const handleContextClick = (e: MouseEvent, item: ImMsgChildType) => {
+  left: number;
+  top: number;
+  isShowContext: boolean;
+  selectedItem: ImMsgChildType;
+  selectMenu?: MenuItemType[];
+} = reactive({
+  left: 0,
+  top: 0,
+  isShowContext: false,
+  selectedItem: {} as ImMsgChildType,
+});
+const handleContextClick = (e: MouseEvent, item: any) => {
   if (!item) {
-    return
+    return;
   }
-  mousePosition.left = e.pageX - 60
-  mousePosition.top = e.pageY - 48
-  mousePosition.isShowContext = true
-  mousePosition.selectedItem = item
-  mousePosition.selectMenu = item.isTop ? menuList.slice(1, 3) : menuList.slice(0, 2)
-}
+  mousePosition.left = e.pageX - 60;
+  mousePosition.top = e.pageY - 48;
+  mousePosition.isShowContext = true;
+  mousePosition.selectedItem = item;
+  mousePosition.selectMenu = item.isToping
+    ? menuList.slice(1, 3)
+    : menuList.slice(0, 2);
+};
 // 关闭右侧点击出现的弹框
 const closecontextmenu = () => {
-  mousePosition.isShowContext = false
-}
+  mousePosition.isShowContext = false;
+};
 // 页面加载完毕，点击其他位置则隐藏菜单
 onMounted(() => {
-  window.addEventListener('click', closecontextmenu)
-  window.addEventListener('contextmenu', closecontextmenu)
-})
+  window.addEventListener("click", closecontextmenu);
+  window.addEventListener("contextmenu", closecontextmenu);
+});
 
 // 页面卸载前给他删了
 onBeforeUnmount(() => {
-  window.removeEventListener('click', closecontextmenu)
-  window.removeEventListener('contextmenu', closecontextmenu)
-})
+  window.removeEventListener("click", closecontextmenu);
+  window.removeEventListener("contextmenu", closecontextmenu);
+});
 
-
-
-const openIdArr = ref<string[]>([])
+const openIdArr = ref<string[]>([]);
 const handleOpenSpace = (selectedID: string) => {
-  const isOpen = openIdArr.value.includes(selectedID)
+  const isOpen = openIdArr.value.includes(selectedID);
   if (isOpen) {
-    openIdArr.value = openIdArr.value.filter((item: string) => item !== selectedID)
+    openIdArr.value = openIdArr.value.filter(
+      (item: string) => item !== selectedID
+    );
   } else {
-    openIdArr.value = [...openIdArr.value, selectedID]
+    openIdArr.value = [...openIdArr.value, selectedID];
   }
-}
+};
 // 右键菜单点击
 const handleContextChange = (item: MenuItemType) => {
   // console.log('右键菜单点击', item, mousePosition.selectedItem)
   switch (item.value) {
     case 1:
-      chat.setToppingSession(mousePosition.selectedItem, true)
-      break
+      {
+        chatCtrl.setToping(mousePosition.selectedItem as any);
+        chatList.value = getChatList(props.chatRef);
+        chatStandardList.value = getChatList(props.chatRef);
+      }
+      break;
     case 2:
       // props.clearHistoryMsg()
-      break
+      break;
     case 3:
-      chat.setToppingSession(mousePosition.selectedItem, false)
-      break
+      {
+        chatCtrl.setToping(mousePosition.selectedItem as any);
+        chatList.value = getChatList(props.chatRef);
+        chatStandardList.value = getChatList(props.chatRef);
+      }
+      break;
 
     default:
-      break
+      break;
   }
-}
+};
 </script>
 
 <style lang="scss">
@@ -355,7 +495,7 @@ const handleContextChange = (item: MenuItemType) => {
   border-right: 1px solid var(--el-border-color); // #d8d8d8;
   background-color: var(--el-bg-color);
 
-  .more{
+  .more {
     width: 150px;
     margin-top: 45px;
     margin-left: 150px;
@@ -459,7 +599,7 @@ const handleContextChange = (item: MenuItemType) => {
         border-bottom: 1px solid var(--el-border-color);
       }
 
-      .con-body+.con-body {
+      .con-body + .con-body {
         // margin-top: 10px;
       }
 
@@ -523,7 +663,6 @@ const handleContextChange = (item: MenuItemType) => {
     }
   }
 }
-
 
 .context-text-wrap {
   position: absolute;

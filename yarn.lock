@@ -348,10 +348,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@orginone/oiocns-ts@^1.1.12":
-  version "1.1.12"
-  resolved "https://registry.npmjs.org/@orginone/oiocns-ts/-/oiocns-ts-1.1.12.tgz#0ba474d05e70a40d233f16bc277558969b504b6f"
-  integrity sha512-BBSfbZmauttb2YfByiDs1p9PUh5TeYqOeueyXOymF4ZrayacEhL/+Epit1pz9zmaYXCz5pA6dfx2bULMgopj5A==
+"@orginone/oiocns-ts@^1.1.10":
+  "integrity" "sha512-g9m6s0yFYF9cjCeeOyBVjK1Aa5nkaDRdfPgGOvBQx78OXpTgLjJZYUKF2q6E4Q5e8x8DR/n5EyEHW/PSIs+47g=="
+  "resolved" "https://registry.npmmirror.com/@orginone/oiocns-ts/-/oiocns-ts-1.1.10.tgz"
+  "version" "1.1.10"
 
 "@popperjs/core@npm:@sxzz/popperjs-es@^2.11.7":
   version "2.11.7"
@@ -1948,17 +1948,17 @@ define-property@^0.2.5:
   dependencies:
     is-descriptor "^0.1.0"
 
-define-property@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmmirror.com/define-property/-/define-property-1.0.0.tgz#769ebaaf3f4a63aad3af9e8d304c9bbe79bfb0e6"
-  integrity sha512-cZTYKFWspt9jZsMscWo8sc/5lbPC9Q0N5nBLgb+Yd915iL3udB1uFgS3B8YCx66UVHq018DAVFoee7x+gxggeA==
+"define-property@^1.0.0":
+  "integrity" "sha512-cZTYKFWspt9jZsMscWo8sc/5lbPC9Q0N5nBLgb+Yd915iL3udB1uFgS3B8YCx66UVHq018DAVFoee7x+gxggeA=="
+  "resolved" "https://registry.npmmirror.com/define-property/-/define-property-1.0.0.tgz"
+  "version" "1.0.0"
   dependencies:
     is-descriptor "^1.0.0"
 
-define-property@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.npmmirror.com/define-property/-/define-property-2.0.2.tgz#d459689e8d654ba77e02a817f8710d702cb16e9d"
-  integrity sha512-jwK2UV4cnPpbcG7+VRARKTZPUWowwXA8bzH5NP6ud0oeAxyYPuGZUAC7hMugpCdz4BeSZl2Dl9k66CHJ/46ZYQ==
+"define-property@^2.0.2":
+  "integrity" "sha512-jwK2UV4cnPpbcG7+VRARKTZPUWowwXA8bzH5NP6ud0oeAxyYPuGZUAC7hMugpCdz4BeSZl2Dl9k66CHJ/46ZYQ=="
+  "resolved" "https://registry.npmmirror.com/define-property/-/define-property-2.0.2.tgz"
+  "version" "2.0.2"
   dependencies:
     is-descriptor "^1.0.2"
     isobject "^3.0.1"

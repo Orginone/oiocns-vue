@@ -1,6 +1,6 @@
 <template>
   <div class="group-content-wrap" ref="nodeRef" @scroll="scrollEvent">
-    <template v-for="(item, index) in chat.curMsgs.value" :key="item.fromId">
+    <template v-for="(item, index) in messages" :key="`${item.fromId}${index}`">
       <!-- 聊天间隔时间3分钟则 显示时间 -->
       <div class="chats-space-Time" v-if="isShowTime(index)">
         <span>
@@ -8,48 +8,109 @@
         </span>
       </div>
       <!-- 左侧聊天内容显示 -->
-      <div class="group-content-left con recall" v-if="item.msgType === 'recall'">
-        {{ chat.getName(item.fromId) }}撤回了一条消息
-        <span class="reWrite" v-if="item.allowEdit" @click="handleReWrite(item.msgBody)">重新编辑</span>
+      <div
+        class="group-content-left con recall"
+        v-if="item.msgType === 'recall'"
+      >
+        {{ chatRef.getName(item.fromId) }}撤回了一条消息
+        <span
+          class="reWrite"
+          v-if="item.allowEdit"
+          @click="handleReWrite(item.msgBody)"
+          >重新编辑</span
+        >
       </div>
 
-      <div class="group-content-left con" v-else-if="item.fromId !== chat.userId.value">
-        <el-popover placement="top-end" :width="155" trigger="click" :hide-after="100" v-model:visible="item.edit"
-          @show="editShow(item)">
+      <div
+        class="group-content-left con"
+        v-else-if="item.fromId !== chatRef.chat.userId"
+      >
+        <el-popover
+          placement="top-end"
+          :width="155"
+          trigger="click"
+          :hide-after="100"
+          v-model:visible="item.allowEdit"
+          @show="editShow(item)"
+        >
           <template #reference>
             <div class="con-body">
-              <HeadImg :name="chat.getName(item.fromId)" :label="''" />
+              <HeadImg :name="chatRef.getName(item.fromId)" :label="''" />
               <div class="con-content">
-                <span v-if="chat.curChat.value.typeName!=='人员'" class="con-content-name">{{
-                chat.getName(item.fromId)
-                }}</span>
-                <div class="con-content-link"></div>
-                <div class="con-content-txt" v-html="item.msgBody"></div>
+                <span
+                  v-if="chatRef.chat.target.typeName !== '人员'"
+                  class="con-content-name"
+                  >{{ chatRef.getName(item.fromId) }}</span
+                >
+                <!-- <div class="con-content-link"></div> -->
+                <div
+                  v-if="item.msgType === 'text'"
+                  class="con-content-txt"
+                  v-html="item.showTxt"
+                ></div>
+                <el-image
+                  v-if="item.msgType === '图片'"
+                  style="width: 100px; height: 100px;margin-left: 10px"
+                  :src="item.link"
+                  :zoom-rate="1.2"
+                  :preview-src-list="[item.link]"
+                  fit="cover"
+                />
               </div>
             </div>
           </template>
           <div class="flex justify-space-between mb-2 flex-wrap gap-2">
-            <el-button type="warning" v-on:click="deleteMsg(item)" text v-if="canDelete(item)">删除
+            <el-button
+              type="warning"
+              v-on:click="deleteMsg(item)"
+              text
+              v-if="canDelete(item)"
+              >删除
             </el-button>
           </div>
         </el-popover>
       </div>
       <!-- 右侧内容显示 -->
       <div class="group-content-right con" v-else>
-        <el-popover placement="top-start" :width="155" trigger="click" :hide-after="100" v-model:visible="item.edit"
-          @show="editShow(item)">
+        <el-popover
+          placement="top-start"
+          :width="155"
+          trigger="click"
+          :hide-after="100"
+          v-model:visible="item.allowEdit"
+          @show="editShow(item)"
+        >
           <template #reference>
             <div class="con-body">
               <div class="con-content">
-                <div class="con-content-link"></div>
-                <div class="con-content-txt" v-html="item.msgBody"></div>
+                <!-- <div class="con-content-link"></div> -->
+                <div
+                  v-if="item.msgType === 'text'"
+                  class="con-content-txt"
+                  v-html="item.showTxt"
+                ></div>
+                <el-image
+                  v-if="item.msgType === '图片'"
+                  style="width: 100px; height: 100px;margin-left: 10px;margin-right: 10px"
+                  :src="item.link"
+                  :zoom-rate="1.2"
+                  :preview-src-list="[item.link]"
+                  fit="cover"
+                />
               </div>
-              <HeadImg :name="chat.getName(item.fromId)" />
+              <HeadImg :name="chatRef.getName(item.fromId)" />
             </div>
           </template>
           <div class="flex justify-space-between mb-3 flex-wrap gap-3">
-            <el-button type="primary" v-on:click="recallMsg(item)" text>撤回</el-button>
-            <el-button type="warning" v-on:click="deleteMsg(item)" text v-if="canDelete(item)">删除
+            <el-button type="primary" v-on:click="recallMsg(item)" text
+              >撤回</el-button
+            >
+            <el-button
+              type="warning"
+              v-on:click="deleteMsg(item)"
+              text
+              v-if="canDelete(item)"
+              >删除
             </el-button>
           </div>
         </el-popover>
@@ -65,127 +126,154 @@ import {
   nextTick,
   reactive,
   onBeforeUnmount,
-  inject
-} from 'vue'
-import { debounce } from '@/utils/tools'
-import HeadImg from '@/components/headImg.vue'
-import moment from 'moment'
-import {chatCtrl as chat} from '@/ts/coreIndex'
-import { ElMessage } from 'element-plus'
+  inject,
+  watch,
+  computed,
+  watchEffect,
+} from "vue";
+import { debounce } from "@/utils/tools";
+import HeadImg from "@/components/headImg.vue";
+import moment from "moment";
+import { ElMessage } from "element-plus";
+
+const props = defineProps<{
+  chatRef: any;
+}>();
+
+const messages = ref(props.chatRef.chat.messages);
+
+watch(
+  () => props.chatRef,
+  () => {
+    messages.value = props.chatRef.chat.messages;
+  },
+  { deep: true }
+);
 
 // dom节点
-const nodeRef = ref(null)
+const nodeRef = ref(null);
 // 事件viewMoreMsg--查看更多 recallMsg--撤销消息
-const emit = defineEmits(['handleReWrite'])
+const emit = defineEmits(["handleReWrite"]);
 
-const info = inject('reWrite', ref(''))
+const info = inject("reWrite", ref(""));
 // 重新编辑功能
 const handleReWrite = (txt: string) => {
-  info.value = txt
-  emit('handleReWrite', txt)
-}
+  info.value = txt;
+  emit("handleReWrite", txt);
+};
 
-const curShow = ref<any>(null)
+const curShow = ref<any>(null);
 
 const editShow = (item: any) => {
   if (item.chatId) {
-    item.id = item.chatId
+    item.id = item.chatId;
   }
   if (curShow.value && curShow.value.id !== item.id) {
-    curShow.value.edit = false
+    curShow.value.edit = false;
   }
-  curShow.value = item
-}
+  curShow.value = item;
+};
 
 const canDelete = (item: any) => {
   if (item.chatId) {
-    return true
+    return true;
   }
-  return item.spaceId === chat.userId.value
-}
+  return item.spaceId === props.chatRef.chat.userId;
+};
 
 const recallMsg = (item: any) => {
-  item.edit = false
+  item.edit = false;
   if (item.chatId) {
-    item.id = item.chatId
-    delete item.chatId
-    delete item.sessionId
+    item.id = item.chatId;
+    delete item.chatId;
+    delete item.sessionId;
   }
-  chat.recallMsg(item).then((res: ResultType) => {
-    if (res.data.status != 2) {
-      ElMessage({
-        type: "warning",
-        message: "只能撤回2分钟内发送的消息"
-      })
-    }
-  })
-}
+  props.chatRef.chat.reCallMessage(item).catch(() => {
+    ElMessage({
+      type: "warning",
+      message: "只能撤回2分钟内发送的消息",
+    });
+  });
+};
 
 const deleteMsg = (item: any) => {
-  item.edit = false
-  chat.deleteMsg(item)
-}
+  item.edit = false;
+  props.chatRef.chat.deleteMessage(item);
+};
 
 const isShowTime = (index: number) => {
-  if (index == 0) return true
-  return moment(chat.curMsgs.value[index].createTime).
-    diff(chat.curMsgs.value[index - 1].createTime, 'minute') > 3
-}
+  if (index == 0) return true;
+  return (
+    moment(props.chatRef.chat.messages[index].createTime).diff(
+      props.chatRef.chat.messages[index - 1].createTime,
+      "minute"
+    ) > 3
+  );
+};
 
 // 显示聊天间隔时间
 const showChatTime = (chatDate: moment.MomentInput) => {
-  const cdate = moment(chatDate)
-  const days = moment().diff(cdate, 'day')
+  const cdate = moment(chatDate);
+  const days = moment().diff(cdate, "day");
   switch (days) {
     case 0:
-      return cdate.format('H:mm')
+      return cdate.format("H:mm");
     case 1:
-      return "昨天 " + cdate.format('H:mm')
+      return "昨天 " + cdate.format("H:mm");
     case 2:
-      return "前天 " + cdate.format('H:mm')
+      return "前天 " + cdate.format("H:mm");
   }
-  const year = moment().diff(cdate, 'year')
-  if(year == 0){
-    return cdate.format('M月D日 H:mm')
+  const year = moment().diff(cdate, "year");
+  if (year == 0) {
+    return cdate.format("M月D日 H:mm");
   }
-  return cdate.format('yy年 M月D日 H:mm')
-}
+  return cdate.format("yy年 M月D日 H:mm");
+};
 
 // 实时滚动条高度
 const scrollTop = debounce(async () => {
-  let scroll = nodeRef.value.scrollTop
-  if (chat.curMsgs.value.length > 0 && scroll < 20) {
-    let beforeHeight = nodeRef.value.scrollHeight
-    let count = await chat.getHistoryMsg()
+  let scroll = nodeRef.value.scrollTop;
+  if (
+    props.chatRef.chat &&
+    props.chatRef.chat.messages.length > 0 &&
+    scroll < 20
+  ) {
+    let beforeHeight = nodeRef.value.scrollHeight;
+    let count = await props.chatRef.chat.messages.length;
     if (count > 0) {
-      nodeRef.value.scrollTop = nodeRef.value.scrollHeight - beforeHeight
+      nodeRef.value.scrollTop = nodeRef.value.scrollHeight - beforeHeight;
     }
   }
-}, 200)
+}, 200);
 
 // 滚动设置到底部
 const goPageEnd = () => {
   nextTick(() => {
-    // console.log('滚动底部', nodeRef.value.scrollHeight);
-    nodeRef.value.scrollTop = nodeRef.value.scrollHeight
-  })
-}
+    // console.log('滚动底部', nodeRef.value);
+    nodeRef.value.scrollTop = nodeRef.value.scrollHeight;
+  });
+};
 
 const scrollEvent = () => {
-  scrollTop(nodeRef.value.scrollTop)
-}
+  scrollTop(nodeRef.value.scrollTop);
+};
 // 暴露子组件方法
 defineExpose({
-  goPageEnd
-})
+  goPageEnd,
+});
 </script>
 <style>
+.con-content-img {
+  max-width: 100%;
+  max-height: 400px;
+}
+
 .con-content-txt img {
   max-width: 100%;
   max-height: 400px;
 }
 
-.con-content-txt>span {
+.con-content-txt > span {
   line-height: 2;
 }
 
@@ -259,7 +347,6 @@ defineExpose({
         z-index: 1;
         margin-top: -10px;
         font-size: small;
-
       }
 
       &-link {
@@ -304,7 +391,9 @@ defineExpose({
       &-link {
         margin-left: 7px;
         background-color: var(--el-bg-color-overlay); // white;
-        box-shadow: var(--el-box-shadow-lighter); // -1px 1px 6px 2px rgb(229 229 229);
+        box-shadow: var(
+          --el-box-shadow-lighter
+        ); // -1px 1px 6px 2px rgb(229 229 229);
       }
 
       &-txt {
