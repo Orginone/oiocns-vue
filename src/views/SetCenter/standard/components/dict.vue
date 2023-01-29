@@ -270,8 +270,8 @@
     }else{
       isEditAttr.value = false
     }
-    attrFormDialog.value = true
     state.belongTreeData = await userCtrl.getTeamTree()
+    attrFormDialog.value = true
   }
 
   //打开字典项弹窗
@@ -283,8 +283,8 @@
     }else{
       isEditAdd.value = false
     }
-    addFormDialog.value = true
     state.belongTreeData = await userCtrl.getTeamTree()
+    addFormDialog.value = true
   }
 
   //提交分类字典

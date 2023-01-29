@@ -18,7 +18,7 @@
             <h4>单位首页配置</h4>
           </template>
           <template #buttons>
-            <el-button class="btn-check" type="primary" link @click="dialogFormVisible = true">添加方案</el-button>
+            <el-button type="primary" link @click="dialogFormVisible = true">添加方案</el-button>
           </template>
           <template #operate="scope">
             <el-dropdown>
@@ -265,16 +265,6 @@
         display: flex;
         flex-direction: column;
         flex: 1;
-        .btn-check{
-          font-size: 14px;
-          padding: 8px 16px;
-          color: #154ad8;
-        }
-        .btn-check:hover{
-            background: #154ad8;
-            color: #fff;
-            padding: 8px  16px;
-        }
       }
     }
   </style>

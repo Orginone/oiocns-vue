@@ -3,9 +3,9 @@
     <div class="header">
       <div class="title">节点信息</div>
       <div class="box-btns">
-        <el-button small link type="primary"  @click="handleAuthority">权限管理</el-button>
-        <el-button small link type="primary"  @click="handleUpdate">编辑</el-button>
-        <el-button small link type="primary"  @click="handleDelete">删除</el-button>
+        <el-button small link type="primary" @click="handleAuthority">权限管理</el-button>
+        <el-button small link type="primary" @click="handleUpdate">编辑</el-button>
+        <el-button small link type="primary" @click="handleDelete">删除</el-button>
       </div>
     </div>
     <div class="tab-list">

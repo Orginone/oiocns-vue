@@ -14,21 +14,21 @@
         >
           <template #buttons>
             <div style="display: flex;align-items: center">
-              <el-upload
+              <!-- <el-upload
                 ref="uploadRef"
                 :show-file-list="false"
                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                 :auto-upload="false"
               >
-              <template #trigger>
-                <el-button class="btn-check" link type="primary">导入集团单位</el-button>
-              </template>
-              </el-upload>
-              <el-button v-if="props.selectItem?.item?.typeName == '集团'" class="btn-check" type="primary" link @click="handleShare()">分享集团</el-button>
-              <el-button class="btn-check" type="primary" @click="handleIdentity()" link>身份设置</el-button>
-              <el-button class="btn-check" v-if="props.selectItem?.item?.typeName == '集团'" small link type="primary" @click="pullCompanysDialog = true">添加单位</el-button>
-              <el-button class="btn-check" v-if="props.selectItem?.item?.typeName == '集团'" small link type="primary" @click="viewApplication">查看申请</el-button>
-              <el-button class="btn-check" v-if="props.selectItem?.item?.typeName == '子集团'" small link type="primary" @click="showAssignDialog">分配单位</el-button>
+              <template #trigger> -->
+                <el-button link type="primary" @click="develop">导入集团单位</el-button>
+              <!-- </template>
+              </el-upload> -->
+              <el-button v-if="props.selectItem?.item?.typeName == '集团'" type="primary" link @click="handleShare()">分享集团</el-button>
+              <el-button type="primary" @click="handleIdentity()" link>身份设置</el-button>
+              <el-button v-if="props.selectItem?.item?.typeName == '集团'" small link type="primary" @click="pullCompanysDialog = true">添加单位</el-button>
+              <el-button v-if="props.selectItem?.item?.typeName == '集团'" small link type="primary" @click="viewApplication">查看申请</el-button>
+              <el-button v-if="props.selectItem?.item?.typeName == '子集团'" small link type="primary" @click="showAssignDialog">分配单位</el-button>
             </div>
           </template>
           <template #operate="scope">
@@ -274,6 +274,14 @@ const checksCompanySearch = (val: any) => {
   } else {
     assignDialog.value = false
   }
+}
+
+//导入集团单位
+const develop = ()=>{
+  ElMessage({
+    message: '功能正在开发中！',
+    type: 'warning'
+  })
 }
 
 //拉单位进集团
