@@ -44,7 +44,7 @@
                 >
                 <!-- <div class="con-content-link"></div> -->
                 <div
-                  v-if="item.msgType === 'text'"
+                  v-if="['text', '文本'].includes(item.msgType)"
                   class="con-content-txt"
                   v-html="item.showTxt"
                 ></div>
@@ -85,7 +85,7 @@
               <div class="con-content">
                 <!-- <div class="con-content-link"></div> -->
                 <div
-                  v-if="item.msgType === 'text'"
+                  v-if="['text', '文本'].includes(item.msgType)"
                   class="con-content-txt"
                   v-html="item.showTxt"
                 ></div>
