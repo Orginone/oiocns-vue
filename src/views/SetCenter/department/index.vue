@@ -248,7 +248,7 @@ import { ref, onMounted, getCurrentInstance, onBeforeMount, computed } from "vue
 import { useRouter } from 'vue-router'
 import AssignedPerson from '@/components/searchs/index.vue'
 import { setCenterStore } from '@/store/setting'
-const store = setCenterStore()
+const store: any = setCenterStore()
 import QrCodeCustom from '@/components/qrCode/index.vue'
 import {TargetType, userCtrl} from '@/ts/coreIndex'
 import CreateTeamModal from '../GlobalComps/createTeam.vue';
@@ -383,7 +383,7 @@ const subscribe = store.$subscribe(
       *
       * */
     // 在此处监听store中值的变化，当变化为某个值的时候，做一些业务操作
-    console.log('state.currentSelectItme',state.currentSelectItme,store.currentSelectItme)
+    // console.log('state.currentSelectItme',state.currentSelectItme,store.currentSelectItme)
 
     if(state.currentSelectItme){
       if(state.currentSelectItme.label === '部门管理') return

@@ -58,6 +58,7 @@
   import LoadingVue from './components/loading.vue'
   import { useUserStore } from '@/store/user'
   import { setCenterStore } from '@/store/setting'
+  const settingStore:any = setCenterStore()
   import authority from '@/utils/authority'
   import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick,getCurrentInstance, onMounted} from 'vue'
   import { RouteLocationNormalizedLoaded, useRouter } from 'vue-router';
@@ -108,7 +109,7 @@
 
 
   // 路由控制，单独匹配的话需要增加 showMenu.value = true;
-  function getNavData2() { 
+  async function getNavData2() { 
     btnType.value='';//默认为空
     if(router.currentRoute.value.path.indexOf('setCenter') != -1){
       if (router.currentRoute.value.name === 'department') {
@@ -134,23 +135,40 @@
           return;
       } else if (router.currentRoute.value.name === 'post') {
           titleArr.state= {icon: 'User',title: '岗位设置',"backFlag": true}
-          setCenterStore().GetIdentities().then((treeData)=> {
-            let newData: any = [
-              {
-                label: '岗位管理',
-                structure: true,
-                id: 1,
-                query: true,
-                isPenultimate: true,
-                btns:[{
-                  name: '新增岗位',
-                  id: '2008'
-                }],
-                children: treeData
-              }
-            ]
-            menuArr.state = newData
-          })
+          const treeDate = await settingStore.GetIdentities() 
+          // setCenterStore().GetIdentities().then((treeData)=> {
+          //   console.log(treeData)
+          //   let newData: any = [
+          //     {
+          //       label: '岗位管理',
+          //       structure: true,
+          //       id: 1,
+          //       query: true,
+          //       isPenultimate: true,
+          //       btns:[{
+          //         name: '新增岗位',
+          //         id: '2008'
+          //       }],
+          //       children: treeData
+          //     }
+          //   ]
+          //   menuArr.state = newData
+          // })
+          let newData: any = [
+            {
+              label: '岗位管理',
+              structure: true,
+              id: 1,
+              query: true,
+              isPenultimate: true,
+              btns:[{
+                name: '新增岗位',
+                id: '2008'
+              }],
+              children: treeDate
+            }
+          ]
+          menuArr.state = newData
           showMenu.value = true;
           return;
       }else if (router.currentRoute.value.name === 'group') {

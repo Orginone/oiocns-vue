@@ -27,8 +27,8 @@
   import { useUserStore } from '@/store/user'
   import { userCtrl, TargetType } from '@/ts/coreIndex';
   import { setCenterStore } from '@/store/setting'
-  const settingStore = setCenterStore()
-  const userStore = useUserStore()
+  const settingStore:any = setCenterStore()
+  const userStore:any = useUserStore()
 
   const isUpdate = ref<boolean>(false)
   const { proxy } = getCurrentInstance()

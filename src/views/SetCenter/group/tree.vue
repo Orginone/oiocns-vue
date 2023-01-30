@@ -94,7 +94,7 @@ import { useUserStore } from '@/store/user'
 import {userCtrl} from '@/ts/coreIndex';
 import { setCenterStore } from '@/store/setting'
 import CreateTeamModal from '../GlobalComps/createTeam.vue';
-const store = useUserStore()
+const store:any = useUserStore()
 const goBack = () => {
   window.history.go(-1)
 }
