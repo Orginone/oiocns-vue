@@ -27,20 +27,5 @@
                 "children": []
             }
         ]
-    },
-    {
-        "label": "分类",
-        "structure": true,
-        "isPenultimate": true,
-        "btns":[{
-            "name":"创建",
-            "id":"101"
-        },{
-            "name":"事件",
-            "id":"102"
-        }],
-        "children": [
-        
-        ]
     }
 ]

@@ -75,7 +75,7 @@
 
   const dialogVisible = ref<boolean>(false)
   const store = useUserStore()
-  let tableData = ref<any>([{id:123,flowInstance:{}}])
+  let tableData = ref<any>([])
   const diyTable = ref(null)
   const tableHead =ref<any[]>([
     {
@@ -126,6 +126,7 @@
    var getAllApprovalList = async () => {
     await todoCtrl.waitUntilInitialized();
     const res = await todoCtrl.OrgTodo.getTodoList(true);
+    console.log('ressss',res)
     let arr:any = []
     res.forEach((element:any) => {
       if(element._data.team.target.typeName =='人员'){

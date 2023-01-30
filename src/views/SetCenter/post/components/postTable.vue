@@ -279,7 +279,7 @@ const giveIdentity = async () => {
 
 </script>
 <style lang="scss" scoped>
-  :deep .el-table th.el-table__cell {
+  :deep(.el-table th.el-table__cell){
     background-color: #eceffb!important;
   }
   .el-dropdown-link{

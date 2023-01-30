@@ -82,7 +82,7 @@
     pageSize: 20,
     total: 0
   })
-  var tableData = ref<any>([{id:123,flowInstance:{}}])
+  var tableData = ref<any>([])
   const diyTable = ref(null)
   const tableHead =ref<any[]>([
     {
