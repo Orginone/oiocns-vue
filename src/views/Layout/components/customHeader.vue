@@ -78,11 +78,11 @@
             <ChatDotSquare />
           </el-icon>
         </el-link> -->
-        <li class="top-icon" :class="{'is-current': item.activeMatch.includes(router.currentRoute.value.fullPath)}"
-          v-for="(item, index) in state.mainMenus"
-          @click="handleRouterChage(item)"
-          :key="index"
-          :title="item.name"
+        <li class="top-icon" :class="{'is-current': item.activeMatch.includes(router.currentRoute.value.fullPath.split('/')[1])}"
+        v-for="(item, index) in state.mainMenus"
+        @click="handleRouterChage(item)"
+        :key="index"
+        :title="item.name"
         >
           <el-badge :value="item.count" :hidden="!item.count">
             <i class="icon-list iconfont" :class="item.icon" ></i>
@@ -149,8 +149,10 @@
   import headImg from '@/components/headImg.vue'
   import TeamIcon from './TeamIcon.vue'
   import { useDark } from '@vueuse/core'
-  import { chatCtrl as chat, todoCtrl as todo } from '@/ts/coreIndex';
+  import { chatCtrl, todoCtrl as todo } from '@/ts/coreIndex';
   import { userCtrl ,TargetType} from '@/ts/coreIndex'
+
+  
 
   const isDark = useDark()
   const store = useUserStore()
@@ -174,20 +176,26 @@
 
   const state = reactive({
     mainMenus: [
-      { name: '沟通', icon: 'icon-message', path: '/chat', activeMatch: ['/chat'], count: 0 },
-      { name: '办事', icon: 'icon-todo', path: '/service', activeMatch: ['/service'], count: 0 },
-      { name: '仓库', icon: 'icon-store', path: '/store', activeMatch: ['/store'] },
-      { name: '设置', icon: 'icon-setting', path: '/setCenter', activeMatch: ['/setCenter', '/mine'] },  
+      { name: '沟通', icon: 'icon-message', path: '/chat', activeMatch: ['chat'], count: 0 },
+      { name: '办事', icon: 'icon-todo', path: '/service', activeMatch: ['service'], count: 0 },
+      { name: '仓库', icon: 'icon-store', path: '/store', activeMatch: ['store'] },
+      { name: '设置', icon: 'icon-setting', path: '/setCenter', activeMatch: ['setCenter', 'mine'] },  
     ]
   })
+  
+  // const chat = ref<any>({})
+  // setTimeout(() => {
+  //   chat.value = new chatCtrl(true)
+  // }, 600);
+
   onMounted(() => {
-    return 
-    // TODO: 目前消息只有全局脏检查订阅，不能单独订阅
-    chat.subscribe(() => {
-      console.warn("触发全局订阅回调");
-      const count = chat.getNoReadCount();
-      state.mainMenus[0].count = count;
-    });
+  return 
+  // TODO: 目前消息只有全局脏检查订阅，不能单独订阅
+  chat.value.subscribe(() => {
+    console.warn("触发全局订阅回调");
+    const count = chat.value.getNoReadCount();
+    state.mainMenus[0].count = count;
+  });
 
     todo.subscribe(async () => {
       console.warn("触发全局订阅回调");
@@ -339,7 +347,7 @@
     handleClose();
     modelIsShow.value = false
     store.setCurSpace(data.id)
-    if(['/mine', '/setCenter'].includes(router.currentRoute.value.fullPath)) {
+    if(['mine', 'setCenter'].includes(router.currentRoute.value.fullPath.split('/')[1])) {
       location.href = `${location.origin}/#/${workspaceData.value.typeName === '单位' ? 'setCenter' : 'mine'}`
     } 
     location.reload()

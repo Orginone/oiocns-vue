@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, reactive } from "vue";
+import { ref, watch } from "vue";
 import GroupSideBarVue from "./components/groupSideBar.vue";
 import GroupHeaderVue from "./components/groupHeader.vue";
 import GroupInputBox from "./components/groupInputBox.vue";
@@ -52,19 +52,18 @@ const isShowDetail = ref<boolean>(false);
 const chatRef = ref<any>({});
 
 setTimeout(() => {
-  chatRef.value = chatCtrl;
+  chatRef.value = new chatCtrl(true);
 }, 600);
 
 watch(
   () => chatRef.value,
   (val: any) => {
-    console.log("chatRef update", val);
-    if(val.chat) {
+    if (val.chat) {
       val.chat.messages.forEach((item: any) => {
-        if(item.msgType === '图片') {
-          item.link = JSON.parse(item.showTxt).thumbnail
+        if (item.msgType === "图片") {
+          item.link = JSON.parse(item.showTxt).thumbnail;
         }
-      })
+      });
     }
   },
   { deep: true }
