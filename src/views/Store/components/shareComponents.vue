@@ -255,19 +255,19 @@
     state.way = [
       {
         id: '1',
-        label: '按组织共享'
+        label: typePD.value == 3 ? '按组织共享':'按组织分配'
       },
       {
         id: '2',
-        label: '按职权共享'
+        label: typePD.value == 3 ? '按职权共享':'按职权分配'
       },
       {
         id: '3',
-        label: '按身份共享'
+        label: typePD.value == 3 ? '按身份共享':'按身份分配'
       },
       {
         id: '4',
-        label: '按人员共享'
+        label: typePD.value == 3 ? '按人员共享':'按人员分配'
       }
     ]
     if (typePD.value == 1) {

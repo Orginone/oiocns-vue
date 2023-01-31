@@ -127,7 +127,7 @@
   }
 
   const store = useUserStore()
-  var tableData = ref<any>([{id:123,flowInstance:{}}])
+  var tableData = ref<any>([])
   const diyTable = ref(null)
   const tableHead =ref<any[]>([
     {
