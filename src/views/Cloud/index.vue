@@ -178,6 +178,7 @@
       v-model="drawer"
       title="操作记录"
       :direction="direction"
+      size="22%"
     >
       <div v-for="(item,index) in state.taskGroup" :key="index">
         <div class="groupBox">
@@ -799,9 +800,10 @@
           margin: 0 10px;
         }
         .itemsInfo{
+          width: calc(100% - 70px);
           :deep .el-progress--line{
             margin-top: 5px;
-            width: 300px;
+            // width: 300px;
           }
         }
       }

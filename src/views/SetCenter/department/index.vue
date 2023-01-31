@@ -387,7 +387,9 @@ const subscribe = store.$subscribe(
 
     if(state.currentSelectItme){
       if(state.currentSelectItme.label === '部门管理') return
-      getUsers(store.currentSelectItme?.intans)
+      setTimeout(()=>{
+        getUsers(store.currentSelectItme?.intans)
+      },500)
     }
     
   },
@@ -552,14 +554,14 @@ const checksCompanySearch = async(val: any) => {
 }
 
 // 加载用户
-const getUsers = async (currentData?: any) => {
+const getUsers = async(currentData?: any) => {
   if(currentData){
     const backData =  await currentData?.loadMembers({
       filter: "",
       limit: 20,
       offset: 0
-  })
-  console.log(backData)
+    })
+    // console.log(backData)
     if(backData.result){
       tableData.value =backData.result;
       pageStore.total = backData.total
@@ -676,12 +678,16 @@ const selectionChange = (val: any) => {
 }
 //获取单位信息
 onMounted(() => {  
-  getPostList()
-  getSelectTree()
+  setTimeout(()=>{
+    getPostList()
+    getSelectTree()
+  },500)
 })
 // 获取单位信息
 onBeforeMount(()=> {
-  store.GetDepartmentInfo()
+  setTimeout(()=>{
+    store.GetDepartmentInfo()
+  },500)
 })
 </script>
 <style lang="scss" scoped>

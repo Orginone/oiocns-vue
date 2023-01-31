@@ -191,9 +191,11 @@ const handleUpdate = (page: any) => {
 let formData = ref<any>({})
 let cascaderTree = ref<OrgTreeModel[]>([])
 function getSelectTree() {
-  store.loadTreeData(false).then((res: any[]) => {
-    cascaderTree.value = res
-  })
+  setTimeout(()=>{
+    store.loadTreeData(false).then((res: any[]) => {
+      cascaderTree.value = res
+    })
+  },500)
 }
 let newDept = ref()
 const handleSelectTree = (_?: any, info?: {intans: any}) => {
@@ -340,6 +342,7 @@ const assign = async (arr: any) => {
 const cardHeight = ref(null)
 const tabHeight = ref<number>(100)
 onMounted(() => {
+  console.log(store)
   getSelectTree()
   nextTick(() => {
     let headerHeight = cardHeight.value?.clientHeight

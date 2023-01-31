@@ -232,8 +232,9 @@ let myGroupList: any = []
 let addGroupList: any = []
 
 // 查询集团列表
-const getGroupList = async() => {
-  const groups = await userCtrl.company.getJoinedGroups(false);
+const getGroupList = () => {
+  setTimeout(async()=>{
+    const groups = await userCtrl.company.getJoinedGroups(false);
     myGroupList = []
     addGroupList = []
     groups.length && groups.forEach((item: any) => {
@@ -275,6 +276,8 @@ const getGroupList = async() => {
     })
     orgTree.value.length && emit('nodeClick', orgTree.value[0]?.children[0])
     // nodeClick(orgTree.value[0]?.children[0])
+  },500)
+
 }
 
 const nodeClick = (val: any, nodeAttribute?: any, event?: any) => {
