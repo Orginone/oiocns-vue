@@ -278,6 +278,11 @@ const handleSelect = (key: any) => {
     // font-weight: 800;
   // }
 
+  :deep .el-tree{
+    height: calc(100vh - 150px);
+    overflow-y: auto;
+  }
+
   :deep .is-penultimate > .el-tree-node__content {
     font-size: 10px;
     color: #909399;
