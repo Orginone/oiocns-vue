@@ -6,9 +6,9 @@
       </div>
       <div class="cohortLayout-header-tabs">
         <el-tabs v-model="activeName" class="demo-tabs">
-          <el-tab-pane v-for="(item, index) in tabs" :key=" item.id" :name="index">
+          <el-tab-pane v-for="(item, index) in tabs" :key=" item.resource.id" :name="index">
             <template #label>
-              <div slot="label" >{{item.name }}</div>
+              <div slot="label" >{{item.resource.name }}</div>
             </template>
           </el-tab-pane>
         </el-tabs>
@@ -318,10 +318,21 @@
 
   // 获取历史数据
   const getHistoryData = async (data?: any) => {
+    let Target;
+    console.log('typePD',typePD.value)
+    if(typePD.value == '1'){
+      Target = tabs?.value[(activeName-1)||0] 
+    }else{
+      Target = appCtrl.curProduct
+    }
+    console.log('Target',Target)
+    if (!Target) {
+      return;
+    }
     switch (radio.value) {
       case '1':
         setTimeout(async () => {
-          let data1 =  await appCtrl.curProduct.queryExtend('组织','0');
+          let data1 =  await Target.queryExtend('组织','0');
           state.departHisData =  data1.result || []
 
           let arr: any[] = []
@@ -334,7 +345,7 @@
         }, 300)
         break
       case '2':
-        let data2 =  await appCtrl.curProduct.queryExtend('职权','0');
+        let data2 =  await Target.queryExtend('职权','0');
         state.authorHisData =  data2.result || []
         state.authorData = JSON.parse(JSON.stringify(state.authorHisData))
         let arrAu: any[] = []
@@ -347,7 +358,7 @@
         }
         break
       case '3':
-        let data3 =  await appCtrl.curProduct.queryExtend('身份','0');
+        let data3 =  await Target.queryExtend('身份','0');
         state.identitysHisData = data3.result || []
         state.identitysData = state.identitysHisData
         let arrId: any[] = []
@@ -360,7 +371,7 @@
         }
         break
       case '4':
-        let data4 = await appCtrl.curProduct.queryExtend('人员','0');        
+        let data4 = await Target.queryExtend('人员','0');       
         state.personsHisData =  data4.result || []
         state.personsData = state.personsHisData
         let arrPe: any[] = []
@@ -400,8 +411,8 @@
     }else if(radio.value == 4){
       data.list = state.personsData
     }
-    await application.submitAll(data)
-    closeDialog()
+    await application.submitAll(data,tabs?.value[(activeName-1)||0])
+    // closeDialog()
   }
 
   // 中间树形滚动加载事件
@@ -674,16 +685,8 @@
 
   // 获取分配时应用的资源信息
   const searchResource = async () => {
-    let arr = [];
-    appCtrl.curProduct.resource.forEach(element => {
-      let obj = {
-        id:element.resource.id,
-        name:element.resource.name,
-      }
-      arr.push(obj)
-    });
-    tabs.value = arr || [];
-    resource.value = arr[0]?.id
+    tabs.value = appCtrl.curProduct.resource || [];
+    resource.value = appCtrl.curProduct.resource[0]?.id
   }
  
 </script>
