@@ -353,7 +353,6 @@
     formEl.validate(async (valid) => {
       if (valid) {
         const res =  await store.currentSelectItme.create(state.classifyForm)
-        // console.log(res)
         if(res){
           ElMessage.success('创建成功!')
           visible.value = false

@@ -366,25 +366,11 @@
   }
   const getStandardSpecies = async()=>{
     const teamSpecies: SpeciesObject = thingCtrl.teamSpecies as SpeciesObject
-    // const teamSpecies = await userCtrl.space.loadSpeciesTree();
     if(teamSpecies) {
+      teamSpecies.structure = true
       const treeData = [teamSpecies]
       treeLabel(treeData)
-      let newData: any = [
-        {
-          label: '标准设置',
-          structure: true,
-          id: 1,
-          query: true,
-          isPenultimate: true,
-          btns:[{
-            name: '新增分类',
-            id: '2204'
-          }],
-          children: treeData
-        }
-      ]
-      menuArr.state = newData
+      menuArr.state = treeData
       function treeLabel(arr: any[]) {
         arr.forEach((el) => {
           el.label = el.name
