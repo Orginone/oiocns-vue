@@ -156,6 +156,54 @@
           </span>
         </template>
       </el-dialog>
+      <!-- 新增分类表单 -->
+      <el-dialog v-model="visible" title="新增分类" width="50%">
+        <el-form :model="state.classifyForm" :rules="classifyRules" label-position="top" label-width="auto" ref="classifyFormRef">
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="分类名称" prop="name">
+                <el-input v-model="state.classifyForm.name" placeholder="请输入"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="分类代码" prop="code">
+                <el-input v-model="state.classifyForm.code" placeholder="请输入"/>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="选择制定组织" prop="belongId">
+                <el-tree-select v-model="state.classifyForm.belongId" :data="state.belongTreeData" highlight-current default-expand-all check-strictly :props="{ label: 'name', value: 'id', children: 'subTeam'}" placeholder="请选择" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="选择管理职权" prop="authId">
+                <el-tree-select v-model="state.classifyForm.authId" :data="state.authTreeData" highlight-current default-expand-all check-strictly :props="{ label: 'name', value: 'id'}" placeholder="请选择" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="向下级组织公开" prop="public">
+                <el-select v-model="state.classifyForm.public" placeholder="请选择">
+                  <el-option label="公开" :value="true" />
+                  <el-option label="不公开" :value="false" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item label="分类定义" prop="remark">
+            <el-input v-model="state.classifyForm.remark" :min="4" placeholder="请输入" type="textarea"/>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="visible=false">取消</el-button>
+            <el-button type="primary" @click="submitForm(classifyFormRef)">确定</el-button>
+          </span>
+        </template>
+      </el-dialog>
     </div>
 </template>
 <script lang="ts" setup>
@@ -165,8 +213,9 @@
   import {computed, nextTick, reactive, ref, watch} from "vue";
   import { setCenterStore } from '@/store/setting'
   import { userCtrl,thingCtrl  } from "@/ts/coreIndex";
-
   import {ElMessage,FormRules,FormInstance} from "element-plus";
+
+  const { proxy } = getCurrentInstance()
 
   const store: any = setCenterStore()
 
@@ -182,6 +231,8 @@
   const isEditAttr =  ref(false)
   const attrFormRef = ref<FormInstance>()
   const activeIndex = ref<string>('1'); //table nav index
+  const visible = ref(false)
+  const classifyFormRef = ref<FormInstance>()
 
   const handleSelect = (key: string) => {
     activeIndex.value = key
@@ -192,6 +243,8 @@
     attrForm: {public:true,valueType:"描述型"},
     belongTreeData: [],
     authTreeData: [],
+    classifyForm:{},
+    createOrEdit:{}
   })
   const options = ref<any>({
     checkBox: false,
@@ -262,6 +315,76 @@
     ],
   })
 
+  const classifyRules = reactive<FormRules>({
+    name: [
+      { required: true, message: '分类名称为必填项', trigger: 'blur' },
+    ],
+    code: [
+      { required: true, message: '分类代码为必填项', trigger: 'blur' },
+    ],
+    belongId: [
+      { required: true, message: '制定组织为必填项', trigger: 'blur' },
+    ],
+    authId: [
+      { required: true, message: '管理职权为必填项', trigger: 'blur' },
+    ],
+    public: [
+      { required: true, message: '向下级组织公开为必填项', trigger: 'blur' },
+    ],
+    remark: [
+      { required: true, message: '分类定义为必填项', trigger: 'blur' },
+    ],
+  })
+
+  proxy?.$Bus.on('clickBus', async (id) => {
+    if(id === '2204') { // 新增分类
+      visible.value = true
+      state.belongTreeData = await userCtrl.getTeamTree()
+      const authData = await userCtrl.company.loadAuthorityTree(false)
+      state.authTreeData = authData ? [authData] : [];
+      // state.createOrEdit = store.currentSelectItme
+
+      // console.log(state.createOrEdit)
+    }
+  })
+
+  const submitForm = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.validate(async (valid) => {
+      if (valid) {
+        const res =  await store.currentSelectItme.create(state.classifyForm)
+        // console.log(res)
+        if(res){
+          ElMessage.success('创建成功!')
+          visible.value = false
+          proxy?.$Bus.emit('refreshNav')
+        }
+      } else {
+        return false
+      }
+    })
+  }
+
+  // const submitClassifyForm = async (formEl: FormInstance | undefined) => {
+  //   if (!formEl) return
+  //   formEl.validate(async (valid) => {
+  //     if (valid) {
+  //       console.log(store.currentSelectItme)
+  //       const res = await store.currentSelectItme?.create(state.classifyForm)
+  //       console.log(res)
+  //       // console.log(res)
+  //         // if(success) {
+  //         //   ElMessage.success({ message: '新增成功'})
+  //         //   visible.value = false
+  //         //   // await loadSpeciesAttrs(currentData.value)
+  //         // }
+  //     } else {
+  //       return false
+  //     }
+  //   })
+  // }
+
+
   const loadSpeciesAttrs = async (species) => {
     const page: PageRequest = {offset: 0, limit: 20, filter: ''}
     const res = await species.loadAttrs(userCtrl.space.id, page)
@@ -302,6 +425,7 @@
     state.attrForm = {public:true,valueType:"描述型"}
   }
 
+  //提交新增特性
   const submitAttrForm = async (formEl: FormInstance | undefined) => {
     if(!currentData || !currentData.value.createAttr) {
       ElMessage.warning({ message: '请选择左侧分类后，再增加特性'})
@@ -324,6 +448,7 @@
     })
   }
 
+  // 删除特性
   const deleteAttrItem = async (attr) => {
     const success = await currentData.value.deleteAttr(attr.id)
     if(success) {

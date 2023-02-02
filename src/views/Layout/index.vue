@@ -134,12 +134,12 @@
             })
             showMenu.value = true;
           },500)
-
           return;
       } else if (router.currentRoute.value.name === 'post') {
           titleArr.state= {icon: 'User',title: '岗位设置',"backFlag": true}
           setTimeout(()=>{
             setCenterStore().GetIdentities().then((treeData)=> {
+              console.log(treeData)
               let newData: any = [
                 {
                   label: '岗位管理',
@@ -364,16 +364,31 @@
     structure: boolean
     label: string
   }
-  const getStandardSpecies = ()=>{
+  const getStandardSpecies = async()=>{
     const teamSpecies: SpeciesObject = thingCtrl.teamSpecies as SpeciesObject
+    // const teamSpecies = await userCtrl.space.loadSpeciesTree();
     if(teamSpecies) {
-      teamSpecies.structure = true
       const treeData = [teamSpecies]
       treeLabel(treeData)
-      menuArr.state = treeData
+      let newData: any = [
+        {
+          label: '标准设置',
+          structure: true,
+          id: 1,
+          query: true,
+          isPenultimate: true,
+          btns:[{
+            name: '新增分类',
+            id: '2204'
+          }],
+          children: treeData
+        }
+      ]
+      menuArr.state = newData
       function treeLabel(arr: any[]) {
         arr.forEach((el) => {
           el.label = el.name
+          el.btns = [{name: '新增分类',id: '2204'}]
           delete el.parent
           treeLabel(el.children || [])
         })

@@ -170,7 +170,6 @@ watch(() => props.data, (newValue:any) => {
   immediate: true
 })
 watch(filterText, (val) => {
-  console.log('a',val);
   treeRef.value!.filter(val)
 })
 const instance = getCurrentInstance();
@@ -278,10 +277,10 @@ const handleSelect = (key: any) => {
     // font-weight: 800;
   // }
 
-  :deep .el-tree{
-    height: calc(100vh - 150px);
-    overflow-y: auto;
-  }
+  // :deep .el-tree{
+  //   height: calc(100vh - 150px);
+  //   overflow-y: auto;
+  // }
 
   :deep .is-penultimate > .el-tree-node__content {
     font-size: 10px;

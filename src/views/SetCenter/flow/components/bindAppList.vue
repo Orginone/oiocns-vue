@@ -3,7 +3,7 @@
     <div class="card-box-items" v-for="(item,index) in state.dataList" :key="index">
       <div class="card-meta">
         <div class="card-meta-avatar">
-          <img src="@assets/img/头像.png" class="avatar" />
+          <img src="@assets/img/app_icon.png" class="avatar" />
         </div>
         <div class="card-meta-detail">
           <div class="card-meta-title">{{item.name}}</div>
