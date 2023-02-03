@@ -291,6 +291,10 @@ onMounted(() => {
             width: 100%;
             border-radius: 15px;
             height: auto;
+            transition: all .2s;
+          }
+          img:hover{
+            transform: scale(1.2);
           }
         }
         span:nth-child(2) {
