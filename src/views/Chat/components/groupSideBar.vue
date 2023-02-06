@@ -206,9 +206,7 @@ import {
 } from "vue";
 import { formatDate } from "@/utils/index";
 import HeadImg from "@/components/headImg.vue";
-import { chatCtrl } from "@/ts/coreIndex";
 import { useRoute } from "vue-router";
-import { ElMessage } from "element-plus";
 import searchFriend from "@/components/searchs/index.vue";
 import FriendServices from "@/module/relation/friend";
 import Loading from "@/views/Layout/components/loading.vue";
@@ -293,15 +291,17 @@ const groupList = ref<any>([]);
 watch(
   () => props.chatRef,
   (val) => {
-    chatList.value = getChatList(val);
-    chatStandardList.value = getChatList(val);
-    groupStandardList.value = getGroupList(val);
-    groupList.value = getGroupList(val);
-
-    openIdArr.value = [];
-    groupList.value.map((item: any) => {
-      item.isOpened && openIdArr.value.push(item.spaceId);
-    });
+    setTimeout(() => {
+      chatList.value = getChatList(val);
+      chatStandardList.value = getChatList(val);
+      groupStandardList.value = getGroupList(val);
+      groupList.value = getGroupList(val);
+  
+      openIdArr.value = [];
+      groupList.value.map((item: any) => {
+        item.isOpened && openIdArr.value.push(item.spaceId);
+      });
+    }, 600);
   },
   { deep: true }
 );
@@ -337,7 +337,7 @@ const getChatList = (val: any) => {
   let tempChats = [...topChatList, ...normalChatList];
 
   tempChats = handlePhotoLink(tempChats);
-
+  
   return tempChats;
 };
 
@@ -478,7 +478,7 @@ const handleContextChange = (item: MenuItemType) => {
   switch (item.value) {
     case 1:
       {
-        chatCtrl.setToping(mousePosition.selectedItem as any);
+        props.chatRef.setToping(mousePosition.selectedItem as any);
         chatList.value = getChatList(props.chatRef);
         chatStandardList.value = getChatList(props.chatRef);
       }
@@ -488,7 +488,7 @@ const handleContextChange = (item: MenuItemType) => {
       break;
     case 3:
       {
-        chatCtrl.setToping(mousePosition.selectedItem as any);
+        props.chatRef.setToping(mousePosition.selectedItem as any);
         chatList.value = getChatList(props.chatRef);
         chatStandardList.value = getChatList(props.chatRef);
       }
