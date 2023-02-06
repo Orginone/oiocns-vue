@@ -8,26 +8,27 @@
           :tableName="props.selectItem?.label ?? props.selectItem?.name" 
           :hasTableHead="true" 
           :tableData="companies"
+          :options="options"
           @handleUpdate="handleUpdate"
           :tableHead="tableHead"
         >
           <template #buttons>
             <div style="display: flex;align-items: center">
-              <el-upload
+              <!-- <el-upload
                 ref="uploadRef"
                 :show-file-list="false"
                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                 :auto-upload="false"
               >
-              <template #trigger>
-                <el-button class="btn-check" link type="primary">导入集团单位</el-button>
-              </template>
-              </el-upload>
-              <el-button v-if="props.selectItem?.item?.typeName == '集团'" class="btn-check" type="primary" link @click="handleShare()">分享集团</el-button>
-              <el-button class="btn-check" type="primary" @click="handleIdentity()" link>身份设置</el-button>
-              <el-button class="btn-check" v-if="props.selectItem?.item?.typeName == '集团'" small link type="primary" @click="pullCompanysDialog = true">添加单位</el-button>
-              <el-button class="btn-check" v-if="props.selectItem?.item?.typeName == '集团'" small link type="primary" @click="viewApplication">查看申请</el-button>
-              <el-button class="btn-check" v-if="props.selectItem?.item?.typeName == '子集团'" small link type="primary" @click="showAssignDialog">分配单位</el-button>
+              <template #trigger> -->
+                <el-button link type="primary" @click="develop">导入集团单位</el-button>
+              <!-- </template>
+              </el-upload> -->
+              <el-button v-if="props.selectItem?.item?.typeName == '集团'" type="primary" link @click="handleShare()">分享集团</el-button>
+              <el-button type="primary" @click="handleIdentity()" link>身份设置</el-button>
+              <el-button v-if="props.selectItem?.item?.typeName == '集团'" small link type="primary" @click="pullCompanysDialog = true">添加单位</el-button>
+              <el-button v-if="props.selectItem?.item?.typeName == '集团'" small link type="primary" @click="viewApplication">查看申请</el-button>
+              <el-button v-if="props.selectItem?.item?.typeName == '子集团'" small link type="primary" @click="showAssignDialog">分配单位</el-button>
             </div>
           </template>
           <template #operate="scope">
@@ -135,6 +136,15 @@ const pageStore = reactive({
 
 const diyTable = ref(null)
 
+const options = {
+  expandAll: false,
+  checkBox: false,
+  order: true,
+  switchType:false,
+  noPage: false,
+  selectLimit: 0
+}
+
 const tableHead = ref([
   {
     prop: 'name',
@@ -155,15 +165,15 @@ const tableHead = ref([
     label: '代码'
   },
   {
-    prop: 'team.code',
+    prop: 'team.remark',
     label: '简介',
-    name: 'teamCode'
+    name: 'teamRemark'
   },
-   {
-    prop: '',
-    label: '所属集团',
-    name: ''
-  },
+  //  {
+  //   prop: '',
+  //   label: '所属集团',
+  //   name: ''
+  // },
   {
     type: 'slot',
     label: '操作',
@@ -181,9 +191,11 @@ const handleUpdate = (page: any) => {
 let formData = ref<any>({})
 let cascaderTree = ref<OrgTreeModel[]>([])
 function getSelectTree() {
-  store.loadTreeData(false).then((res: any[]) => {
-    cascaderTree.value = res
-  })
+  setTimeout(()=>{
+    store.loadTreeData(false).then((res: any[]) => {
+      cascaderTree.value = res
+    })
+  },500)
 }
 let newDept = ref()
 const handleSelectTree = (_?: any, info?: {intans: any}) => {
@@ -266,6 +278,14 @@ const checksCompanySearch = (val: any) => {
   }
 }
 
+//导入集团单位
+const develop = ()=>{
+  ElMessage({
+    message: '功能正在开发中！',
+    type: 'warning'
+  })
+}
+
 //拉单位进集团
 const pullCompanys = async (arr: any) => {
   const data =  await props.selectItem?.item?.pullMembers(arr,TargetType.Company)
@@ -322,6 +342,7 @@ const assign = async (arr: any) => {
 const cardHeight = ref(null)
 const tabHeight = ref<number>(100)
 onMounted(() => {
+  console.log(store)
   getSelectTree()
   nextTick(() => {
     let headerHeight = cardHeight.value?.clientHeight

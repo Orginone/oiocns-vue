@@ -71,24 +71,6 @@
                 "children": []
             },
             {
-                "id": "setCenter.resource",
-                "name": "资源设置",
-                "type": "8",
-                "icon": "Histogram",
-                "uid": "1-1",
-                "url": "/setCenter/resource",
-                "children": []
-            },
-            {
-                "id": "setCenter.use",
-                "name": "应用设置",
-                "type": "9",
-                "icon": "Grid",
-                "uid": "1-1",
-                "url": "/setCenter/use",
-                "children": []
-            },
-            {
                 "id": "setCenter.flow",
                 "name": "流程设置",
                 "type": "10",
@@ -104,15 +86,6 @@
                 "icon": "PriceTag",
                 "uid": "1-1",
                 "url": "/setCenter/standard",
-                "children": []
-            },
-            {
-                "id": "setCenter.authority",
-                "name": "权限设置",
-                "type": "12",
-                "icon": "Stamp",
-                "uid": "1-1",
-                "url": "/setCenter/authority",
                 "children": []
             }
         ]

@@ -111,6 +111,7 @@ import { ElMessage, ElMessageBox, FormRules } from "element-plus";
 import {userCtrl,processCtrl} from '@/ts/coreIndex'
 import { useRouter } from "vue-router";
 import FormProcessDesign from '@/components/wflow/layout/FormProcessDesign.vue'
+import DefaultProps from "@/components/wflow/process/DefaultNodeProps"
 
 const active = ref(0)
 const stepsArr = reactive([{title:'基本信息'},{title:'流程设计'}])
@@ -230,6 +231,7 @@ const submitForm = () => { // 点击确定按钮，输出行内数据
     if (valid) {
       active.value++
       const config = state.workFlowForm;
+      DefaultProps.setFormFields(state.workFlowForm.labels) 
       processCtrl.setCondtionData(config);
     } else {
       console.log('error submit!', fields)

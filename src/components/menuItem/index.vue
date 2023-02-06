@@ -170,7 +170,6 @@ watch(() => props.data, (newValue:any) => {
   immediate: true
 })
 watch(filterText, (val) => {
-  console.log('a',val);
   treeRef.value!.filter(val)
 })
 const instance = getCurrentInstance();

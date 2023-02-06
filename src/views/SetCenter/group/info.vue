@@ -3,9 +3,9 @@
     <div class="header">
       <div class="title">节点信息</div>
       <div class="box-btns">
-        <el-button small link type="primary"  @click="handleAuthority">权限管理</el-button>
-        <el-button small link type="primary"  @click="handleUpdate">编辑</el-button>
-        <el-button small link type="primary"  @click="handleDelete">删除</el-button>
+        <el-button small link type="primary" @click="handleAuthority">权限管理</el-button>
+        <el-button small link type="primary" @click="handleUpdate">编辑</el-button>
+        <el-button small link type="primary" @click="handleDelete">删除</el-button>
       </div>
     </div>
     <div class="tab-list">
@@ -71,7 +71,7 @@ let selectItem = ref<any>({})
 
 // 获取单位树点击的信息
 const selectItemChange = (data: any) => {
-  console.log('data: ', data);
+  // console.log('data: ', data);
   selectItem.value = data?.item;
 };
 defineExpose({ selectItemChange });

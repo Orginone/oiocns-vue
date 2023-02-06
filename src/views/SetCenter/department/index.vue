@@ -5,14 +5,14 @@
     </div>
     <div class="body" ref="bodyWrap">
       <div class="body-tabs">
-        <el-menu
-        :default-active="tableActiveIndex"
-        mode="horizontal"
-      >
-        <el-menu-item index="1">部门成员</el-menu-item>
-        <el-menu-item index="2">部门应用</el-menu-item>
-      </el-menu>
-      <hr >
+        <!-- <el-menu
+          :default-active="tableActiveIndex"
+          mode="horizontal"
+        >
+          <el-menu-item index="1">部门成员</el-menu-item>
+          <el-menu-item index="2">部门应用</el-menu-item>
+        </el-menu> -->
+      <!-- <hr > -->
       </div>
       <diytab
         :style="{ width: '100%' }"
@@ -28,7 +28,7 @@
         @selectionChange="selectionChange"
         :tableHead="tableHead"
       >
-        <template #slot-tabs>
+        <!-- <template #slot-tabs>
           <div class="table-tabs">
             <el-menu
               :default-active="tableActiveIndex2"
@@ -41,7 +41,7 @@
               <el-menu-item index="3">未开通</el-menu-item>
             </el-menu>
           </div>
-        </template>
+        </template> -->
         <template #buttons>
           <el-button class="btn-check" type="primary" link @click="handleShare()">分享部门</el-button>
           <el-upload
@@ -248,7 +248,7 @@ import { ref, onMounted, getCurrentInstance, onBeforeMount, computed } from "vue
 import { useRouter } from 'vue-router'
 import AssignedPerson from '@/components/searchs/index.vue'
 import { setCenterStore } from '@/store/setting'
-const store = setCenterStore()
+const store: any = setCenterStore()
 import QrCodeCustom from '@/components/qrCode/index.vue'
 import {TargetType, userCtrl} from '@/ts/coreIndex'
 import CreateTeamModal from '../GlobalComps/createTeam.vue';
@@ -383,11 +383,13 @@ const subscribe = store.$subscribe(
       *
       * */
     // 在此处监听store中值的变化，当变化为某个值的时候，做一些业务操作
-    console.log('state.currentSelectItme',state.currentSelectItme,store.currentSelectItme)
+    // console.log('state.currentSelectItme',state.currentSelectItme,store.currentSelectItme)
 
     if(state.currentSelectItme){
       if(state.currentSelectItme.label === '部门管理') return
-      getUsers(store.currentSelectItme?.intans)
+      setTimeout(()=>{
+        getUsers(store.currentSelectItme?.intans)
+      },500)
     }
     
   },
@@ -552,13 +554,14 @@ const checksCompanySearch = async(val: any) => {
 }
 
 // 加载用户
-const getUsers = async (currentData?: any) => {
+const getUsers = async(currentData?: any) => {
   if(currentData){
     const backData =  await currentData?.loadMembers({
       filter: "",
       limit: 20,
       offset: 0
-  })
+    })
+    // console.log(backData)
     if(backData.result){
       tableData.value =backData.result;
       pageStore.total = backData.total
@@ -651,6 +654,11 @@ const tableHead = ref([
     name: 'teamCode'
   },
   {
+    prop: 'team.remark',
+    label: '签名',
+    name: 'teamRemark'
+  },
+  {
     type: 'slot',
     label: '操作',
     fixed: 'right',
@@ -670,12 +678,16 @@ const selectionChange = (val: any) => {
 }
 //获取单位信息
 onMounted(() => {  
-  getPostList()
-  getSelectTree()
+  setTimeout(()=>{
+    getPostList()
+    getSelectTree()
+  },500)
 })
 // 获取单位信息
 onBeforeMount(()=> {
-  store.GetDepartmentInfo()
+  setTimeout(()=>{
+    store.GetDepartmentInfo()
+  },500)
 })
 </script>
 <style lang="scss" scoped>
@@ -718,15 +730,15 @@ onBeforeMount(()=> {
       display: flex;
       flex-direction: column;
       flex: 1;
-      .btn-check{
-        padding: 8px 16px;
-        color: #154ad8;
-      }
-      .btn-check:hover{
-        background: #154ad8;
-        color: #fff;
-        padding: 8px  16px;
-      }
+      // .btn-check{
+      //   padding: 8px 16px;
+      //   color: #154ad8;
+      // }
+      // .btn-check:hover{
+      //   background: #154ad8;
+      //   color: #fff;
+      //   padding: 8px  16px;
+      // }
       .body-tabs {
         margin: 0px 20px;
         margin-top: 10px;

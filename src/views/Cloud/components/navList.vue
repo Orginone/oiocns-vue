@@ -22,7 +22,33 @@
             <el-icon><FolderOpened v-if="node.expanded"/><Folder v-else/></el-icon>
             <span>{{ doZipFileName(node.label) }}</span>
           </div>
-          <el-icon class="node-dots" @click.stop="showNodeBtns" v-if="!props.onlySelect"><MoreFilled /></el-icon>
+          
+          <el-dropdown v-if="!props.onlySelect">
+            <el-button class="node-btns"><el-icon class="node-dots"><MoreFilled /></el-icon></el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click.stop="handleOptions('add',data)">新建文件夹</el-dropdown-item>
+                <el-dropdown-item @click.stop="handleOptions('refresh',data)">刷新文件夹</el-dropdown-item>
+                <el-dropdown-item >
+                  <el-upload class="upload-demo"
+                    multiple
+                    ref="uploadRef"
+                    :show-file-list="false"
+                    :limit="3"
+                    :data="data"
+                    :http-request="customUpload"
+                  >
+                    上传文件
+                  </el-upload>
+                </el-dropdown-item>
+                <el-dropdown-item v-if="data.key && data.key != '主目录'" @click.stop="handleOptions('edit',data)">重命名</el-dropdown-item>
+                <el-dropdown-item v-if="data.key && data.key != '主目录'" @click.stop="handleOptions('copy',data)">复制到</el-dropdown-item>
+                <el-dropdown-item v-if="data.key && data.key != '主目录'" @click.stop="handleOptions('move',data)">移动到</el-dropdown-item>
+                <el-dropdown-item v-if="data.key && data.key != '主目录'" @click.stop="handleOptions('del',data)" style="color: #f67c80">删除文件</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <!-- <el-icon class="node-dots" @click.stop="showNodeBtns" v-if="!props.onlySelect"><MoreFilled /></el-icon> -->
         </div>
       </template>
     </el-tree>
@@ -31,6 +57,7 @@
 
 <script lang="ts" setup>
   import type Node from 'element-plus/es/components/tree/src/model/node'
+  import {ElMessage, UploadProps, UploadRequestOptions} from "element-plus";
   import { ref, onMounted, watch, reactive, nextTick } from 'vue'
   import Cloud, { FileObject } from '@/ts/cloud'
   import { zipFileName } from '@/utils'
@@ -44,7 +71,7 @@
     }
   })
   const treeRef = ref(null)
-  const emit = defineEmits(['clickFileFromTree', 'selectTreeNode'])
+  const emit = defineEmits(['clickFileFromTree', 'selectTreeNode', 'selectOptions'])
 
   const defaultProps = {
     children: 'dirChildren',
@@ -74,6 +101,12 @@
     } else {
       emit('clickFileFromTree', data)
     }
+  }
+
+  //操作
+  const handleOptions = (type:any,data:any) => {
+    const json = {type:type,data:data}
+    emit('selectOptions', json)
   }
 
   // 文本展示工具函数
@@ -109,6 +142,19 @@
   const removeNode = (data: FileObject) => {
     nextTick(() => {
       treeRef.value.remove(data.key)
+    })
+  }
+
+    // 自定义文件上传
+  const customUpload = async (options: UploadRequestOptions) => {
+    const current = options.data as FileObject
+    const file = options.file as File
+    await current.upload(file.name, file, async (res: any) => {
+      if(res > 0) {
+        ElMessage.success('上传成功')
+        const json = {type:'refresh',data:current}
+        emit('selectOptions', json)
+      }
     })
   }
 
@@ -189,6 +235,12 @@
         span {
           margin-left: 5px;
         }
+      }
+      .node-btns{
+        background: transparent;
+        border-radius: none;
+        border:none;
+        height: auto;
       }
       .node-dots {
         display: none;

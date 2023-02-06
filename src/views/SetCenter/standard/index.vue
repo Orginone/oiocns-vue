@@ -1,7 +1,20 @@
 <template>
     <div class="main">
-      <div class="content">
-        <div class="detail" v-if="currentData.target">
+      <div class="content" v-if="currentData.target">
+        <div class="header">
+          <el-menu
+            :default-active="activeIndex"
+            mode="horizontal"
+            @select="handleSelect"
+          >
+            <el-menu-item index="1">基本信息</el-menu-item>
+            <el-menu-item index="2">分类特征</el-menu-item>
+            <el-menu-item index="3">分类字典</el-menu-item>
+            <!-- <el-menu-item index="4">业务标准</el-menu-item> -->
+          </el-menu>
+        </div>
+        
+        <div class="detail" v-if="activeIndex == 1">
           <el-descriptions
               class="margin-top"
               :title="`${currentData.name}的基本信息`"
@@ -40,7 +53,7 @@
             </el-descriptions-item>
           </el-descriptions>
         </div>
-        <div class="table">
+        <div class="table" v-if="activeIndex == 2">
           <DiyTable
               :style="{ width: '100%' }"
               ref="diyTable"
@@ -49,10 +62,9 @@
               :hasTableHead="true"
               :tableData="state.tableData"
               :options="options"
-              @handleUpdate="handleUpdate"
               :tableHead="tableHead"
           >
-            <template #slot-tabs>
+            <!-- <template #slot-tabs>
               <div class="table-tabs">
                 <el-menu
                     :default-active="`1`"
@@ -63,7 +75,7 @@
                   <el-menu-item index="1">全部</el-menu-item>
                 </el-menu>
               </div>
-            </template>
+            </template> -->
             <template #buttons>
               <el-button class="btn-check" type="primary" text link @click="openAttrFormDialog">新增特性</el-button>
             </template>
@@ -82,6 +94,9 @@
               <!-- <card></card> -->
             </template>
           </DiyTable>
+        </div>
+        <div class="dict" v-if="activeIndex == 3">
+          <Dict :info="currentData"></Dict>
         </div>
       </div>
       <!-- 特性提交表单 -->
@@ -141,17 +156,67 @@
           </span>
         </template>
       </el-dialog>
+      <!-- 新增分类表单 -->
+      <el-dialog v-model="visible" title="新增分类" width="50%">
+        <el-form :model="state.classifyForm" :rules="classifyRules" label-position="top" label-width="auto" ref="classifyFormRef">
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="分类名称" prop="name">
+                <el-input v-model="state.classifyForm.name" placeholder="请输入"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="分类代码" prop="code">
+                <el-input v-model="state.classifyForm.code" placeholder="请输入"/>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="选择制定组织" prop="belongId">
+                <el-tree-select v-model="state.classifyForm.belongId" :data="state.belongTreeData" highlight-current default-expand-all check-strictly :props="{ label: 'name', value: 'id', children: 'subTeam'}" placeholder="请选择" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="选择管理职权" prop="authId">
+                <el-tree-select v-model="state.classifyForm.authId" :data="state.authTreeData" highlight-current default-expand-all check-strictly :props="{ label: 'name', value: 'id'}" placeholder="请选择" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="向下级组织公开" prop="public">
+                <el-select v-model="state.classifyForm.public" placeholder="请选择">
+                  <el-option label="公开" :value="true" />
+                  <el-option label="不公开" :value="false" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item label="分类定义" prop="remark">
+            <el-input v-model="state.classifyForm.remark" :min="4" placeholder="请输入" type="textarea"/>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="visible=false">取消</el-button>
+            <el-button type="primary" @click="submitForm(classifyFormRef)">确定</el-button>
+          </span>
+        </template>
+      </el-dialog>
     </div>
 </template>
 <script lang="ts" setup>
   // @ts-nocheck
   import DiyTable from "@/components/diyTable/index.vue";
+  import Dict from './components/dict.vue'
   import {computed, nextTick, reactive, ref, watch} from "vue";
   import { setCenterStore } from '@/store/setting'
-  import { userCtrl,thingCtrl } from "@/ts/coreIndex";
-
-  import { PageRequest } from '@/ts/base/model';
+  import { userCtrl,thingCtrl  } from "@/ts/coreIndex";
   import {ElMessage,FormRules,FormInstance} from "element-plus";
+
+  const { proxy } = getCurrentInstance()
+
   const store: any = setCenterStore()
 
   const currentData = computed(() => {
@@ -165,12 +230,21 @@
   const attrFormDialog = ref(false)
   const isEditAttr =  ref(false)
   const attrFormRef = ref<FormInstance>()
+  const activeIndex = ref<string>('1'); //table nav index
+  const visible = ref(false)
+  const classifyFormRef = ref<FormInstance>()
+
+  const handleSelect = (key: string) => {
+    activeIndex.value = key
+  }
 
   const state = reactive({
     tableData: [],
     attrForm: {public:true,valueType:"描述型"},
     belongTreeData: [],
-    authTreeData: []
+    authTreeData: [],
+    classifyForm:{},
+    createOrEdit:{}
   })
   const options = ref<any>({
     checkBox: false,
@@ -241,12 +315,78 @@
     ],
   })
 
+  const classifyRules = reactive<FormRules>({
+    name: [
+      { required: true, message: '分类名称为必填项', trigger: 'blur' },
+    ],
+    code: [
+      { required: true, message: '分类代码为必填项', trigger: 'blur' },
+    ],
+    belongId: [
+      { required: true, message: '制定组织为必填项', trigger: 'blur' },
+    ],
+    authId: [
+      { required: true, message: '管理职权为必填项', trigger: 'blur' },
+    ],
+    public: [
+      { required: true, message: '向下级组织公开为必填项', trigger: 'blur' },
+    ],
+    remark: [
+      { required: true, message: '分类定义为必填项', trigger: 'blur' },
+    ],
+  })
+
+  proxy?.$Bus.on('clickBus', async (id) => {
+    if(id === '2204') { // 新增分类
+      visible.value = true
+      state.belongTreeData = await userCtrl.getTeamTree()
+      const authData = await userCtrl.company.loadAuthorityTree(false)
+      state.authTreeData = authData ? [authData] : [];
+      // state.createOrEdit = store.currentSelectItme
+
+      // console.log(state.createOrEdit)
+    }
+  })
+
+  const submitForm = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.validate(async (valid) => {
+      if (valid) {
+        const res =  await store.currentSelectItme.create(state.classifyForm)
+        if(res){
+          ElMessage.success('创建成功!')
+          visible.value = false
+          proxy?.$Bus.emit('refreshNav')
+        }
+      } else {
+        return false
+      }
+    })
+  }
+
+  // const submitClassifyForm = async (formEl: FormInstance | undefined) => {
+  //   if (!formEl) return
+  //   formEl.validate(async (valid) => {
+  //     if (valid) {
+  //       console.log(store.currentSelectItme)
+  //       const res = await store.currentSelectItme?.create(state.classifyForm)
+  //       console.log(res)
+  //       // console.log(res)
+  //         // if(success) {
+  //         //   ElMessage.success({ message: '新增成功'})
+  //         //   visible.value = false
+  //         //   // await loadSpeciesAttrs(currentData.value)
+  //         // }
+  //     } else {
+  //       return false
+  //     }
+  //   })
+  // }
 
 
   const loadSpeciesAttrs = async (species) => {
     const page: PageRequest = {offset: 0, limit: 20, filter: ''}
     const res = await species.loadAttrs(userCtrl.space.id, page)
-    console.log(res)
     if (res && res.result) {
       for (const item of res.result) {
         const team = await userCtrl.findTeamInfoById(item.belongId);
@@ -284,6 +424,7 @@
     state.attrForm = {public:true,valueType:"描述型"}
   }
 
+  //提交新增特性
   const submitAttrForm = async (formEl: FormInstance | undefined) => {
     if(!currentData || !currentData.value.createAttr) {
       ElMessage.warning({ message: '请选择左侧分类后，再增加特性'})
@@ -306,6 +447,7 @@
     })
   }
 
+  // 删除特性
   const deleteAttrItem = async (attr) => {
     const success = await currentData.value.deleteAttr(attr.id)
     if(success) {
@@ -326,9 +468,6 @@
     state.attrForm = attr
   }
 
-  const handleUpdate = (page: any) => {
-
-  }
 </script>
 <style lang="scss">
   .el-dropdown-link {
@@ -358,15 +497,14 @@
         display: flex;
         flex-direction: column;
         flex-wrap: nowrap;
-        max-height: 300px;
-        min-height: 130px;
+        height: 100%;
         padding: 12px;
         margin-top:3px;
       }
       .table {
         background: #fff;
         margin-top: 3px;
-        height: calc(100vh - 290px);
+        height: 100%;
 
         .btn-check {
           padding: 8px 16px;
@@ -394,6 +532,16 @@
             background: #fff;
           }
         }
+      }
+      .dict{
+        background: #fff;
+        overflow-x: auto;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        height: 100%;
+        padding: 12px;
+        margin-top:3px;
       }
     }
   }

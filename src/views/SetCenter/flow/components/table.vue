@@ -18,7 +18,7 @@
             <h4>流程列表</h4>
           </template>
           <template #buttons>
-            <el-button class="btn-check" @click="addNew" type="primary" link>创建流程</el-button>
+            <el-button @click="addNew" type="primary" link>创建流程</el-button>
           </template>
           <template #operate="scope">
             <el-dropdown>
@@ -86,7 +86,7 @@
         </DiyTable>
       </div>
       <div class="bindApp-box">
-        <BindAppList ref="childRefs" :bindAppMes="state.bindAppMes" @showDialog="openShareDialog()"></BindAppList>
+        <BindAppList ref="childRefs" :bindAppMes="state.bindAppMes" :resultList="state.resultList" @showDialog="openShareDialog()"></BindAppList>
       </div>
     </div>
     <Wflow v-if="state.addOrEdit" :contionData="state.contionData" @exit="exit" @clearData="clearData"></Wflow>
@@ -117,6 +117,7 @@ import { ref, reactive, onMounted } from "vue";
 import {processCtrl,userCtrl} from '@/ts/coreIndex'
 import { useRouter } from "vue-router";
 import { stat } from "fs";
+import DefaultProps from "@/components/wflow/process/DefaultNodeProps"
 
 type StateType = {
   dataList: any[]; //表格数据
@@ -163,7 +164,8 @@ const state: StateType = reactive({
     name: '',
     labels: [{ label: '', value: '', type: '' }],
     fields: '',
-  }
+  },
+  resultList:[]
 });
 
 // 表格展示数据
@@ -183,7 +185,7 @@ const options = ref<any>({
   treeProps: {
     children: 'children',
     hasChildren: 'hasChildren'
-  }
+  },
 })
 
 // 注册页面实例
@@ -197,6 +199,7 @@ onMounted(() => {
 //加载数据
 const initData = async () =>{
   const result = await userCtrl.space.getDefines(false);
+  state.resultList = result
   if (result) {
     for(var i = 0;i<result.length;i++){
       result[i].remarks = JSON.parse(result[i].content || '{}').fields
@@ -252,6 +255,7 @@ const handleCommand = (
           labels: JSON.parse(editorDataMes.remark || '{}'),
           fields: editorDataMes.fields,
         };
+        DefaultProps.setFormFields(contionData.labels) 
         processCtrl.setCondtionData(contionData);
         state.contionData = contionData;
         state.addOrEdit = true
@@ -382,11 +386,6 @@ const clearForm = () => {
       .table-box{
         width: 100%;
         height: 400px;
-        .btn-check{
-          font-size: 14px;
-          padding: 8px 16px;
-          color: #154ad8;
-        }
       }
       .bindApp-box{
         margin-top: 20px;

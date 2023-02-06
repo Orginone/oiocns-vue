@@ -27,8 +27,8 @@
   import { useUserStore } from '@/store/user'
   import { userCtrl, TargetType } from '@/ts/coreIndex';
   import { setCenterStore } from '@/store/setting'
-  const settingStore = setCenterStore()
-  const userStore = useUserStore()
+  const settingStore:any = setCenterStore()
+  const userStore:any = useUserStore()
 
   const isUpdate = ref<boolean>(false)
   const { proxy } = getCurrentInstance()
@@ -38,7 +38,7 @@
   const current = ref()
   const visible = ref(false)
   const handleOk = (newItem) => {
-    if(newItem) {
+    if(newItem.target.name != settingStore.currentSelectItme.label) {
       ElMessage.success(`${isUpdate.value ? '编辑': '新增'}成功!`)
       visible.value = false
       proxy?.$Bus.emit('refreshNav')
@@ -115,6 +115,7 @@
     height: 100%;
     padding: 3px 0;
     box-sizing: border-box;
+    background: var(--el-bg-color-overlay);
     display: flex;
     .content {
       width: 100%;
@@ -123,12 +124,12 @@
       box-sizing: border-box;
       overflow: hidden;
       .info {
-        height: calc(45%);
+        height: calc(40%);
         padding: 0 0 3px 0;
         box-sizing: border-box;
       }
       .body {
-        height: calc(43%);
+        max-height: calc(43%);
       }
     }
   }

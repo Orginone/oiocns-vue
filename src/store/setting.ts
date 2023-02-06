@@ -59,6 +59,7 @@ export const setCenterStore = defineStore({
     },
     // 获取所有部门
     async loadTreeData(reload: boolean) {
+      console.log(userCtrl)
       const createTeeDom: any = async (n: any) => {
         const { target } = n;
         let result: any = {

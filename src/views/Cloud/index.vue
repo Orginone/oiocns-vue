@@ -1,34 +1,41 @@
 <template>
   <div class="cloud">
-    <NavList ref="navRef" @clickFileFromTree="clickFile"></NavList>
+    <NavList ref="navRef" @clickFileFromTree="clickFile" @selectOptions="selectHandle($event)"></NavList>
     <div class="cloudMainBox" @click="onContent">
       <div class="cloudBar" v-if="state.currentLay">
-        <el-space size="default">
-          <el-icon title="后退" class="operateBtn" :class="{disabled: !state.currentLay.parent}" @click="goBackOneStep"><Back /></el-icon>
-          <el-icon title="刷新" class="operateBtn" @click="refreshCurrent"><Refresh /></el-icon>
-          <el-upload class="upload-demo"
-                     multiple
-                     ref="uploadRef"
-                     :show-file-list="false"
-                     :limit="3"
-                     :http-request="customUpload"
-          >
-            <el-icon title="上传文件" class="operateBtn"><UploadFilled /></el-icon>
-          </el-upload>
-          <el-icon title="创建文件夹" class="operateBtn" @click="openCreateFileDialog"><FolderAdd /></el-icon>
-        </el-space>
-        <el-divider direction="vertical" />
-        <div class="breadcrumb" v-if="state.currentLay">
-          <el-breadcrumb>
-            <el-breadcrumb-item
-                v-for="(item, index) in state.breadcrumb"
-                :to="{}"
-                :key="index"
-                @click="goBack(item, index)"
+        <div class="cloudBarLeft">
+          <el-space size="default">
+            <el-icon title="后退" class="operateBtn" :class="{disabled: !state.currentLay.parent}" @click="goBackOneStep"><Back /></el-icon>
+            <el-icon title="刷新" class="operateBtn" @click="refreshCurrent"><Refresh /></el-icon>
+            <el-upload class="upload-demo"
+                      multiple
+                      ref="uploadRef"
+                      :show-file-list="false"
+                      :limit="3"
+                      :http-request="customUpload"
             >
-              {{ item.name }}
-            </el-breadcrumb-item>
-          </el-breadcrumb>
+              <el-icon title="上传文件" class="operateBtn"><UploadFilled /></el-icon>
+            </el-upload>
+            <el-icon title="创建文件夹" class="operateBtn" @click="openCreateFileDialog"><FolderAdd /></el-icon>
+          </el-space>
+          <el-divider direction="vertical" />
+          <div class="breadcrumb" v-if="state.currentLay">
+            <el-breadcrumb>
+              <el-breadcrumb-item
+                  v-for="(item, index) in state.breadcrumb"
+                  :to="{}"
+                  :key="index"
+                  @click="goBack(item, index)"
+              >
+                {{ item.name }}
+              </el-breadcrumb-item>
+            </el-breadcrumb>
+          </div>
+        </div>
+        <div class="cloudBarRight" @click="drawer = true">
+          <el-badge :value="state.errorNum" class="item">
+            <el-icon title="操作记录" class="operateBtn"><Expand /></el-icon>
+          </el-badge>
         </div>
       </div>
       <div class="cloudFiles" v-if="state.currentLay">
@@ -166,6 +173,39 @@
       <div class="text fileMenu-item" @click="openMoveFileDialog">移动到</div>
       <div class="text fileMenu-item" @click="deleteFile">删除文件</div>
     </el-card>
+
+    <el-drawer
+      v-model="drawer"
+      title="操作记录"
+      :direction="direction"
+      size="22%"
+    >
+      <div v-for="(item,index) in state.taskGroup" :key="index">
+        <div class="groupBox">
+          <div>{{item.count}}项被上传到[{{item.group}}]目录下</div>
+          <div class="groupBoxMod">
+            <el-progress :percentage="getProcess(item.finished, item.size)" color="#67c23a" />
+          </div>
+        </div>
+        <div class="groupItems" v-for="(g,i) in item.tasks" :key="i">
+          <div class="itemsBox">
+            <img
+              src="/icons/default_file.svg"
+              alt=""
+              class="file_icon"
+            />
+            <div class="itemsInfo">
+              <div>{{g.name}}</div>
+              <el-progress
+                :status="g.finished === 0 ? 'exception' : 'success'"
+                color="#67c23a"
+                :percentage="getProcess(g.finished, g.size)"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -178,7 +218,17 @@
   import {useUserStore} from "@store/user";
   import {formatBytes, formatDate, zipFileName} from '@/utils'
   import { MenuItemType } from '@/typings/globelType';
+  import { TaskModel} from '@orginone/oiocns-ts'
   const store = useUserStore()
+
+  type GroupTaskModel = {
+    group: string;
+    count: number;
+    done: number;
+    size: number;
+    finished: number;
+    tasks: TaskModel[];
+  };
 
   const navRef = ref(null)
   const state = reactive({
@@ -186,7 +236,10 @@
     breadcrumb: [],
     fileName: '',
     operateItem: null,
-    targetItem: null
+    targetItem: null,
+    taskList:[],
+    taskGroup:[],
+    errorNum:0
   })
   const createFileDialog = ref<boolean>(false)
   const editFileDialog = ref<boolean>(false)
@@ -196,6 +249,8 @@
   const menuLeft = ref<number>(0)
   const menuTop = ref<number>(0)
   const showType = ref<number>(2)
+  const drawer = ref(false)
+  const direction = ref('rtl')
 
   // @ts-ignore
   state.breadcrumb = computed<FileObject[]>(() => {
@@ -215,6 +270,35 @@
     breadcrumb.unshift(item)
     if(item.parent) {
       pushBreadcrumb(breadcrumb, item.parent as FileObject)
+    }
+  }
+
+  // 进度条计算
+  const getProcess = (f: number, s: number) => {
+    s = s == 0 ? 1 : s;
+    return parseInt(((f * 10000.0) / s).toFixed(0)) / 100;
+  };
+
+  const selectHandle = (msg:any) =>{
+    const type = msg.type
+    const data = msg.data
+    if(type == 'add'){
+      state.currentLay = data
+      openCreateFileDialog()
+    }else if(type == 'refresh'){
+      refreshCurrent()
+    }else if(type == 'edit'){
+      state.operateItem = data
+      openEditFileDialog()
+    }else if(type == 'copy'){
+      state.operateItem = data
+      openCopyFileDialog()
+    }else if(type == 'move'){
+      state.operateItem = data
+      openMoveFileDialog()
+    }else if(type == 'del'){
+      state.operateItem = data
+      deleteFile()
     }
   }
 
@@ -273,12 +357,65 @@
   // 自定义文件上传
   const customUpload = async (options: UploadRequestOptions) => {
     const file = options.file as File
-    await state.currentLay.upload(file.name, file, async (res: any) => {
-      if(res > 0) {
-        ElMessage.success('上传成功')
-        await refreshCurrent()
-      }
-    })
+    const res = await state.currentLay.upload(file.name,file)
+    console.log(res)
+    if(res){
+      ElMessage.success('上传成功')
+      await refreshCurrent()
+      let json = {finished:res.target.size,name:res.name,size:res.target.size,group:state.currentLay.name}
+      state.taskList.push(json)
+      taskListGroup()
+    }else{
+      let json = {finished:0,name:file.name,size:file.size,group:state.currentLay.name}
+      state.taskList.push(json)
+      state.errorNum =+ 1
+      taskListGroup()
+    }
+    // await state.currentLay.upload(file.name, file, async (res: any) => {
+    //   console.log(res.finished,res.size)
+    //   if(res > 0) {
+    //     ElMessage.success('上传成功')
+    //     await refreshCurrent()
+    //   }
+    //   let json = {createTime:file.lastModified,finished:res,name:file.name,size:file.size,group:state.currentLay.name}
+    //   state.taskList.push(json)
+    //   taskListGroup()
+    // })
+  }
+
+  const taskListGroup = () =>{
+    let taskIng = 0;
+    let group: GroupTaskModel[] = [];
+    state.taskList
+      .sort((a, b) => {
+        return a.createTime < b.createTime ? 1 : 0;
+      })
+      .forEach((item) => {
+        if (item.finished != item.size) {
+          taskIng++;
+        }
+        const index = group.findIndex((i) => {
+          return i.group == item.group;
+        });
+        if (index > -1) {
+          group[index].tasks.unshift(item);
+          group[index].count += 1;
+          group[index].size += item.size;
+          group[index].finished += item.finished === -1 ? item.size : item.finished;
+          group[index].done += item.finished == item.size ? 1 : 0;
+        } else {
+          group.unshift({
+            count: 1,
+            size: item.size,
+            finished: item.finished,
+            group: item.group,
+            tasks: [item],
+            done: item.finished == item.size ? 1 : 0,
+          });
+        }
+      });
+    console.log(group)
+    state.taskGroup = group
   }
 
   // 打开创建文件夹对话框
@@ -327,6 +464,7 @@
     await state.operateItem.rename(state.fileName)
     ElMessage.success('修改成功')
     onContent()
+    await refreshCurrent()
   }
 
   // 删除文件
@@ -346,7 +484,7 @@
       }
       await state.operateItem.delete()
       ElMessage.success('删除成功')
-      await refreshCurrent()
+      // await refreshCurrent()
       onContent()
     }).catch(() => {})
   }
@@ -365,9 +503,13 @@
   // 确认移动文件
   const confirmMoveFile = async () => {
     moveFileDialog.value = false
+    navRef.value.appendNode(state.targetItem,state.operateItem.key)
+    navRef.value.removeNode(state.operateItem)
     await state.operateItem.move(state.targetItem)
     await clickFile(state.targetItem)
+    await state.operateItem.delete()
     ElMessage.success('移动成功')
+    // 追加节点
     onContent()
     state.operateItem = null
     await refreshCurrent()
@@ -406,7 +548,7 @@
   }
 
   onMounted(async () => {
-    await clickFile(Cloud.DocModel.current)
+    // await clickFile(Cloud.DocModel.current)
     showType.value = Cloud.ListMode
   })
 </script>
@@ -459,9 +601,15 @@
       display: flex;
       flex-direction: row;
       align-items: center;
+      justify-content: space-between;
       border-bottom: 1px solid #eee;
       height: 56px;
       box-sizing: border-box;
+      .cloudBarLeft{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
       .operateBtn {
         cursor: pointer;
         font-size: 20px;
@@ -626,6 +774,37 @@
 
         &:hover {
           background-color: #f8f7f9;
+        }
+      }
+    }
+    .groupBox{
+      font-size: 14px;
+      .groupBoxMod{
+        margin-top: 5px;
+      }
+    }
+    .groupItems{
+      margin-top:20px;
+      font-size: 14px;
+      .itemsBox{
+        display: flex;
+        align-items: center;
+        border-radius: 5px;
+        border:1px solid #ebebeb;
+        width: 100%;
+        height: 80px;
+        margin-bottom: 5px;
+        .file_icon{
+          width: 50px;
+          height: 50px;
+          margin: 0 10px;
+        }
+        .itemsInfo{
+          width: calc(100% - 70px);
+          :deep .el-progress--line{
+            margin-top: 5px;
+            // width: 300px;
+          }
         }
       }
     }

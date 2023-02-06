@@ -19,7 +19,6 @@
   // 当前路由
   const currentRouter = computed(()=> router.currentRoute.value.fullPath)
   router.push(currentRouter.value)
-
 </script>
 
 <style lang="scss" scoped>
