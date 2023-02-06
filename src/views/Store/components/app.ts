@@ -68,7 +68,7 @@ export class Application {
     return nodes
   }
   
-  public async submitAll(data: any) {
+  public async submitAll(data: any,curResource:any) {
     let departAdd: any[] = []
     let departDel: any[] = []
 
@@ -89,41 +89,40 @@ export class Application {
     }else if(data.destType == '4'){
       data.destType ='人员'
     }
-    if(this.typePD ==3){
+    if(this.typePD ==3){ //分享
       if (departAdd.length > 0) {
-        await appCtrl.curProduct?.createExtend(
+        const success = await appCtrl.curProduct?.createExtend(
           data.destType == '组织' ? '0' : data?.switchId,
           departAdd,
           data.destType
         );
+        success && ElMessage.success(`新增共享, 操作成功`);
       }
       if (departDel.length > 0) {
-         await appCtrl.curProduct?.deleteExtend(
+        const success =  await appCtrl.curProduct?.deleteExtend(
           data.destType == '组织' ? '0' :  data?.switchId,
           departDel,
           data.destType
         );
+        success && ElMessage.success(`删除共享, 操作成功`);
       }
-    }else{
-      const getCurResource = () => {
-        return appCtrl.curProduct?.resource?.find(
-          (R: any) => R.resource.id === data.curResourceId,
-        );
-      };
-      let item = getCurResource();
+    }else{  //分配
+      let item = curResource;
       if (departAdd.length > 0) {
-        await item?.createExtend(
-          data?.switchId,
+        const success =  await item?.createExtend(
+          data.destType == '组织' ? '0' :  data?.switchId,
           departAdd,
           data.destType
         );
+        success && ElMessage.success(`新增分配, 操作成功`);
       }
       if (departDel.length > 0) {
-         await item?.deleteExtend(
-          data?.switchId,
+        const success =  await item?.deleteExtend(
+          data.destType == '组织' ? '0' :  data?.switchId,
           departDel,
           data.destType
         );
+        success && ElMessage.success(`删除分配, 操作成功`);
       }
     }
     

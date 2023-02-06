@@ -472,7 +472,7 @@ const state: StateType = reactive({
       prop: "prod.createTime",
       label: "创建时间",
       width: "200",
-      formatter: (row: any, column: any) => moment(row.createTime).format('YYYY/MM/DD HH:mm:ss')
+      formatter: (row: any, column: any) => moment(row.prod.createTime).format('YYYY/MM/DD HH:mm:ss')
 
     },
     {

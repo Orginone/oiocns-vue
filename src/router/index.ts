@@ -52,62 +52,6 @@ const mainRouter: RouteRecordRaw[] = [
   // 我的
   ...mine,
   {
-    path: '/relation',
-    component: () => import('@/views/Relation/index.vue'),
-    meta: {
-      keepAlive: false,
-      title: '关系',
-      id: "relation"
-    },
-    children: [
-      {
-        path: '/relation/department',
-        name: 'department',
-        component: () => import('@/views/Relation/department/index.vue'),
-        meta: {
-          title: '部门维护',
-          id: "relation.department"
-        }
-      },
-      {
-        path: '/relation/group',
-        name: 'group1',
-        component: () => import('@/views/Relation/group/index.vue'),
-        meta: {
-          title: '集团维护',
-          id: "relation.group"
-        }
-      },
-      {
-        path: '/relation/org',
-        name: 'org',
-        component: () => import('@/views/Relation/org/index.vue'),
-        meta: {
-          title: '单位维护',
-          id: "relation.org"
-        }
-      },
-      {
-        path: '/relation/authority',
-        name: 'authority',
-        component: () => import('@/views/Relation/authority/index.vue'),
-        meta: {
-          title: '角色管理',
-          id: "relation.authority"
-        }
-      },
-      {
-        path: '/relation/identity',
-        name: 'identity',
-        component: () => import('@/views/Relation/identity/index.vue'),
-        meta: {
-          title: '岗位管理',
-          id: "relation.identity"
-        }
-      }
-    ]
-  },
-  {
     component: () => import('@/views/Portal/home.vue'),
     name: 'workHome',
     path: '/workHome',
@@ -344,64 +288,6 @@ const mainRouter: RouteRecordRaw[] = [
     }
   },
   {
-    component: () => import('@/views/Person/application/index.vue'),
-    name: 'application',
-    path: '/application',
-    meta: {
-      keepAlive: false,
-      title: '我的申请',
-      id: "application"
-    }
-  },
-  //个人中心信息设置路由
-  {
-    path: '/user',
-    component: () => import('@/views/Layout/msgLayout/layout.vue'),
-    redirect: '/user/userMsg',
-    meta: {
-      id: "userold"
-    },
-    children: [
-      {
-        path: '/user/userMsg',
-        name: 'userMsg',
-        component: () => import('@/views/Person/msgSetting/userMsg.vue'),
-        meta: {
-          title: '个人信息',
-          id: "userold.userMsg"
-        }
-      },
-      {
-        path: '/user/userUnit',
-        name: 'userUnit',
-        component: () => import('@/views/Person/msgSetting/userUnit.vue'),
-        meta: {
-          title: '我的单位',
-          id: "userold.userUnit"
-        }
-      },
-      {
-        path: '/user/userAccountBind',
-        name: 'userAccountBind',
-        component: () => import('@/views/Person/msgSetting/userAccountBind.vue'),
-        meta: {
-          title: '账号绑定',
-          id: "userold.userAccountBind"
-        }
-      },
-      {
-        path: '/user/userSaveSet',
-        name: 'userSaveSet',
-        component: () => import('@/views/Person/msgSetting/userSaveSet.vue'),
-        meta: {
-          title: '安全设置',
-          id: "userold.userSaveSet"
-        }
-      },
-
-    ]
-  },
-  {
     component: () => import('@/views/ForeignApp/index.vue'),
     name: 'ForeignApp',
     path: '/online',
@@ -410,34 +296,6 @@ const mainRouter: RouteRecordRaw[] = [
       title: '外部应用',
       id: "foreignApp"
     }
-  },
-  {
-    path: '/company',
-    redirect: '/company/unitMsg',
-    component: () => import('@/views/Layout/msgLayout/layout.vue'),
-    meta: {
-      id: "company"
-    },
-    children: [
-      {
-        path: '/company/unitMsg',
-        name: 'unitMsg',
-        component: () => import('@/views/Person/msgSetting/unitMsg.vue'),
-        meta: {
-          title: '单位信息',
-          id: "company.info"
-        }
-      },
-      {
-        path: '/company/affiliatedGroups',
-        name: 'affiliatedGroups',
-        component: () => import('@/views/Person/msgSetting/affiliatedGroups.vue'),
-        meta: {
-          title: '关联集团',
-          id: "company.group"
-        }
-      }
-    ]
   },
   {
     component: () => import('@/views/Cloud/index.vue'),
