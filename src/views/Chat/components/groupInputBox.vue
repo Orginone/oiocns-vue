@@ -1,7 +1,7 @@
 <template>
   <div class="group-input-wrap" @keyup.enter="submit">
     <div class="icons-box">
-      <div ref="faceBtnRef" style="margin-top:4px;">
+      <div ref="faceBtnRef" style="margin-top: 4px">
         <el-popover placement="top" :width="400" trigger="click">
           <template #reference>
             <el-icon :size="20">
@@ -13,8 +13,14 @@
               :class="['qqface', `qqface${value}`, 'small']">
             </li> -->
             <li>
-              <img class="emoji" v-for="index in 36" :key="index" :src="`/emo/${index}.png`" alt=""
-                @click="handleImgChoosed(`/emo/${index}.png`)" />
+              <img
+                class="emoji"
+                v-for="index in 36"
+                :key="index"
+                :src="`/emo/${index}.png`"
+                alt=""
+                @click="handleImgChoosed(`/emo/${index}.png`)"
+              />
             </li>
           </ul>
         </el-popover>
@@ -23,10 +29,31 @@
       <el-icon :size="20">
         <Microphone />
       </el-icon>
+
+      <el-upload
+        ref="uploadRef"
+        :show-file-list="false"
+        :http-request="customRequest"
+        :before-upload="beforeUpload"
+        style="display: flex"
+      >
+        <template #trigger>
+          <el-icon :size="20">
+            <Files />
+          </el-icon>
+        </template>
+      </el-upload>
     </div>
     <div class="input-content" @keyup.enter.stop>
-      <div id="insterHtml" class="textarea" contenteditable="true" spellcheck="false" ref="inputRef" placeholder="请输入内容"
-        @keydown.enter.native="keyDown"></div>
+      <div
+        id="insterHtml"
+        class="textarea"
+        contenteditable="true"
+        spellcheck="false"
+        ref="inputRef"
+        placeholder="请输入内容"
+        @keydown.enter.native="keyDown"
+      ></div>
       <div class="send-box">
         <el-button type="success" @click="submit">发送</el-button>
       </div>
@@ -35,113 +62,164 @@
 </template>
 
 <script lang="ts" setup>
-import { ElMessage } from 'element-plus'
-import { onMounted, ref } from 'vue'
-import {chatCtrl as chat} from '@/ts/coreIndex'
+import { docsCtrl } from "@/ts/coreIndex";
+import { ElMessage } from "element-plus";
+import { onMounted, ref } from "vue";
+const props = defineProps<{
+  chatRef: any;
+}>();
 
-const inputRef = ref(null)
-const faceBtnRef = ref(null)
+const inputRef = ref(null);
+const faceBtnRef = ref(null);
 
-const emit = defineEmits(['submitInfo'])
+const emit = defineEmits([
+  "submitInfo",
+  "update:contentKey",
+  "initContentScroll",
+]);
+
+const beforeUpload = (file: any) => {
+  const isImage = file.type.startsWith("image");
+  if (!isImage) {
+    ElMessage.error(`${file.name} 不是一个图片文件`);
+  }
+  return isImage;
+};
+const customRequest = async (options: any) => {
+  const file = options.file as File;
+  const docDir = await docsCtrl.home?.create("沟通");
+  if (docDir && file) {
+    const result = await docDir.upload(file.name, file, (p: number) => {
+      // return setTask({
+      //   finished: p,
+      //   size: file.size,
+      //   name: file.name,
+      //   group: docDir.name,
+      //   createTime: new Date(),
+      // });
+      return {
+        finished: p,
+        size: file.size,
+        name: file.name,
+        group: docDir.name,
+        createTime: new Date(),
+      };
+    });
+    // setTask(undefined);
+    if (result) {
+      await props.chatRef.chat?.sendMessage(
+        "图片",
+        JSON.stringify(result.shareInfo())
+      );
+    }
+  }
+};
 
 // 提交聊天内容
 const submit = async () => {
-  const inputContent = document.getElementById('insterHtml').childNodes
-  const text = inputContent.length > 0 ? reCreatChatContent(document.getElementById('insterHtml').childNodes) : [document.getElementById('insterHtml').innerHTML]
-  let massage = text.join('').trim()
-  if (massage.length > 0) {
-    await chat.sendMsg({
-      toId: chat.curChat.value.id,
-      spaceId: chat.curChat.value.spaceId,
-      msgType: 'text',
-      msgBody: massage
-    })
+  const inputContent = document.getElementById("insterHtml").childNodes;
+
+  const text =
+    inputContent.length > 0
+      ? reCreatChatContent(document.getElementById("insterHtml").childNodes)
+      : [document.getElementById("insterHtml").innerHTML];
+
+  let message = text.join("").trim();
+  if (message.length > 0) {
+    await props.chatRef.chat.sendMessage("text", message);
+    emit("initContentScroll");
   }
-  document.getElementById('insterHtml').innerHTML = ''
-}
+  document.getElementById("insterHtml").innerHTML = "";
+};
 // 解析聊天内容
 const reCreatChatContent = (elementChild: NodeList | any[]): Array<string> => {
   // console.log(elementChild)
-  const arrElement = Array.from(elementChild)
+  const arrElement = Array.from(elementChild);
   // const newSpace  = document.createDocumentFragment()
   if (arrElement.length > 0) {
-
-    return arrElement.map(n => {
-
-      if (n.nodeName == "#text") { // 如果是文本 
-        const newContent = n.textContent.length > 2048 ? n.textContent.substring(0, 2048) : n.textContent
-        return newContent
+    return arrElement.map((n) => {
+      if (n.nodeName == "#text") {
+        // 如果是文本
+        const newContent =
+          n.textContent.length > 2048
+            ? n.textContent.substring(0, 2048)
+            : n.textContent;
+        return newContent;
       }
-      return n?.outerHTML
-    })
+      return n?.outerHTML;
+    });
   }
 
   // return newSpace.innerHTML
-}
+};
 
 const reWrite = (str: string) => {
-  document.getElementById('insterHtml').innerHTML = str
-}
+  document.getElementById("insterHtml").innerHTML = str;
+};
 
 const handleImgChoosed = (url: string) => {
-  const img = document.createElement('img')
-  img.src = url
-  img.className = 'emoji'
+  const img = document.createElement("img");
+  img.src = url;
+  img.className = "emoji";
   // img.width = 20
   // img.height = 20
-  document.getElementById('insterHtml').append(img)
-}
+  document.getElementById("insterHtml").append(img);
+};
 
 onMounted(() => {
-  const faceBtnTriggrt = faceBtnRef.value
+  const faceBtnTriggrt = faceBtnRef.value;
   if (faceBtnTriggrt) {
-    faceBtnTriggrt.addEventListener('mousedown', (event: MouseEvent) => {
-      return event.preventDefault()
-    })
+    faceBtnTriggrt.addEventListener("mousedown", (event: MouseEvent) => {
+      return event.preventDefault();
+    });
   }
-})
+});
 // 输入框 键盘指令
 const keyDown = (e: any) => {
   if (e.ctrlKey && e.keyCode == 13) {
     //用户点击了ctrl+enter触发
-    const value = document.getElementById('insterHtml').innerHTML
-    if (!value.includes('<div><br></div>')) {
-      document.getElementById('insterHtml').innerHTML += '<div><br></div>'
+    const value = document.getElementById("insterHtml").innerHTML;
+    if (!value.includes("<div><br></div>")) {
+      document.getElementById("insterHtml").innerHTML += "<div><br></div>";
     }
-    setFocus()
+    setFocus();
   } else {
     //用户点击了enter触发
-    e.preventDefault() // 阻止浏览器默认换行操作
+    e.preventDefault(); // 阻止浏览器默认换行操作
     const value = document
-      .getElementById('insterHtml')
-      .innerHTML.replaceAll('<div><br></div>', '')
+      .getElementById("insterHtml")
+      .innerHTML.replaceAll("<div><br></div>", "");
     if (value) {
-      submit()
+      submit();
     } else {
       return ElMessage({
-        message: '不能发送空值',
-        type: 'warning'
-      })
+        message: "不能发送空值",
+        type: "warning",
+      });
     }
   }
-}
+};
 // 设置光标到最后
 const setFocus = () => {
-  let selection = window.getSelection()
-  let range = document.createRange()
-  range.selectNodeContents(inputRef.value)
-  range.collapse(false)
-  selection.removeAllRanges()
-  selection.addRange(range)
-}
+  let selection = window.getSelection();
+  let range = document.createRange();
+  range.selectNodeContents(inputRef.value);
+  range.collapse(false);
+  selection.removeAllRanges();
+  selection.addRange(range);
+};
 
 defineExpose({
-  reWrite
-})
+  reWrite,
+});
 </script>
 
 <style lang="scss">
-@import './qqface.scss';
+@import "./qqface.scss";
+
+.el-upload-list {
+  margin: 0;
+}
 
 .group-input-wrap {
   .textarea {

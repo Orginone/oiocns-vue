@@ -709,7 +709,7 @@ onBeforeMount(()=> {
     background:#1642cb;
     color: #fff;
   }
-  :deep .el-table th.el-table__cell {
+  :deep(.el-table th.el-table__cell) {
     background-color: #eceffb!important;
   }
   .content {

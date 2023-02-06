@@ -117,7 +117,6 @@
     }
     onMounted(async ()=>{
         getList();
-        console.log('appCtrl.curProduct',appCtrl.curProduct)
     })
 </script>
 
@@ -269,6 +268,7 @@
                     }
                     p:nth-child(1){
                         color: #909399;
+                        word-break:break-all;
                     }
                 }
             }

@@ -78,11 +78,11 @@
             <ChatDotSquare />
           </el-icon>
         </el-link> -->
-        <li class="top-icon" :class="{'is-current': router.currentRoute.value.fullPath.startsWith(item.path)}"
-          v-for="(item, index) in state.mainMenus"
-          @click="handleRouterChage(item)"
-          :key="index"
-          :title="item.name"
+        <li class="top-icon" :class="{'is-current': item.activeMatch.includes(router.currentRoute.value.fullPath.split('/')[1])}"
+        v-for="(item, index) in state.mainMenus"
+        @click="handleRouterChage(item)"
+        :key="index"
+        :title="item.name"
         >
           <el-badge :value="item.count" :hidden="!item.count">
             <i class="icon-list iconfont" :class="item.icon" ></i>
@@ -95,14 +95,14 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="toWork" icon="Setting">首页配置</el-dropdown-item>
+              <!-- 
               <el-dropdown-item @click="toSetting" icon="Setting">设置中心</el-dropdown-item>
               <el-dropdown-item @click="toUserSetting" icon="Postcard">个人中心</el-dropdown-item>
-              <el-dropdown-item v-if="isUnitWork" @click="toCompanySetting" icon="Postcard"
-                >单位中心</el-dropdown-item
-              >
+              <el-dropdown-item v-if="isUnitWork" @click="toCompanySetting" icon="Postcard">单位中心</el-dropdown-item>
               <el-dropdown-item icon="Help">帮助中心 </el-dropdown-item>
               <el-dropdown-item icon="Switch">切换语言 </el-dropdown-item>
               <el-dropdown-item icon="Brush">切换主题 </el-dropdown-item>
+              -->
               <el-dropdown-item @click="exitLogin" icon="SwitchButton" divided
                 >退出登录</el-dropdown-item
               >
@@ -149,8 +149,10 @@
   import headImg from '@/components/headImg.vue'
   import TeamIcon from './TeamIcon.vue'
   import { useDark } from '@vueuse/core'
-  import { chatCtrl as chat, todoCtrl as todo } from '@/ts/coreIndex';
+  import { chatCtrl, todoCtrl as todo } from '@/ts/coreIndex';
   import { userCtrl ,TargetType} from '@/ts/coreIndex'
+
+  
 
   const isDark = useDark()
   const store = useUserStore()
@@ -174,20 +176,26 @@
 
   const state = reactive({
     mainMenus: [
-      { name: '沟通', icon: 'icon-message', path: '/chat', count: 0 },
-      { name: '办事', icon: 'icon-todo', path: '/service', count: 0 },
-      { name: '仓库', icon: 'icon-store', path: '/store' },
-      { name: '设置', icon: 'icon-setting', path: '/setCenter' },  
+      { name: '沟通', icon: 'icon-message', path: '/chat', activeMatch: ['chat'], count: 0 },
+      { name: '办事', icon: 'icon-todo', path: '/service', activeMatch: ['service'], count: 0 },
+      { name: '仓库', icon: 'icon-store', path: '/store', activeMatch: ['store'] },
+      { name: '设置', icon: 'icon-setting', path: '/setCenter', activeMatch: ['setCenter', 'mine'] },  
     ]
   })
+  
+  // const chat = ref<any>({})
+  // setTimeout(() => {
+  //   chat.value = new chatCtrl(true)
+  // }, 600);
+
   onMounted(() => {
-    return 
-    // TODO: 目前消息只有全局脏检查订阅，不能单独订阅
-    chat.subscribe(() => {
-      console.warn("触发全局订阅回调");
-      const count = chat.getNoReadCount();
-      state.mainMenus[0].count = count;
-    });
+  return 
+  // TODO: 目前消息只有全局脏检查订阅，不能单独订阅
+  chat.value.subscribe(() => {
+    console.warn("触发全局订阅回调");
+    const count = chat.value.getNoReadCount();
+    state.mainMenus[0].count = count;
+  });
 
     todo.subscribe(async () => {
       console.warn("触发全局订阅回调");
@@ -206,7 +214,11 @@
   })
 
   const handleRouterChage = (item: any) => {
-    router.push({ path: item.path })
+    if(item.name === '设置') {
+      router.push({path: workspaceData.value.typeName === '单位' ? item.path : '/mine'})
+    } else {
+      router.push({ path: item.path })
+    }
   }
 
   const load = async () => {
@@ -335,6 +347,9 @@
     handleClose();
     modelIsShow.value = false
     store.setCurSpace(data.id)
+    if(['mine', 'setCenter'].includes(router.currentRoute.value.fullPath.split('/')[1])) {
+      location.href = `${location.origin}/#/${workspaceData.value.typeName === '单位' ? 'setCenter' : 'mine'}`
+    } 
     location.reload()
     // $services.person
     //   .changeWorkspace({

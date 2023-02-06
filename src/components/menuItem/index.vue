@@ -174,6 +174,7 @@ watch(filterText, (val) => {
 })
 const instance = getCurrentInstance();
 const clickBus = (e:any)=>{
+  console.log('aaa',e.target.dataset.index)
   instance?.proxy?.$Bus.emit('clickBus', e.target.dataset.index)
 }
 const storeBus = (type:number,e:any)=>{
@@ -186,16 +187,15 @@ const filterNode = (value: string, data: any) => {
 
 // 路由跳转
 const jump = (val:any)=>{
-    if(val?.data?.isStoreMenu){
-      instance?.proxy?.$Bus.emit('storeMenu', val.data.items)
-    }else{
-      if(val.url){
-        router.push(val.url)
-      }else if (val.data.url){
-        router.push(val.data.url)
-      }
+  if(val?.data?.isStoreMenu){ //仓库分类事件
+    instance?.proxy?.$Bus.emit('storeMenu', val.data.items)
+  }else if(val?.data?.shopLink){ //商店分类跳转事件
+    instance?.proxy?.$Bus.emit('shopLink', val.data)
+  } else{ //普通url跳转
+    if(val.url){
+      router.push(val.url)
     }
-   
+  }
 }
 // 树点击事件
 const nodeClick = (val: any) => {
@@ -270,27 +270,22 @@ const handleSelect = (key: any) => {
     }
   }
 
-  :deep .el-sub-menu__icon-arrow{
+  :deep(.el-sub-menu__icon-arrow){
     display: none;
   }
   // :deep .no-penultimate > .el-tree-node__content{
     // font-weight: 800;
   // }
 
-  // :deep .el-tree{
-  //   height: calc(100vh - 150px);
-  //   overflow-y: auto;
-  // }
-
-  :deep .is-penultimate > .el-tree-node__content {
+  :deep(.is-penultimate > .el-tree-node__content) {
     font-size: 10px;
     color: #909399;
   }
-  :deep .el-tree-node__content{
+  :deep(.el-tree-node__content){
     height: 40px;
   }
   // 去掉el-input自带边框
-  :deep .el-input__wrapper {
+  :deep(.el-input__wrapper) {
     margin: 15px;
     padding-left: 15px !important;
     box-sizing: border-box;

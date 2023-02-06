@@ -15,11 +15,6 @@
           <el-menu-item index="3">我的申请</el-menu-item>
         </el-menu>
       </div>
-      <div class="btnStyle">
-        <el-button @click="joinCompany" type="primary">加入单位</el-button>
-        <el-button type="primary">审核</el-button>
-        <el-button type="primary">退回</el-button>
-      </div>
        <div class="tab-list">
         <DiyTable
           class="diytable"
@@ -28,18 +23,22 @@
           :tableData="tableData"
           :options="options"
           :tableHead="tableHead"
+          
         >
-          <template #content="scope">
-            {{ scope.row.target.name }}申请加入{{ scope.row.team.name }}
+        <template #targetName="scope">
+            {{scope.row?._data?.target?.name}}
           </template>
-          <!-- <template #targetName="scope">
-            {{chat.getName(scope.row.createUser)}}
-          </template> -->
+          <template #content="scope">
+            {{ scope.row?._data?.target?.name }}申请加入{{ scope.row?._data?.team?.name }}
+          </template>
+          <template #createTime="scope">
+            {{ scope.row?._data?.createTime?.slice(0,19) }}
+          </template>
           <template #status="scope">
-            <div v-if="scope.row.status >= 0 && scope.row.status < 100">待批</div>
-            <div v-else-if="scope.row.status >= 100 && scope.row.status < 200">
-              <div v-if="scope.row?.flowTask?.flowNode?.nodeType=='审批'">已通过</div>
-              <div v-else-if="scope.row?.flowTask?.flowNode?.nodeType=='抄送'">已查阅</div>
+            <div v-if="scope.row?._data?.status >= 0 && scope.row?._data?.status < 100">待批</div>
+            <div v-else-if="scope.row?._data?.status >= 100 && scope.row?._data?.status < 200">
+              <div v-if="scope.row?._data.flowTask?.flowNode?.nodeType=='审批'">已通过</div>
+              <div v-else-if="scope.row?._data.flowTask?.flowNode?.nodeType=='抄送'">已查阅</div>
               <div v-else>已通过</div>
             </div>
             <div v-else>已拒绝</div>
@@ -68,83 +67,28 @@
       </div>
     </div>
   </div>
-  <searchCompany
-    v-if="searchDialog"
-    :serachType="3"
-    @closeDialog="closeDialog"
-    @checksSearch="checksSearch"
-  >
-  </searchCompany>
 </template>
 
 <script lang="ts" setup>
-  import $services from '@/services'
-  import { ref, onMounted, reactive, nextTick, getCurrentInstance } from 'vue'
-  import { storeToRefs } from 'pinia'
-  import { useUserStore } from '@/store/user'
-  import { useRoute,useRouter } from 'vue-router'
+  import { ref, onMounted ,reactive} from 'vue'
   import DiyTable from '@/components/diyTable/index.vue'
-  import { ElMessage, ElMessageBox } from 'element-plus'
-  import type { TabsPaneContext } from 'element-plus'
-  import searchCompany from '@/components/searchs/index.vue'
+  import { ElMessage } from 'element-plus'
   // import {chatCtrl as chat} from '@/ts/coreIndex'
   
   import {todoCtrl} from '@/ts/coreIndex';
-
-  // 申请加入单位弹窗控制
-  const searchDialog = ref<boolean>(false)
-  const joinCompany = () => {
-    searchDialog.value = true
-  }
-  // 关闭弹窗
-  const closeDialog = (key: string) => {
-    searchDialog.value = false
-  }
-  // 加入单位方法
-  const checksSearch = (val: any) => {
-    if (val.value.length > 0) {
-      let arr: Array<any> = []
-      val.value.forEach((element: any) => {
-        arr.push(element.id)
-      })
-      console.log('val', arr)
-      joinSubmit(arr)
-    } else {
-      searchDialog.value = false
-    }
-  }
-  const joinSubmit = (arr: any) => {
-    $services.company
-      .applyJoin({
-        data: {
-          id: arr.join('')
-        }
-      })
-      .then((res: ResultType) => {
-        if (res.code == 200) {
-          searchDialog.value = false
-          ElMessage({
-            message: '申请成功',
-            type: 'success'
-          })
-        }
-      })
-  }
-
-  // const ThingServices  = new thingServices()
-  const instance = getCurrentInstance()
-  const route = useRoute()
-  const router = useRouter()
-  const dialogVisible = ref<boolean>(false)
-  const store = useUserStore()
-  const { workspaceData } = storeToRefs(store)
-  var tableData = ref<any>([{id:123,flowInstance:{}}])
+// 表格展示数据
+  const pageStore = reactive({
+    currentPage: 0,
+    pageSize: 20,
+    total: 0
+  })
+  var tableData = ref<any>([])
   const diyTable = ref(null)
   const tableHead =ref<any[]>([
     {
-       prop: 'target.name',
+       prop: 'targetName',
        label: '申请人',
-       name: 'target.name',
+       name: 'targetName',
        type: 'slot',
      },
      {
@@ -162,7 +106,8 @@
      {
        prop: 'createTime',
        label: '发送时间',
-       name: 'createTime'
+       name: 'createTime',
+       type: 'slot',
      },
      {
        type: 'slot',
@@ -176,60 +121,54 @@
     checkBox: false,
     order: true,
     noPage: true,
-    selectLimit: 0
+    selectLimit: 0,
+    switchType:false,
   }
-  // 表格展示数据
-  const pageStore = reactive({
-    tableData: [],
-    currentPage: 1,
-    pageSize: 20,
-    total: 0
-  })
-
-  const activeIndex = ref<string>('1')
-  const activeId = ref<string>('0')
-  const elmenus = ref(null);
-
-  const handleClose = (index:any) => {
-    elmenus.value.open(index)
-    handleSelect(activeIndex.value, [])
-  }
-
   // 查询我的审批
   var getAllApprovalList = async () => {
     // await ThingServices.getAllApproval('0')
-    // tableData.value = ThingServices.approvalList.length && ThingServices.approvalList.filter(i => i?.team?.target?.typeName === '单位')
     await todoCtrl.waitUntilInitialized();
     const res = await todoCtrl.OrgTodo.getTodoList(true);
-    tableData.value = res.map(d => {
-      d.Data.pass = d.pass;
-      d.Data.reject = d.reject;
-      return d.Data;
+    let arr:any = []
+    res.forEach((element:any) => {
+      if(element._data.team.target.typeName =='单位'){
+        arr.push(element)
+      }
     });
+    tableData.value = arr
   }
 
   // 查询我的申请
   var getApplyList = async () => {
     await todoCtrl.waitUntilInitialized();
-    const res = await todoCtrl.OrgTodo.getApplyList({
+    const res:any = await todoCtrl.OrgTodo.getApplyList({
       offset:0,
       limit: 20,
       filter: ""
     });
-    tableData.value = res.map(d => {
-      d.Data.cancel = d.cancel;
-      return d.Data;
+    let arr:any = []
+    res.result.forEach((element:any) => {
+      if(element._data.team.target.typeName =='单位'){
+        arr.push(element)
+      }
     });
+    tableData.value = arr
   }
 
   var getDoneList = async () => {
     await todoCtrl.waitUntilInitialized();
-    const res = await todoCtrl.OrgTodo.getDoList({
+    const res:any = await todoCtrl.OrgTodo.getDoList({
       offset:0,
       limit: 20,
       filter: ""
     });
-    tableData.value = res.map(d => d.Data);
+    let arr:any = []
+    res.result.forEach((element:any) => {
+      if(element._data.team.target.typeName =='单位'){
+        arr.push(element)
+      }
+    });
+    tableData.value = arr
   }
 
   // 当前menu默认active
@@ -247,56 +186,29 @@
     }else if(key =='3'){
       getApplyList();
     }
-    // if(key == '1'){
-    //   await ThingServices.queryTask()
-    //   tableData.value =ThingServices.taskList
-    // }else if(key =='2'){
-    //   await ThingServices.queryRecord()
-    //   tableData.value =ThingServices.recordList
-    // }else if(key =='3'){
-    //   await ThingServices.queryInstance()
-    //   tableData.value =ThingServices.queryInstanceList
-    // }else if(key =='4'){
-    //   tableData.value = ThingServices.copyList
-    // }
   }
 
   async function joinSuccess(row: { pass: (status: any) => Promise<any> }) {
     await row.pass(114);
     ElMessage.success('通过成功')
+    flowSelect(flowActive.value)
+  }
+  async function cancelJoin(row: { cancel: (status: any) => Promise<any> }) {
+    await row.cancel('100');
+    ElMessage.success('取消成功')
+    flowSelect(flowActive.value)
   }
   async function joinReject(row: { reject: (status: any) => Promise<any> }) {
     await row.reject(514);
     ElMessage.success('拒绝成功')
-  }
-
-  const whiteList:Array<string>= ['1-1','1-2','1-3','1-4','1-5','1-6']
-  const handleSelect = (key: any, keyPath: string[]) => {
-    tableData.value = []
-    // diyTable.value.state.page.total = 0
-    activeIndex.value = key;
-    // ThingServices.whiteList = [];
-    if (whiteList.includes(key)) {
-      getApplyList()
-      // tableHead.value = ThingServices.companyHead;
-    }
+    flowSelect(flowActive.value)
   }
 
   onMounted(() => {
-    handleSelect('1-2', [])
     getAllApprovalList()
   });
 
-  instance?.proxy?.$Bus.on('selectBtn', (num) => {
-    if(num === '1-2') {
-      handleSelect(num, [])
-    }
-  })
-
 </script>
-
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
   .thing {
     width: 100%;
@@ -335,7 +247,7 @@
       position: absolute;
       right: 30px;
       top: 20px;
-      :deep .el-button{
+      :deep(.el-button){
         width: 80px;
       }
     }

@@ -28,17 +28,14 @@ export class Application {
   /*
    *分发分享变量定义
    */
-  private appInfo: string
-  private opertion: number
+  private typePD: number
   private rootTreeId: string
   private parentIdMap: any = {}
   public cascaderTree: any
   public tabs: any
 
-  constructor(appInfo?: string, opertion?: number) {
-    this.appInfo = appInfo
-    this.opertion = opertion
-    console.log('thus',this)
+  constructor(typePD?: number) {
+    this.typePD = typePD
   }
   /**
    * 树形权限判断
@@ -58,7 +55,7 @@ export class Application {
    * 过滤掉工作组作为表单级联数据
    */
   private filter = (nodes: OrgTreeModel[]): OrgTreeModel[] => {
-    if (this.opertion == 1) {
+    if (this.typePD == 1) {
       nodes = nodes.filter((node) => node.data?.typeName !== '工作组')
     } else {
       nodes = nodes.filter(
@@ -70,91 +67,65 @@ export class Application {
     }
     return nodes
   }
-
-  /**
-   *@desc 提交radio = 1 时的方法
-   *@param departData 提交的数据
-   *@param resource 所选择的资源信息
-   */
-  public async submitAll(departData: any, resource?: string,destType:string = '组织',typePD?:number) {
+  
+  public async submitAll(data: any,curResource:any) {
     let departAdd: any[] = []
     let departDel: any[] = []
 
-    departData.forEach((el: any) => {
+    data.list.forEach((el: any) => {
       if (el.type == 'add') {
         departAdd.push(el.id)
       } else if (el.type == 'del') {
         departDel.push(el.id)
       }
     })
-    let teamId = this.opertion == 1 ? this.rootTreeId : this.opertion == 2 ? resource : store.queryInfo.id
-    if(typePD ==3){
-      teamId = '0';
-    }
-    if(destType == '1'){
-      destType ='组织'
-    }else if(destType == '2'){
-      destType ='职权'
-    }else if(destType == '3'){
-      destType ='身份'
-    }else if(destType == '4'){
-      destType ='人员'
-    }
 
-    console.log('departAdd',departAdd,'departDel',departDel)
-    if (departAdd.length > 0) {
-      await appCtrl.curProduct?.createExtend(
-        teamId,
-        departAdd,
-        destType
-      );
+    if(data.destType == '1'){
+      data.destType ='组织'
+    }else if(data.destType == '2'){
+      data.destType ='职权'
+    }else if(data.destType == '3'){
+      data.destType ='身份'
+    }else if(data.destType == '4'){
+      data.destType ='人员'
     }
-    if (departDel.length > 0) {
-      console.log('delete',teamId,
-      departDel,
-      destType)
-       await appCtrl.curProduct?.deleteExtend(
-        teamId,
-        departDel,
-        destType
-      );
-    }
-  }
-  /**
-   *@desc 提交radio != 1 时的方法
-   *@param data 所选中的数据
-   *@param switchData 接口所需teamid数据
-   *@param destType 区分分发分享的类型
-   *@param resource 所选中的资源信息
-   */
-  public async sumbitSwitch(data: any, switchData: string, destType: string, resource?: string) {
-    let addData: any[] = []
-    let delData: any[] = []
-    data.forEach((el: any) => {
-      if (el.type == 'add') {
-        addData.push(el.id)
-      } else if (el.type == 'del') {
-        delData.push(el.id)
+    if(this.typePD ==3){ //分享
+      if (departAdd.length > 0) {
+        const success = await appCtrl.curProduct?.createExtend(
+          data.destType == '组织' ? '0' : data?.switchId,
+          departAdd,
+          data.destType
+        );
+        success && ElMessage.success(`新增共享, 操作成功`);
       }
-    })
-    let teamId = this.opertion == 1 ? this.rootTreeId : this.opertion == 2 ? resource : store.queryInfo.id
-    if(!teamId){
-      teamId = '0';
+      if (departDel.length > 0) {
+        const success =  await appCtrl.curProduct?.deleteExtend(
+          data.destType == '组织' ? '0' :  data?.switchId,
+          departDel,
+          data.destType
+        );
+        success && ElMessage.success(`删除共享, 操作成功`);
+      }
+    }else{  //分配
+      let item = curResource;
+      if (departAdd.length > 0) {
+        const success =  await item?.createExtend(
+          data.destType == '组织' ? '0' :  data?.switchId,
+          departAdd,
+          data.destType
+        );
+        success && ElMessage.success(`新增分配, 操作成功`);
+      }
+      if (departDel.length > 0) {
+        const success =  await item?.deleteExtend(
+          data.destType == '组织' ? '0' :  data?.switchId,
+          departDel,
+          data.destType
+        );
+        success && ElMessage.success(`删除分配, 操作成功`);
+      }
     }
-    if (addData.length > 0) {
-      await appCtrl.curProduct?.createExtend(
-          teamId,
-          addData,
-          destType
-        )
-    }
-    if (delData.length > 0) {
-      await appCtrl.curProduct?.deleteExtend(
-        teamId,
-        addData,
-        destType
-      );
-    }
+    
   }
 
   private handleTreeData(node: any, belongId: string) {

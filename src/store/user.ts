@@ -75,10 +75,10 @@ export const useUserStore = defineStore({
         // await this.getQueryInfo(this.userToken)
         return this.workspaceData
       } else {
-        ElMessage({
-          message: res.msg,
-          type: 'warning'
-        })
+        // ElMessage({
+        //   message: res.msg,
+        //   type: 'warning'
+        // })
         return null
       }
     },

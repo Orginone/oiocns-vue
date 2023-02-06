@@ -14,7 +14,7 @@
           :tableName="'我的应用'"
           :hasTitle="true"
           :hasTableHead="true"
-          :tableData="state.ownProductList"
+          :tableData="state.productList"
           :options="options"
           :total="pageStore.total"
           @handleUpdate="handleUpdate"
@@ -30,10 +30,10 @@
                 @select="handleSelect"
               >
                 <el-menu-item index="1">全部</el-menu-item>
-                <el-menu-item index="2">创建的</el-menu-item>
-                <el-menu-item index="3">购买的</el-menu-item>
-                <el-menu-item index="4">共享的</el-menu-item>
-                <el-menu-item index="5">分配的</el-menu-item>
+                <el-menu-item index="2">共享的</el-menu-item>
+                <el-menu-item index="3">可用的</el-menu-item>
+                <el-menu-item index="4">创建的</el-menu-item>
+                <el-menu-item index="5">购买的</el-menu-item>
               </el-menu>
             </div>
           </template>
@@ -122,12 +122,12 @@
                     @click="goPublic(scope.row)">
                     上架列表
                   </el-dropdown-item>
-                  <el-dropdown-item
+                  <!-- <el-dropdown-item
                     link
                     type="primary"
                     @click="handleSetting(scope.row.prod.id)">
                     移动至
-                  </el-dropdown-item>
+                  </el-dropdown-item> -->
                   <el-dropdown-item
                     link
                     type="primary"
@@ -164,7 +164,7 @@
             <div class="card-list">
               <div
                 class="card-item"
-                v-for="(item, index) in state.ownProductList"
+                v-for="(item, index) in state.productList"
                 :key="index"
               >
                 <div class="item-head">
@@ -294,7 +294,7 @@
       :close-on-click-modal="false"
     >
       <ShareComponent
-        dialogType="2"
+        dialogType="3"
         :type="store.workspaceData.type"
         @closeDialog="closeDialog('shareVisible', false)"
         :info="selectProductItem"
@@ -321,12 +321,10 @@ import authority from "@/utils/authority";
 import opened from "./components/opened.vue";
 import appDetail from "./components/appDetail.vue";
 import ShareComponent from "./components/shareComponents.vue";
-import ProcessDesign from "@/components/wflow/ProcessDesign.vue";
-import {marketCtrl} from '@/ts/coreIndex';
-import {appCtrl} from '@/ts/coreIndex'
-import {userCtrl} from '@/ts/coreIndex'
+import {marketCtrl,appCtrl,userCtrl} from '@/ts/coreIndex';
 import { useCommonStore } from '@store/common'
 import img1 from '@/assets/img/group22.png'
+import moment from 'moment'
 
 const { proxy } = getCurrentInstance()
 
@@ -372,6 +370,23 @@ const selectionChange = () => {
 const tableActiveIndex = ref<string>();
 const handleSelect = (key: string) => {
   tableActiveIndex.value = key;
+  if(tableActiveIndex.value == '1'){
+    state.productList = state.ownProductList
+  }else if (tableActiveIndex.value == '2'){
+    state.productList = state.ownProductList.filter(
+      (a) =>  a.prod.belongId != userCtrl.space.id,
+    )
+  }else if (tableActiveIndex.value == '3'){
+    
+  }else if (tableActiveIndex.value == '4'){
+    state.productList = state.ownProductList.filter(
+      (a) => a.prod.source == '创建的' && a.prod.belongId == userCtrl.space.id,
+    )
+  }else if (tableActiveIndex.value == '5'){
+    state.productList = state.ownProductList.filter(
+      (a) => a.prod.source == '购买的' && a.prod.belongId == userCtrl.space.id,
+    )
+  }
 };
 
 //去应用商店
@@ -384,7 +399,8 @@ const goDetail = (item: any) => {
   router.push({ path: "/store/appManagement", query: { id: item.id } });
 };
 type StateType = {
-  ownProductList: any[]; //我的应用
+  ownProductList: any[]; //获取到的我的应用
+  productList:any[];//实际显示的应用列表
   ownTotal: number;
   shareTotal: number;
   marketOptions: any[]; //所有市场列表
@@ -406,9 +422,9 @@ const options = ref<any>({
     hasChildren: "hasChildren",
   },
 });
-const lista = ref<any>([])
 const state: StateType = reactive({
-  ownProductList: [],
+  ownProductList: [], //获取到的应用列表
+  productList:[], //实际显示的应用列表
   ownTotal: 0,
   shareTotal: 0,
   marketOptions: [],
@@ -456,6 +472,8 @@ const state: StateType = reactive({
       prop: "prod.createTime",
       label: "创建时间",
       width: "200",
+      formatter: (row: any, column: any) => moment(row.prod.createTime).format('YYYY/MM/DD HH:mm:ss')
+
     },
     {
       type: "slot",
@@ -470,10 +488,9 @@ const state: StateType = reactive({
 const title = ref<string>("");
 onMounted(() => {
   // 获取列表
-  getProductList(); 
-  console.log('marketCtrl', marketCtrl);
-  console.log('userCtrl', userCtrl)
-  console.log('marketCtrl.shopinglist',marketCtrl.shopinglist)
+  setTimeout(() => {
+    getProductList(); 
+  }, 600);
 });
 
 const commonStore = useCommonStore()
@@ -500,11 +517,11 @@ const handleUpdate = (page: any) => {
 // 获取我的应用列表
 const getProductList = () => {
   marketCtrl.target.getOwnProducts(false).then((res:any)=>{
-
-    
-    state[`ownProductList`] = res ;
+    console.log('res',res)
+    state[`ownProductList`] = res;
+    state[`productList`] = res;
     state['appList'] = res;
-    diyTable.value.state.page.total = res.length
+    diyTable.value.state.page.total = res.length;
   })
 };
 proxy?.$Bus.on("storeMenu", (arr:any) => {
@@ -518,6 +535,7 @@ proxy?.$Bus.on("storeMenu", (arr:any) => {
       });
     });
     state[`ownProductList`] = newArr ;
+    state[`productList`] = newArr ;
     diyTable.value.state.page.total = newArr?.length || 0
 });
 // 移除app
@@ -547,7 +565,6 @@ const handleCommand = (
 ) => {
   selectProductItem.value = item;
   appCtrl.setCurProduct(item)
-  console.log("selectProductItem", selectProductItem.value);
   switch (command) {
     case "share": //分享
       openShareDialog();
