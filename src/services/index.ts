@@ -13,8 +13,10 @@ export type RequestMethodMap = {
   };
 }
 
-const FUNS: RequestMethodMap = {} as any;
-const APPFUNS: RequestMethodMap = {} as any;
+let FUNS: { [key: string]: any } = {};
+// const FUNS: RequestMethodMap = {} as any;
+let APPFUNS: any = {};
+// const APPFUNS: RequestMethodMap = {} as any;
 
 const InitRequests = (req: any, urls: Record<string, any>, loadToken: boolean, ignores: string[]) => {
   Object.keys(urls).forEach((key) => {
@@ -66,6 +68,6 @@ InitRequests(APPFUNS, urls, false, [])
 export function setGlobalProperties(app: App<Element>) {
   app.config.globalProperties.$API = FUNS
 }
-console.warn(FUNS)
+// console.warn(FUNS)
 export default FUNS
 export { APPFUNS }
