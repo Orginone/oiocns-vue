@@ -296,18 +296,14 @@ watch(
   (val) => {
     if (setTime.value < 3) {
       const chatInterval = setInterval(() => {
-        console.log(val);
-
-       forMatChats(val)
-
+        forMatChats(val);
         setTime.value++;
-
         if (setTime.value === 3) {
           clearInterval(chatInterval);
         }
       }, 500);
     } else {
-      forMatChats(val)
+      forMatChats(val);
     }
   },
   { deep: true }
@@ -315,15 +311,15 @@ watch(
 
 const forMatChats = (val: any) => {
   chatList.value = getChatList(val);
-      chatStandardList.value = getChatList(val);
-      groupStandardList.value = getGroupList(val);
-      groupList.value = getGroupList(val);
+  chatStandardList.value = getChatList(val);
+  groupStandardList.value = getGroupList(val);
+  groupList.value = getGroupList(val);
 
-      openIdArr.value = [];
-      groupList.value.map((item: any) => {
-        item.isOpened && openIdArr.value.push(item.spaceId);
-      });
-}
+  openIdArr.value = [];
+  groupList.value.map((item: any) => {
+    item.isOpened && openIdArr.value.push(item.spaceId);
+  });
+};
 
 /**
  * input 输入筛选功能
