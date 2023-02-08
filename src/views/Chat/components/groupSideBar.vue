@@ -211,6 +211,7 @@ import searchFriend from "@/components/searchs/index.vue";
 import FriendServices from "@/module/relation/friend";
 import Loading from "@/views/Layout/components/loading.vue";
 import _ from "lodash";
+import { format } from "path";
 
 const routerParams = useRoute().params;
 const friendServices = new FriendServices();
@@ -288,23 +289,41 @@ const chatList = ref<any>([]);
 const groupStandardList = ref<any>([]);
 const groupList = ref<any>([]);
 
+const setTime = ref(0);
+
 watch(
   () => props.chatRef,
   (val) => {
-    setTimeout(() => {
-      chatList.value = getChatList(val);
+    if (setTime.value < 3) {
+      const chatInterval = setInterval(() => {
+        console.log(val);
+
+       forMatChats(val)
+
+        setTime.value++;
+
+        if (setTime.value === 3) {
+          clearInterval(chatInterval);
+        }
+      }, 500);
+    } else {
+      forMatChats(val)
+    }
+  },
+  { deep: true }
+);
+
+const forMatChats = (val: any) => {
+  chatList.value = getChatList(val);
       chatStandardList.value = getChatList(val);
       groupStandardList.value = getGroupList(val);
       groupList.value = getGroupList(val);
-  
+
       openIdArr.value = [];
       groupList.value.map((item: any) => {
         item.isOpened && openIdArr.value.push(item.spaceId);
       });
-    }, 600);
-  },
-  { deep: true }
-);
+}
 
 /**
  * input 输入筛选功能
@@ -337,7 +356,7 @@ const getChatList = (val: any) => {
   let tempChats = [...topChatList, ...normalChatList];
 
   tempChats = handlePhotoLink(tempChats);
-  
+
   return tempChats;
 };
 
@@ -366,17 +385,17 @@ const handlePhotoLink = (arr: any) => {
 };
 
 /**
- * 判断是否为 json 
+ * 判断是否为 json
  */
 const isJsonString = (str: string) => {
   try {
-    if (typeof JSON.parse(str) == 'object') {
+    if (typeof JSON.parse(str) == "object") {
       return true;
     }
   } catch (e) {}
 
-  return false
-}
+  return false;
+};
 
 //根据搜索条件-输出展示列表
 const showList = ref([]);

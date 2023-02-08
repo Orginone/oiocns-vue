@@ -58,6 +58,8 @@ setTimeout(() => {
 watch(
   () => chatRef.value,
   (val: any) => {
+    console.log(88888888888);
+    
     if (val.chat) {
       val.chat.messages.forEach((item: any) => {
         if (item.msgType === "图片") {
