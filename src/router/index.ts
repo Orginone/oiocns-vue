@@ -426,6 +426,16 @@ const mainRouter: RouteRecordRaw[] = [
       },
     ]
   },
+  {
+    component: () => import('@/views/Thing/index.vue'),
+    name: 'thing',
+    path: '/thing',
+    meta: {
+      keepAlive: false,
+      title: '物',
+      id: "thing"
+    }
+  },
 ]
 
 // 整合路由

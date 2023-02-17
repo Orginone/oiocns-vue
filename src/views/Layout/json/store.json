@@ -25,6 +25,15 @@
                 "uid":"1-1",
                 "url":"/cloud",
                 "children": []
+            },
+            {
+                "id": "thing",
+                "name": "物",
+                "type":"3",
+                "icon": "OfficeBuilding",
+                "uid":"1-1",
+                "url":"/thing",
+                "children": []
             }
         ]
     }
