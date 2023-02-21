@@ -55,14 +55,16 @@
         </div>
         <div class="table" v-if="activeIndex == 2">
           <DiyTable
-              :style="{ width: '100%' }"
+              :style="{ width: '100%'}"
               ref="diyTable"
               :hasTabs="true"
               :hasTitle="false"
               :hasTableHead="true"
               :tableData="state.tableData"
               :options="options"
+              :total="state.attrTotal"
               :tableHead="tableHead"
+              @handleUpdate="handleUpdate"
           >
             <!-- <template #slot-tabs>
               <div class="table-tabs">
@@ -244,7 +246,8 @@
     belongTreeData: [],
     authTreeData: [],
     classifyForm:{},
-    createOrEdit:{}
+    createOrEdit:{},
+    attrTotal:0
   })
   const options = ref<any>({
     checkBox: false,
@@ -256,6 +259,19 @@
       hasChildren: 'hasChildren'
     }
   })
+
+  const pageStore = reactive({
+    currentPage: 1,
+    pageSize: 20,
+    total: 0
+  })
+
+  const handleUpdate = (page: any) => {
+    pageStore.currentPage = page.currentPage;
+    pageStore.pageSize = page.pageSize;
+    loadSpeciesAttrs(currentData.value)
+  }
+
   const tableHead = ref([
     {
       prop: 'code',
@@ -383,9 +399,8 @@
   //   })
   // }
 
-
   const loadSpeciesAttrs = async (species) => {
-    const page: PageRequest = {offset: 0, limit: 20, filter: ''}
+    const page = {offset: (pageStore.currentPage - 1) * pageStore.pageSize, limit: pageStore.pageSize, filter: ''}
     const res = await species.loadAttrs(userCtrl.space.id, page)
     if (res && res.result) {
       for (const item of res.result) {
@@ -397,6 +412,7 @@
       }
     }
     state.tableData = res.result
+    state.attrTotal = res.total
   }
 
   const findSpecesName = (species: INullSpeciesItem, id: string) => {
@@ -504,8 +520,7 @@
       .table {
         background: #fff;
         margin-top: 3px;
-        height: 100%;
-
+        height: calc(100vh - 180px);
         .btn-check {
           padding: 8px 16px;
         }

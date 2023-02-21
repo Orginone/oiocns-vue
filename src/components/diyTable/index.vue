@@ -353,7 +353,7 @@
     isAllSelect.value = true
     selectAll(false, false)
     page.value.currentPage = val
-    emit('handleUpdate', { pageSize: page.value.pageSize, current: page.value.current })
+    emit('handleUpdate', { pageSize: page.value.pageSize, current: page.value.current, currentPage: page.value.currentPage })
   }
   onMounted(() => {
     nextTick(()=>{

@@ -185,7 +185,7 @@ export default function request(
     headers: formatHeaders,
     responseType: dataType,
     // 这里将 response.data 为 string 做了 JSON.parse 的转换处理
-    transformResponse: axios.defaults.transformResponse.concat(function (data) {
+    transformResponse: axios.defaults.transformResponse.concat(function (data:any) {
       if (typeof data === 'string' && data.length) {
         try {
           return JSON.parse(data)

@@ -107,7 +107,6 @@ class appStore {
    * @return 返回接口调用结果
    */
   public async onRegister(params: any) {
-    console.log(params)
 
     const { success } = await API.product.register({
       data: params
