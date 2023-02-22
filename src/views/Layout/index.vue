@@ -1,7 +1,7 @@
 <template>
   <el-container class="pages home-wrap">
     <!-- 头 -->
-    <el-header class="page-header" >
+    <el-header v-if="!$route.meta.noHeader" class="page-header" >
       <CustomHeadr />
     </el-header>
     <el-container>

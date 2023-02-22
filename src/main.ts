@@ -37,6 +37,11 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import ElementPlus from 'element-plus'
 import VueGridLayout from 'vue-grid-layout'
 
+// @ts-ignore
+import VForm3 from '@/../lib/vform/designer.umd.js'
+import '../lib/vform/designer.style.css'
+import 'element-plus/dist/index.css'
+
 
 // 下面是我们安装的固化插件。
 import piniaPersist from 'pinia-plugin-persist'
@@ -56,6 +61,7 @@ app.use(pinia)
 app.use(VueGridLayout)
 setupRouter(app)
 app.use(ElementPlus)
+app.use(VForm3)
 // app.use(ElementPlus, {locale}) //国内
 // await router.isReady()
 

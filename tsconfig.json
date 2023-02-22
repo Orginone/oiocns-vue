@@ -68,6 +68,7 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "src/icons/index.js",
+    "auto-imports.d.ts"
   ],
   "exclude": [
     "node_modules",
