@@ -20,7 +20,7 @@
             <el-dropdown-menu>
               <el-dropdown-item>编辑</el-dropdown-item>
               <el-dropdown-item>删除</el-dropdown-item>
-              <el-dropdown-item>设计表单</el-dropdown-item>
+              <el-dropdown-item @click="goFormDesign()">设计表单</el-dropdown-item>
               <el-dropdown-item>预览表单</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -40,7 +40,9 @@ export default {
 import { useUserStore } from "@/store/user";
 import { ref, onMounted, watch } from 'vue';
 import { thingCtrl as thing, userCtrl as user } from "@/ts/coreIndex";
+import { useRouter } from "vue-router";
 
+const router = useRouter()
 const store = useUserStore();
 
 const props = defineProps({
@@ -118,6 +120,10 @@ const findSpeciesName = (species: any[], id: string): string | undefined => {
   }
   return specesName;
 };
+
+const goFormDesign = () => {
+  router.push('/formDesign')
+}
 </script>
 
 <style lang="scss" scoped></style>
