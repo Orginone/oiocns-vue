@@ -427,6 +427,16 @@ const mainRouter: RouteRecordRaw[] = [
     ]
   },
   {
+    component: () => import('@/views/Thing/index.vue'),
+    name: 'thing',
+    path: '/thing',
+    meta: {
+      keepAlive: false,
+      title: '物',
+      id: "thing"
+    }
+  },
+  {
     path: '/formDesign',
     name: 'formDesign',
     component: () => import('@/views/SetCenter/standard/components/formDesign.vue'),

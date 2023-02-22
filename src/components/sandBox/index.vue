@@ -34,7 +34,7 @@
   const load = () => {
     console.log('子页面加载完成')
     loading.value = false
-    console.log(props.containLink);
+    // console.log(props.containLink,props.appInfo);
     
   }
   // 使用poseMessage 监听子页面消息,并回复

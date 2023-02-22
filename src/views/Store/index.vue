@@ -499,8 +499,14 @@ const handleChooseItem = async (app: any) => {
   state.appList.forEach(element => {
     if(element.prod.id ==app.prod.id){
       const { link } = element.prod.resource[0]
+      const appInfo = {...app.prod}
+      for(var i = 0;i<appInfo.resource.length;i++){
+        delete appInfo.resource[i].product
+        appInfo.resource[i] = JSON.parse(JSON.stringify(appInfo.resource[i]))
+      }
       let data = { type: '', appInfo: app, icon: img1, link, path: '/online' }
       data.type = 'app'
+      commonStore.appInfo = appInfo
       commonStore.iframeLink = data?.link
       router.push(data.path)
     }else{
@@ -517,7 +523,6 @@ const handleUpdate = (page: any) => {
 // 获取我的应用列表
 const getProductList = () => {
   marketCtrl.target.getOwnProducts(false).then((res:any)=>{
-    console.log('res',res)
     state[`ownProductList`] = res;
     state[`productList`] = res;
     state['appList'] = res;

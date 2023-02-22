@@ -3,7 +3,6 @@ import { onMounted, onUnmounted, Ref } from 'vue'
 import { APPFUNS } from '@/services'
 
 export default function (iframeRef: Ref<any>, appInfo: any, link: string) {
-  console.log(appInfo)
   let funcs = {}
   onMounted(() => {
     // 加载app可用urls
@@ -46,7 +45,7 @@ export default function (iframeRef: Ref<any>, appInfo: any, link: string) {
           result.exception = ex
         }
         finally {
-          iframeRef.value.contentWindow.postMessage(result, link)
+          iframeRef.value.contentWindow.postMessage(JSON.parse(JSON.stringify(result)), link)
         }
       })
     })(message)

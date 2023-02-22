@@ -174,7 +174,7 @@
       }
     }
     // start-文档相关
-    if (router.currentRoute.value.name === 'cloud') {
+    if (router.currentRoute.value.name === 'cloud' || router.currentRoute.value.name === 'thing') {
       showMenu.value = false;
       return;
     }
