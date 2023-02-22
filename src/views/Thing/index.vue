@@ -235,7 +235,6 @@ const loadSpeciesAttrs = async (species:INullSpeciesItem) => {
     let obj = {
       type: element.valueType,
       label: element.name,
-      fixed: "right",
       align: "center",
       width: "100",
       name: "operate",

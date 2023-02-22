@@ -173,7 +173,7 @@
         }
       }
     }
-    // start-文档相关
+    // start-文档/物相关
     if (router.currentRoute.value.name === 'cloud' || router.currentRoute.value.name === 'thing') {
       showMenu.value = false;
       return;
@@ -226,7 +226,7 @@
     showMenu.value = true;
   }
   let router = useRouter()
-  console.log(router.currentRoute.value.path);
+  // console.log(router.currentRoute.value.path);
 
   let titleArr = reactive<any>({state:{btnList:[]}});
   let menuArr = reactive({
