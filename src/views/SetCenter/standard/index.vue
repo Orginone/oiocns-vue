@@ -9,8 +9,9 @@
           >
             <el-menu-item index="1">基本信息</el-menu-item>
             <el-menu-item index="2">分类特征</el-menu-item>
-            <el-menu-item index="3">字典定义</el-menu-item>
+            <el-menu-item index="3">分类字典</el-menu-item>
             <el-menu-item index="4">表单设计</el-menu-item>
+            <!-- <el-menu-item index="4">业务标准</el-menu-item> -->
           </el-menu>
           <div>
             <el-radio-group v-model="recursionOrg">
@@ -111,6 +112,9 @@
         </div>
         <div class="dict" v-if="activeIndex == 3">
           <Dict :info="currentData" :recursionOrg="recursionOrg" :recursionSpecies="recursionSpecies"></Dict>
+        </div>
+        <div class="table" v-if="activeIndex == 4">
+          <FormSet :info="currentData" />
         </div>
       </div>
 
@@ -226,6 +230,7 @@
   // @ts-nocheck
   import DiyTable from "@/components/diyTable/index.vue";
   import Dict from './components/dict.vue'
+  import FormSet from './components/formSet.vue'
   import {computed, nextTick, reactive, ref, watch} from "vue";
   import { setCenterStore } from '@/store/setting'
   import { userCtrl,thingCtrl  } from "@/ts/coreIndex";

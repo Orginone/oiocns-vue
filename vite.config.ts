@@ -40,6 +40,11 @@ export default defineConfig(({ command, mode }) => {
           /\.vue\?vue/, // .vue
           /\.md$/ // .md
         ],
+        eslintrc: {
+          enabled: true,
+          filepath: "./.eslintrc-auto-import.json",
+          globalsPropValue: true,
+        },
         dts: true,
         imports: ['vue', 'vue-router']
       }),
@@ -68,6 +73,9 @@ export default defineConfig(({ command, mode }) => {
         '@store': path.resolve(__dirname, 'src/store')
       }
     },
+    optimizeDeps: {
+      include: ['@/../lib/vform/designer.umd.js']
+    },
     css: {
       preprocessorOptions: {
         scss: {
@@ -82,6 +90,9 @@ export default defineConfig(({ command, mode }) => {
       minify: 'terser', // 混淆器,terser构建后文件体积更小
       sourcemap: false, // 输出.map文件
       chunkSizeWarningLimit: 1024,
+      commonjsOptions: {
+        include: /node_modules|lib/
+      },
       terserOptions: {
         compress: {
           drop_console: true, // 生产环境移除console
