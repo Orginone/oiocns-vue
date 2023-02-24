@@ -193,6 +193,7 @@ onMounted(() => {
 
 const getThingMenus = async () => {
   const root = await userCtrl.space.loadSpeciesTree();
+  console.log(root)
   const species =
     root && root.children ? root.children.filter((item) => item.name == '物')[0] : null;
   state.navData = species?[species]:[]
@@ -230,7 +231,6 @@ const loadSpeciesAttrs = async (species:INullSpeciesItem) => {
       }))?.result || [];
   let arr:any = []
   if(targetAttrs){
-    // console.log(targetAttrs,'123')
     targetAttrs?.forEach(element => {
       let obj = {
         type: element.valueType,
@@ -252,7 +252,6 @@ const loadSpeciesAttrs = async (species:INullSpeciesItem) => {
     state.tableHead = arr
   }
 }
-
 </script>
 
 <style lang="scss" scoped>

@@ -130,6 +130,7 @@
                   children: treeData
                 }
               ]
+              console.log(newData)
               menuArr.state = newData
             })
             showMenu.value = true;
@@ -183,7 +184,8 @@
     // start-标准设置相关
     if (router.currentRoute.value.path.indexOf('setCenter/standard') != -1) {
       titleArr.state = {icon: 'PriceTag',title: '标准设置', "backFlag": true}
-      getStandardSpecies()
+      // getStandardSpecies()
+      loadSpeciesSetting()
       showMenu.value = true;
       return;
     }
@@ -381,6 +383,27 @@
       menuArr.state = []
     }
   }
+
+  const loadSpeciesSetting = async () => {
+    const species = await userCtrl.space.loadSpeciesTree();
+    if (species) {
+      console.log(species)
+      const treeData = [species]
+      treeData[0].structure = true
+      treeLabel(treeData)
+      menuArr.state = treeData
+      function treeLabel(arr: any[]) {
+        arr.forEach((el) => {
+          el.label = el.name
+          el.btns = [{name: '新增分类',id: '2204'}]
+          delete el.parent
+          treeLabel(el.children || [])
+        })
+      }
+    }else{
+      menuArr.state = []
+    }
+  };
   
   // 获取我的商店列表
   const getShopList = async ()=>{
@@ -414,7 +437,6 @@
     titleArr.state = {icon: 'User',title: '商店', "backFlag": true}
     menuArr.state = shopstoreJson
     })
-    
   }
   // const getNav = ()=>{
   //     if(router.currentRoute.value.path.indexOf('store') != -1){    
