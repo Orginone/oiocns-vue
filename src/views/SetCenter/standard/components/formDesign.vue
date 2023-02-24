@@ -6,8 +6,8 @@
       :designer-config="designerConfig"
     >
       <template #customToolButtons>
-        <el-button type="text" @click="saveFormJson">保存</el-button>
-        <el-button type="text" @click="$router.go(-1)">返回</el-button>
+        <el-button link type="primary" @click="saveFormJson">保存</el-button>
+        <el-button link type="primary" @click="$router.go(-1)">返回</el-button>
       </template>
     </v-form-designer>
   </section>
