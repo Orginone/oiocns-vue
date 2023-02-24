@@ -6,8 +6,9 @@
       <b>物</b>
     </div>
     <el-tree
+      v-if="props.NavData != [null]"
       ref="treeRef"
-      :data="props.NavData"
+      :data="props.NavData || []"
       :props="defaultProps"
       :node-key="'key'"
       :expand-on-click-node="true"

@@ -146,6 +146,7 @@ import {
 } from "vue";
 import NavList from './components/navList.vue'
 import {docsCtrl,userCtrl,INullSpeciesItem} from '@/ts/coreIndex';
+import { result } from "lodash";
 
 const diyTable = ref(null);
 // 表格展示数据
@@ -192,9 +193,10 @@ onMounted(() => {
 
 const getThingMenus = async () => {
   const root = await userCtrl.space.loadSpeciesTree();
+  console.log(root)
   const species =
     root && root.children ? root.children.filter((item) => item.name == '物')[0] : null;
-  state.navData = [species]
+  state.navData = species?[species]:[]
   loadSpeciesAttrs(species)
   return species? buildSpeciesTree(species)
     : {
@@ -222,37 +224,34 @@ const buildSpeciesTree = (species: INullSpeciesItem): MenuItemType => {
 
 
 const loadSpeciesAttrs = async (species:INullSpeciesItem) => {
-  let targetAttrs=
-    (
-      await species.loadAttrs(userCtrl.space.id || '', {
+  let targetAttrs = (await species?.loadAttrs(userCtrl.space.id || '', {
         offset: 0,
         limit: 1000,
         filter: '',
-      })
-    ).result || [];
+      }))?.result || [];
   let arr:any = []
-  targetAttrs.forEach(element => {
-    let obj = {
-      type: element.valueType,
-      label: element.name,
-      fixed: "right",
-      align: "center",
-      width: "100",
-      name: "operate",
-    }
-    arr.push(obj)
-  });
-  arr.push({
-      type: "slot",
-      label: "操作",
-      fixed: "right",
-      align: "center",
-      width: "100",
-      name: "operate",
-  })
-  state.tableHead = arr
+  if(targetAttrs){
+    targetAttrs?.forEach(element => {
+      let obj = {
+        type: element.valueType,
+        label: element.name,
+        align: "center",
+        width: "100",
+        name: "operate",
+      }
+      arr.push(obj)
+    });
+    arr.push({
+        type: "slot",
+        label: "操作",
+        fixed: "right",
+        align: "center",
+        width: "100",
+        name: "operate",
+    })
+    state.tableHead = arr
+  }
 }
-
 </script>
 
 <style lang="scss" scoped>
