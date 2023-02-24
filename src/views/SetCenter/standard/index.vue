@@ -10,7 +10,7 @@
             <el-menu-item index="1">基本信息</el-menu-item>
             <el-menu-item index="2">分类特征</el-menu-item>
             <el-menu-item index="3">字典定义</el-menu-item>
-            <!-- <el-menu-item index="4">业务标准</el-menu-item> -->
+            <el-menu-item index="4">表单设计</el-menu-item>
           </el-menu>
           <div>
             <el-radio-group v-model="recursionOrg">
