@@ -40,7 +40,7 @@
       :filter-node-method="filterNode"
       :props="{ class: customNodeClass }"
       @node-click="nodeClick"
-      v-show="state.treeData.length"
+      v-show="props.titleData.title != '设置' && props.titleData.title != '仓库' && props.titleData.title != '我的'"
     >
       <template #default="{ node, data }">
         <div class="custom-tree-node" @mouseover='onHover(node.id)' @mouseout="onOut" @click="jump(node)">

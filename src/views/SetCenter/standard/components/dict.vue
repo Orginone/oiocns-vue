@@ -142,7 +142,7 @@
   import {reactive, ref,onMounted, watch} from "vue";
   import {FormRules,FormInstance,ElMessage,ElTree } from "element-plus";
   import { Search } from '@element-plus/icons-vue'
-  import {userCtrl,dictionaryCtrl, Dict} from '@/ts/coreIndex'
+  import {userCtrl,dictionaryCtrl, Dict, INullSpeciesItem} from '@/ts/coreIndex'
   import { PageRequest } from '@/ts/base/model';
 
   interface Tree {
@@ -177,6 +177,12 @@
   const props = defineProps({
     info: {
       type: Object
+    },
+    recursionOrg:{
+      type: Boolean
+    },
+    recursionSpecies:{
+      type: Boolean
     }
   })
 
@@ -344,17 +350,21 @@
   
   //获取字典分类列表
   const loadDictsList = async() => {
-    const page: PageRequest = {offset: 0, limit: 10000, filter: ''}
-    const params = {
-      id: props.info.target.id,
-      spaceId: userCtrl.space.id,
-      page: page
-    }
-    const res = await dictionaryCtrl.getDictList(params)
-    let records: XDict[] = (res.data.result as XDict[]) || [];
-    state.dictData = records
-    // state.selectKey = records[0]?.id
-    // getCurrentDict(records[0])
+    const current:INullSpeciesItem = props.info
+    console.log(current)
+    let res: IDict[] = await current.loadDictsEntity(
+        userCtrl.space.id,
+        props.recursionOrg,
+        props.recursionSpecies,
+        {
+          offset: 0,
+          limit: 10000,
+          filter: '',
+        },
+    );
+    state.dictData = res
+    state.selectKey =res[0]?.id
+    getCurrentDict(res[0])
   }
 
   //选择分类字典

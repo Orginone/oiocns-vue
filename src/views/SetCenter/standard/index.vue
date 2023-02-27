@@ -13,6 +13,18 @@
             <el-menu-item index="4">表单设计</el-menu-item>
             <!-- <el-menu-item index="4">业务标准</el-menu-item> -->
           </el-menu>
+          <div>
+            <el-radio-group v-model="recursionOrg">
+              <el-radio-button size="small" :label="true">全部</el-radio-button>
+              <el-radio-button size="small" :label="false">本组织</el-radio-button>
+            </el-radio-group>
+
+            <el-radio-group v-model="recursionSpecies" style="margin-left: 5px">
+              <el-radio-button size="small" :label="true">全部</el-radio-button>
+              <el-radio-button size="small" :label="false">本分类</el-radio-button>
+            </el-radio-group>
+          </div>
+          
         </div>
         
         <div class="detail" v-if="activeIndex == 1">
@@ -99,12 +111,14 @@
           </DiyTable>
         </div>
         <div class="dict" v-if="activeIndex == 3">
-          <Dict :info="currentData"></Dict>
+          <Dict :info="currentData" :recursionOrg="recursionOrg" :recursionSpecies="recursionSpecies"></Dict>
         </div>
         <div class="table" v-if="activeIndex == 4">
           <FormSet :info="currentData" />
         </div>
       </div>
+
+      <!-- <div v-else>暂无数据</div> -->
       <!-- 特性提交表单 -->
       <el-dialog v-model="attrFormDialog" :title="`${isEditAttr ? '编辑' : '新增'}特性`" width="50%">
         <el-form :model="state.attrForm" :rules="rules" label-position="top" label-width="auto" ref="attrFormRef">
@@ -239,6 +253,9 @@
   const attrFormRef = ref<FormInstance>()
   const activeIndex = ref<string>('1'); //table nav index
   const visible = ref(false)
+  const recursionOrg = ref<boolean>(true)
+  const recursionSpecies = ref<boolean>(true)
+  
   const classifyFormRef = ref<FormInstance>()
 
   const handleSelect = (key: string) => {
@@ -406,7 +423,7 @@
 
   const loadSpeciesAttrs = async (species) => {
     const page = {offset: (pageStore.currentPage - 1) * pageStore.pageSize, limit: pageStore.pageSize, filter: ''}
-    const res = await species.loadAttrs(userCtrl.space.id, page)
+    const res = await species.loadAttrs(userCtrl.space.id,recursionOrg.value,recursionSpecies.value, page)
     if (res && res.result) {
       for (const item of res.result) {
         const team = await userCtrl.findTeamInfoById(item.belongId);
@@ -512,6 +529,17 @@
       display: flex;
       flex-direction: column;
       background: #f0f4f8;
+      .header{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-right: 30px;
+        background: #fff;
+        :deep(.el-menu) {
+          border-bottom: 0;
+          width: calc(100% - 300px)
+        }
+      }
       .detail {
         background: #fff;
         overflow-x: auto;
