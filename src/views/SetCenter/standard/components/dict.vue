@@ -2,8 +2,11 @@
   <div class="main">
     <div class="left">
       <div class="header">
-        <span>分类字典</span>
-        <el-icon class="add" @click="attrFormAdd('新增','')"><Plus /></el-icon>
+        <div class="addBox" @click="attrFormAdd('新增','')">
+          <el-icon class="add"><Plus /></el-icon>
+          新增
+        </div>
+        <span class="showBtn" @click="attrDialogShow">从分类生成</span>
       </div>
       <div class="search-wrap">
         <el-input class="search" v-model="filterText" placeholder="搜索" :prefix-icon="Search" />
@@ -134,6 +137,28 @@
         </span>
       </template>
     </el-dialog>
+
+    <!-- 从分类生成字典 -->
+    <el-dialog v-model="attrDialog" title="分类转字典" width="840px">
+      <el-input v-model="filterAttr" placeholder="请输入关键词" />
+      <el-tree
+        ref="attrTreeRef"
+        class="filter-tree"
+        node-key="id"
+        :data="state.classifyData"
+        :props="defaultProps"
+        default-expand-all
+        show-checkbox
+        :filter-node-method="filterAttrNode"
+        @check="handleCurrentChecked"
+      />
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="attrDialog = false">取消</el-button>
+          <el-button type="primary" @click="createDictFromSpeciesItem()">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 <script lang="ts" setup>
@@ -152,19 +177,31 @@
   }
 
   const filterText = ref('')
+  const filterAttr = ref('')
   const treeRef = ref<InstanceType<typeof ElTree>>()
+  const attrTreeRef = ref<InstanceType<typeof ElTree>>()
   const attrFormDialog = ref(false)
   const isEditAttr =  ref(false)
   const attrFormRef = ref<FormInstance>()
   const addFormDialog = ref(false)
   const isEditAdd =  ref(false)
+  const attrDialog = ref(false)
   const addFormRef = ref<FormInstance>()
 
   watch(filterText, (val) => {
     treeRef.value!.filter(val)
   })
 
+  watch(filterAttr, (val) => {
+    attrTreeRef.value!.filter(val)
+  })
+
   const filterNode = (value: string, data: Tree) => {
+    if (!value) return true
+    return data.name.includes(value)
+  }
+
+  const filterAttrNode = (value: string, data: Tree) => {
     if (!value) return true
     return data.name.includes(value)
   }
@@ -193,7 +230,9 @@
     belongTreeData: [],
     dictData:[],
     attrEditData:{},
-    currentDict:null
+    currentDict:null,
+    classifyData:[],
+    currentNode:{}
   })
 
   const options = ref<any>({
@@ -351,7 +390,6 @@
   //获取字典分类列表
   const loadDictsList = async() => {
     const current:INullSpeciesItem = props.info
-    console.log(current)
     let res: IDict[] = await current.loadDictsEntity(
         userCtrl.space.id,
         props.recursionOrg,
@@ -407,6 +445,64 @@
     }
   } 
 
+  const attrDialogShow = () =>{ //打开分类转字典弹窗
+    loadSpeciesSetting()
+    attrDialog.value = true
+  }
+
+  const handleCurrentChecked =  (node,selectItem) =>{ //选择节点
+    state.currentNode = node
+  }
+
+  const createDictFromSpeciesItem = () => {  //分类转字典
+    state.currentNode
+      ?.createDict({
+        name: state.currentNode.name,
+        code: state.currentNode.target.code,
+        public: true,
+        belongId: userCtrl.space.id,
+        speciesId: props.info.id,
+        remark: '',
+      })
+      .then((dict: INullDict) => {
+        if (dict) {
+          state.currentNode.children?.forEach((child) => {
+            dict.createItem({
+              name: child.name,
+              value: child.target.code,
+              public: true,
+              belongId: userCtrl.space.id,
+            });
+          });
+          ElMessage.success({ message: '转化成功!'})
+          attrDialog.value = false
+          loadDictsList()
+        } else {
+          ElMessage.error({ message: '转化失败!'})
+        }
+      });
+  };
+
+  const loadSpeciesSetting = async () => {
+    const species = await userCtrl.space.loadSpeciesTree();
+    if (species) {
+      const treeData = [species]
+      treeData[0].structure = true
+      treeLabel(treeData)
+      state.classifyData = treeData
+      function treeLabel(arr: any[]) {
+        arr.forEach((el) => {
+          el.label = el.name
+          el.btns = [{name: '新增分类',id: '2204'}]
+          delete el.parent
+          treeLabel(el.children || [])
+        })
+      }
+    }else{
+      state.classifyData = []
+    }
+  };
+
   onMounted(() => {
     loadDictsList()
   })
@@ -424,10 +520,19 @@
       width: 100%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      // justify-content: space-between;
       font-size: var(--el-font-size-base);
       color: var(--el-tree-text-color);
-      .add{
+      .addBox{
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+        .add{
+          margin-right: 5px;
+          cursor: pointer;
+        }
+      }
+      .showBtn{
         cursor: pointer;
       }
     }
