@@ -34,19 +34,19 @@
                   :options="options"
                 >
                   <template #merchandiseStatus="scope">
-                    <el-tag v-show="scope.row.merchandise">在售</el-tag>
-                    <el-tag class="ml-2" type="danger" v-show="!scope.row.merchandise">已下架</el-tag>
+                    <el-tag v-show="scope.row._data.merchandise">在售</el-tag>
+                    <el-tag class="ml-2" type="danger" v-show="!scope.row._data.merchandise">已下架</el-tag>
                   </template>
 
                   <template #operate="scope">
-                    <el-button link type="primary" @click="showPayList(scope.row)">支付记录</el-button>
+                    <!-- <el-button link type="primary" @click="showPayList(scope.row)">支付记录</el-button> -->
                     <el-button
                       link
                       small
                       type="danger"
                       class="btn"
-                      v-show="scope.row.status < 102"
-                      @click="cancelOrder('buy', scope.row.id)"
+                      v-show="scope.row._data.status < 102"
+                      @click="cancelOrder('buy', scope.row._data.id)"
                     >
                       取消订单
                     </el-button>
@@ -55,8 +55,8 @@
                       small
                       type="primary"
                       class="btn"
-                      v-show="scope.row.status == 102"
-                      @click="reject(scope.row.id)"
+                      v-show="scope.row._data.status == 102"
+                      @click="reject(scope.row._data.id)"
                     >
                       退货退款
                     </el-button>
@@ -70,7 +70,7 @@
                 small
                 type="danger"
                 class="btn"
-                v-show="scope.row.status < 102 && scope.row.details?.find((n:any) => n.status < 102)"
+                v-show="scope.row._data.status < 102 && scope.row._data.details?.find((n:any) => n.status < 102)"
                 @click="cancelOrder('main', scope.row.id)"
               >
                 取消订单 
@@ -89,13 +89,13 @@
             :options="options"
           >
             <template #merchandiseStatus="scope">
-              <el-tag v-show="scope.row.merchandise">在售</el-tag>
-              <el-tag class="ml-2" type="danger" v-show="!scope.row.merchandise">已下架</el-tag>
+              <el-tag v-show="scope.row._data.merchandise">在售</el-tag>
+              <el-tag class="ml-2" type="danger" v-show="!scope.row._data.merchandise">已下架</el-tag>
             </template>
 
             <template #operate="scope">
               <el-space>
-                <el-button link type="success" @click="showPayList(scope.row)">支付记录</el-button>
+                <!-- <el-button link type="success" @click="showPayList(scope.row)">支付记录</el-button> -->
                 <el-button
                   link
                   small
@@ -135,7 +135,8 @@
   import type { ListProps } from '@/module/store/order'
   import payView from './components/pay.vue'
   import payList from './components/list.vue'
-  import moment from 'moment'
+  import moment from 'moment';
+  import {todoCtrl} from '@/ts/coreIndex';
 
   const switchType = ref<number>(1);
   const searchType = ref<OrderListType>('buy')
@@ -160,11 +161,13 @@
     total: 0
   })
   onMounted(() => {
-    if (switchType.value ==1) {
-      getTableList('buy')
-    } else {
-      getTableList('sell')
-    }
+    setTimeout(() => {
+      if (switchType.value ==1) {
+        getTableList('buy')
+      } else {
+        getTableList('sell')
+      }
+    }, 1000);
   })
   interface ListItem {
     value: string
@@ -194,21 +197,21 @@
     orderList: [],
     tableHeadBuy: [
       {
-        type: 'expand',
+        type: '_data.expand',
         name: 'expand'
       },
       {
-        prop: 'code',
+        prop: '_data.code',
         label: '订单号'
       },
       {
-        prop: 'name',
+        prop: '_data.name',
         label: '应用名称'
       },
       {
-        prop: 'createTime',
+        prop: '_data.createTime',
         label: '创建时间',
-        formatter: (row: any, column: any) => moment(row.createTime).format('YYYY/MM/DD HH:mm:ss')
+        formatter: (row: any, column: any) => moment(row._data.createTime).format('YYYY/MM/DD HH:mm:ss')
       },
       {
         type: 'slot',
@@ -220,39 +223,39 @@
     ],
     tableHeadBuyDetail: [
       {
-        prop: 'caption',
+        prop: '_data.caption',
         label: '应用名称',
         minWidth: '220'
       },
       {
-        prop: 'sellAuth',
+        prop: '_data.sellAuth',
         label: '售卖权属'
       },
       {
-        prop: 'days',
+        prop: '_data.days',
         label: '使用期限',
         width: '120',
         formatter: (row: any, column: any) => {
-          return row.days || '永久'
+          return row._data.days || '永久'
         }
       },
       {
-        prop: 'price',
+        prop: '_data.price',
         label: '价格'
       },
       {
-        prop: 'marketId',
+        prop: '_data.order.marketId',
         label: '市场名称',
         formatter: (row: any, column: any) => {
-          return row.marketId ? row.marketId : '-'
+          return row._data.marketId ? row._data.marketId : '-'
         }
       },
       {
-        prop: 'belongId',
+        prop: '_data.order.belongId',
         label: '卖方名称',
       },
       {
-        prop: 'status',
+        prop: '_data.order.status',
         label: '状态',
         formatter: (row: any, column: any) => renderDict(row, column, 'OrderStatus')
       },
@@ -260,7 +263,7 @@
         prop: 'createTime',
         label: '创建时间',
         minWidth: '100',
-        formatter: (row: any, column: any) => moment(row.createTime).format('YYYY/MM/DD HH:mm:ss')
+        formatter: (row: any, column: any) => moment(row._data.createTime).format('YYYY/MM/DD HH:mm:ss')
       },
 
       {
@@ -281,17 +284,17 @@
     ],
     tableHeadSell: [
       {
-        prop: 'code',
+        prop: '_data.order.code',
         label: '订单号',
         minWidth: '150'
       },
       {
-        prop: 'caption',
+        prop: '_data.caption',
         label: '名称',
         minWidth: '120'
       },
       {
-        prop: 'marketId',
+        prop: '_data.order.marketId',
         label: '市场名称',
         minWidth: '200',
         formatter: (row: any, column: any) => {
@@ -299,36 +302,36 @@
         }
       },
       {
-        prop: 'belongId',
+        prop: '_data.order.belongId',
         label: '买方名称',
         minWidth: '200',
       },
       {
-        prop: 'sellAuth',
+        prop: '_data.sellAuth',
         label: '售卖权属',
         width: '100'
       },
       {
-        prop: 'days',
+        prop: '_data.days',
         label: '使用期限',
         width: '120',
         formatter: (row: any, column: any) => {
-          return row.days || '永久'
+          return row._data.days || '永久'
         }
       },
       {
-        prop: 'price',
+        prop: '_data.price',
         label: '价格',
         width: '120'
       },
       {
-        prop: 'status',
+        prop: '_data.order.status',
         label: '状态',
         width: '120',
         formatter: (row: any, column: any) => renderDict(row, column, 'OrderStatus')
       },
       {
-        prop: 'createTime',
+        prop: '_data.createTime',
         label: '创建时间',
         width: '160',
         formatter: (row: any, column: any) => moment(row.createTime).format('YYYY/MM/DD HH:mm:ss')
@@ -393,25 +396,16 @@
   //查询已出售订单
   const searchSellList = async (params: ListProps) => {
     state.orderList = []
-    const { data, total } = await OrderSevice.getSellList({
-      ...params,
-      filter: '',
-      status: statusvalue.value ? statusvalue.value : 0 //后续改成-1
-    })
-    state.orderMessage.total = total
-    state.orderMessage.list = data
+    const res =  await todoCtrl.OrderTodo?.getTodoList(true)
+    state.orderMessage.list = res
+    state.orderMessage.total = res.length;
   }
   //查询已购入订单
-  const searchBuyList = async (params: ListProps) => {
-    // state.orderMessage.list = [];
-    const { data, total } = await OrderSevice.geBuyList({
-      ...params,
-      filter: '',
-      status: statusvalue.value ? statusvalue.value : 0 //后续改成-1
-    })
-    state.orderMessage.total = total
-    state.orderMessage.list = data
-    console.log('data',data)
+  const searchBuyList = async (params: ListProps) => {    
+  
+    const res =  await todoCtrl.OrderTodo.getApplyList({offset:0,limit:65535,filter:''});
+    state.orderMessage.list = res.result;
+    state.orderMessage.total = res.total;
   }
   //查询支付列表
   const showPayList = async (data: any) => {

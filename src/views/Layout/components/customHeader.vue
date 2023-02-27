@@ -189,13 +189,13 @@
   // }, 600);
 
   onMounted(() => {
-  return 
+  return false;
   // TODO: 目前消息只有全局脏检查订阅，不能单独订阅
-  chat.value.subscribe(() => {
-    console.warn("触发全局订阅回调");
-    const count = chat.value.getNoReadCount();
-    state.mainMenus[0].count = count;
-  });
+  // chat.value.subscribe(() => {
+  //   console.warn("触发全局订阅回调");
+  //   const count = chat.value.getNoReadCount();
+  //   state.mainMenus[0].count = count;
+  // });
 
     todo.subscribe(async () => {
       console.warn("触发全局订阅回调");
