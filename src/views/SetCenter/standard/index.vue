@@ -114,7 +114,7 @@
           <Dict :info="currentData" :recursionOrg="recursionOrg" :recursionSpecies="recursionSpecies"></Dict>
         </div>
         <div class="table" v-if="activeIndex == 4">
-          <FormSet :info="currentData" />
+          <FormSet :info="currentData" :recursionOrg="recursionOrg" :recursionSpecies="recursionSpecies" />
         </div>
       </div>
 
@@ -308,11 +308,11 @@
       label: '特性类型',
     },
     {
-      prop: 'speciesId',
+      prop: 'speciesName',
       label: '特性分类',
     },
     {
-      prop: 'belongId',
+      prop: 'belongName',
       label: '共享组织',
     },
     {
@@ -428,9 +428,9 @@
       for (const item of res.result) {
         const team = await userCtrl.findTeamInfoById(item.belongId);
         if (team) {
-          item.belongId = team.name;
+          item.belongName = team.name;
         }
-        item.speciesId = findSpecesName(thingCtrl.teamSpecies, item.speciesId);
+        item.speciesName = findSpecesName(thingCtrl.teamSpecies, item.speciesId);
       }
     }
     state.tableData = res.result
