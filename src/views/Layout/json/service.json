@@ -2,7 +2,7 @@
   {
     "icon": "List",
     "title": "办事",
-    "backFlag": true,
+    "backFlag": false,
     "id": "service-header"
   },
   {
@@ -66,13 +66,5 @@
       ]
   },
   {
-      "label": "应用待办",
-      "structure": true,
-      "url":"/service/todo",
-      "isPenultimate": false,
-      "id": 1,
-      "children": [
-        
-      ]
   }
 ]

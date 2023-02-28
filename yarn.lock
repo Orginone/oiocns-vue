@@ -459,7 +459,7 @@
     fastq "^1.6.0"
 
 "@orginone/oiocns-ts@file:.yalc/@orginone/oiocns-ts":
-  version "1.1.14"
+  version "1.1.16"
   dependencies:
     vue "^3.2.45"
 

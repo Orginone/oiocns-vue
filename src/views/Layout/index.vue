@@ -85,7 +85,7 @@
   
   onMounted(() => {
     todo.subscribe(async () => {
-      return
+      return false;
       console.warn("触发全局订阅回调");
 
       const header = allMenuItems.value.find(m => m.id == "service");

@@ -179,7 +179,7 @@
       { name: '沟通', icon: 'icon-message', path: '/chat', activeMatch: ['chat'], count: 0 },
       { name: '办事', icon: 'icon-todo', path: '/service', activeMatch: ['service'], count: 0 },
       { name: '仓库', icon: 'icon-store', path: '/store', activeMatch: ['store'] },
-      { name: '设置', icon: 'icon-setting', path: '/setCenter', activeMatch: ['setCenter', 'mine'] },  
+      { name: '设置', icon: 'icon-settings', path: '/setCenter', activeMatch: ['setCenter', 'mine'] },  
     ]
   })
   
@@ -189,13 +189,13 @@
   // }, 600);
 
   onMounted(() => {
-  return 
+  return false;
   // TODO: 目前消息只有全局脏检查订阅，不能单独订阅
-  chat.value.subscribe(() => {
-    console.warn("触发全局订阅回调");
-    const count = chat.value.getNoReadCount();
-    state.mainMenus[0].count = count;
-  });
+  // chat.value.subscribe(() => {
+  //   console.warn("触发全局订阅回调");
+  //   const count = chat.value.getNoReadCount();
+  //   state.mainMenus[0].count = count;
+  // });
 
     todo.subscribe(async () => {
       console.warn("触发全局订阅回调");
