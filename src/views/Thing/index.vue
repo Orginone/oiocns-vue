@@ -145,8 +145,9 @@ import {
   ref
 } from "vue";
 import NavList from './components/navList.vue'
-import {docsCtrl,userCtrl,INullSpeciesItem} from '@/ts/coreIndex';
+import {docsCtrl,userCtrl,INullSpeciesItem, XAttribute} from '@/ts/coreIndex';
 import { result } from "lodash";
+
 
 const diyTable = ref(null);
 // 表格展示数据
@@ -174,7 +175,8 @@ const state = reactive({
   thingList:[], //实际显示的应用列表
   current:[],
   tableHead: [],
-  navData:[]
+  navData:[],
+  checkData:[]
 });
 
 const handleUpdate = (page: any) => {
@@ -183,30 +185,103 @@ const handleUpdate = (page: any) => {
 };
 
 // 打开文件
-const clickFile = async (item: INullSpeciesItem) => {
-  await loadSpeciesAttrs(item)
+const clickFile = async (item:INullSpeciesItem) => {
+  state.checkData.push(item)
+  loadAttrs(state.checkData)
 }
 
+const getSortedList = (
+  speciesArray: INullSpeciesItem[],
+  array: any[],
+  front: boolean,
+): any[] => {
+  for (let species of speciesArray) {
+    if (!array.includes(species)) {
+      //没有就放在最前面 改为父级放前，子级放后
+      if (front) {
+        array = [species, ...array];
+      } else {
+        array = [...array, species];
+      }
+    }
+    if (species.parent) {
+      array = getSortedList([species.parent], array, true);
+    }
+  }
+  return array;
+};
+
+const loadAttrs = async (speciesArray: INullSpeciesItem[]) => {
+  let parentHeaders: any[] = [];
+  let speciesIds = speciesArray.map((item) => item.id);
+  //带属性的分类
+  let instances = docsCtrl.checkedSpeciesList.filter((item: INullSpeciesItem) =>
+    speciesIds.includes(item.id),
+  );
+  //属性set
+  let attrArray: XAttribute[] = [];
+  for (let instance of instances) {
+    for (let attr of instance.attrs || []) {
+      if (!attrArray.map((item) => item.id).includes(attr.id)) {
+        attrArray.push(attr);
+      }
+    }
+  }
+
+  let sortedSpecies = getSortedList(instances, [], false);
+  for (let species of sortedSpecies) {
+    if (attrArray.map((attr: XAttribute) => attr.speciesId).includes(species.id)) {
+      let attrs =
+        attrArray?.filter((attr: XAttribute) => attr.speciesId == species.id) || [];
+      parentHeaders.push({
+        caption: attrs[0].species?.name || species.name,
+        children: attrs,
+      });
+    }
+  }
+  console.log(parentHeaders)
+  // setThingAttrs(parentHeaders);
+};
+
 onMounted(() => {
-  getThingMenus()
+  if(docsCtrl.tabIndex == 1){
+    getThingMenus()
+  }else{
+    getWelMenus()
+  }
 })
 
 const getThingMenus = async () => {
   const root = await userCtrl.space.loadSpeciesTree();
-  console.log(root)
   const species =
     root && root.children ? root.children.filter((item) => item.name == '物')[0] : null;
   state.navData = species?[species]:[]
-  loadSpeciesAttrs(species)
   return species? buildSpeciesTree(species)
     : {
         children: [] as string[],
-        key: '物',
-        label: '物',
-        itemType: '物',
+        key: '创建',
+        label: '创建',
+        itemType: '创建',
         item: userCtrl.space,
         icon: '',
       }
+};
+
+/** 获取获取菜单 */
+const getWelMenus = async () => {
+  const root = await userCtrl.space.loadSpeciesTree();
+  const species = root?.children?.filter((item) => item.name == '财')[0];
+  state.navData = species?[species]:[]
+  return species
+    ? buildSpeciesTree(species)
+    : {
+        children: [] as string[],
+        key: '获取',
+        label: '获取',
+        itemType: '获取',
+        item: species,
+        icon: '',
+      };
 };
 
 const buildSpeciesTree = (species: INullSpeciesItem): MenuItemType => {
@@ -223,35 +298,35 @@ const buildSpeciesTree = (species: INullSpeciesItem): MenuItemType => {
 };
 
 
-const loadSpeciesAttrs = async (species:INullSpeciesItem) => {
-  let targetAttrs = (await species?.loadAttrs(userCtrl.space.id || '', {
-        offset: 0,
-        limit: 1000,
-        filter: '',
-      }))?.result || [];
-  let arr:any = []
-  if(targetAttrs){
-    targetAttrs?.forEach(element => {
-      let obj = {
-        type: element.valueType,
-        label: element.name,
-        align: "center",
-        width: "100",
-        name: "operate",
-      }
-      arr.push(obj)
-    });
-    arr.push({
-        type: "slot",
-        label: "操作",
-        fixed: "right",
-        align: "center",
-        width: "100",
-        name: "operate",
-    })
-    state.tableHead = arr
-  }
-}
+// const loadSpeciesAttrs = async (species:INullSpeciesItem) => {
+//   let targetAttrs = (await species?.loadAttrs(userCtrl.space.id || '', {
+//         offset: 0,
+//         limit: 1000,
+//         filter: '',
+//       }))?.result || [];
+//   let arr:any = []
+//   if(targetAttrs){
+//     targetAttrs?.forEach(element => {
+//       let obj = {
+//         type: element.valueType,
+//         label: element.name,
+//         align: "center",
+//         width: "100",
+//         name: "operate",
+//       }
+//       arr.push(obj)
+//     });
+//     arr.push({
+//         type: "slot",
+//         label: "操作",
+//         fixed: "right",
+//         align: "center",
+//         width: "100",
+//         name: "operate",
+//     })
+//     state.tableHead = arr
+//   }
+// }
 </script>
 
 <style lang="scss" scoped>
