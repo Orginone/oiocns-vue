@@ -193,7 +193,6 @@ onMounted(() => {
 
 const getThingMenus = async () => {
   const root = await userCtrl.space.loadSpeciesTree();
-  console.log(root)
   const species =
     root && root.children ? root.children.filter((item) => item.name == '物')[0] : null;
   state.navData = species?[species]:[]

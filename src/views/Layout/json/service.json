@@ -66,13 +66,5 @@
       ]
   },
   {
-      "label": "应用待办",
-      "structure": true,
-      "url":"/service/todo",
-      "isPenultimate": false,
-      "id": 1,
-      "children": [
-        
-      ]
   }
 ]
