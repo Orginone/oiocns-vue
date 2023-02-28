@@ -271,7 +271,6 @@ const getThingMenus = async () => {
 const getWelMenus = async () => {
   const root = await userCtrl.space.loadSpeciesTree();
   const species = root?.children?.filter((item) => item.name == '财')[0];
-  console.log(species)
   state.navData = species?species.children:[]
   return species
     ? buildSpeciesTree(species)
