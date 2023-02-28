@@ -247,7 +247,7 @@ const filterNode = (value: string, data: any) => {
   return data.label.includes(value)
 }
 const getNodes = (checkedNodes:any) =>{
-  console.log(checkedNodes)
+  router.push('/service/thing')
 }
 
 const loadThingMenus = async (prefix: string, isWork: boolean = false) => {

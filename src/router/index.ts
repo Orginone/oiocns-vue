@@ -142,6 +142,15 @@ const mainRouter: RouteRecordRaw[] = [
           title: '应用待办',
           id: "service.todo"
         }
+      },
+      {
+        path: '/service/thing',
+        name: 'todo',
+        component: () => import('@/views/Service/thing/index.vue'),
+        meta: {
+          title: '发起业务',
+          id: "service.todo"
+        }
       }
     ]
   },
