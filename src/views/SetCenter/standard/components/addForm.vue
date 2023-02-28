@@ -93,6 +93,7 @@ export default {
 
 <script setup lang="ts">
 import { userCtrl as user } from "@/ts/coreIndex";
+import _ from 'lodash'
 
 const publicOptions = [
   { label: "公开", value: true },
@@ -176,7 +177,7 @@ const getTeamTree = async () => {
 onMounted(async () => {
   show.value = props.dialog;
   if (props.editFormInfo) {
-    ruleForm.value = props.editFormInfo;
+    ruleForm.value = _.cloneDeep(props.editFormInfo) ;
   }
   belongOptions.value = await getTeamTree();
 });
