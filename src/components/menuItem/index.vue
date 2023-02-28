@@ -5,11 +5,11 @@
       <component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;
       <b style="font-size: 14px;">{{titleData.title}}</b>
     </div>
-    <el-tabs v-model="activeName" v-if="titleData.title == '仓库'" class="demo-tabs" @tab-click="handleClick">
-      <el-tab-pane label="创建" name="1"></el-tab-pane>
-      <el-tab-pane label="获取" name="2"></el-tab-pane>
+    <el-tabs v-model="state.tabActive" class="todo-tabs" v-if="router.currentRoute.value.path.indexOf('/service') != -1" @tab-click="tabsClick">
+      <el-tab-pane label="待办" name="1"> </el-tab-pane>
+      <el-tab-pane label="发起业务" name="2"> </el-tab-pane>
     </el-tabs>
-    <el-menu v-bind="$attrs" :default-openeds="state.openeds"  @select="handleSelect">
+    <el-menu v-bind="$attrs" :default-openeds="state.openeds"  v-if="state.tabActive=='1'" @select="handleSelect">
       <el-sub-menu
         v-for="(item, index) in state.menuData"
         :key="item.uid"
@@ -36,6 +36,7 @@
     </el-menu>
     <el-input v-model="filterText" placeholder="搜索" v-if="state.query" class="w-50 m-2" :prefix-icon="Search" />
     <el-tree ref="treeRef" 
+      v-if="state.tabActive == '1'"
       v-bind="$attrs" 
       :data="state.treeData"
       :default-expanded-keys="[1]"
@@ -86,6 +87,13 @@
         </div>
       </template>
     </el-tree>
+    <div class="tree-wrap" v-if="state.tabActive =='2'">
+      <el-tree 
+        show-checkbox
+        :props="thingProps"
+        :data="state.thingList"
+      />
+    </div>
   </div>
 </template>
 
@@ -94,8 +102,9 @@ import { ref, watch, reactive ,nextTick ,getCurrentInstance, onMounted} from 'vu
 import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
 import { setCenterStore } from '@/store/setting'
-import type { TabsPaneContext } from 'element-plus'
-import {docsCtrl} from '@/ts/coreIndex';
+import {docsCtrl,userCtrl,thingCtrl,INullSpeciesItem} from '@/ts/coreIndex';
+
+let router = useRouter()
 
 // const emit = defineEmits(['handleSelect'])
 const props = defineProps({
@@ -114,18 +123,20 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['clickTabs'])
-
 const filterText = ref('')
 const treeRef = ref()
-let activeName = ref('1')
 const state = reactive({
   menuData: [],
   openeds: ['1', '2'],
   treeData: [],
   query: false, // 是否显示搜索框
   flag: '', // 是否高亮标记
-  flag1: ''// 是否高亮标记
+  flag1: '',// 是否高亮标记
+  tabActive:'1',
+  thingList:[], //实际显示的应用列表
+  current:[],
+  tableHead: [],
+  navData:[]
 })
 const onHover = (id: string) => {
   state.flag = id
@@ -136,12 +147,11 @@ const onOver = (id: string) => {
 }
 
 const goBack = () => {
-  window.history.go(-1) 
+  window.history.go(-1)
 }
 
-const handleClick = (tab: TabsPaneContext, event: Event) => {
-  docsCtrl.setTabIndex(tab.props.name)
-  emit('clickTabs', tab.props.name)
+const tabsClick = () => {
+
 }
 
 const customNodeClass = (data: any, node: Node) => {
@@ -151,9 +161,47 @@ const customNodeClass = (data: any, node: Node) => {
     return 'no-penultimate'
   }
 }
+const thingProps = {
+  label: 'label',
+  children: 'children',
+}
+
 onMounted(()=>{
+  console.log('aa',thingCtrl);
   init();
+  setTimeout(async () => {
+    let res = await loadThingMenus('work', true);
+    console.log('ress',res);
+    // let arr: any[] =[]
+    // res.forEach(element => {
+    //   console.log('element',element)
+    //   arr.push(
+    //     {
+    //       label:element?.label,
+    //       children:getChildren(element?.children),
+    //     }
+    //   )
+    // });
+    state.thingList = res;
+    console.log('thingList',state.thingList);
+  }, 1000);
 })
+const getChildren = (list:any)=>{
+  if(list.length){
+    let arr:any = []
+    list.forEach((el:any) => {
+      arr.push(
+          {
+            label:el.label,
+            children:getChildren(el.children),
+          }
+      )
+    });
+    return arr;
+  }else{
+    return []
+  }
+}
 const onOut = () => {
   state.flag = ''
   state.flag1 = ''
@@ -169,7 +217,6 @@ const init =  () => {
     state.query = state.treeData[0]?.query
   })
 }
-let router = useRouter()
 watch(() => router.currentRoute.value.path, (newValue:any) => {
   // nextTick(() => {
     setTimeout(() => {
@@ -198,6 +245,42 @@ const filterNode = (value: string, data: any) => {
   if (!value) return true
   return data.label.includes(value)
 }
+const handleCheckChange = () =>{
+
+}
+
+const loadThingMenus = async (prefix: string, isWork: boolean = false) => {
+  const root = await userCtrl.space.loadSpeciesTree();
+  console.log('thingCtrl',thingCtrl)
+  // const aaa = await thingCtrl.queryOperationBySpeciesIds();
+  var thing = root?.children?.find((item) => item.name == '事');
+  if (thing) {
+    return await buildSpeciesTree(thing.children, prefix + '事', isWork);
+  }
+  return [];
+};
+
+/** 编译分类树 */
+const buildSpeciesTree = async (
+  species: any,
+  itemType: string,
+  isWork: boolean,
+): Promise<MenuItemType[]> => {
+  var result: MenuItemType[] = [];
+  for (let item of species) {
+    result.push({
+      key: itemType + item.id,
+      item: item,
+      label: item.name,
+      icon: 'icon',
+      itemType: itemType,
+      menuType: isWork ? 'checkbox' : undefined,
+      menus: [],
+      children: await buildSpeciesTree(item.children, itemType, isWork),
+    });
+  }
+  return result;
+};
 
 // 路由跳转
 const jump = (val:any)=>{
@@ -221,6 +304,8 @@ const handleSelect = (key: any) => {
 </script>
 <style lang="scss">
 .menu-side{
+  width: 100%;
+  min-width: 197px;
   .el-menu{
     border: 0;
   }
@@ -233,10 +318,34 @@ const handleSelect = (key: any) => {
     line-height: 45px;
   }
 }
- 
+  .el-tabs__active-bar {
+    background-color: transparent !important;
+  }
+  .el-tabs__header{
+    margin-bottom: 0 !important;
+  }
+  /*去掉tabs底部的下划线*/
+  .el-tabs__nav-wrap::after {
+    position: static !important;
+  }
 </style>
 <style lang="scss" scoped>
   *{font-family: '微软雅黑';}
+  .tree-wrap{
+    height: calc(500px);
+    overflow-y: auto;
+  }
+
+  .todo-tabs{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    border-bottom: 1px solid #eee;
+    .el-tabs__nav-scroll{
+      display: flex;
+    justify-content: center;  
+    }
+  }
   .title{
     display: flex;
     justify-content: center;
@@ -290,11 +399,6 @@ const handleSelect = (key: any) => {
   // :deep .no-penultimate > .el-tree-node__content{
     // font-weight: 800;
   // }
-
-  :deep(.el-tabs__nav-scroll){
-    display: flex;
-    justify-content: center;
-  }
 
   :deep(.is-penultimate > .el-tree-node__content) {
     font-size: 10px;
