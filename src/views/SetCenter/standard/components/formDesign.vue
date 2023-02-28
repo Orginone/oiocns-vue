@@ -4,10 +4,11 @@
       ref="vfDesigner"
       :banned-widgets="banned"
       :designer-config="designerConfig"
+      :attrList="attrList"
     >
       <template #customToolButtons>
-        <el-button type="text" @click="saveFormJson">保存</el-button>
-        <el-button type="text" @click="$router.go(-1)">返回</el-button>
+        <el-button link type="primary" @click="saveFormJson">保存</el-button>
+        <el-button link type="primary" @click="$router.go(-1)">返回</el-button>
       </template>
     </v-form-designer>
   </section>
@@ -20,13 +21,39 @@ export default {
 </script>
 
 <script setup lang="ts">
+import { setCenterStore } from "@/store/setting";
+import { userCtrl as user } from "@/ts/coreIndex";
+
+const store: any = setCenterStore();
+
+const currentData = computed(() => {
+  return store.currentSelectItme;
+});
+
+const attrList = ref<any>(null);
+
+const loadSpeciesAttrs = async (species: any) => {
+  const page = {
+    offset: 0,
+    limit: 100000,
+  };
+  const res = await species.loadAttrs(user.space.id, true, true, page);
+  if (res.result) {
+    attrList.value = res.result;
+  }
+};
+
+onMounted(() => {
+  loadSpeciesAttrs(currentData.value);
+});
+
 const banned = ["button", "divider", "html-text"];
 const designerConfig = {
   languageMenu: false,
   externalLink: false,
   // formTemplates: false, // 禁止表单模版
   // eventCollapse: false, // 禁止表单和组件的事件
-  toolbarMaxWidth: 530,
+  toolbarMaxWidth: 540,
 };
 
 const vfDesigner = ref<any>(null);
