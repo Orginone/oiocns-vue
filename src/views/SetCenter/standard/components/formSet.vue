@@ -8,9 +8,17 @@
       :hasTableHead="true"
       :tableData="tableData"
       :tableHead="tableHead"
+      :total="pages.total"
+      @hanldeUpdate="handlePageUpdate"
       ><template #buttons>
-        <el-button class="btn-check" type="primary" text link
-          >新增表单
+        <el-button
+          class="btn-check"
+          type="primary"
+          text
+          link
+          @click="createAddDialog()"
+        >
+          新增表单
         </el-button>
       </template>
       <template #operate="scope">
@@ -18,15 +26,28 @@
           <span class="el-dropdown-link"> ··· </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>编辑</el-dropdown-item>
-              <el-dropdown-item>删除</el-dropdown-item>
-              <el-dropdown-item @click="goFormDesign()">设计表单</el-dropdown-item>
+              <el-dropdown-item @click="editAddDialog(scope.row)"
+                >编辑</el-dropdown-item
+              >
+              <el-dropdown-item @click="delFormInfo(scope.row)"
+                >删除</el-dropdown-item
+              >
+              <el-dropdown-item @click="goFormDesign()"
+                >设计表单</el-dropdown-item
+              >
               <el-dropdown-item>预览表单</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
       </template>
     </DiyTable>
+    <AddForm
+      v-if="dialog"
+      v-model:dialog="dialog"
+      :info="info"
+      v-model:editFormInfo="editFormInfo"
+      @updateTable="getTableData(props.info)"
+    />
   </div>
 </template>
 
@@ -37,16 +58,16 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { useUserStore } from "@/store/user";
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch } from "vue";
 import { thingCtrl as thing, userCtrl as user } from "@/ts/coreIndex";
 import { useRouter } from "vue-router";
-
-const router = useRouter()
-const store = useUserStore();
+import AddForm from "./addForm.vue";
+const router = useRouter();
 
 const props = defineProps({
   info: Object,
+  recursionOrg: Boolean,
+  recursionSpecies: Boolean,
 });
 const tableHead = [
   {
@@ -66,6 +87,10 @@ const tableHead = [
     label: "共享组织",
   },
   {
+    prop: "beginAuthId",
+    label: "角色",
+  },
+  {
     type: "slot",
     label: "操作",
     fixed: "right",
@@ -74,36 +99,76 @@ const tableHead = [
     name: "operate",
   },
 ];
+const dialog = ref<boolean>(false);
 const tableData = ref<any>([]);
-
-const getTableData = async () => {
-  const { data: res } = await thing.loadFormSetTable({
-    id: props.info.id,
-    spaceId: store.workspaceData.id,
-    page: {
-      offset: 0,
-      limit: 20,
+const pages = reactive<any>({
+  currentPage: 0, // 当前页
+  pageSize: 20, // 每页条数
+  total: 0,
+});
+const getTableData = async (currentSpace: any) => {
+  const res = await currentSpace.loadOperations(
+    user.space.id,
+    false,
+    props.recursionOrg,
+    props.recursionSpecies,
+    {
+      offset: pages.currentPage,
+      limit: pages.pageSize,
       filter: "",
-    },
-  });
-  res.result.forEach((item: any) => {
-    const team = user.findTeamInfoById(item.belongId);
-    if (team) {
-      item.belongName = team.name;
     }
-    item.speciesName = findSpeciesName([thing.teamSpecies], item.speciesId);
-  });
-  tableData.value = res.result;
+  );
+  if (res.result) {
+    res.result.forEach((item: any) => {
+      const team = user.findTeamInfoById(item.belongId);
+      if (team) {
+        item.belongName = team.name;
+      }
+      item.speciesName = findSpeciesName([thing.teamSpecies], item.speciesId);
+    });
+    tableData.value = res.result;
+    pages.total = res.total;
+  } else {
+    tableData.value = [];
+    pages.total = 0;
+  }
 };
 
-watch(() => props.info, () => {
- getTableData() 
-}, {
-  deep: true
-})
+const handlePageUpdate = (pageSize: string, current: string) => {
+  pages.currentPage = current;
+  pages.pageSize = pageSize;
+
+  getTableData(props.info);
+};
+
+watch(
+  () => props.info,
+  (val) => {
+    getTableData(val);
+  },
+  {
+    deep: true,
+  }
+);
+
+watch(
+  () => props.recursionOrg,
+  () => {
+    getTableData(props.info);
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.recursionSpecies,
+  () => {
+    getTableData(props.info);
+  },
+  { deep: true }
+);
 
 onMounted(() => {
-  getTableData();
+  getTableData(props.info);
 });
 
 const findSpeciesName = (species: any[], id: string): string | undefined => {
@@ -122,8 +187,32 @@ const findSpeciesName = (species: any[], id: string): string | undefined => {
 };
 
 const goFormDesign = () => {
-  router.push('/formDesign')
-}
+  router.push("/formDesign");
+};
+
+const createAddDialog = () => {
+  dialog.value = true;
+};
+
+const editFormInfo = ref<any>(null);
+const editAddDialog = (val: any) => {
+  editFormInfo.value = val;
+  dialog.value = true;
+};
+
+const delFormInfo = (val: any) => {
+  ElMessageBox.confirm("是否确定删除当前数据", "删除", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(async () => {
+      await props.info.deleteOperation(val.id);
+      getTableData(props.info);
+      ElMessage.success("删除成功");
+    })
+    .catch(() => {});
+};
 </script>
 
 <style lang="scss" scoped></style>
