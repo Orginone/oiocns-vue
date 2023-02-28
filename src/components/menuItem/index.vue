@@ -171,11 +171,9 @@ const init =  () => {
 }
 let router = useRouter()
 watch(() => router.currentRoute.value.path, (newValue:any) => {
-  // nextTick(() => {
     setTimeout(() => {
       init();
     });
-  // })
 })
 watch(() => props.data, (newValue:any) => {
   init();
