@@ -5,6 +5,10 @@
       <component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;
       <b style="font-size: 14px;">{{titleData.title}}</b>
     </div>
+    <el-tabs v-model="activeName" v-if="titleData.title == '仓库'" class="demo-tabs" @tab-click="handleClick">
+      <el-tab-pane label="创建" name="1"></el-tab-pane>
+      <el-tab-pane label="获取" name="2"></el-tab-pane>
+    </el-tabs>
     <el-menu v-bind="$attrs" :default-openeds="state.openeds"  @select="handleSelect">
       <el-sub-menu
         v-for="(item, index) in state.menuData"
@@ -90,6 +94,8 @@ import { ref, watch, reactive ,nextTick ,getCurrentInstance, onMounted} from 'vu
 import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
 import { setCenterStore } from '@/store/setting'
+import type { TabsPaneContext } from 'element-plus'
+import {docsCtrl} from '@/ts/coreIndex';
 
 // const emit = defineEmits(['handleSelect'])
 const props = defineProps({
@@ -108,8 +114,11 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['clickTabs'])
+
 const filterText = ref('')
 const treeRef = ref()
+let activeName = ref('1')
 const state = reactive({
   menuData: [],
   openeds: ['1', '2'],
@@ -127,7 +136,12 @@ const onOver = (id: string) => {
 }
 
 const goBack = () => {
-  window.history.go(-1)
+  window.history.go(-1) 
+}
+
+const handleClick = (tab: TabsPaneContext, event: Event) => {
+  docsCtrl.setTabIndex(tab.props.name)
+  emit('clickTabs', tab.props.name)
 }
 
 const customNodeClass = (data: any, node: Node) => {
@@ -276,6 +290,11 @@ const handleSelect = (key: any) => {
   // :deep .no-penultimate > .el-tree-node__content{
     // font-weight: 800;
   // }
+
+  :deep(.el-tabs__nav-scroll){
+    display: flex;
+    justify-content: center;
+  }
 
   :deep(.is-penultimate > .el-tree-node__content) {
     font-size: 10px;

@@ -327,6 +327,7 @@ import img1 from '@/assets/img/group22.png'
 import moment from 'moment'
 
 const { proxy } = getCurrentInstance()
+console.log(proxy)
 
 const goCreate = () => {
   router.push({ path: "/store/appRegister" });
