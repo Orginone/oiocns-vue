@@ -36,7 +36,7 @@
     </el-menu>
     <el-input v-model="filterText" placeholder="搜索" v-if="state.query" class="w-50 m-2" :prefix-icon="Search" />
     <el-tree ref="treeRef" 
-      v-if="state.tabActive == '1'"
+      v-if="state.tabActive == '1' && state.treeData.length"
       v-bind="$attrs" 
       :data="state.treeData"
       :default-expanded-keys="[1]"
@@ -91,6 +91,7 @@
       <el-tree 
         show-checkbox
         :props="thingProps"
+        @check="getNodes"
         :data="state.thingList"
       />
     </div>
@@ -245,8 +246,8 @@ const filterNode = (value: string, data: any) => {
   if (!value) return true
   return data.label.includes(value)
 }
-const handleCheckChange = () =>{
-
+const getNodes = (checkedNodes:any) =>{
+  console.log(checkedNodes)
 }
 
 const loadThingMenus = async (prefix: string, isWork: boolean = false) => {
@@ -318,9 +319,6 @@ const handleSelect = (key: any) => {
     line-height: 45px;
   }
 }
-  .el-tabs__active-bar {
-    background-color: transparent !important;
-  }
   .el-tabs__header{
     margin-bottom: 0 !important;
   }
@@ -344,6 +342,9 @@ const handleSelect = (key: any) => {
     .el-tabs__nav-scroll{
       display: flex;
     justify-content: center;  
+    }
+    :deep(.el-tabs__item){
+      height: 44px;
     }
   }
   .title{
