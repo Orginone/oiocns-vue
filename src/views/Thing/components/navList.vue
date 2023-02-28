@@ -17,6 +17,12 @@
       show-checkbox
       @check-change="handleCheckChange"
     >
+      <template #default="{node}">
+        <div class="treeItems">
+          <el-icon :size="18" color="#154ad8"><ScaleToOriginal /></el-icon>
+          <span>{{node.label}}</span>
+        </div>
+      </template>
     </el-tree>
   </div>
 </template>
@@ -137,6 +143,13 @@ const handleCheckChange = (data:INullSpeciesItem, checked:any, indeterminate:any
         .node-dots {
           display: block;
         }
+      }
+    }
+    .treeItems{
+      display: flex;
+      align-items: center;
+      >span{
+        margin-left: 5px;
       }
     }
   }

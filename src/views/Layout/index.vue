@@ -278,12 +278,6 @@
     //       dataFilter(menuData.data)
     //       newJSON[2].children = menuData.data;
     //     }
-
-    if(docsCtrl.tabIndex == 1){
-      newJSON[1].children[2].name="创建"
-    }else{
-      newJSON[1].children[2].name="获取"
-    }
     titleArr.state = newJSON[0]
     menuArr.state = newJSON
     // return species? buildSpeciesTree(species)
