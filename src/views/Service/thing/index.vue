@@ -1,15 +1,35 @@
 <template>
-  <div class="menu-side" style="height: 100%; background: #fff">
-    <div class="title">
-      <b style="font-size: 14px;">办事</b>
+  <div class="thing-box">
+    <div class="menu-side" style="height: 100%; background: #fff">
+      <div class="tree-wrap">
+        <el-tree 
+          show-checkbox
+          :props="thingProps"
+          @check="getNodes"
+          :data="state.thingList"
+        />
+      </div>
     </div>
-    <div class="tree-wrap">
-      <el-tree 
-        show-checkbox
-        :props="thingProps"
-        @check="getNodes"
-        :data="state.thingList"
-      />
+    <div class="content-main">
+      <div class="main">
+        <el-form class="main-form" :model="state.form" label-width="120px">
+          <el-form-item class="form-item" :label="item.name" v-for="(item,index) in state.fromDetail?.items" :key="index">
+            <div class="form-flex">
+              <el-tooltip class="item" effect="dark" :content="item.name" placement="top-start">
+                <el-icon style="margin-left: 10px; font-size: default; color: #b0b0b1"><QuestionFilled /></el-icon>
+              </el-tooltip>
+              <el-input width="300" v-model="state.form[item.name]" />
+            </div>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="main-table">
+        <el-table :data="tableData" border style="width: 100%">
+          <el-table-column prop="date" label="Date" width="180" />
+          <el-table-column prop="name" label="Name" width="180" />
+          <el-table-column prop="address" label="Address" />
+        </el-table>
+      </div>
     </div>
   </div>
 </template>
@@ -19,7 +39,8 @@ import { ref, watch, reactive ,nextTick ,getCurrentInstance, onMounted} from 'vu
 import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
 import { setCenterStore } from '@/store/setting'
-import {docsCtrl,userCtrl,thingCtrl,INullSpeciesItem} from '@/ts/coreIndex';
+import {docsCtrl,userCtrl,thingCtrl,todoCtrl as todo ,INullSpeciesItem} from '@/ts/coreIndex';
+import { ElMessage } from 'element-plus'
 
 let router = useRouter()
 
@@ -29,7 +50,13 @@ const props = defineProps({
     type: Array,
   },
 })
-
+const tableData = [
+  {
+    date: '2016-05-03',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+]
 const filterText = ref('')
 const treeRef = ref()
 const state = reactive({
@@ -43,23 +70,14 @@ const state = reactive({
   thingList:[], //实际显示的应用列表
   current:[],
   tableHead: [],
-  navData:[]
+  navData:[],
+  fromDetail:{
+    items:[]
+  },
+  form:{
+    text:''
+  }
 })
-const onHover = (id: string) => {
-  state.flag = id
-}
-
-const onOver = (id: string) => {
-  state.flag1 = id
-}
-
-const goBack = () => {
-  window.history.go(-1)
-}
-
-const tabsClick = () => {
-
-}
 
 const customNodeClass = (data: any, node: Node) => {
   if (data.isPenultimate) {
@@ -74,21 +92,21 @@ const thingProps = {
 }
 
 onMounted(()=>{
-  console.log('aa',thingCtrl);
+   
   init();
   setTimeout(async () => {
     let res = await loadThingMenus('work', true);
     console.log('ress',res);
-    // let arr: any[] =[]
-    // res.forEach(element => {
-    //   console.log('element',element)
-    //   arr.push(
-    //     {
-    //       label:element?.label,
-    //       children:getChildren(element?.children),
-    //     }
-    //   )
-    // });
+    let arr: any[] =[]
+    res.forEach(element => {
+      console.log('element',element)
+      arr.push(
+        {
+          label:element?.label,
+          children:getChildren(element?.children),
+        }
+      )
+    });
     state.thingList = res;
     console.log('thingList',state.thingList);
   }, 1000);
@@ -143,8 +161,28 @@ const filterNode = (value: string, data: any) => {
   if (!value) return true
   return data.label.includes(value)
 }
-const getNodes = (checkedNodes:any) =>{
-  router.push('/service/thing')
+const getNodes = async (checkedNodes:any,checkedKeys:any) =>{
+
+  let ids:any = []
+  checkedKeys.checkedNodes.forEach((element:any) => {
+    ids.push(element.item.id)
+  });  
+  if(ids.length){
+    const fromDetail = await todo.queryOperationBySpeciesIds(ids,userCtrl.space.id);
+    if(!fromDetail.data.result){
+      ElMessage({
+        message: '暂无数据',
+        type: 'warning'
+      })
+    }else{
+      state.fromDetail = fromDetail.data.result[0];
+      // console.log(fromDetail)
+      state.fromDetail.items.forEach(element => {
+        console.log(JSON.parse(element.rule))
+      });
+    }
+  }
+
 }
 
 const loadThingMenus = async (prefix: string, isWork: boolean = false) => {
@@ -203,7 +241,9 @@ const handleSelect = (key: any) => {
 <style lang="scss">
 .menu-side{
   width: 197px;
+  height: 100%;
   margin-right: 3px;
+  padding-top: 10px;
   .el-menu{
     border: 0;
   }
@@ -230,103 +270,48 @@ const handleSelect = (key: any) => {
     height: calc(500px);
     overflow-y: auto;
   }
-
-  .todo-tabs{
+  .thing-box{
     display: flex;
-    justify-content: center;
     width: 100%;
-    border-bottom: 1px solid #eee;
-    .el-tabs__nav-scroll{
+    height: 100%;
+    .content-main{
       display: flex;
-    justify-content: center;  
+      flex-direction: column;
+      width: 100%;
     }
-    :deep(.el-tabs__item){
-      height: 44px;
+    .main{
+      background: #fff;
+      padding-top: 20px;
     }
   }
-  .title{
+  .main-form{
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .form-item{
+    width: 47%;
     display: flex;
     justify-content: center;
-    align-items: center;
-    padding: 10px;
-    background: #f9fbfe;
-    font-size: 16px;
-  }
-  .row-btn{
-    text-align: center;
-    line-height: 27px;
-  }
-  .row-btn:hover{
-    background: #EBEEF5;
-  }
-  .row-btn:last-child{
-    margin-bottom: 0;
-  }
-  .custom-tree-node {
-    width: 180px;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    // position: relative;
-    span{
+    .el-form-item__content{
       display: flex;
       align-items: center;
-    }
-    .blue-tips{
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      display: flex;
       justify-content: center;
+    }
+    .el-form-item__label{
+      padding-right: 5px !important;
+    }
+    i{
+      margin-left: 0 !important;
+      margin-right:10px;
+    }
+    .form-flex{
+      display: flex;
       align-items: center;
-      font-size: 12px;
-      margin-left: 5px;
-      color: #fff;
-      background: #214dd0;
-    }
-    .sp_10{
-      position: absolute;
-      right: 8px;
     }
   }
-
-  :deep(.el-sub-menu__icon-arrow){
-    display: none;
-  }
-  // :deep .no-penultimate > .el-tree-node__content{
-    // font-weight: 800;
-  // }
-
-  :deep(.is-penultimate > .el-tree-node__content) {
-    font-size: 10px;
-    color: #909399;
-  }
-  :deep(.el-tree-node__content){
-    height: 40px;
-  }
-  // 去掉el-input自带边框
-  :deep(.el-input__wrapper) {
-    margin: 15px;
-    padding-left: 15px !important;
-    box-sizing: border-box;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0px; //前边边距去掉
-    border-radius: 15px;
-    background: #f2f4f9;
-  }
-  .tips{
-    margin-left: 10px;
-    display: inline-block;
-    height: 15px;
-    width: 15px;
-    line-height: 15px;
-    background: #ec5b56;
-    color: #fff;
-    font-size: 12px;
-    text-align: center;
-    border-radius: 50%;
+  .main-table{
+    padding: 20px;
+    background: #fff;
   }
 </style>
 

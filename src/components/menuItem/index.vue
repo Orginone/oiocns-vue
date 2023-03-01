@@ -168,7 +168,6 @@ const thingProps = {
 }
 
 onMounted(()=>{
-  console.log('aa',thingCtrl);
   init();
   setTimeout(async () => {
     let res = await loadThingMenus('work', true);
@@ -252,8 +251,6 @@ const getNodes = (checkedNodes:any) =>{
 
 const loadThingMenus = async (prefix: string, isWork: boolean = false) => {
   const root = await userCtrl.space.loadSpeciesTree();
-  console.log('thingCtrl',thingCtrl)
-  // const aaa = await thingCtrl.queryOperationBySpeciesIds();
   var thing = root?.children?.find((item) => item.name == '事');
   if (thing) {
     return await buildSpeciesTree(thing.children, prefix + '事', isWork);

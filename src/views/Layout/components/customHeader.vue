@@ -215,7 +215,7 @@
 
   const handleRouterChage = (item: any) => {
     if(item.name === '设置') {
-      router.push({path: workspaceData.value.typeName === '单位' ? item.path : '/mine'})
+      router.push({path: workspaceData.value.typeName === '单位' || workspaceData.value.typeName === '大学'? item.path : '/mine'})
     } else {
       router.push({ path: item.path })
     }
