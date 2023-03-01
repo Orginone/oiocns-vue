@@ -165,6 +165,15 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="请选择枚举分类" v-if="state.attrForm.valueType == '选择型'" prop="dictId">
+                <el-select v-model="state.attrForm.dictId" v-for="(item,index) in state.dictList" :key="index" placeholder="请选择">
+                  <el-option :label="item.label" :value="item.id" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
           <el-form-item label="特性定义" prop="remark">
             <el-input v-model="state.attrForm.remark" :min="4" placeholder="请输入" type="textarea"/>
           </el-form-item>
@@ -269,7 +278,8 @@
     authTreeData: [],
     classifyForm:{},
     createOrEdit:{},
-    attrTotal:0
+    attrTotal:0,
+    dictList:[]
   })
   const options = ref<any>({
     checkBox: false,
@@ -347,6 +357,9 @@
     ],
     valueType: [
       { required: true, message: '特性类型为必填项', trigger: 'blur' },
+    ],
+    dictId:[
+      { required: true, message: '枚举分类为必填项', trigger: 'blur' },
     ],
     remark: [
       { required: true, message: '特性定义为必填项', trigger: 'blur' },
@@ -458,9 +471,24 @@
     state.belongTreeData = await userCtrl.getTeamTree()
     const authData = await userCtrl.company.loadAuthorityTree(false)
     state.authTreeData = authData ? [authData] : [];
-    
+
+    const current:INullSpeciesItem = currentData.value
+    let res = await current.loadDictsEntity(userCtrl.space.id, true, true, {
+        offset: 0,
+        limit: 10000,
+        filter: '',
+      })
+    state.dictList = buildTree(res);
     state.attrForm = {public:true,valueType:"描述型"}
   }
+
+  const buildTree = (dicts: IDict[]) => {
+    const result: any = {};
+    for (const item of dicts) {
+      result[item.id] = { id: item.id, label: item.name, label: item.name };
+    }
+    return result;
+  };
 
   //提交新增特性
   const submitAttrForm = async (formEl: FormInstance | undefined) => {
@@ -502,6 +530,14 @@
     state.belongTreeData = await userCtrl.getTeamTree()
     const authData = await userCtrl.company.loadAuthorityTree(false)
     state.authTreeData = authData ? [authData] : [];
+
+    const current:INullSpeciesItem = currentData.value
+    let res = await current.loadDictsEntity(userCtrl.space.id, true, true, {
+        offset: 0,
+        limit: 10000,
+        filter: '',
+      })
+    state.dictList = buildTree(res);
     attrFormDialog.value = true
     state.attrForm = attr
   }
