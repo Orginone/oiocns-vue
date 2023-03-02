@@ -32,7 +32,7 @@
               <el-dropdown-item @click="delFormInfo(scope.row)"
                 >删除</el-dropdown-item
               >
-              <el-dropdown-item @click="goFormDesign()"
+              <el-dropdown-item @click="goFormDesign(scope.row)"
                 >设计表单</el-dropdown-item
               >
               <el-dropdown-item>预览表单</el-dropdown-item>
@@ -202,8 +202,8 @@ const findAuthName = (auths: any[], id: string): string | undefined => {
   return authName;
 };
 
-const goFormDesign = () => {
-  router.push("/formDesign");
+const goFormDesign = (val: any) => {
+  router.push({path: "/formDesign", query: { operationId: val.id}});
 };
 
 const createAddDialog = () => {
