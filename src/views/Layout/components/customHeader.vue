@@ -177,7 +177,7 @@
   const state = reactive({
     mainMenus: [
       { name: '沟通', icon: 'icon-message', path: '/chat', activeMatch: ['chat'], count: 0 },
-      { name: '办事', icon: 'icon-todo', path: '/service', activeMatch: ['service'], count: 0 },
+      { name: '办事', icon: 'icon-todo', path: '/todo', activeMatch: ['todo'], count: 0 },
       { name: '仓库', icon: 'icon-store', path: '/store', activeMatch: ['store'] },
       { name: '设置', icon: 'icon-settings', path: '/setCenter', activeMatch: ['setCenter', 'mine'] },  
     ]
