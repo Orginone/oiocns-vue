@@ -87,7 +87,7 @@ const tableHead = [
     label: "共享组织",
   },
   {
-    prop: "beginAuthId",
+    prop: "beginAuthName",
     label: "角色",
   },
   {
@@ -125,6 +125,7 @@ const getTableData = async (currentSpace: any) => {
         item.belongName = team.name;
       }
       item.speciesName = findSpeciesName([thing.teamSpecies], item.speciesId);
+      item.beginAuthName = findAuthName([user.space.authorityTree], item.beginAuthId)
     });
     tableData.value = res.result;
     pages.total = res.total;
@@ -184,6 +185,21 @@ const findSpeciesName = (species: any[], id: string): string | undefined => {
     }
   }
   return specesName;
+};
+
+const findAuthName = (auths: any[], id: string): string | undefined => {
+  let authName = undefined;
+  for (const item of auths) {
+    if (item?.id == id) {
+      authName = item.name;
+    } else if (item?.children) {
+      authName = findAuthName(item?.children, id);
+    }
+    if (authName) {
+      break;
+    }
+  }
+  return authName;
 };
 
 const goFormDesign = () => {
