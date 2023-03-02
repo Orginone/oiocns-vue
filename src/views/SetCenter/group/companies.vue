@@ -301,7 +301,7 @@ const pullCompanys = async (arr: any) => {
 
 //查看申请
 const viewApplication = (row: any) => {
-  router.push({ path: '/service/group', query: { type: 1, id: props.selectItem.id } })
+  router.push({ path: '/todu', query: { type: 1, id: props.selectItem.id } })
 }
 
 // 移除

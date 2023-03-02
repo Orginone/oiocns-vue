@@ -574,7 +574,7 @@ const getUsers = async(currentData?: any) => {
 
 //查看申请
 const viewApplication = (row: any) => {
-  router.push({ path: '/service/company', query: { type: 1, id: store.currentSelectItme?.id } })
+  router.push({ path: '/tood', query: { type: 1, id: store.currentSelectItme?.id } })
 }
 // 修改信息
 const reviseInfo = (row: any) => {
