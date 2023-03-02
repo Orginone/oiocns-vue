@@ -5,6 +5,10 @@
       <component :is="titleData.icon" style="width: 16px;height: 16px;color:#154ad8"></component>&nbsp;&nbsp;
       <b style="font-size: 14px;">{{titleData.title}}</b>
     </div>
+    <el-tabs v-model="activeName" v-if="titleData.title == '仓库'" class="todo-tabs" @tab-click="handleClick">
+      <el-tab-pane label="创建" name="1"></el-tab-pane>
+      <el-tab-pane label="获取" name="2"></el-tab-pane>
+    </el-tabs>
     <el-tabs v-model="state.tabActive" class="todo-tabs" v-if="router.currentRoute.value.path.indexOf('/service') != -1" @tab-click="tabsClick">
       <el-tab-pane label="待办" name="1"> </el-tab-pane>
       <el-tab-pane label="发起业务" name="2"> </el-tab-pane>
@@ -97,17 +101,15 @@
     </div>
   </div>
 </template>
-
 <script lang="ts" setup>
 import { ref, watch, reactive ,nextTick ,getCurrentInstance, onMounted} from 'vue'
 import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
+import type { TabsPaneContext } from 'element-plus'
 import { setCenterStore } from '@/store/setting'
 import {docsCtrl,userCtrl,thingCtrl,INullSpeciesItem} from '@/ts/coreIndex';
-
 let router = useRouter()
-
-// const emit = defineEmits(['handleSelect'])
+const emit = defineEmits(['handleSelect'])
 const props = defineProps({
   data: {
     type: Array,
@@ -123,9 +125,9 @@ const props = defineProps({
     type:Object
   }
 })
-
 const filterText = ref('')
 const treeRef = ref()
+let activeName = ref('1')
 const state = reactive({
   menuData: [],
   openeds: ['1', '2'],
@@ -142,19 +144,18 @@ const state = reactive({
 const onHover = (id: string) => {
   state.flag = id
 }
-
+const handleClick = (tab: TabsPaneContext, event: Event) => {
+  docsCtrl.setTabIndex(tab.props.name)
+  emit('clickTabs', tab.props.name)
+}
 const onOver = (id: string) => {
   state.flag1 = id
 }
-
 const goBack = () => {
   window.history.go(-1)
 }
-
 const tabsClick = () => {
-
 }
-
 const customNodeClass = (data: any, node: Node) => {
   if (data.isPenultimate) {
     return 'is-penultimate'
@@ -166,7 +167,6 @@ const thingProps = {
   label: 'label',
   children: 'children',
 }
-
 onMounted(()=>{
   init();
   setTimeout(async () => {
@@ -248,7 +248,6 @@ const filterNode = (value: string, data: any) => {
 const getNodes = (checkedNodes:any) =>{
   router.push('/service/thing')
 }
-
 const loadThingMenus = async (prefix: string, isWork: boolean = false) => {
   const root = await userCtrl.space.loadSpeciesTree();
   var thing = root?.children?.find((item) => item.name == '事');
@@ -257,7 +256,6 @@ const loadThingMenus = async (prefix: string, isWork: boolean = false) => {
   }
   return [];
 };
-
 /** 编译分类树 */
 const buildSpeciesTree = async (
   species: any,
@@ -279,7 +277,6 @@ const buildSpeciesTree = async (
   }
   return result;
 };
-
 // 路由跳转
 const jump = (val:any)=>{
   if(val?.data?.isStoreMenu){ //仓库分类事件
@@ -330,7 +327,6 @@ const handleSelect = (key: any) => {
     height: calc(500px);
     overflow-y: auto;
   }
-
   .todo-tabs{
     display: flex;
     justify-content: center;
@@ -390,14 +386,12 @@ const handleSelect = (key: any) => {
       right: 8px;
     }
   }
-
   :deep(.el-sub-menu__icon-arrow){
     display: none;
   }
   // :deep .no-penultimate > .el-tree-node__content{
     // font-weight: 800;
   // }
-
   :deep(.is-penultimate > .el-tree-node__content) {
     font-size: 10px;
     color: #909399;
@@ -429,4 +423,3 @@ const handleSelect = (key: any) => {
     border-radius: 50%;
   }
 </style>
-
