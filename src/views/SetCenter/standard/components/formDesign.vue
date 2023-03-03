@@ -4,6 +4,7 @@
       ref="vfDesigner"
       :banned-widgets="banned"
       :designer-config="designerConfig"
+      :childTableData="childTableData"
       :attrList="attrList"
     >
       <template #customToolButtons>
@@ -33,7 +34,7 @@
 
 <script lang="ts">
 export default {
-  name: "VFormDemo",
+  name: "VFormDesign",
 };
 </script>
 

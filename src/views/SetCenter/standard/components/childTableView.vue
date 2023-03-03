@@ -2,7 +2,6 @@
   <el-tabs
     v-model="editableTabsValue"
     type="card"
-    class="demo-tabs"
     closable
     @tab-remove="removeTab"
   >
