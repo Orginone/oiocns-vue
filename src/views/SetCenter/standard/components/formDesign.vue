@@ -13,6 +13,9 @@
         <el-button link type="primary" @click="saveFormJson">保存</el-button>
         <el-button link type="primary" @click="$router.go(-1)">返回</el-button>
       </template>
+      <template #childTable>
+        <ChildTableView v-if="childTableData.length" v-model:childTableData="childTableData" v-model:activeChildTable="activeChildTable" />
+      </template>
     </v-form-designer>
     <ChildTableSet
       v-if="childTableSetDialog"
@@ -33,6 +36,7 @@ export default {
 import { setCenterStore } from "@/store/setting";
 import { userCtrl as user } from "@/ts/coreIndex";
 import ChildTableSet from "./childTableSet.vue";
+import ChildTableView from './childTableView.vue'
 
 const store: any = setCenterStore();
 
@@ -46,7 +50,7 @@ const designerConfig = {
   externalLink: false,
   // formTemplates: false, // 禁止表单模版
   // eventCollapse: false, // 禁止表单和组件的事件
-  toolbarMaxWidth: 600,
+  toolbarMaxWidth: 530,
 };
 
 const vfDesigner = ref<any>(null);
@@ -75,8 +79,12 @@ const loadSpeciesTree = async () => {
   speciesTree.value = species.children;
 };
 
+const childTableData = ref<any>([])
+const activeChildTable = ref<any>("")
 const setChildTableData = (val: any) => {
   console.log(val);
+  childTableData.value.push(val)
+  activeChildTable.value = val.code
 };
 
 onMounted(() => {
