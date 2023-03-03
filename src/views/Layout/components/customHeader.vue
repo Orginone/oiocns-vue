@@ -177,9 +177,9 @@
   const state = reactive({
     mainMenus: [
       { name: '沟通', icon: 'icon-message', path: '/chat', activeMatch: ['chat'], count: 0 },
-      { name: '办事', icon: 'icon-todo', path: '/service', activeMatch: ['service'], count: 0 },
+      { name: '办事', icon: 'icon-todo', path: '/todo', activeMatch: ['todo'], count: 0 },
       { name: '仓库', icon: 'icon-store', path: '/store', activeMatch: ['store'] },
-      { name: '设置', icon: 'icon-setting', path: '/setCenter', activeMatch: ['setCenter', 'mine'] },  
+      { name: '设置', icon: 'icon-settings', path: '/setCenter', activeMatch: ['setCenter', 'mine'] },  
     ]
   })
   
@@ -215,7 +215,7 @@
 
   const handleRouterChage = (item: any) => {
     if(item.name === '设置') {
-      router.push({path: workspaceData.value.typeName === '单位' ? item.path : '/mine'})
+      router.push({path: workspaceData.value.typeName === '单位' || workspaceData.value.typeName === '大学'? item.path : '/mine'})
     } else {
       router.push({ path: item.path })
     }

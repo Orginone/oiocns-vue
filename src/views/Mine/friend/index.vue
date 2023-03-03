@@ -166,7 +166,7 @@
     searchDialog.value = true
   }
   const friendApply = () => {
-    router.push({ path: '/service', query: { type: 1, id: chat.userId.value } })
+    router.push({ path: '/todo', query: { type: 1, id: chat.userId.value } })
   }
 
   // 跳转至角色管理页面

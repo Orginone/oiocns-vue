@@ -7,7 +7,7 @@
     <el-container>
       <!-- 主导航 -->
       <div class="menu-list" v-show="showMenu">
-        <MenuNav :data="menuArr.state" :titleData="titleArr.state" :btnType="btnType"></MenuNav>
+        <MenuNav :data="menuArr.state" :titleData="titleArr.state" :btnType="btnType" @clickTabs="clickTabs"></MenuNav>
       </div>
       <div class="layout-main" >
           <!-- 面包屑 -->
@@ -67,7 +67,7 @@
   import setTree from './json/setTree.json';
   // import serviceJson from './json/service.json';
   // import userJosn from './json/user.json';
-  import { appCtrl,userCtrl,thingCtrl,marketCtrl,INullSpeciesItem, todoCtrl as todo } from '@/ts/coreIndex';
+  import { appCtrl,userCtrl,thingCtrl,marketCtrl,INullSpeciesItem, todoCtrl as todo, docsCtrl } from '@/ts/coreIndex';
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
   import { getAllNodes } from '@/utils/tree'
   import { anystore } from '@/hubs/anystore'
@@ -81,6 +81,7 @@
   const menuText = ref<string>('')
   const menuTree = ref(createAllMenuTree());
   const allMenuItems = ref(getAllNodes(menuTree.value));
+  let activeIndex = ref<string>('1')
   
   onMounted(() => {
     todo.subscribe(async () => {
@@ -130,7 +131,6 @@
                   children: treeData
                 }
               ]
-              console.log(newData)
               menuArr.state = newData
             })
             showMenu.value = true;
@@ -254,13 +254,17 @@
       return data;
     }
   };
+
+  const clickTabs = (num:string) =>{
+    getMenu()
+  }
+
   // 获取商店分类
-  const getMenu = () => {
-      const id = appCtrl.subscribePart('STORE_MENU', () => {
-        //   setCustomMenu([...appCtrl.spacies]);
-            // console.log('appCtrl.spacies',appCtrl.spacies)
-      });
-    
+  const getMenu = async() => {
+    const id = appCtrl.subscribePart('STORE_MENU', () => {
+      //   setCustomMenu([...appCtrl.spacies]);
+          // console.log('appCtrl.spacies',appCtrl.spacies)
+    });
     
     console.log('id',id)
     // return () => {
@@ -268,14 +272,23 @@
     // };
     // anystore.subscribed('STORE_MENU'+store.workspaceData.id, 'user', (data) => {
     //   console.log('dataaa',data)
-      let newJSON = JSON.parse(JSON.stringify(storeJson))
+    let newJSON = JSON.parse(JSON.stringify(storeJson))
     //     if(data?.data?.species.length>0){
     //       menuData.data = data.data.species;          
     //       dataFilter(menuData.data)
     //       newJSON[2].children = menuData.data;
     //     }
-        titleArr.state = newJSON[0]
-        menuArr.state = newJSON
+    titleArr.state = newJSON[0]
+    menuArr.state = newJSON
+    // return species? buildSpeciesTree(species)
+    //   : {
+    //       children: [] as string[],
+    //       key: '物',
+    //       label: '物',
+    //       itemType: '物',
+    //       item: userCtrl.space,
+    //       icon: '',
+    //     }
     //     btnType.value = 'STORE_USER_MENU'
     // })
   }
@@ -387,7 +400,6 @@
   const loadSpeciesSetting = async () => {
     const species = await userCtrl.space.loadSpeciesTree();
     if (species) {
-      console.log(species)
       const treeData = [species]
       treeData[0].structure = true
       treeLabel(treeData)

@@ -562,10 +562,6 @@
     width: 100%;
     height: 100%;
     overflow-y: auto;
-    overflow-y: auto;
-    position: absolute;
-    left: 0;
-    top: 0;
     display: flex;
     .thing-menu{
       width: 200px;
@@ -603,7 +599,7 @@
   // }
   .content {
     flex: 1;
-    height: calc(100vh - 108px);
+    height: calc(100vh - 65px);
     padding: 20px;
     box-sizing: border-box;
     background: var(--el-bg-color-overlay);

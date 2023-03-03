@@ -3,7 +3,7 @@
     <div class="contentTile">
       <el-icon class="back" title="返回" @click="goBack"><ArrowLeft/></el-icon>
       <el-icon class="doc"><Document/></el-icon>
-      <b>物</b>
+      <b>{{docsCtrl.tabIndex=='1'?'创建':'获取'}}</b>
     </div>
     <el-tree
       v-if="props.NavData != [null]"
@@ -14,14 +14,22 @@
       :expand-on-click-node="true"
       :highlight-current="true"
       @node-click="nodeClick"
+      show-checkbox
+      @check-change="handleCheckChange"
     >
+      <template #default="{node}">
+        <div class="treeItems">
+          <el-icon :size="18" color="#154ad8"><ScaleToOriginal /></el-icon>
+          <span>{{node.label}}</span>
+        </div>
+      </template>
     </el-tree>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref} from 'vue'
-import {INullSpeciesItem} from '@/ts/coreIndex';
+import {docsCtrl,INullSpeciesItem} from '@/ts/coreIndex';
 import { useRouter } from "vue-router";
 
 const props = defineProps({
@@ -47,10 +55,16 @@ const goBack = () => {
   router.push({ path: '/store' })
 }
 
-// 点击节点目录
-const nodeClick = (data: INullSpeciesItem, item: any, treenode: any, event: any) => {
-  emit('clickFileFromTree', data)
+const handleCheckChange = (data:INullSpeciesItem, checked:any, indeterminate:any) => {
+  if(checked){
+    emit('clickFileFromTree', data)
+  }
 }
+
+// 点击节点目录
+// const nodeClick = (data: INullSpeciesItem, item: any, treenode: any, event: any) => {
+//   emit('clickFileFromTree', data)
+// }
 </script>
 <style lang="scss">
   .el-tree-node__label {
@@ -129,6 +143,13 @@ const nodeClick = (data: INullSpeciesItem, item: any, treenode: any, event: any)
         .node-dots {
           display: block;
         }
+      }
+    }
+    .treeItems{
+      display: flex;
+      align-items: center;
+      >span{
+        margin-left: 5px;
       }
     }
   }

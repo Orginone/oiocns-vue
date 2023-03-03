@@ -27,6 +27,8 @@ declare module "vue" {
 // import '@/assets/style/element.dark.scss'
 // import 'element-plus/theme-chalk/dark/css-vars.css'
 
+import 'devextreme/dist/css/dx.light.css';
+
 import '@/assets/style/app.scss'
 import "element-plus/theme-chalk/src/loading.scss";
 import "element-plus/theme-chalk/src/message.scss";
