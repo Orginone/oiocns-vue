@@ -54,10 +54,10 @@ export default {
 <script setup lang="ts">
 import { userCtrl as user } from "@/ts/coreIndex";
 
-const route = useRoute();
 const props = defineProps({
   dialog: Boolean,
   speciesTree: Array,
+  activeFormSetData: Object
 });
 
 const emit = defineEmits(["update:dialog", "setChildTableData"]);
@@ -87,7 +87,7 @@ const getFinalChildTableData = () => {
     name: ruleForm.value.name,
     code: ruleForm.value.code,
     belongId: user.space.id,
-    operationId: route.query.operationId,
+    operationId: props.activeFormSetData.Id,
     rule: "{}",
   };
 };

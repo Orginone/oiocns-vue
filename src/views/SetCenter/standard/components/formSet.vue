@@ -60,6 +60,7 @@ export default {
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { thingCtrl as thing, userCtrl as user } from "@/ts/coreIndex";
+import { useAnyData } from "@/store/anydata";
 import { useRouter } from "vue-router";
 import AddForm from "./addForm.vue";
 const router = useRouter();
@@ -202,8 +203,10 @@ const findAuthName = (auths: any[], id: string): string | undefined => {
   return authName;
 };
 
+const store = useAnyData()
 const goFormDesign = (val: any) => {
-  router.push({path: "/formDesign", query: { operationId: val.id}});
+  store.setActiveFormSetData(val)
+  router.push({path: "/formDesign"});
 };
 
 const createAddDialog = () => {

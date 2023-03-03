@@ -14,13 +14,18 @@
         <el-button link type="primary" @click="$router.go(-1)">返回</el-button>
       </template>
       <template #childTable>
-        <ChildTableView v-if="childTableData.length" v-model:childTableData="childTableData" v-model:activeChildTable="activeChildTable" />
+        <ChildTableView
+          v-if="childTableData.length"
+          v-model:childTableData="childTableData"
+          v-model:activeChildTable="activeChildTable"
+        />
       </template>
     </v-form-designer>
     <ChildTableSet
       v-if="childTableSetDialog"
       v-model:dialog="childTableSetDialog"
       :speciesTree="speciesTree"
+      :activeFormSetData="activeFormSetData"
       @setChildTableData="setChildTableData"
     />
   </section>
@@ -36,9 +41,14 @@ export default {
 import { setCenterStore } from "@/store/setting";
 import { userCtrl as user } from "@/ts/coreIndex";
 import ChildTableSet from "./childTableSet.vue";
-import ChildTableView from './childTableView.vue'
+import ChildTableView from "./childTableView.vue";
+import { useAnyData } from "@/store/anydata";
+import { thingCtrl as thing } from "@/ts/coreIndex";
 
+const anyStoreData = useAnyData();
 const store: any = setCenterStore();
+
+const activeFormSetData = anyStoreData.activeFormSetData;
 
 const currentData = computed(() => {
   return store.currentSelectItme;
@@ -48,15 +58,83 @@ const banned = ["button", "divider", "html-text"];
 const designerConfig = {
   languageMenu: false,
   externalLink: false,
-  // formTemplates: false, // 禁止表单模版
-  // eventCollapse: false, // 禁止表单和组件的事件
+  formTemplates: false, // 禁止表单模版
+  eventCollapse: false, // 禁止表单和组件的事件
   toolbarMaxWidth: 530,
+  resetFormJson: true,
 };
 
 const vfDesigner = ref<any>(null);
-const saveFormJson = () => {
+
+const saveFormJson = async () => {
   const formJson = vfDesigner.value.getFormJson();
-  console.log(formJson);
+  saveFormJsonInRemark(formJson)
+  const params = {
+    ...activeFormSetData,
+    items: [...getAttrByFormat(formJson.widgetList), ...childTableData.value],
+  };
+  const createParams = {
+    spaceId: user.space.id,
+    operationId: activeFormSetData.id,
+    operationItems: [...getAttrByFormat(formJson.widgetList), ...childTableData.value]
+  }
+  await thing.setDesign(params, createParams)
+  ElMessage.success('保存成功')
+};
+
+const saveFormJsonInRemark = (formJson: any) => {
+  const remark = JSON.parse(activeFormSetData.remark);
+  remark.fromByVue = JSON.stringify(formJson);
+  activeFormSetData.remark = JSON.stringify(remark);
+};
+
+const getAttrByFormat = (widgetList: any) => {
+  const attrFields = getAttrFields(widgetList);
+  const attrByFormat = attrFields.map((item: any) => {
+    return {
+      id: item.basic.id,
+      name: item.basic.name,
+      code: item.basic.code,
+      belongId: activeFormSetData.belongId,
+      operationId: activeFormSetData.id,
+      attrId: item.basic.id,
+      attr: item.basic,
+      rule: JSON.stringify(getAttrRule(item)),
+    };
+  });
+
+  return attrByFormat;
+};
+
+const getAttrRule = (item: any) => {
+  return {
+    title: item.basic.name,
+    type: "string",
+    widget: item.adaptType,
+    required: false,
+    readOnly: false,
+    hidden: false,
+    placeholder: "",
+  };
+};
+
+const getAttrFields = (list: any) => {
+  const attrFields: any = [];
+  getAttrFieldFromGrid(list, attrFields);
+  return attrFields;
+};
+
+const getAttrFieldFromGrid = (list: any, attrFields: any) => {
+  list.map((col: any) => {
+    if (col.category) {
+      getAttrFieldFromGrid(
+        col.type === "grid-col" ? col.widgetList : col.cols,
+        attrFields
+      );
+    } else {
+      col.options.fromAttr && attrFields.push(col);
+    }
+  });
 };
 
 const attrList = ref<any>(null);
@@ -79,16 +157,21 @@ const loadSpeciesTree = async () => {
   speciesTree.value = species.children;
 };
 
-const childTableData = ref<any>([])
-const activeChildTable = ref<any>("")
+const childTableData = ref<any>([]);
+const activeChildTable = ref<any>("");
 const setChildTableData = (val: any) => {
   console.log(val);
-  childTableData.value.push(val)
-  activeChildTable.value = val.code
+  childTableData.value.push(val);
+  activeChildTable.value = val.code;
 };
 
 onMounted(() => {
-  loadSpeciesTree();
+  const remark = JSON.parse(activeFormSetData.remark)
+  if(remark.fromByVue) {
+    console.log(JSON.parse(remark.childTableData));
+    vfDesigner.value.setFormJson(JSON.parse(remark.fromByVue))
+  }
+
   loadSpeciesAttrs(currentData.value);
 });
 </script>
