@@ -44,6 +44,7 @@ import ChildTableSet from "./childTableSet.vue";
 import ChildTableView from "./childTableView.vue";
 import { useAnyData } from "@/store/anydata";
 import { thingCtrl as thing } from "@/ts/coreIndex";
+import { getFiedlByReact, initWidgetList } from "./getFieldByReact";
 
 const anyStoreData = useAnyData();
 const store: any = setCenterStore();
@@ -68,7 +69,7 @@ const vfDesigner = ref<any>(null);
 
 const saveFormJson = async () => {
   const formJson = vfDesigner.value.getFormJson();
-  saveFormJsonInRemark(formJson)
+  saveFormJsonInRemark(formJson);
   const params = {
     ...activeFormSetData,
     items: [...getAttrByFormat(formJson.widgetList), ...childTableData.value],
@@ -76,10 +77,13 @@ const saveFormJson = async () => {
   const createParams = {
     spaceId: user.space.id,
     operationId: activeFormSetData.id,
-    operationItems: [...getAttrByFormat(formJson.widgetList), ...childTableData.value]
-  }
-  await thing.setDesign(params, createParams)
-  ElMessage.success('保存成功')
+    operationItems: [
+      ...getAttrByFormat(formJson.widgetList),
+      ...childTableData.value,
+    ],
+  };
+  await thing.setDesign(params, createParams);
+  ElMessage.success("保存成功");
 };
 
 const saveFormJsonInRemark = (formJson: any) => {
@@ -138,6 +142,7 @@ const getAttrFieldFromGrid = (list: any, attrFields: any) => {
 };
 
 const attrList = ref<any>(null);
+const attrDictionary = ref<any>(null);
 const childTableSetDialog = ref<boolean>(false);
 
 const loadSpeciesAttrs = async (species: any) => {
@@ -147,7 +152,7 @@ const loadSpeciesAttrs = async (species: any) => {
   };
   const res = await species.loadAttrs(user.space.id, true, true, page);
   if (res.result) {
-    attrList.value = res.result;
+    attrDictionary.value = res.result;
   }
 };
 
@@ -159,20 +164,63 @@ const loadSpeciesTree = async () => {
 
 const childTableData = ref<any>([]);
 const activeChildTable = ref<any>("");
+const filedsByReact = ref<any>(null);
 const setChildTableData = (val: any) => {
   console.log(val);
   childTableData.value.push(val);
   activeChildTable.value = val.code;
 };
 
-onMounted(() => {
-  const remark = JSON.parse(activeFormSetData.remark)
-  if(remark.fromByVue) {
-    console.log(JSON.parse(remark.childTableData));
-    vfDesigner.value.setFormJson(JSON.parse(remark.fromByVue))
-  }
+const getChildTableData = async () => {
+  const params = {
+    id: activeFormSetData.id,
+    spaceId: user.space.id,
+    page: {
+      offset: 0,
+      limit: 10000,
+      filter: "",
+    },
+  };
+  const { data: res } = await thing.getOperationItems(params);
+  const tempChildTableData: any = res.result.filter(
+    (item: any) => item.containSpecies
+  );
 
-  loadSpeciesAttrs(currentData.value);
+  tempChildTableData.forEach((data: any) => {
+    data.speciesIds = data.containSpecies.map((item: any) => item.id);
+  });
+  childTableData.value = tempChildTableData;
+
+  const tempFieldData = res.result.filter((item: any) => !item.containSpecies);
+  const fieldsFilterFromDic: any = [];
+  tempFieldData.map((item: any) => {
+    const tempField = attrDictionary.value.filter(
+      (attrItem: any) => attrItem.id === item.attrId
+    )[0];
+    tempField && fieldsFilterFromDic.push(tempField);
+  });
+  filedsByReact.value = tempFieldData;
+};
+
+onMounted(async () => {
+  await loadSpeciesTree();
+  await loadSpeciesAttrs(currentData.value);
+  await getChildTableData();
+  const remark = JSON.parse(activeFormSetData.remark);
+  if (remark.fromByVue) {
+    vfDesigner.value.setFormJson(JSON.parse(remark.fromByVue));
+  } else {
+    /**
+     * 格式化从 react 创建的表单字段
+     */
+    const formJson = initWidgetList()
+    filedsByReact.value.map((field: any) => {
+      const tempField = getFiedlByReact(field)
+      formJson.widgetList.push(tempField)
+    });
+    vfDesigner.value.setFormJson(formJson);
+  }
+  attrList.value = attrDictionary.value;
 });
 </script>
 
