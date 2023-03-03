@@ -45,7 +45,7 @@ import ChildTableSet from "./childTableSet.vue";
 import ChildTableView from "./childTableView.vue";
 import { useAnyData } from "@/store/anydata";
 import { thingCtrl as thing } from "@/ts/coreIndex";
-import { getFiedlByReact, initWidgetList } from "./getFieldByReact";
+import { getFiedlByReact, initWidgetList } from './getFieldByReact';
 
 const anyStoreData = useAnyData();
 const store: any = setCenterStore();
@@ -75,13 +75,11 @@ const saveFormJson = async () => {
     ...activeFormSetData,
     items: [...getAttrByFormat(formJson.widgetList), ...childTableData.value],
   };
+
   const createParams = {
     spaceId: user.space.id,
     operationId: activeFormSetData.id,
-    operationItems: [
-      ...getAttrByFormat(formJson.widgetList),
-      ...childTableData.value,
-    ],
+    operationItems: [...getAttrByFormat(formJson.widgetList), ...childTableData.value],
   };
   await thing.setDesign(params, createParams);
   ElMessage.success("保存成功");
@@ -95,6 +93,8 @@ const saveFormJsonInRemark = (formJson: any) => {
 
 const getAttrByFormat = (widgetList: any) => {
   const attrFields = getAttrFields(widgetList);
+  console.log(attrFields);
+  
   const attrByFormat = attrFields.map((item: any) => {
     return {
       id: item.basic.id,
@@ -102,7 +102,7 @@ const getAttrByFormat = (widgetList: any) => {
       code: item.basic.code,
       belongId: activeFormSetData.belongId,
       operationId: activeFormSetData.id,
-      attrId: item.basic.id,
+      attrId: item.basic.attrId,
       attr: item.basic,
       rule: JSON.stringify(getAttrRule(item)),
     };
@@ -165,7 +165,7 @@ const loadSpeciesTree = async () => {
 
 const childTableData = ref<any>([]);
 const activeChildTable = ref<any>("");
-const filedsByReact = ref<any>(null);
+const fieldsByReact = ref<any>(null);
 const setChildTableData = (val: any) => {
   console.log(val);
   childTableData.value.push(val);
@@ -200,22 +200,34 @@ const getChildTableData = async () => {
     )[0];
     tempField && fieldsFilterFromDic.push(tempField);
   });
-  filedsByReact.value = tempFieldData;
+  fieldsByReact.value = tempFieldData;
 };
+
+const isReactChangeField = () => {
+  const remark = JSON.parse(activeFormSetData.remark);
+  if(remark.fromByVue) {
+    const {widgetList} = JSON.parse(remark.fromByVue)
+    const fieldsFromVue = getAttrByFormat(widgetList)
+    console.log(fieldsFromVue.length!==fieldsByReact.value.length);
+    
+    return fieldsFromVue.length === fieldsByReact.value.length
+  }
+  return false
+}
 
 onMounted(async () => {
   await loadSpeciesTree();
   await loadSpeciesAttrs(currentData.value);
   await getChildTableData();
   const remark = JSON.parse(activeFormSetData.remark);
-  if (remark.fromByVue) {
+  if (isReactChangeField()) {
     vfDesigner.value.setFormJson(JSON.parse(remark.fromByVue));
   } else {
     /**
      * 格式化从 react 创建的表单字段
      */
     const formJson = initWidgetList()
-    filedsByReact.value.map((field: any) => {
+    fieldsByReact.value.map((field: any) => {
       const tempField = getFiedlByReact(field)
       formJson.widgetList.push(tempField)
     });
