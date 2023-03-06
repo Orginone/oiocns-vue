@@ -11,12 +11,15 @@
         <el-button link type="primary" @click="childTableSetDialog = true"
           >子表设置</el-button
         >
+        <el-button link type="primary" @click="preivewDialog = true">预览</el-button>
         <el-button link type="primary" @click="saveFormJson">保存</el-button>
         <el-button link type="primary" @click="$router.go(-1)">返回</el-button>
       </template>
       <template #childTable>
         <ChildTableView
           v-if="childTableData.length"
+          :isEdit="true"
+          :speciesTree="speciesTree"
           v-model:childTableData="childTableData"
           v-model:activeChildTable="activeChildTable"
         />
@@ -29,6 +32,7 @@
       :activeFormSetData="activeFormSetData"
       @setChildTableData="setChildTableData"
     />
+    <Preview v-if="preivewDialog" v-model:dialog="preivewDialog" :childTableData="childTableData" :formJson="vfDesigner.getFormJson()" />
   </section>
 </template>
 
@@ -46,6 +50,7 @@ import ChildTableView from "./childTableView.vue";
 import { useAnyData } from "@/store/anydata";
 import { thingCtrl as thing } from "@/ts/coreIndex";
 import { getFiedlByReact, initWidgetList } from './getFieldByReact';
+import Preview from './preview.vue'
 
 const anyStoreData = useAnyData();
 const store: any = setCenterStore();
@@ -64,6 +69,7 @@ const designerConfig = {
   eventCollapse: false, // 禁止表单和组件的事件
   toolbarMaxWidth: 530,
   resetFormJson: true,
+  previewFormButton: false,
 };
 
 const vfDesigner = ref<any>(null);
@@ -93,8 +99,6 @@ const saveFormJsonInRemark = (formJson: any) => {
 
 const getAttrByFormat = (widgetList: any) => {
   const attrFields = getAttrFields(widgetList);
-  console.log(attrFields);
-  
   const attrByFormat = attrFields.map((item: any) => {
     return {
       id: item.basic.id,
@@ -102,7 +106,7 @@ const getAttrByFormat = (widgetList: any) => {
       code: item.basic.code,
       belongId: activeFormSetData.belongId,
       operationId: activeFormSetData.id,
-      attrId: item.basic.attrId,
+      attrId: item.basic.attrId || item.basic.id,
       attr: item.basic,
       rule: JSON.stringify(getAttrRule(item)),
     };
@@ -167,7 +171,6 @@ const childTableData = ref<any>([]);
 const activeChildTable = ref<any>("");
 const fieldsByReact = ref<any>(null);
 const setChildTableData = (val: any) => {
-  console.log(val);
   childTableData.value.push(val);
   activeChildTable.value = val.code;
 };
@@ -208,12 +211,12 @@ const isReactChangeField = () => {
   if(remark.fromByVue) {
     const {widgetList} = JSON.parse(remark.fromByVue)
     const fieldsFromVue = getAttrByFormat(widgetList)
-    console.log(fieldsFromVue.length!==fieldsByReact.value.length);
-    
     return fieldsFromVue.length === fieldsByReact.value.length
   }
   return false
 }
+
+const preivewDialog = ref(false)
 
 onMounted(async () => {
   await loadSpeciesTree();
