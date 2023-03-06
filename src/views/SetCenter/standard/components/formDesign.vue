@@ -213,7 +213,6 @@ const isReactChangeField = () => {
     return fieldsFromVue.length === fieldsByReact.value.length
   }
   return false
-  
 }
 
 onMounted(async () => {
