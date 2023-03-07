@@ -44,12 +44,13 @@ type WorkSpaceType = {
 
 export const useAnyData = defineStore({
     id: "userAnyData",
-    state: (): { workspace: WorkSpaceType, activeSchema: UsingSpace, isDefaultLayout: boolean, usingSchema: UsingSpace } => {
+    state: (): { workspace: WorkSpaceType, activeSchema: UsingSpace, isDefaultLayout: boolean, usingSchema: UsingSpace, activeFormSetData: any } => {
         return {
             workspace: null,
             activeSchema: null,
             isDefaultLayout: true,
             usingSchema: null,
+            activeFormSetData: null,
         }
     },
     getters: {
@@ -57,6 +58,9 @@ export const useAnyData = defineStore({
         userComplist: (state) => state.workspace?.user?.content || [], // 用户组件
     },
     actions: {
+        setActiveFormSetData(params: any) {
+            this.activeFormSetData = params
+        },
         // 设置首页为指定布局
         setUsingSchema(params: UsingSpace) {
             this.usingSchema = params

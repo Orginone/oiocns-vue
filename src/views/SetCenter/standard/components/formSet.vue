@@ -32,7 +32,7 @@
               <el-dropdown-item @click="delFormInfo(scope.row)"
                 >删除</el-dropdown-item
               >
-              <el-dropdown-item @click="goFormDesign()"
+              <el-dropdown-item @click="goFormDesign(scope.row)"
                 >设计表单</el-dropdown-item
               >
               <el-dropdown-item>预览表单</el-dropdown-item>
@@ -60,6 +60,7 @@ export default {
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { thingCtrl as thing, userCtrl as user } from "@/ts/coreIndex";
+import { useAnyData } from "@/store/anydata";
 import { useRouter } from "vue-router";
 import AddForm from "./addForm.vue";
 const router = useRouter();
@@ -87,7 +88,7 @@ const tableHead = [
     label: "共享组织",
   },
   {
-    prop: "beginAuthId",
+    prop: "beginAuthName",
     label: "角色",
   },
   {
@@ -125,6 +126,7 @@ const getTableData = async (currentSpace: any) => {
         item.belongName = team.name;
       }
       item.speciesName = findSpeciesName([thing.teamSpecies], item.speciesId);
+      item.beginAuthName = findAuthName([user.space.authorityTree], item.beginAuthId)
     });
     tableData.value = res.result;
     pages.total = res.total;
@@ -186,8 +188,25 @@ const findSpeciesName = (species: any[], id: string): string | undefined => {
   return specesName;
 };
 
-const goFormDesign = () => {
-  router.push("/formDesign");
+const findAuthName = (auths: any[], id: string): string | undefined => {
+  let authName = undefined;
+  for (const item of auths) {
+    if (item?.id == id) {
+      authName = item.name;
+    } else if (item?.children) {
+      authName = findAuthName(item?.children, id);
+    }
+    if (authName) {
+      break;
+    }
+  }
+  return authName;
+};
+
+const store = useAnyData()
+const goFormDesign = (val: any) => {
+  store.setActiveFormSetData(val)
+  router.push({path: "/formDesign"});
 };
 
 const createAddDialog = () => {
