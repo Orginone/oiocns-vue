@@ -140,6 +140,7 @@ const rules = reactive({
   name: [{ required: true, message: "请输入表单名称", trigger: "blur" }],
   code: [{ required: true, message: "请输入业务代码", trigger: "blur" }],
   belongId: [{ required: true, message: "请选择指定组织", trigger: "blur" }],
+  beginAuthId: [{ required: true, message: "请选择角色", trigger: "blur" }],
   public: [
     { required: true, message: "请选择是否向下级组织公开", trigger: "blur" },
   ],
