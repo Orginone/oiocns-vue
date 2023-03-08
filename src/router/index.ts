@@ -72,78 +72,13 @@ const mainRouter: RouteRecordRaw[] = [
     }
   },
   {
-    path: '/service',
-    component: () => import('@/views/Service/index.vue'),
+    path: '/todo',
+    component: () => import('@/views/todo/index.vue'),
     meta: {
       keepAlive: false,
       title: '办事',
-      id: "service"
+      id: "todo"
     },
-    children: [
-      {
-        path: '/service',
-        name: 'friendApply',
-        component: () => import('@/views/Service/friendApply/index.vue'),
-        meta: {
-          title: '好友申请',
-          id: "service.friendApply"
-        }
-      },
-      {
-        path: '/service/company',
-        name: 'company',
-        component: () => import('@/views/Service/company/index.vue'),
-        meta: {
-          title: '单位审核',
-          id: "service.company"
-        }
-      },
-      {
-        path: '/service/group',
-        name: 'group2',
-        component: () => import('@/views/Service/group/index.vue'),
-        meta: {
-          title: '集团审核',
-          id: "service.group"
-        }
-      },
-      {
-        path: '/service/shop',
-        name: 'shop',
-        component: () => import('@/views/Service/shop/index.vue'),
-        meta: {
-          title: '商店审核',
-          id: "service.shop"
-        }
-      },
-      {
-        path: '/service/product',
-        name: 'product',
-        component: () => import('@/views/Service/product/index.vue'),
-        meta: {
-          title: '上架审核',
-          id: "service.product"
-        }
-      },
-      {
-        path: '/service/order',
-        name: 'order',
-        component: () => import('@/views/Service/order/index.vue'),
-        meta: {
-          title: '订单审核',
-          id: "service.order"
-        }
-      },
-      {
-        path: '/service/todo',
-        name: 'todo',
-        component: () => import('@/views/Service/todo/index.vue'),
-        meta: {
-          title: '应用待办',
-          id: "service.todo"
-        }
-      }
-    ]
   },
   {
     path: '/setCenter',

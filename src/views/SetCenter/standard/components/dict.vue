@@ -582,14 +582,14 @@
   }
 }
 // 去掉el-input自带边框
-:deep .search .el-input__wrapper {
-  margin: 5px;
-  padding-left: 14px !important;
-  box-sizing: border-box;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0px; //前边边距去掉
-  border-radius: 15px;
-  background: #f2f4f9;
-}
+// :deep .search .el-input__wrapper {
+//   margin: 5px;
+//   padding-left: 14px !important;
+//   box-sizing: border-box;
+//   border: none !important;
+//   box-shadow: none !important;
+//   padding: 0px; //前边边距去掉
+//   border-radius: 15px;
+//   background: #f2f4f9;
+// }
 </style>

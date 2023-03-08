@@ -22,6 +22,8 @@
     "@yzfe/vue3-svgicon": "1.0.1",
     "core-js": "^3.26.1",
     "dayjs": "^1.11.7",
+    "devextreme": "22.2.4",
+    "devextreme-vue": "22.2.4",
     "echarts": "^5.4.0",
     "element-china-area-data": "^5.0.2",
     "lodash": "^4.17.21",

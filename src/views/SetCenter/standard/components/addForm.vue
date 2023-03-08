@@ -63,18 +63,21 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <!-- <el-row :gutter="20">
+      <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="选择角色" prop="beginAuthId">
-            <el-select
+            <el-tree-select
               v-model="ruleForm.beginAuthId"
+              :data="authorityTree"
+              check-strictly
               placeholder="请选择"
+              :render-after-expand="false"
               clearable
             >
-            </el-select>
+            </el-tree-select>
           </el-form-item>
         </el-col>
-      </el-row> -->
+      </el-row>
       <el-form-item>
         <el-button @click="handleClose()">取消</el-button>
         <el-button type="primary" @click="submitForm(ruleFormRef)">
@@ -129,7 +132,7 @@ const ruleForm = ref<any>({
   code: "",
   belongId: "",
   public: "",
-  // beginAuthId: "",
+  beginAuthId: "",
   remark: JSON.stringify(defaultRemark),
 });
 
@@ -137,6 +140,7 @@ const rules = reactive({
   name: [{ required: true, message: "请输入表单名称", trigger: "blur" }],
   code: [{ required: true, message: "请输入业务代码", trigger: "blur" }],
   belongId: [{ required: true, message: "请选择指定组织", trigger: "blur" }],
+  beginAuthId: [{ required: true, message: "请选择角色", trigger: "blur" }],
   public: [
     { required: true, message: "请选择是否向下级组织公开", trigger: "blur" },
   ],
@@ -174,11 +178,33 @@ const getTeamTree = async () => {
   });
 };
 
+
+const authorityTree = ref([]);
+const getAuthorityTree = async () => {
+  const tempTreeItem = await user.space.loadAuthorityTree(false)
+  const tempTree = [tempTreeItem]
+  const formatTree = (tree: any) => {
+    return tree.map((item: any) => {
+      return {
+        key: item.id,
+        label: item.name,
+        value: item.id,
+        children: item.children && item.children.length ? formatTree(item.children) : []
+      }
+    })
+  }
+
+  authorityTree.value = formatTree(tempTree)
+
+  authorityTree.value.unshift({label: '全员', value: 0, key: 0})
+}
+
 onMounted(async () => {
   show.value = props.dialog;
   if (props.editFormInfo) {
     ruleForm.value = _.cloneDeep(props.editFormInfo) ;
   }
+  getAuthorityTree()
   belongOptions.value = await getTeamTree();
 });
 </script>

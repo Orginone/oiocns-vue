@@ -168,7 +168,6 @@ const thingProps = {
   children: 'children',
 }
 onMounted(()=>{
-  console.log('aa',thingCtrl);
   init();
   setTimeout(async () => {
     let res = await loadThingMenus('work', true);
@@ -247,12 +246,10 @@ const filterNode = (value: string, data: any) => {
   return data.label.includes(value)
 }
 const getNodes = (checkedNodes:any) =>{
-  console.log(checkedNodes)
+  router.push('/service/thing')
 }
 const loadThingMenus = async (prefix: string, isWork: boolean = false) => {
   const root = await userCtrl.space.loadSpeciesTree();
-  console.log('thingCtrl',thingCtrl)
-  // const aaa = await thingCtrl.queryOperationBySpeciesIds();
   var thing = root?.children?.find((item) => item.name == '事');
   if (thing) {
     return await buildSpeciesTree(thing.children, prefix + '事', isWork);
@@ -404,14 +401,14 @@ const handleSelect = (key: any) => {
   }
   // 去掉el-input自带边框
   :deep(.el-input__wrapper) {
-    margin: 15px;
-    padding-left: 15px !important;
-    box-sizing: border-box;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0px; //前边边距去掉
-    border-radius: 15px;
-    background: #f2f4f9;
+    // margin: 15px;
+    // padding-left: 15px !important;
+    // box-sizing: border-box;
+    // border: none !important;
+    // box-shadow: none !important;
+    // padding: 0px; //前边边距去掉
+    // border-radius: 15px;
+    // background: #f2f4f9;
   }
   .tips{
     margin-left: 10px;
