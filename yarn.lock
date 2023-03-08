@@ -481,8 +481,15 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+<<<<<<< HEAD
+"@orginone/oiocns-ts@^1.1.19":
+  version "1.1.19"
+  resolved "https://registry.npmmirror.com/@orginone/oiocns-ts/-/oiocns-ts-1.1.19.tgz#d446ece263a8b6e51e6c42f245c9c7a8718bcfb8"
+  integrity sha512-qL9p64ernsC+9hj/nuw/eE0XWLzfxv1uLf0r8wVFmIL6HERZlWa8oW/pYnyNkGJmbcNjBzOcxzhcetHsgR5GNQ==
+=======
 "@orginone/oiocns-ts@file:.yalc/@orginone/oiocns-ts":
   version "1.1.17"
+>>>>>>> 12edb3b3d10e93ad3aa3fcd42a4618409e5d79a6
   dependencies:
     vue "^3.2.45"
 
