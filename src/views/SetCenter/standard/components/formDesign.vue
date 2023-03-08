@@ -11,7 +11,9 @@
         <el-button link type="primary" @click="childTableSetDialog = true"
           >子表设置</el-button
         >
-        <el-button link type="primary" @click="preivewDialog = true">预览</el-button>
+        <el-button link type="primary" @click="preivewDialog = true"
+          >预览</el-button
+        >
         <el-button link type="primary" @click="saveFormJson">保存</el-button>
         <el-button link type="primary" @click="$router.go(-1)">返回</el-button>
       </template>
@@ -32,7 +34,12 @@
       :activeFormSetData="activeFormSetData"
       @setChildTableData="setChildTableData"
     />
-    <Preview v-if="preivewDialog" v-model:dialog="preivewDialog" :childTableData="childTableData" :formJson="vfDesigner.getFormJson()" />
+    <Preview
+      v-if="preivewDialog"
+      v-model:dialog="preivewDialog"
+      :childTableData="childTableData"
+      :formJson="vfDesigner.getFormJson()"
+    />
   </section>
 </template>
 
@@ -49,8 +56,8 @@ import ChildTableSet from "./childTableSet.vue";
 import ChildTableView from "./childTableView.vue";
 import { useAnyData } from "@/store/anydata";
 import { thingCtrl as thing } from "@/ts/coreIndex";
-import { getFiedlByReact, initWidgetList } from './getFieldByReact';
-import Preview from './preview.vue'
+import { getFiedlByReact, initWidgetList } from "./getFieldByReact";
+import Preview from "./preview.vue";
 
 const anyStoreData = useAnyData();
 const store: any = setCenterStore();
@@ -85,7 +92,10 @@ const saveFormJson = async () => {
   const createParams = {
     spaceId: user.space.id,
     operationId: activeFormSetData.id,
-    operationItems: [...getAttrByFormat(formJson.widgetList), ...childTableData.value],
+    operationItems: [
+      ...getAttrByFormat(formJson.widgetList),
+      ...childTableData.value,
+    ],
   };
   await thing.setDesign(params, createParams);
   ElMessage.success("保存成功");
@@ -186,16 +196,20 @@ const getChildTableData = async () => {
     },
   };
   const { data: res } = await thing.getOperationItems(params);
-  const tempChildTableData: any = res.result.filter(
-    (item: any) => item.containSpecies
-  );
+  let tempChildTableData: any = [];
+  if (res.result) {
+    tempChildTableData = res.result.filter((item: any) => item.containSpecies);
+  }
 
   tempChildTableData.forEach((data: any) => {
     data.speciesIds = data.containSpecies.map((item: any) => item.id);
   });
   childTableData.value = tempChildTableData;
 
-  const tempFieldData = res.result.filter((item: any) => !item.containSpecies);
+  let tempFieldData: any = [];
+  if (res.result) {
+    tempFieldData = res.result.filter((item: any) => !item.containSpecies);
+  }
   const fieldsFilterFromDic: any = [];
   tempFieldData.map((item: any) => {
     const tempField = attrDictionary.value.filter(
@@ -208,15 +222,15 @@ const getChildTableData = async () => {
 
 const isReactChangeField = () => {
   const remark = JSON.parse(activeFormSetData.remark);
-  if(remark.fromByVue) {
-    const {widgetList} = JSON.parse(remark.fromByVue)
-    const fieldsFromVue = getAttrByFormat(widgetList)
-    return fieldsFromVue.length === fieldsByReact.value.length
+  if (remark.fromByVue) {
+    const { widgetList } = JSON.parse(remark.fromByVue);
+    const fieldsFromVue = getAttrByFormat(widgetList);
+    return fieldsFromVue.length === fieldsByReact.value.length;
   }
-  return false
-}
+  return false;
+};
 
-const preivewDialog = ref(false)
+const preivewDialog = ref(false);
 
 onMounted(async () => {
   await loadSpeciesTree();
@@ -229,10 +243,10 @@ onMounted(async () => {
     /**
      * 格式化从 react 创建的表单字段
      */
-    const formJson = initWidgetList()
+    const formJson = initWidgetList();
     fieldsByReact.value.map((field: any) => {
-      const tempField = getFiedlByReact(field)
-      formJson.widgetList.push(tempField)
+      const tempField = getFiedlByReact(field);
+      formJson.widgetList.push(tempField);
     });
     vfDesigner.value.setFormJson(formJson);
   }
