@@ -6,6 +6,7 @@
       :designer-config="designerConfig"
       :childTableData="childTableData"
       :attrList="attrList"
+      :selectOptionFromOio="selectOptionFromOio"
     >
       <template #customToolButtons>
         <el-button link type="primary" @click="childTableSetDialog = true"
@@ -232,10 +233,90 @@ const isReactChangeField = () => {
 
 const preivewDialog = ref(false);
 
+const selectOptionFromOio = reactive({
+  personOption: null,
+  deptOption: null,
+  groupOption: null
+});
+const getFormFieldWithPerson = async () => {
+  const params = {
+    id: user.space.id,
+    typeNames: ["单位"],
+    subTypeNames: ["人员"],
+    page: {
+      limit: 10000,
+      offset: 0,
+      filter: "",
+    },
+  };
+
+  selectOptionFromOio.personOption = await getSelectContent(params);
+};
+const getFormFieldWithDept = async () => {
+  const params = {
+    id: user.space.id,
+    typeNames: ["单位"],
+    subTypeNames: [
+      "办事处",
+      "科室",
+      "研究所",
+      "实验室",
+      "工作群",
+      "部门",
+      "工作组",
+    ],
+    page: {
+      limit: 10000,
+      offset: 0,
+      filter: ""
+    }
+  };
+
+  selectOptionFromOio.deptOption = await getSelectContent(params)
+};
+
+const getSelectContent = async (params: any) => {
+  let { result: res } = await thing.getFormFieldWithPerson(params);
+  res = res.map((item: any) => {
+    return {
+      label: item.name,
+      value: item.id,
+    };
+  });
+  return res
+}
+const getFormFieldWithGroup = async () => {
+  const params = {
+    id: user.space.id,
+    typeName: '单位',
+    // @ts-ignore
+    spaceId: user.space.userId,
+    JoinTypeNames: ["集团"],
+    page: {
+      offset: 0,
+      limit: 10000,
+      filter: "",
+    }
+  }
+
+  let {result: res} = await thing.getFormFieldWithGroup(params)
+  selectOptionFromOio.groupOption = res.map((item: any) => {
+    return {
+      label: item.name,
+      value: item.id
+    }
+  })
+  
+}
+
 onMounted(async () => {
+  await getFormFieldWithPerson();
+  await getFormFieldWithGroup();
+  await getFormFieldWithDept()
   await loadSpeciesTree();
   await loadSpeciesAttrs(currentData.value);
   await getChildTableData();
+
   const remark = JSON.parse(activeFormSetData.remark);
   if (isReactChangeField()) {
     vfDesigner.value.setFormJson(JSON.parse(remark.fromByVue));

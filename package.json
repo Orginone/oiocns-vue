@@ -14,7 +14,7 @@
     "@kangc/v-md-editor": "^2.3.15",
     "@microsoft/signalr": "^6.0.7",
     "@msgpack/msgpack": "^2.8.0",
-    "@orginone/oiocns-ts": "^1.1.20",
+    "@orginone/oiocns-ts": "file:.yalc/@orginone/oiocns-ts",
     "@types/qrcode": "^1.5.0",
     "@vueuse/core": "^9.6.0",
     "@wcjiang/notify": "^2.1.0",
