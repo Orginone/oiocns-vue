@@ -168,8 +168,8 @@
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item label="请选择枚举分类" v-if="state.attrForm.valueType == '选择型'" prop="dictId">
-                <el-select v-model="state.attrForm.dictId" v-for="(item,index) in state.dictList" :key="index" placeholder="请选择">
-                  <el-option :label="item.label" :value="item.id" />
+                <el-select v-model="state.attrForm.dictId"  placeholder="请选择">
+                  <el-option :label="item.label" :value="item.id" v-for="(item,index) in state.dictList" :key="index"/>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -501,12 +501,22 @@
 
     formEl.validate(async (valid) => {
       if (valid) {
-        const success = await currentData.value.createAttr(state.attrForm)
+        if(isEditAttr.value == false){
+          const success = await currentData.value.createAttr(state.attrForm)
           if(success) {
             ElMessage.success({ message: '新增成功'})
             attrFormDialog.value = false
             await loadSpeciesAttrs(currentData.value)
           }
+        }else{
+          const success = await currentData.value.updateAttr(state.attrForm)
+          if(success) {
+            ElMessage.success({ message: '编辑成功'})
+            attrFormDialog.value = false
+            await loadSpeciesAttrs(currentData.value)
+          }
+        }
+        
       } else {
         return false
       }
