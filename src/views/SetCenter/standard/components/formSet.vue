@@ -126,6 +126,8 @@ const getTableData = async (currentSpace: any) => {
         item.belongName = team.name;
       }
       item.speciesName = findSpeciesName([thing.teamSpecies], item.speciesId);
+      console.log(user.space);
+      
       item.beginAuthName = findAuthName([user.space.authorityTree], item.beginAuthId)
     });
     tableData.value = res.result;
@@ -192,7 +194,7 @@ const findAuthName = (auths: any[], id: string): string | undefined => {
   let authName = undefined;
   for (const item of auths) {
     if (item?.id == id) {
-      authName = item.name;
+      authName = item?.name;
     } else if (item?.children) {
       authName = findAuthName(item?.children, id);
     }
