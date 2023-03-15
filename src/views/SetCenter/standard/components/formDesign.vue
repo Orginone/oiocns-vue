@@ -274,9 +274,9 @@ const getFormFieldWithDept = async () => {
 
   selectOptionFromOio.deptOption = await getSelectContent(params)
 };
-
 const getSelectContent = async (params: any) => {
   let { result: res } = await thing.getFormFieldWithPerson(params);
+  // @ts-ignore
   res = res.map((item: any) => {
     return {
       label: item.name,
