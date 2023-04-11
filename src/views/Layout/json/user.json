@@ -1,7 +1,7 @@
 [
     {
         "icon": "User",
-        "title": "我的",
+        "title": "设置",
         "id": "mine-header"
     },
     {

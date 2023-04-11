@@ -1,20 +1,20 @@
 <template>
   <div>
     <el-form ref="ruleFormRef" :model="ruleForm" status-icon class="demo-ruleForm">
-      <el-form-item prop="username">
+      <el-form-item prop="account">
         <el-input
           size="large"
-          v-model="ruleForm.username"
+          v-model="ruleForm.account"
           autocomplete="off"
           placeholder="请输入账户名称"
           oninput="value=value.replace(/[\u4E00-\u9FA5]/g,'')"
         />
       </el-form-item>
-      <el-form-item prop="password">
+      <el-form-item prop="pwd">
         <el-input
           size="large"
           placeholder="请输入密码"
-          v-model="ruleForm.password"
+          v-model="ruleForm.pwd"
           type="password"
           autocomplete="off"
         />
@@ -40,8 +40,8 @@ export default defineComponent({
     })
     const ruleFormRef = ref<FormInstance>()
     const ruleForm = reactive({
-      password: '',
-      username: '',
+      pwd: '',
+      account: '',
       remind: false
     })
     const forgetPassword = () => {

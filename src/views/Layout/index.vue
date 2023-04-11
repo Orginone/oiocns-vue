@@ -446,7 +446,7 @@
     let shopstoreJson = JSON.parse(JSON.stringify(storeJson))
     showMenu.value = true;
     shopstoreJson[2] = newObj
-    titleArr.state = {icon: 'User',title: '商店', "backFlag": true}
+    titleArr.state = {icon: 'User',title: '市场', "backFlag": false}
     menuArr.state = shopstoreJson
     })
   }
@@ -539,6 +539,8 @@
 
   .home-wrap {
     .page-header {
+      height: 48px;
+
       background-color: var(--el-bg-color);
       border-bottom: 1px solid #fff0f4;
       z-index: calc(var(--el-index-normal) + 2);

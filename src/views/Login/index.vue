@@ -62,6 +62,7 @@
   import { useMarketStore } from '@/store/market'
   import { useRouter } from 'vue-router'
   import { ElMessage } from 'element-plus'
+  import {userCtrl} from '@/ts/coreIndex';
 
   const dialogVisible = ref<boolean>(false)
   const carousel = ref<any>()
@@ -128,7 +129,7 @@
     stept.value = 'first'
     // carousel.value?.setActiveItem('first')
   }
-  const userLogin = (data: { password: string; username: string; remind: boolean }) => {
+  const userLogin = async (data: { pwd: string; account: string; remind: boolean }) => {
     btnLoading.value = true
     store.updateUserInfo(data).then((res) => {
       btnLoading.value = false

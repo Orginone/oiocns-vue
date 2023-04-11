@@ -61,9 +61,9 @@ export const useUserStore = defineStore({
         }
       })
     },
-    async updateUserInfo(data: { username: string; password: string }) {
+    async updateUserInfo(data: { account: string; pwd: string }) {
       // 获取用户登录信息
-      const res: ResultType = await userCtrl.login(data.username, data.password)
+      const res: ResultType = await userCtrl.login(data.account, data.pwd)
       if (res.success) {
         this.userInfo = res.data
         this.userToken = res.data.accessToken
