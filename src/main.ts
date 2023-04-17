@@ -62,16 +62,16 @@ pinia.use(piniaPersist)
 app.use(pinia)
 app.use(VueGridLayout)
 setupRouter(app)
-app.use(ElementPlus)
+// app.use(ElementPlus)
 app.use(VForm3)
-// app.use(ElementPlus, {locale}) //国内
+app.use(ElementPlus, {locale}) //国内
 // await router.isReady()
 
-import Prism from 'prismjs';
+// import Prism from 'prismjs';
 
-VueMarkdownEditor.use(vuepressTheme, {
-  Prism,
-});
+// VueMarkdownEditor.use(vuepressTheme, {
+//   Prism,
+// });
 app.config.globalProperties.$Bus = Mit
 
 app.use(VueMarkdownEditor);
