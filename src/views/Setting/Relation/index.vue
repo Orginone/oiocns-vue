@@ -4,10 +4,8 @@
     <div class="body">
       <div class="tab-wrap">
         <el-tabs v-model="currentTab">
-          <el-tab-pane label="部门" name="dept"/>
-          <el-tab-pane label="工作组" name="job"/>
-          <el-tab-pane label="岗位" name="identity"/>
-          <el-tab-pane label="应用" name="app"/>
+          <el-tab-pane label="我的好友" name="dept"/>
+          <el-tab-pane label="加入的单位" name="job"/>
         </el-tabs>  
       </div>
       <component :is="components[currentTab]" />    

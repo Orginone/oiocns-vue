@@ -48,21 +48,6 @@ class Authority {
     isUserSpace(){
         return this.spaceId == this.userId
     }
-    /**加载当前登录信息 */
-    async Load() {
-        let res = await api.person.tokenInfo({})
-        if (res.success) {
-            this.userId = res.data.userId
-            this.spaceId = res.data.spaceId
-            
-            this.identitys = res.data.identitys
-            this.userInfo = res.data.userInfo
-            this.spaceInfo = res.data.spaceInfo
-        } else {
-            router.push("/login")
-        }
-        return res.data
-    }
     /** 是否包含对应权限
      * @param auths 权限数组
      * @param targetIds 组织数组

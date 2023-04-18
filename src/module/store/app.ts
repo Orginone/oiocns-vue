@@ -119,15 +119,15 @@ class appStore {
    * @param appId 应用id
    */
   public async queryInfo(appId: string) {
-    const { data, success } = await API.product.queryInfo({
-      data: {
-        id: appId
-      }
-    })
-    if (!success) {
-      return {}
-    }
-    return data
+    // const { data, success } = await API.product.queryInfo({
+    //   data: {
+    //     id: appId
+    //   }
+    // })
+    // if (!success) {
+    //   return {}
+    // }
+    // return data
   }
 
   /**

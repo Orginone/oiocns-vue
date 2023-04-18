@@ -146,7 +146,6 @@ import {
 } from "vue";
 import NavList from './components/navList.vue'
 import {docsCtrl,userCtrl,INullSpeciesItem, XAttribute} from '@/ts/coreIndex';
-import { result } from "lodash";
 
 
 const diyTable = ref(null);

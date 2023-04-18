@@ -16,9 +16,6 @@ import IconsResolver from 'unplugin-icons/resolver'
 // import svgLoader from 'vite-svg-loader';
 // console.log('类型', process.env.NODE_ENV)
 
-// import OptimizationPersist from 'vite-plugin-optimize-persist'
-// import PkgConfig from 'vite-plugin-package-config'
-
 export default defineConfig(({ command, mode }) => {
   console.log('运行环境', command, mode)
 
@@ -57,8 +54,6 @@ export default defineConfig(({ command, mode }) => {
           IconsResolver({ enabledCollections: 'ep' })
         ]
       }),
-      // PkgConfig(),
-      // OptimizationPersist(),
       Icons({
         autoInstall: true
       }),

@@ -6,22 +6,6 @@
       :options="options" 
       @selectionChange="selectionChange">
     </DiyTable>
-    <Teleport to="#app_breadcrumb_right" :disabled="!ready">
-      <el-row style="margin-right: 5px">
-        <transition name="el-zoom-in-center">
-          <el-input v-model="searchText"
-            v-show="showSearch"
-            placeholder="搜索"
-            :prefix-icon="Search"
-            size="small"
-            @keyup.stop.enter="loadData"
-          />
-        </transition>
-      </el-row>
-      <el-button type="text" @click="showSearch = !showSearch">
-        <el-icon :size="18"><Search /></el-icon>
-      </el-button>
-    </Teleport>
   </div>
 </template>
 <script setup lang="ts">

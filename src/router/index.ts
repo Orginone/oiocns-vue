@@ -1,7 +1,7 @@
 import { App } from 'vue'
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import Layout from '@/views/Layout/index.vue'
-import mine from './modules/mine'
+import Setting from './modules/setting'
 
 let resultRouter: RouteRecordRaw[] = []
 
@@ -50,7 +50,7 @@ const mainRouter: RouteRecordRaw[] = [
     }
   },
   // 我的
-  ...mine,
+  ...Setting,
   {
     component: () => import('@/views/Portal/home.vue'),
     name: 'workHome',

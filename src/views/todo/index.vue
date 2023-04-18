@@ -66,7 +66,6 @@ let router = useRouter()
 const filterText = ref('')
 const treeRef = ref()
 const state = reactive({
-  menuData: [],
   openeds: ['1', '2'],
   treeData: [],
   query: false, // 是否显示搜索框

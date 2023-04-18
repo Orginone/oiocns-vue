@@ -179,7 +179,7 @@
       { name: '沟通', icon: 'icon-message', path: '/chat', activeMatch: ['chat'], count: 0 },
       { name: '办事', icon: 'icon-todo', path: '/todo', activeMatch: ['todo'], count: 0 },
       { name: '仓库', icon: 'icon-store', path: '/store', activeMatch: ['store'] },
-      { name: '设置', icon: 'icon-settings', path: '/setCenter', activeMatch: ['setCenter', 'mine'] },  
+      { name: '设置', icon: 'icon-settings', path: '/setting', activeMatch: ['setting','setCenter'] },  
     ]
   })
   
@@ -214,8 +214,9 @@
   })
 
   const handleRouterChage = (item: any) => {
+    console.log
     if(item.name === '设置') {
-      router.push({path: workspaceData.value.typeName === '单位' || workspaceData.value.typeName === '大学'? item.path : '/mine'})
+      router.push({path: workspaceData.value.typeName === '单位' || workspaceData.value.typeName === '大学'? '/setCenter' : '/setting'})
     } else {
       router.push({ path: item.path })
     }
@@ -344,11 +345,12 @@
     //   })
   }
   const switchCompany = (data: { id: string }) => {
+    console.log('data',data)
     handleClose();
     modelIsShow.value = false
     store.setCurSpace(data.id)
-    if(['mine', 'setCenter'].includes(router.currentRoute.value.fullPath.split('/')[1])) {
-      location.href = `${location.origin}/#/${workspaceData.value.typeName === '单位' ? 'setCenter' : 'mine'}`
+    if(['setting','setCenter'].includes(router.currentRoute.value.fullPath.split('/')[1])) {
+      location.href = `${location.origin}/#/${(workspaceData.value.typeName === '单位'||workspaceData.value.typeName === '大学') ? 'setCenter' :'setting'}`
     } 
     location.reload()
     // $services.person
@@ -377,7 +379,7 @@
     dialogShow[3].value = true
   }
   const toUserSetting = () => {
-    router.push('/mine')
+    router.push('/setting')
   }
   const toSetting = () => {
     router.push('/setCenter')

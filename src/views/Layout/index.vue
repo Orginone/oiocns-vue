@@ -450,50 +450,6 @@
     menuArr.state = shopstoreJson
     })
   }
-  // const getNav = ()=>{
-  //     if(router.currentRoute.value.path.indexOf('store') != -1){    
-  //       storeFun()
-  //     }else if(router.currentRoute.value.path.indexOf('setCenter') != -1){
-  //       showMenu.value = true;
-  //       if (router.currentRoute.value.name === 'department') {
-  //           titleArr.state= {icon: 'User',title: '部门设置',"backFlag": true}
-  //           setCenterStore().GetDepartmentInfo().then((treeData)=> {
-  //             menuArr.state = treeData
-  //           })
-  //       } else if (router.currentRoute.value.name === 'unit') {
-  //         titleArr.state= settingJosn[0]
-  //         menuArr.state = settingJosn
-  //       } else if (router.currentRoute.value.name === 'post') {
-  //         titleArr.state= {icon: 'User',title: '岗位设置',"backFlag": true}
-  //         setCenterStore().GetIdentities().then((treeData)=> {
-  //           menuArr.state = treeData
-  //         })
-  //       } else {
-  //         let currentRouteName: any = router.currentRoute.value.name
-  //         const jsonData: any = setTree
-  //         if (['unit', 'group', 'data' , 'resource' , 'standard', 'authority'].includes(currentRouteName)) {
-  //           titleArr.state= jsonData[currentRouteName][0]
-  //           menuArr.state = jsonData[currentRouteName]
-  //         } else {
-  //           titleArr.state= settingJosn[0]
-  //           menuArr.state = settingJosn
-  //         }
-  //       }
-        
-  //     } else if (router.currentRoute.value.path.indexOf('mine') != -1) {
-  //       showMenu.value = true;
-  //       titleArr.state = userJosn[0]
-  //       menuArr.state = userJosn
-        
-  //     } else if (router.currentRoute.value.path.indexOf('service') != -1){
-  //       showMenu.value = true;
-  //       titleArr.state = detailJosn[0]
-  //       menuArr.state = detailJosn
-  //     } else {
-  //       showMenu.value = false;
-  //     }
-  // }
-  // getNav();
   getNavData2();
 
   watch(() => router.currentRoute.value.path, () => {
@@ -504,7 +460,7 @@
   })
 
   onBeforeMount(async () => {
-    await authority.Load()
+    // await authority.Load()
     // chat.start(useUserStore().userToken)
   })
 

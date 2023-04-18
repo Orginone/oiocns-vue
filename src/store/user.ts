@@ -87,15 +87,15 @@ export const useUserStore = defineStore({
         this.userToken = token
       }
       //获取用户详细信息
-      let res: ResultType = await $services.person.queryInfo()
-      if (res.success) {
-        this.queryInfo = res.data
-      } else {
-        ElMessage({
-          message: res.msg,
-          type: 'warning'
-        })
-      }
+      // let res: ResultType = await $services.person.queryInfo()
+      // if (res.success) {
+      //   this.queryInfo = res.data
+      // } else {
+      //   ElMessage({
+      //     message: res.msg,
+      //     type: 'warning'
+      //   })
+      // }
     },
     async getCompanyList(current: number, workspaceId: string, lazyLoad: boolean) {
       await userCtrl.user

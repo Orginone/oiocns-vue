@@ -156,15 +156,15 @@
     const templateContentLen = userOtherData.homeComplist ? userOtherData.homeComplist.length : 0
     editableTabsValue.value = templateContentLen > 0 ? templateContentLen - 1 : 0
     // 订阅工作空间数据变化
-    anystore.subscribed(`${store.workspaceData.id}`, 'user', (data) => {
-      // console.log('home===',data)
-      userOtherData.setWorkspace(data)
-      editableTabsValue.value =
-        data && data?.content && data?.content.length > 0 ? data?.content.length - 1 : 0
-    })
+    // anystore.subscribed(`${store.workspaceData.id}`, 'user', (data) => {
+    //   // console.log('home===',data)
+    //   userOtherData.setWorkspace(data)
+    //   editableTabsValue.value =
+    //     data && data?.content && data?.content.length > 0 ? data?.content.length - 1 : 0
+    // })
   })
   onBeforeUnmount(() => {
-    anystore.unSubscribed(`${store.workspaceData.id}`, 'user')
+    // anystore.unSubscribed(`${store.workspaceData.id}`, 'user')
   })
   // 删除tab
   const removeTabs = async (targetName: TabPanelName) => {

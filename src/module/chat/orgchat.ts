@@ -93,13 +93,13 @@ export default class OrgChat extends Object {
     public async start(accessToken: string) {
         if (this.accessToken != accessToken) {
             await this.stop()
-            let res = await api.person.tokenInfo({})
-            if (res.success) {
-                this.userId.value = res.data.userId
-                this.spaceId.value = res.data.spaceId
-            } else {
-                router.push("/login")
-            }
+            // let res = await api.person.tokenInfo({})
+            // if (res.success) {
+            //     this.userId.value = res.data.userId
+            //     this.spaceId.value = res.data.spaceId
+            // } else {
+            //     router.push("/login")
+            // }
         }
         this.stoped = false
         this.accessToken = accessToken

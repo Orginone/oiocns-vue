@@ -1,5 +1,5 @@
 <template>
-  <div class="mine">
+  <div class="setting">
     <userInfoBox></userInfoBox>
     <div class="tabBox">
       <diytab
@@ -115,7 +115,7 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
-.mine {
+.setting {
   padding: 5px 8px;
   display: flex;
   flex-direction: column;
