@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts" setup>
-import { docsCtrl } from "@/ts/coreIndex";
+// import { docsCtrl } from "@/ts/coreIndex";
 import { ElMessage } from "element-plus";
 import { onMounted, ref } from "vue";
 const props = defineProps<{

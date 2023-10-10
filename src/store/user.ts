@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 import $services from '@/services'
 import { ElMessage } from 'element-plus'
-import {userCtrl} from '@/ts/coreIndex'
+// import {userCtrl} from '@/ts/coreIndex'
 // import { type } from 'os'
-import { ICompany,SpaceType } from '@/ts/coreIndex';
+// import { ICompany,SpaceType } from '@/ts/coreIndex';
 
 type QueryInfoType = {
   id: string

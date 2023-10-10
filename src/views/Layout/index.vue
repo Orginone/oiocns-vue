@@ -52,35 +52,35 @@
 </template>
 
 <script lang="ts" setup>
-  import CustomHeadr from './components/customHeader.vue'
-  import MenuNav    from '@/components/menuItem/index.vue'
-  import Breadcrumb from '@/components/divBreadcrumb/index.vue'
-  import LoadingVue from './components/loading.vue'
-  import { useUserStore } from '@/store/user'
-  import { setCenterStore } from '@/store/setting'
-  const settingStore:any = setCenterStore()
-  import authority from '@/utils/authority'
+  // import CustomHeadr from './components/customHeader.vue'
+  // import MenuNav    from '@/components/menuItem/index.vue'
+  // import Breadcrumb from '@/components/divBreadcrumb/index.vue'
+  // import LoadingVue from './components/loading.vue'
+  // import { useUserStore } from '@/store/user'
+  // import { setCenterStore } from '@/store/setting'
+  // const settingStore:any = setCenterStore()
+  // import authority from '@/utils/authority'
   import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick,getCurrentInstance, onMounted} from 'vue'
   import { RouteLocationNormalizedLoaded, useRouter } from 'vue-router';
-  import storeJson from './json/store.json';
+  // import storeJson from './json/store.json';
   // import settingJosn from './json/setting.json';
-  import setTree from './json/setTree.json';
+  // import setTree from './json/setTree.json';
   // import serviceJson from './json/service.json';
   // import userJosn from './json/user.json';
-  import { appCtrl,userCtrl,thingCtrl,marketCtrl,INullSpeciesItem, todoCtrl as todo, docsCtrl } from '@/ts/coreIndex';
+  // import { appCtrl,userCtrl,thingCtrl,marketCtrl,INullSpeciesItem, todoCtrl as todo, docsCtrl } from '@/ts/coreIndex';
   import { createAllMenuTree, MenuDataItem, findMenu } from "./json/MenuData";
-  import { getAllNodes } from '@/utils/tree'
-  import { anystore } from '@/hubs/anystore'
+  // import { getAllNodes } from '@/utils/tree'
+  // import { anystore } from '@/hubs/anystore'
   // import {MarketModel} from "@/ts/market";
 
   const { proxy } = getCurrentInstance()
-  const store = useUserStore()
+  // const store = useUserStore()
 
   const btnType = ref<string>('');
   const addMenuDialog = ref<boolean>(false);
   const menuText = ref<string>('')
   const menuTree = ref(createAllMenuTree());
-  const allMenuItems = ref(getAllNodes(menuTree.value));
+  // const allMenuItems = ref(getAllNodes(menuTree.value));
   let activeIndex = ref<string>('1')
   
   onMounted(() => {

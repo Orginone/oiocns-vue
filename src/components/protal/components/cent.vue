@@ -62,15 +62,15 @@
 </template>
 
 <script lang="ts" setup>
-import { useUserStore } from '@/store/user'
+// import { useUserStore } from '@/store/user'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 // import { appstore } from '@/module/store/app'
 import { computed,onMounted,ref,reactive } from 'vue'
 import { ElMessage } from 'element-plus'
-import img1 from '@/assets/img/group22.png'
-import {marketCtrl} from '@/ts/coreIndex'
-import { useCommonStore } from '@store/common'
+// import img1 from '@/assets/img/group22.png'
+// import {marketCtrl} from '@/ts/coreIndex'
+// import { useCommonStore } from '@store/common'
 
 const store = useUserStore()
 const router = useRouter()

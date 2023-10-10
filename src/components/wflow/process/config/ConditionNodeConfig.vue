@@ -39,7 +39,7 @@
   } from 'vue';
   // import draggable from "vuedraggable";
   import GroupItem from "./ConditionGroupItemConfigNew.vue"
-  import {processCtrl} from '@/ts/coreIndex'
+  // import {processCtrl} from '@/ts/coreIndex'
   
   export default defineComponent({
     name: 'ConditionNodeConfig',

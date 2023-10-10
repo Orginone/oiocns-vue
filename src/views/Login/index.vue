@@ -62,6 +62,7 @@
   import { useMarketStore } from '@/store/market'
   import { useRouter } from 'vue-router'
   import { ElMessage } from 'element-plus'
+  import orgCtrl from '@/ts/controller';
 
   const dialogVisible = ref<boolean>(false)
   const carousel = ref<any>()
@@ -128,17 +129,23 @@
     stept.value = 'first'
     // carousel.value?.setActiveItem('first')
   }
-  const userLogin = (data: { password: string; username: string; remind: boolean }) => {
+  const userLogin = async (data: { password: string; username: string; remind: boolean }) => {
     btnLoading.value = true
-    store.updateUserInfo(data).then((res) => {
-      btnLoading.value = false
-      // if (data.remind) {
-      //   setCookie(data.username, data.password, 7)
-      // } else {
-      //   setCookie('', '', -1)
-      // }
-      router.push({ path: 'workHome' })
-    })
+    console.log('orgCtrl',orgCtrl);
+     const res = await orgCtrl.provider.login(data.username, data.password);
+     console.log('res',res);
+     if(res.msg == 'success'){
+      router.push('/home')
+     }
+    // store.updateUserInfo(data).then((res) => {
+    //   btnLoading.value = false
+    //   // if (data.remind) {
+    //   //   setCookie(data.username, data.password, 7)
+    //   // } else {
+    //   //   setCookie('', '', -1)
+    //   // }
+    //   router.push({ path: 'workHome' })
+    // })
   }
   const registerUser = (data: any) => {
     registerData = { ...registerData, ...data }

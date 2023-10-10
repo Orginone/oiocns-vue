@@ -38,12 +38,12 @@
 
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import GroupSideBarVue from "./components/groupSideBar.vue";
-import GroupHeaderVue from "./components/groupHeader.vue";
-import GroupInputBox from "./components/groupInputBox.vue";
-import GroupContent from "./components/groupContent.vue";
-import GroupDetail from "./components/groupDetail.vue";
-import { chatCtrl } from "@/ts/coreIndex";
+// import GroupSideBarVue from "./components/groupSideBar.vue";
+// import GroupHeaderVue from "./components/groupHeader.vue";
+// import GroupInputBox from "./components/groupInputBox.vue";
+// import GroupContent from "./components/groupContent.vue";
+// import GroupDetail from "./components/groupDetail.vue";
+// import { chatCtrl } from "@/ts/coreIndex";
 const isShowDetail = ref<boolean>(false);
 
 /**

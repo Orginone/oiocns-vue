@@ -9,11 +9,9 @@ NProgress.configure({showSpinner:false})
 router.beforeEach((to, from, next) => {
   // Start progress bar
   NProgress.start()
-  const store = useUserStore()
+  // const store = useUserStore()
   // console.log('路由守卫', 'token===>', !!store.userToken, 'to===>', to.path, 'from===>', from.path)
-
-  if (store.userToken) {
-    clearPending()
+  if (sessionStorage.getItem('accessToken')) {
     next()
   } else {
     if (to.path == '/login') {

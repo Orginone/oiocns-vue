@@ -48,9 +48,9 @@
 		onMounted,
     provide
 	} from 'vue';
-	import $services from '@/services'
-	import {userCtrl,processCtrl} from '@/ts/coreIndex';
-	import {deepClone} from '@orginone/oiocns-ts'
+	// import $services from '@/services'
+	// import {userCtrl,processCtrl} from '@/ts/coreIndex';
+	// import {deepClone} from '@orginone/oiocns-ts'
 	import LayoutHeader from './layout/LayoutHeader.vue';
 	// import FormDesign from './layout/FormDesign.vue'
 	import FormProcessDesign from './layout/FormProcessDesign.vue'

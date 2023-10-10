@@ -18,37 +18,37 @@
 import { defineComponent } from 'vue'
 import { ElConfigProvider,ElMessage } from 'element-plus'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
-import { logger,LoggerLevel } from '@/ts/coreIndex';
+// import { logger,LoggerLevel } from '@/ts/coreIndex';
 import moment from 'moment'
 
-logger.onLogger = (level:LoggerLevel, msg:any) => {
-  switch (level) {
-    case LoggerLevel.info:
-      ElMessage({
-        message: msg,
-        type: 'info'
-      })
-      break;
-    case LoggerLevel.warn:
-      ElMessage({
-        message: msg,
-        type: 'warning'
-      })
-      break;
-    case LoggerLevel.error:
-      ElMessage({
-        message: msg,
-        type: 'error'
-      })
-      break;
-    case LoggerLevel.unauth:
-        ElMessage({
-        message: msg,
-        type: 'error'
-      })
-      // return r.push('/login');
-  }
-}
+// logger.onLogger = (level:LoggerLevel, msg:any) => {
+//   switch (level) {
+//     case LoggerLevel.info:
+//       ElMessage({
+//         message: msg,
+//         type: 'info'
+//       })
+//       break;
+//     case LoggerLevel.warn:
+//       ElMessage({
+//         message: msg,
+//         type: 'warning'
+//       })
+//       break;
+//     case LoggerLevel.error:
+//       ElMessage({
+//         message: msg,
+//         type: 'error'
+//       })
+//       break;
+//     case LoggerLevel.unauth:
+//         ElMessage({
+//         message: msg,
+//         type: 'error'
+//       })
+//       // return r.push('/login');
+//   }
+// }
 export default defineComponent({
   components: {
     ElConfigProvider

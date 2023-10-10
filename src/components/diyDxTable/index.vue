@@ -43,14 +43,14 @@ import {
 } from "vue";
 import { useRouter } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
-import { setCenterStore } from "@/store/setting";
-import {
-  docsCtrl,
-  userCtrl,
-  thingCtrl,
-  todoCtrl as todo,
-  INullSpeciesItem,
-} from "@/ts/coreIndex";
+// import { setCenterStore } from "@/store/setting";
+// import {
+//   docsCtrl,
+//   userCtrl,
+//   thingCtrl,
+//   todoCtrl as todo,
+//   INullSpeciesItem,
+// } from "@/ts/coreIndex";
 import { ElMessage } from "element-plus";
 import {
   DxDataGrid,
