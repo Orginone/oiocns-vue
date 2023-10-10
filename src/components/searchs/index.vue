@@ -41,7 +41,7 @@
   import $services from '@/services'
   import { ref, reactive, onMounted, nextTick } from 'vue'
   import { ElMessage } from 'element-plus'
-  import {chatCtrl as chat} from '@/ts/coreIndex'
+  // import {chatCtrl as chat} from '@/ts/coreIndex'
   const dialogVisible = ref<boolean>(true)
   const diyTable = ref(null)
   // 表格展示数据

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import {userCtrl} from '@/ts/coreIndex';
+// import {userCtrl} from '@/ts/coreIndex';
 
 type SettingStoreType = {
   unitInfo: any,

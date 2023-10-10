@@ -24,14 +24,14 @@
 
   import DefaultProps from "./DefaultNodeProps"
 
-  import { useAppwfConfig } from '@/store/wflow';
+  // import { useAppwfConfig } from '@/store/wflow';
   import {
     APPROVAL_PROPS,
     CC_PROPS,
     DELAY_PROPS,
     TRIGGER_PROPS,
   } from './DefaultNodeProps';
-	import {processCtrl} from '@/ts/coreIndex';
+	// import {processCtrl} from '@/ts/coreIndex';
 
   export default defineComponent({
     name: 'ProcessTree',

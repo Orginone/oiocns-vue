@@ -343,7 +343,7 @@ export class Session extends Entity<schema.XEntity> implements ISession {
       this.coll.subscribe(
         [this.key],
         (res: { operate: string; data: model.ChatMessageType[] }) => {
-          res.data.map((item) => this.receiveMessage(res.operate, item));
+          res?.data.map((item) => this.receiveMessage(res.operate, item));
         },
       );
     } else {
