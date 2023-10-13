@@ -66,6 +66,9 @@ app.use(ElementPlus)
 app.use(VForm3)
 // app.use(ElementPlus, {locale}) //国内
 // await router.isReady()
+import orgIcons from './components/Common/GlobalComps/orgIcons.vue';
+
+app.component('orgIcons', orgIcons);
 
 import Prism from 'prismjs';
 
