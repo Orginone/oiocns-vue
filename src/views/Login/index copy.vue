@@ -1,117 +1,83 @@
 <template>
-  <div class="baseLayout">
-    <div class="container">
-      <div class="logo">OrginOne</div>
-      <div class="slider">
-        <el-carousel height="73vh">
-          <el-carousel-item class="sliderSlidesItem">
-            <img
-              class="sliderSlidesItemImg"
-              src="/img/passport/orginOne/passport_img1.png"
-              alt=""
-            />
-            <div class="sliderSlidesItemTitle">奥集能 Orginone</div>
-            <div class="sliderSlidesItemContent">
-              面向下一代互联网发展趋势，基于动态演化的复杂系统多主体建模方法，以所有权作为第一优先级，运用零信任安全机制，按自组织分形理念提炼和抽象“沟通、办事、存储、流通和设置”等基础功能，为b端和c端融合的全场景业务的提供新一代分布式应用架构。
-            </div>
-          </el-carousel-item>
-          <el-carousel-item class="sliderSlidesItem">
-            <img
-              class="sliderSlidesItemImg"
-              src="/img/passport/orginOne/passport_img2.png"
-              alt=""
-            />
-            <div class="sliderSlidesItemTitle">门户</div>
-            <div class="sliderSlidesItemContent">
-              汇聚各类动态信息，新闻资讯，交易商城，监控大屏，驾驶舱。用户可以按权限自由定义，千人千面。
-            </div>
-          </el-carousel-item>
-          <el-carousel-item class="sliderSlidesItem">
-            <img
-              class="sliderSlidesItemImg"
-              src="/img/passport/orginOne/passport_img3.png"
-              alt=""
-            />
-            <div class="sliderSlidesItemTitle">沟通</div>
-            <div class="sliderSlidesItemContent">
-              为个人和组织提供可靠、安全、私密的即时沟通工具，个人会话隐私保护优先，组织会话单位数据权利归属优先。
-            </div>
-          </el-carousel-item>
-          <el-carousel-item class="sliderSlidesItem">
-            <img
-              class="sliderSlidesItemImg"
-              src="/img/passport/orginOne/passport_img4.png"
-              alt=""
-            />
-            <div class="sliderSlidesItemTitle">办事</div>
-            <div class="sliderSlidesItemContent">
-              满足各类组织和跨组织协同办公，适应各类业务场景，支持发起、待办、已办、已完结等不同状态流程类业务审核审批查阅。
-            </div>
-          </el-carousel-item>
-          <el-carousel-item class="sliderSlidesItem">
-            <img
-              class="sliderSlidesItemImg"
-              src="/img/passport/orginOne/passport_img5.png"
-              alt=""
-            />
-            <div class="sliderSlidesItemTitle">存储</div>
-            <div class="sliderSlidesItemContent">
-              提供各类文件、数据、应用的存储空间。具有操作系统级文件和资源管理器功能。
-            </div>
-          </el-carousel-item>
-          <el-carousel-item class="sliderSlidesItem">
-            <img
-              class="sliderSlidesItemImg"
-              src="/img/passport/orginOne/passport_img6.png"
-              alt=""
-            />
-            <div class="sliderSlidesItemTitle">设置</div>
-            <div class="sliderSlidesItemContent">
-              进行个人和组织的关系设置，数据标准、办事和应用的定义和管理。无代码自定义表单、规则，灵活的流程配置。支持各类资源注册和管理。
-            </div>
-          </el-carousel-item>
-        </el-carousel>
-      </div>
-      <div class="login-foot">
-        <img src="/img/passport/orginOne/passport_bg.png" alt="" />
-        <div class="baseLayout_btmText"> 主办单位：<a
-            href="https://czt.zj.gov.cn"
-            target="_blank"
-            rel="noopener noreferrer"
-          >浙江省财政厅
-          </a>&nbsp;技术支持：<a
-            href="https://assetcloud.org.cn"
-            target="_blank"
-            rel="noopener noreferrer"
-          >资产云开放协同创新中心
-          </a>
-        </div>
-      </div>
+  <div class="container">
+    <div class="logo">OrginOne</div>
+    <div class="slider">
+      <el-carousel>
+        <el-carousel-item class="sliderSlidesItem">
+          <img
+            class="sliderSlidesItemImg"
+            src="/img/passport/orginOne/passport_img1.png"
+            alt=""
+          />
+          <div class="sliderSlidesItemTitle">奥集能 Orginone</div>
+          <div class="sliderSlidesItemContent">
+            面向下一代互联网发展趋势，基于动态演化的复杂系统多主体建模方法，以所有权作为第一优先级，运用零信任安全机制，按自组织分形理念提炼和抽象“沟通、办事、存储、流通和设置”等基础功能，为b端和c端融合的全场景业务的提供新一代分布式应用架构。
+          </div>
+        </el-carousel-item>
+        <el-carousel-item class="sliderSlidesItem">
+          <img
+            class="sliderSlidesItemImg"
+            src="/img/passport/orginOne/passport_img2.png"
+            alt=""
+          />
+          <div class="sliderSlidesItemTitle">门户</div>
+          <div class="sliderSlidesItemContent">
+            汇聚各类动态信息，新闻资讯，交易商城，监控大屏，驾驶舱。用户可以按权限自由定义，千人千面。
+          </div>
+        </el-carousel-item>
+        <el-carousel-item class="sliderSlidesItem">
+          <img
+            class="sliderSlidesItemImg"
+            src="/img/passport/orginOne/passport_img3.png"
+            alt=""
+          />
+          <div class="sliderSlidesItemTitle">沟通</div>
+          <div class="sliderSlidesItemContent">
+            为个人和组织提供可靠、安全、私密的即时沟通工具，个人会话隐私保护优先，组织会话单位数据权利归属优先。
+          </div>
+        </el-carousel-item>
+        <el-carousel-item class="sliderSlidesItem">
+          <img
+            class="sliderSlidesItemImg"
+            src="/img/passport/orginOne/passport_img4.png"
+            alt=""
+          />
+          <div class="sliderSlidesItemTitle">办事</div>
+          <div class="sliderSlidesItemContent">
+            满足各类组织和跨组织协同办公，适应各类业务场景，支持发起、待办、已办、已完结等不同状态流程类业务审核审批查阅。
+          </div>
+        </el-carousel-item>
+        <el-carousel-item class="sliderSlidesItem">
+          <img
+            class="sliderSlidesItemImg"
+            src="/img/passport/orginOne/passport_img5.png"
+            alt=""
+          />
+          <div class="sliderSlidesItemTitle">存储</div>
+          <div class="sliderSlidesItemContent">
+            提供各类文件、数据、应用的存储空间。具有操作系统级文件和资源管理器功能。
+          </div>
+        </el-carousel-item>
+        <el-carousel-item class="sliderSlidesItem">
+          <img
+            class="sliderSlidesItemImg"
+            src="/img/passport/orginOne/passport_img6.png"
+            alt=""
+          />
+          <div class="sliderSlidesItemTitle">设置</div>
+          <div class="sliderSlidesItemContent">
+            进行个人和组织的关系设置，数据标准、办事和应用的定义和管理。无代码自定义表单、规则，灵活的流程配置。支持各类资源注册和管理。
+          </div>
+        </el-carousel-item>
+      </el-carousel>
     </div>
-    <div class="baseLayout-loginBox">
-      <Login
-        v-show="stept == 'first'"
-        @register="register"
-        @userLogin="userLogin"
-        @forgetPassword="forgetPassword"
-        :btnLoading="btnLoading"
-      ></Login>
-      <UserInfo
-        v-show="stept == 'second'"
-        @gotoPrev="gotoPrev"
-        @gotoNext="gotoNext"
-      ></UserInfo>
-      <Register
-        v-show="stept == 'third'"
-        @gotoPrev="gotoPrev"
-        @registerUser="registerUser"
-        @gotoBack="register"
-      ></Register>
-      <Forget
-        v-show="stept == 'fourth'"
-        @gotoPrev="gotoPrev"
-        @resetPWD="resetPWD"
-      ></Forget>
+    <div class="login-foot">
+      <div>
+        <img src="/img/passport/orginOne/passport_bg.png" alt="" />
+      </div>
+      <div class="baseLayout_btmText">
+        Copyright 2021 资产云开放协同创新中⼼ 主办单位：浙江省财政厅
+      </div>
     </div>
   </div>
   <el-dialog v-model="dialogVisible" width="30%" center>
@@ -261,70 +227,30 @@ const setCookie = (username: string, password: string, days: any) => {
 </script>
 
 <style lang="scss" scoped>
-:deep(.el-dialog__body) {
-  display: flex;
-  flex-direction: column;
-}
-:deep(.el-carousel__container) {
-  height: 100%;
-}
-.dialogText {
-  font-size: 16px;
-  margin-bottom: 40px;
-}
-.dialogPrivate {
-  font-size: 26px;
-  text-align: center;
-  color: rgb(35, 72, 211);
-}
-.baseLayout {
-  width: 100%;
-  height: 100%;
-  &-bg {
-    position: absolute;
-    left: 40px;
-    bottom: 0;
-    width: 50%;
-    height: 80%;
-    background-size: 100% 100%;
-  }
-}
-.baseLayout-loginBox {
-  width: 25%;
-  height: 65%;
-  position: absolute;
-  right: 6.5%;
-  top: 30%;
-}
-div {
-  font-family: "PingFang SC";
-}
-.container {
-  width: 62.5%;
-  height: 100%;
-  display: grid;
-  align-items: center;
-  .logo {
-    position: absolute;
-    top: 43px;
-    left: 55.14px;
-    z-index: 1;
-    height: 40px;
-    font-size: 26px;
-    line-height: 44px;
-    font-weight: bold;
-    color: #fff;
-  }
-}
-
 .background {
   position: fixed;
   height: 100%;
   width: 62.5vw;
-  background-color: #deeaff;
+  background-color: #011736;
   img {
+    position: absolute;
     width: 100%;
+    bottom: 0;
   }
+}
+.logo {
+  position: absolute;
+  top: 43px;
+  left: 55.14px;
+  z-index: 1;
+  height: 24px;
+  font-family: Figtree;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 44px;
+  letter-spacing: 0em;
+  text-align: center;
+  color: white;
 }
 
 input[type="radio"] {
@@ -352,7 +278,178 @@ input[type="radio"] {
 .slider {
   z-index: 1;
   width: 62.5vw;
+  overflow: hidden;
+  &Slides {
+    display: -webkit-box;
+    transition: margin 0.8s;
+    &Item {
+      display: flex;
+      z-index: 1;
+      width: 62.5vw;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      &Img {
+        position: relative;
+        float: right;
+        object-fit: contain;
+        height: 300px;
+      }
+      div {
+        color: #fff;
+      }
+      &Title {
+        color: #ffffff;
+        font-size: 36px;
+        font-weight: bold;
+        line-height: 44px;
+        letter-spacing: 0;
+        text-align: center;
+      }
+      &Content {
+        margin-top: 23px;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        letter-spacing: 0;
+        text-align: center;
+        width: 500px;
+      }
+    }
+  }
+}
+
+.higher_img {
+  height: 65vh;
+}
+.higher_text {
+  position: relative;
+  bottom: 5vh;
+}
+
+.box {
+  width: 25vw;
+  height: 65%;
+  position: absolute;
+  left: 68.75vw;
+  top: 28%;
+}
+.copyright {
+  color: #8a8a8a;
+  width: 100%;
+  &Zh {
+    position: absolute;
+    bottom: 10px;
+    align-items: center;
+    left: 31.25%;
+    transform: translate(-50%, 0);
+  }
+  &En {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .sliderSlidesItemContent {
+    width: 300px;
+  }
+}
+
+@media (max-width: 800px) {
+  .logo {
+    color: black;
+  }
+  .count {
+    display: none;
+  }
+  .slider {
+    display: none;
+  }
+  .background {
+    display: none;
+  }
+  .box {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: auto;
+    left: auto;
+  }
+  .copyright {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    right: 0;
+    &Zh {
+      justify-content: center;
+      display: inline-flex;
+      left: auto;
+      transform: translate(0, 0);
+      width: 100%;
+    }
+    &En {
+      display: none;
+    }
+  }
+}
+
+div {
+  font-family: "PingFang SC";
+}
+.container {
+  width: 62.5%;
   height: 100%;
+  display: grid;
+  align-items: center;
+}
+
+.background {
+  position: fixed;
+  height: 100%;
+  width: 62.5vw;
+  background-color: #deeaff;
+  img {
+    width: 100%;
+  }
+}
+.logo {
+  position: absolute;
+  top: 43px;
+  left: 55.14px;
+  z-index: 1;
+  height: 40px;
+}
+
+input[type="radio"] {
+  display: none;
+}
+.count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  width: 5vw;
+  height: 6px;
+  top: 92vh;
+  left: 28.75vw;
+  gap: 6px;
+  label {
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    transition: width 0.5s;
+  }
+}
+
+.slider {
+  z-index: 1;
+  width: 62.5vw;
   position: fixed;
   top: 20px;
   &Slides {
@@ -467,34 +564,10 @@ input[type="radio"] {
     }
   }
 }
-.sliderSlidesItem {
-  div {
-    color: #fff;
-  }
-}
-.login-foot {
+.login-foot{
   position: fixed;
   left: 0;
   top: 0;
   width: 62.5%;
-  height: 100%;
-  background: rgb(1, 23, 54);
-  img {
-    position: absolute;
-    left: 0;
-    bottom: 0; 
-    width: 100%;
-  }
-  .baseLayout_btmText {
-    line-height: 22px;
-    position: absolute;
-    width: 500px;
-    text-align: center;
-    color: rgb(138, 138, 138);
-    left: 50%;
-    margin-left: -250px;
-    bottom: 10px;
-    font-size: 14px;
-  }
 }
 </style>
