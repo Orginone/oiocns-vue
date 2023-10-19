@@ -37,16 +37,6 @@
                 </DiyTable>
               </div>
             </div>
-            <CreateUnitDialog
-              :dialogShow="dialogShow"
-              @switchCreateCompany="closeDialog"
-            ></CreateUnitDialog>
-            <searchCompany
-              v-if="friendDialog"
-              @closeDialog="()=> {friendDialog = false}"
-              :serachType="3"
-              @checksSearch="checksSearch"
-            ></searchCompany>
           </div>
         </div>
       </div>
