@@ -2,70 +2,40 @@
   <el-container class="pages home-wrap">
       <slide></slide>
       <div class="content">
-        <div class="head">
-          
-        </div>
+        <headContent></headContent>
+        <routerContent></routerContent>
       </div>
   </el-container>
 </template>
 
 <script lang="ts" setup>
   import slide from './components/slide.vue';
-  import { getCurrentInstance, onMounted} from 'vue';
+  import headContent from './components/headContent.vue';
+  import routerContent from './components/routerContent.vue';
 
-  const { proxy } = getCurrentInstance()
-  const msgCount:Number = 0;
-  const workCount:Number = 0;
-  const actions = [
-    {
-      text: '门户',
-      icon: 'home',
-      path: '/home',
-      count: 0,
-    },
-    {
-      text: '沟通',
-      icon: 'chat',
-      path: '/chat',
-      count: msgCount,
-    },
-    {
-      text: '办事',
-      icon: 'work',
-      path: '/work',
-      count: workCount,
-    },
-    {
-      text: '存储',
-      icon: 'store',
-      path: '/store',
-      count: 0,
-    },
-    {
-      text: '设置',
-      icon: 'setting',
-      path: '/setting',
-      count: 0,
-    },
-  ];
-  
+  import { getCurrentInstance, onMounted} from 'vue';
+  import {
+  Document,  Menu as IconMenu,  Location, Setting,} from '@element-plus/icons-vue'
   onMounted(() => {
 
   })
-  const instance = getCurrentInstance();
-  instance?.proxy?.$Bus.on('refreshNav', () => { getNavData2() })
-</script>
-
-<style lang="scss" scoped>
-  .slide{
-    width: 60px;
-    height: 100%;
-    background-color: #fafafa;
-    border-right: rgba(227,226,226,.8) solid 1px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  const handleOpen = (key: string, keyPath: string[]) => {
+    console.log(key, keyPath)
   }
+  const handleClose = (key: string, keyPath: string[]) => {
+    console.log(key, keyPath)
+  }
+</script>
+<style>
+div{
+  font-size: 14px;
+}
+</style>
+<style lang="scss" scoped>
+  .pages{
+    display: flex;
+  }
+
   .item{
     padding: 10px 0;
     img{
@@ -77,6 +47,11 @@
       line-height: 18px;
       color: #888;
     }
+  }
+  .content{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
 </style>

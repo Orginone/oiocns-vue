@@ -1,7 +1,7 @@
 <template>
   <Suspense>
     <template #default>
-      <el-config-provider :locale="locale">
+      <el-config-provider>
         <div class="pages" @contextmenu.prevent>
           <router-view />
         </div>
@@ -17,7 +17,7 @@
 
 import { defineComponent } from 'vue'
 import { ElConfigProvider,ElMessage } from 'element-plus'
-import zhCn from 'element-plus/lib/locale/lang/zh-cn'
+// import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 // import { logger,LoggerLevel } from '@/ts/coreIndex';
 import moment from 'moment'
 
@@ -55,13 +55,17 @@ export default defineComponent({
   },
   setup() {
     return {
-      locale: zhCn
+      // locale: zhCn
     }
   }
 })
 </script>
 
 <style lang="scss">
+
+.mx-context-menu{
+  border-radius: 0 !important;
+}
 .el-dialog>.el-dialog__header ,.el-drawer >.el-drawer__header {
   background-color: var(--el-fill-color-light) !important;
   margin-right: 0 !important;

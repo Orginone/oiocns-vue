@@ -1,6 +1,6 @@
 <template>
   <div class="icons">
-      <div class="img" :src=imgUrl.value></div>
+      <img class="img" :src=imgUrl />
   </div>
 </template>
 
@@ -12,25 +12,10 @@
 </script>
 
 <style lang="scss" scoped>
-  .slide{
-    width: 60px;
-    height: 100%;
-    background-color: #fafafa;
-    border-right: rgba(227,226,226,.8) solid 1px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .item{
-    padding: 10px 0;
+  .icons{
     img{
       width: 26px;
       height: 26px;
-    }
-    .item-text{
-      font-size: 12px;
-      line-height: 18px;
-      color: #888;
     }
   }
 

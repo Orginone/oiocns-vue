@@ -68,6 +68,11 @@ app.use(VForm3)
 // await router.isReady()
 import orgIcons from './components/Common/GlobalComps/orgIcons.vue';
 
+import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
+import ContextMenu from '@imengyu/vue3-context-menu'
+
+app.use(ContextMenu)     
+
 app.component('orgIcons', orgIcons);
 
 import Prism from 'prismjs';
