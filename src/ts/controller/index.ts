@@ -40,6 +40,7 @@ class IndexController extends Controller {
   get targets(): ITarget[] {
     return this.provider.targets;
   }
+  /** 加载应用 */
   async loadApplications(): Promise<IApplication[]> {
     const apps: IApplication[] = [];
     for (const directory of this.targets
