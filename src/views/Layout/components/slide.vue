@@ -3,12 +3,18 @@
     
     <div class="slide">
       <div class="user">
+        <!-- TODO:改用entityicon -->
         <img src="/svg/home.svg" alt="" />
       </div>
-      <div class="item" v-for="(item, index) in actions" :key="index">
+      <RouterLink 
+        :to="item.path"
+        class="item" 
+        v-for="(item, index) in actions" :key="index"
+        @click=""
+      >
         <orgIcons :url="item.icon"></orgIcons>
         <div class="item-text">{{ item.text }}</div>
-      </div>
+      </RouterLink>
     </div>
     <div class="exit" url="exit">
       <orgIcons :url="'exit'"></orgIcons>
@@ -18,7 +24,7 @@
 
 <script lang="ts" setup>
 import { getCurrentInstance, onMounted } from "vue";
-
+import orgIcons from "@/components/Common/GlobalComps/orgIcons.vue";
 const { proxy } = getCurrentInstance();
 const msgCount: Number = 0;
 const workCount: Number = 0;

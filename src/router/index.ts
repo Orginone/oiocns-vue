@@ -40,7 +40,7 @@ const mainRouter: RouteRecordRaw[] = [
     }
   },
   {
-    component: () => import('@/views/Chat/index.vue'),
+    component: () => import('@/views/Chats/index.vue'),
     name: 'chat',
     path: '/chat',
     meta: {

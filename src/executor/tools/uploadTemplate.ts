@@ -1,0 +1,1 @@
+export const uploadTemplate = (entity:any)=>{}
