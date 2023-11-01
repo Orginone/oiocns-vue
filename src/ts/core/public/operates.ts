@@ -172,12 +172,6 @@ export const directoryOperates = {
     label: '新建迁移配置',
     iconType: '迁移配置',
   },
-  NewPageTemplate: {
-    sort: 11,
-    cmd: 'newPageTemplate',
-    label: '新建页面模板',
-    iconType: '页面模板',
-  },
 };
 
 /** 目录下新增 */
@@ -195,7 +189,6 @@ export const directoryNew = {
     directoryOperates.NewApp,
     directoryOperates.NewForm,
     directoryOperates.NewTransferConfig,
-    directoryOperates.NewPageTemplate,
   ],
 };
 

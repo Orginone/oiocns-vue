@@ -163,6 +163,7 @@ export class WorkProvider implements IWorkProvider {
       },
       isCountQuery: true,
     });
+    
     if (res.success) {
       return res.totalCount;
     }

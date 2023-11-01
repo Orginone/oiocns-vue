@@ -1,9 +1,31 @@
+<!-- Layout -->
 <template>
   <el-container class="pages home-wrap">
       <slide></slide>
+      <!-- 命令执行器 -->
+      <Executor />
+      <!-- 内容布局 -->
       <div class="content">
-        <headContent></headContent>
-        <routerContent></routerContent>
+        <Suspense>
+          <template #default>
+            <router-view v-slot="{ Component }">
+              <!-- <transition name="fade-transform"> -->
+              <keep-alive v-if="$route.meta.keepAlive">
+                <component :is="Component" />
+              </keep-alive>
+              <component v-else :is="Component" />
+              <!-- </transition> -->
+            </router-view>
+          </template>
+
+          <template #fallback>
+            <LoadingVue />
+          </template>
+        </Suspense>
+        <!-- 头部 -->
+        <!-- <headContent></headContent> -->
+        <!-- 内容布局 -->
+        <!-- <routerContent></routerContent> -->
       </div>
   </el-container>
 </template>
@@ -25,7 +47,12 @@
   const handleClose = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
   }
+
+
+  // 命令执行器
+import Executor from '@/executor/index.vue'; 
 </script>
+
 <style>
 div{
   font-size: 14px;

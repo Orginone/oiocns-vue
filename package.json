@@ -18,6 +18,8 @@
     "@orginone/oiocns-ts": "^1.1.20",
     "@types/qrcode": "^1.5.0",
     "@vueuse/core": "^9.6.0",
+    "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-vue": "^5.1.12",
     "@wcjiang/notify": "^2.1.0",
     "@yzfe/svgicon": "1.0.1",
     "@yzfe/vue3-svgicon": "1.0.1",
