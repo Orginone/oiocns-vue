@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts" setup>
-  import listContent from './listContent.vue';
+import listContent from './listContent.vue';
 import { getCurrentInstance, onMounted } from "vue";
 import {
   Document,
