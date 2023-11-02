@@ -5,9 +5,36 @@
         <orgIcons :url="'setting'"></orgIcons>
         <div>管理</div>
       </div>
-      <!-- --{{menuList}}-- -->
       <div class="meni-common">
-        <MenuList :items="menuList" @select="changeActive" :active-index="data.key"/>
+        <el-menu
+          default-active="2"
+          class="el-menu-vertical-demo"
+          @open="handleOpen"
+          @close="handleClose"
+        >
+          <el-sub-menu index="1">
+            <template #title>
+              <el-icon><location /></el-icon>
+              <span>目录</span>
+            </template>
+            
+            <el-menu-item index="1-1">目录1</el-menu-item>
+            <el-menu-item index="1-2">目录2</el-menu-item>
+            <el-menu-item index="1-3">目录3</el-menu-item> 
+          </el-sub-menu>
+          <el-menu-item index="2">
+            <el-icon><icon-menu /></el-icon>
+            <span>目录2</span>
+          </el-menu-item>
+          <el-menu-item index="3" disabled>
+            <el-icon><document /></el-icon>
+            <span>目录</span>
+          </el-menu-item>
+          <el-menu-item index="4">
+            <el-icon><setting /></el-icon>
+            <span>目录</span>
+          </el-menu-item>
+        </el-menu>
       </div>
     </div>
     <div class="active">
@@ -28,30 +55,15 @@
 </template>
 
 <script lang="ts" setup>
-import listContent from './listContent.vue';
-import MenuList from './subMenu/menu-list.vue'
-
-const data = reactive<any>({
-  key:"",
-})
-const props = defineProps({
-  menuList: {
-    type:Object
-  },
-})
-// const emit = defineEmits(['select'])
-watch(
-  ()=>props.menuList,
-  (val,preVal)=>{
-      //val为修改后的值,preVal为修改前的值
-      console.log("message",val)
-  },
-  {
-      immediate:true,
-      deep:true,
-  }
-)
-console.log('ac',props);
+  import listContent from './listContent.vue';
+import { getCurrentInstance, onMounted } from "vue";
+import {
+  Document,
+  Menu as IconMenu,
+  Location,
+  Setting,
+} from "@element-plus/icons-vue";
+onMounted(() => {});
 const handleOpen = (key: string, keyPath: string[]) => {
   console.log(key, keyPath);
 };
@@ -60,10 +72,9 @@ const handleClose = (key: string, keyPath: string[]) => {
 };
 const showType = ref('');
 const changeNav = (name:string)=>{
+ 
   showType.value = name
-}
-const changeActive = (key:any)=>{
-    // data.key = obj.key
+  console.log('name',showType.value)
 }
 </script>
 

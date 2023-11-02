@@ -40,7 +40,7 @@ export const useUserStore = defineStore({
   },
   persist: {
     //  固化插件
-    enabled: true, // 开启存储
+    enabled: false, // 关闭存储，否则会有循环引用转JSON的问题
     strategies: [
       // 指定存储的位置以及存储的变量都有哪些，该属性可以不写，
       //在不写的情况下，默认存储到 sessionStorage 里面,默认存储 state 里面的所有数据。
