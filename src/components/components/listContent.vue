@@ -105,17 +105,9 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import type { UploadProps } from 'element-plus'
-import { setCenterStore } from "@/store/setting";
-import {storeToRefs} from 'pinia';
-//创建仓库对象
-const store= setCenterStore();
-let {currItem}=storeToRefs(store);//结构store
- const contentData = reactive({
-    currItem : currItem
- })
-watchEffect(() => {
-  console.log('currItem change-->',contentData.currItem); 
-});
+const dialogFormVisible = ref(false)
+const showIndex= ref('1');
+const imageUrl = ref('')
 
 const handleAvatarSuccess: UploadProps['onSuccess'] = (
   response,
@@ -160,7 +152,7 @@ const onContextMenu = (e : MouseEvent)=> {
   }); 
 }
 const forwardingMessage =()=>{
-  dialogFormVisible.value = true;
+    dialogFormVisible.value = true;
 }
 const formLabelWidth = '140px'
 

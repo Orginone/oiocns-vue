@@ -1,4 +1,3 @@
-import TypeIcon from '@/components/Common/GlobalComps/typeIcon';
 import { command } from '@/ts/base';
 import { OperateModel } from '@/ts/base/model';
 import { IFile } from '@/ts/core';
@@ -29,7 +28,7 @@ export const loadFileMenus = (file: IFile, mode: number = 0) => {
         key: o.cmd,
         label: parseLabel(o.label),
         model: o.model ?? 'inside',
-        icon: o.menus ? <></> : <TypeIcon iconType={o.iconType} size={16} />,
+        icon: '',
         beforeLoad: async () => {
           command.emitter('executor', o.cmd, file);
           return true;
@@ -40,7 +39,7 @@ export const loadFileMenus = (file: IFile, mode: number = 0) => {
             return {
               key: s.cmd,
               label: parseLabel(s.label),
-              icon: <TypeIcon iconType={s.iconType} size={16} />,
+              icon: '',
               beforeLoad: async () => {
                 command.emitter('executor', s.cmd, file);
                 return true;
