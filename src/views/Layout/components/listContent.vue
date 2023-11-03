@@ -153,7 +153,7 @@ const onContextMenu = (e : MouseEvent)=> {
   }); 
 }
 const forwardingMessage =()=>{
-    dialogFormVisible.value = true;
+  dialogFormVisible.value = true;
 }
 const formLabelWidth = '140px'
 
