@@ -1,62 +1,32 @@
 <template>
   <div class="content-wrap">
     <div class="content" ref="buttonRef" @contextmenu="onContextMenu">
-        <div class="list" v-if="showIndex ==1">
-            <div class="list-item">
+        <div class="list" v-if="contentData.showIndex ==1">
+            <div class="list-item" v-for="(item,index) in contentData.contentList" :key="index">
                 <img src="/svg/home.svg" alt="" />
                 <div class="list-item-com">
-                    <p class="list-item-name">浙江元翼 <el-tag class="ml-2" type="success">群组 </el-tag> </p>
-                    <p class="list-item-text">元翼科技是一家领先的云原生平台及应用开发解决方案服务商，专注于提供全口径、全生命周期、全员管理的资产管理解决方案；</p>
+                    <p class="list-item-name">{{item._metadata.name}} <el-tag class="ml-2" type="success">{{item._metadata.typeName}} </el-tag> </p>
+                    <p class="list-item-text"> {{item._metadata.remark}}</p>
                 </div>
-                <div class="list-item-time">9月20日 15:28</div>
-            </div>
-            <div class="list-item">
-                <img src="/svg/home.svg" alt="" />
-                <div class="list-item-com">
-                    <p class="list-item-name">浙江元翼 <el-tag class="ml-2" type="success">群组</el-tag></p>
-                    <p class="list-item-text">元翼科技是一家领先的云原生平台及应用开发解决方案服务商，专注于提供全口径、全生命周期、全员管理的资产管理解决方案；元翼科技是一家领先的云原生平台及应用开发解决方案服务商，专注于提供全口径、全生命周期、全员管理的资产管理解决方案；</p>
-                </div>
-                <div class="list-item-time">9月20日 15:28</div>
-            </div>
-            <div class="list-item">
-                <img src="/svg/home.svg" alt="" />
-                <div class="list-item-com">
-                    <p class="list-item-name">浙江元翼 <el-tag class="ml-2" type="success">群组</el-tag></p>
-                    <p class="list-item-text">元翼科技是一家领先的云原生平台及应用开发解决方案服务商，专注于提供全口径、全生命周期、全员管理的资产管理解决方案；</p>
-                </div>
-                <div class="list-item-time">9月20日 15:28</div>
+                <div class="list-item-time">{{item._metadata.createTime.slice(5,16)}}</div>
             </div>
         </div>
         <div class="card" v-else>
-          <div class="card-item">
+          <div class="card-item" v-for="(item,index) in contentData.contentList" :key="index">
               <img src="/svg/home.svg" alt="" />
               <div class="card-item-com">
-                  <p class="card-item-name">浙江元翼</p>
-                  <p class="card-item-type">群组</p>
-              </div>
-          </div>
-          <div class="card-item">
-              <img src="/svg/home.svg" alt="" />
-              <div class="card-item-com">
-                  <p class="card-item-name">浙江元翼</p>
-                  <p class="card-item-type">群组</p>
-              </div>
-          </div>
-          <div class="card-item">
-              <img src="/svg/home.svg" alt="" />
-              <div class="card-item-com">
-                  <p class="card-item-name">浙江元翼</p>
-                  <p class="card-item-type">群组</p>
+                  <p class="card-item-name">{{item._metadata.name}}</p>
+                  <p class="card-item-type">{{item._metadata.typeName}}</p>
               </div>
           </div>
         </div>
         <div class="list-foot">
-            <div class="foot-num">38个项目</div>
+            <div class="foot-num">{{contentData.contentList.length}}个项目</div>
             <div class="foot-check">
-                <div class="show-type" :class="showIndex==1?'show-active':''" @click="showIndex='1'">
+                <div class="show-type" :class="contentData.showIndex==1?'show-active':''" @click="contentData.showIndex='1'">
                   <img src="/svg/list.png" alt="">
                 </div>
-                <div class="show-type" :class="showIndex==2?'show-active':''"  @click="showIndex='2'">
+                <div class="show-type" :class="contentData.showIndex==2?'show-active':''"  @click="contentData.showIndex='2'">
                   <img src="/svg/table.png" alt="">
                 </div>
             </div>
@@ -101,7 +71,7 @@
 <script lang="ts" setup>
 //@ts-nocheck
 import ContextMenu from '@imengyu/vue3-context-menu'
-import { ref } from 'vue'
+import { command, parseAvatar, schema } from '@/ts/base';
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import type { UploadProps } from 'element-plus'
@@ -110,13 +80,36 @@ import {storeToRefs} from 'pinia';
 //创建仓库对象
 const store= setCenterStore();
 let {currItem}=storeToRefs(store);//结构store
- const contentData = reactive({
-    currItem : currItem
- })
+const dialogFormVisible =ref(false) ;
+const contentData = reactive({
+  showIndex:1,
+  currItem : currItem,
+  contentList :[],
+})
 watchEffect(() => {
-  console.log('currItem change-->',contentData.currItem); 
+  if(contentData.currItem.item?.content()){
+    let list  = contentData.currItem.item?.content()
+    console.log('list',list);
+    list.forEach(item => {
+      // if(item?._metadata?.icon){
+      //   item?._metadata?.icon = parseAvatar(item?._metadata?.icon)
+      // }
+    });
+    contentData.contentList = list
+  }
+  // console.log('current',contentData.currItem.item,contentData.currItem.item?.cacheFlag)
+  // console.log('currItem change-->',); 
 });
-
+const getContent = () => {
+  const contents: IFile[] = [];
+  if (props.current === 'disk') {
+    contents.push(orgCtrl.user, ...orgCtrl.user.companys);
+  } else {
+    console.log('props.current.content()', props.current.content());
+    contents.push(...props.current.content());
+  }
+  return contents;
+};
 const handleAvatarSuccess: UploadProps['onSuccess'] = (
   response,
   uploadFile
@@ -226,12 +219,15 @@ const form = reactive({
     .card{
       padding: 20px;
       display: flex;
+      flex-wrap: wrap;
+      
       .card-item{
         width: 160px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        margin-bottom: 20px;
       }
       img{
         width: 42px;
