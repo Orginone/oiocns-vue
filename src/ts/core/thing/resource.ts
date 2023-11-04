@@ -1,6 +1,5 @@
 import { XCollection } from '../public/collection';
 import {
-  XPageTemplate,
   XApplication,
   XDirectory,
   XForm,
@@ -9,8 +8,9 @@ import {
   XSpeciesItem,
   XTarget,
   Xbase,
+  XPageTemplate,
 } from '../../base/schema';
-import { ChatMessageType, Transfer } from '@/ts/base/model';
+import { BucketOpreates, ChatMessageType, Transfer } from '@/ts/base/model';
 import { kernel, model } from '@/ts/base';
 import { blobToDataUrl, encodeKey, generateUuid, sliceFile } from '@/ts/base/common';
 
@@ -60,13 +60,8 @@ export class DataResource {
   async preLoad(reload: boolean = false): Promise<void> {
     if (this._proLoaded === false || reload) {
       await Promise.all([
-        this.formColl.all(reload),
-        this.speciesColl.all(reload),
-        this.propertyColl.all(reload),
-        this.transferColl.all(reload),
         this.directoryColl.all(reload),
         this.applicationColl.all(reload),
-        this.templateColl.all(reload),
       ]);
     }
     this._proLoaded = true;
@@ -87,6 +82,13 @@ export class DataResource {
   /** 文件桶操作 */
   async bucketOpreate<R>(data: model.BucketOpreateModel): Promise<model.ResultType<R>> {
     return await kernel.bucketOpreate<R>(this.target.belongId, this.relations, data);
+  }
+  /** 删除文件目录 */
+  async deleteDirectory(directoryId: string): Promise<void> {
+    await this.bucketOpreate({
+      key: encodeKey(directoryId),
+      operate: BucketOpreates.Delete,
+    });
   }
   /** 上传文件 */
   public async fileUpdate(

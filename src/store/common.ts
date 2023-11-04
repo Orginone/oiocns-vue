@@ -13,7 +13,7 @@ export const useCommonStore = defineStore({
   },
   persist: {
     //  固化插件
-    enabled: true, // 开启存储
+    enabled: false, // 开启存储
     strategies: [
       {
         storage: sessionStorage,

@@ -9,6 +9,7 @@ import {
   XSpecies,
   XStandard,
   XTarget,
+  XThing,
 } from './schema';
 // 请求类型定义
 export type ReqestType = {
@@ -559,23 +560,6 @@ export type GetDirectoryModel = {
   page: PageModel | undefined;
 };
 
-export type AnyThingModel = {
-  /** 唯一ID */
-  Id: string;
-  /** 名称 */
-  Name: string;
-  /** 状态 */
-  Status: string;
-  /** 创建人 */
-  Creater: string;
-  /** 创建时间 */
-  CreateTime: string;
-  /** 变更时间 */
-  ModifiedTime: string;
-  /** 其它信息 */
-  [field: string]: any;
-};
-
 export type WorkDefineModel = {
   // 流程ID
   id: string;
@@ -674,11 +658,13 @@ export type FiledLookup = {
 
 export type FormEditData = {
   /** 操作前数据体 */
-  before: AnyThingModel[];
+  before: XThing[];
   /** 操作后数据体 */
-  after: AnyThingModel[];
+  after: XThing[];
   /** 流程节点Id */
   nodeId: string;
+  /** 表单名称 */
+  formName: string;
   /** 操作人 */
   creator: string;
   /** 操作时间 */
@@ -907,6 +893,7 @@ export type OperateModel = {
   sort: number;
   label: string;
   iconType: string;
+  model?: string;
   menus?: OperateModel[];
 };
 
@@ -984,11 +971,11 @@ export type Node = {
   // 名称
   name: string;
   // 类型
-  typeName: string;
+  typeName: NodeType;
   // 前置脚本
-  preScripts?: string;
+  preScript?: string;
   // 后置脚本
-  postScripts?: string;
+  postScript?: string;
   // 状态
   status?: NStatus;
 };
@@ -1009,10 +996,15 @@ export type Request = {
 } & Node;
 
 // 表格
-export type Tables = { formIds: string[]; file?: FileItemModel } & Node;
+export type Tables = {
+  formIds: string[];
+  file?: FileItemModel;
+} & Node;
 
 // 页
 export type Sheet<T> = {
+  // 主键
+  id: string;
   // 名称
   name: string;
   // 列信息
@@ -1031,14 +1023,20 @@ export interface Column {
   dataIndex: string;
   // 类型
   valueType: string;
+  // 映射
+  lookups?: { id: string; text: string; value: string }[];
 }
 
 // 映射
 export type Mapping = {
   // 源
-  source: string;
+  source?: string;
   // 目标
-  target: string;
+  target?: string;
+  // 原 Id 字段名称
+  idName: string;
+  // 映射类型
+  mappingType: MappingType;
   // 映射
   mappings: SubMapping[];
 } & Node;
@@ -1049,26 +1047,34 @@ export type SubMapping = {
   source: string;
   // 目标对象
   target: string;
+  // 类型
+  typeName?: string;
   // 子映射
   mappings?: SubMapping[];
 };
 
 // 存储
 export type Store = {
-  // 存储目录
-  directoryId: string;
+  // 应用
+  applicationId?: string;
   // 办事
-  workId: string;
-  // 表单
-  formIds: string[];
-  // 是否直接存入平台
-  directIs: boolean;
+  workId?: string;
 } & Node;
 
 // 子配置
 export type SubTransfer = {
   // 子配置 ID
-  nextId: string;
+  transferId?: string;
+  // 是否自循环
+  isSelfCirculation: boolean;
+  // 退出循环脚本
+  judge?: string;
+} & Node;
+
+// 表单
+export type Form = {
+  // 表单 ID
+  formId?: string;
 } & Node;
 
 // 选择
@@ -1097,22 +1103,25 @@ export type Script = {
 };
 
 // 图状态
-export type GStatus = 'Editable' | 'Viewable' | 'Running' | 'Completed' | 'Error';
+export type GStatus = 'Editable' | 'Viewable' | 'Running' | 'Error';
 
 // 图事件
-export type GEvent = 'EditRun' | 'ViewRun' | 'Throw' | 'Completed';
+export type GEvent = 'Prepare' | 'Run' | 'Complete' | 'Edit' | 'Throw' | 'Recover';
 
 // 节点状态
-export type NStatus = GStatus;
+export type NStatus = 'Stop' | 'Running' | 'Error' | 'Completed';
 
 // 节点事件
-export type NEvent = '';
+export type NEvent = 'Start' | 'Throw' | 'Complete';
 
 // 节点类型
 export type NodeType = '表单' | '表格' | '请求' | '子图' | '映射' | '存储';
 
 // 脚本位置
 export type Pos = 'pre' | 'post';
+
+// 映射类型（外部系统 => 内部系统，外部系统 => 外部系统，内部系统 => 外部系统，内部系统 => 内部系统）
+export type MappingType = 'OToI' | 'OToO' | 'IToO' | 'IToI';
 
 // 键值对
 export type KeyValue = { [key: string]: string | undefined };
@@ -1141,10 +1150,6 @@ export type Transfer = {
   edges: Edge[];
   // 图数据
   graph: any;
-  // 是否自循环
-  isSelfCirculation: boolean;
-  // 退出循环脚本
-  judge: string;
 } & XStandard;
 
 // 任务
@@ -1198,56 +1203,6 @@ export type SchemaType = {
   properties: Record<string, object>;
   column: 1 | 2 | 3;
 };
-
-export type CommonAppplication = {
-  // 应用Id
-  id: string;
-  // 展示归属组织
-  spaceId: string;
-};
-
-/** 代码构建 */
-export type codeBuildType = {
-  git: string;
-  dockerfile: string;
-  image: string;
-  registry_tokencreateTime: string;
-};
-/** 新建文档 */
-export type documentType = {
-  name: string;
-};
-// 页面设计
-export interface IPageTemplate<T extends string> {
-  kind: T;
-  // 其他属性通过模块补充增加
-}
-
-export interface ShopTemplate extends IPageTemplate<"shop"> {
-
-}
-
-export interface NewsTemplate extends IPageTemplate<"news"> {
-
-}
-
-export interface PageTemplatePresetMap {
-  "shop": ShopTemplate;
-  "news": NewsTemplate;
-}
-
-export type PageTemplatePreset = PageTemplatePresetMap[keyof PageTemplatePresetMap];
-
-/** 类型保护，判断一个模板是不是内置模板 */
-export function isPageTemplatePreset(template: PageTemplate): template is PageTemplatePreset {
-  return ["shop", "news"].includes(template.kind);
-}
-
-export type PageTemplate<T extends string = string> =  T extends keyof PageTemplatePresetMap
-  ? PageTemplatePresetMap[T]
-  : IPageTemplate<T>;
-
-export type XPageTemplate<T extends string = string> = XStandard & PageTemplate<T>;
 
 export type DiskInfoType = {
   // 状态

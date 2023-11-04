@@ -49,6 +49,16 @@ const mainRouter: RouteRecordRaw[] = [
       id: "chat"
     }
   },
+  {
+    component: () => import('@/views/Setting/index.vue'),
+    name: 'setting',
+    path: '/setting',
+    meta: {
+      keepAlive: false,
+      title: '设置',
+      id: "setting"
+    }
+  },
   // 我的
   ...mine,
   {
