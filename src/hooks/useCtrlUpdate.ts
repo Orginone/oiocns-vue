@@ -32,10 +32,7 @@ const useCtrlUpdate = (ctrl: Emitter): [Ref<string>, () => void] => {
  * @param callback? 回调
  * @returns hooks 常量
  */
-export const useFlagCmdEmitter = (
-  flag: string,
-  callback?: Function,
-): [Ref<boolean>, Ref<string>, () => void] => {
+export const useFlagCmdEmitter = (flag: string,callback?: Function) => {
   const key= ref(generateUuid())
   const loaded = ref(orgCtrl.provider.inited)
   // 手动刷新
@@ -44,7 +41,7 @@ export const useFlagCmdEmitter = (
   }
   let id = ''
   onMounted(() => {
-    id = command.subscribeByFlag(flag, (done: boolean) => {
+    id = command.subscribeByFlag(flag, (done: boolean) => {      
       forceUpdate()
       if (done === true) {loaded.value = true}
       if (callback) callback()
@@ -53,7 +50,8 @@ export const useFlagCmdEmitter = (
   onBeforeMount(() => {
     command.unsubscribeByFlag(id);
   })
-  return [loaded, key, forceUpdate]
+  
+  return {loaded, key, forceUpdate}
 }
 
 export default useCtrlUpdate

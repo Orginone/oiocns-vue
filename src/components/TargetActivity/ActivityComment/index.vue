@@ -1,21 +1,21 @@
 <script setup lang="ts">
-// import EntityIcon from '../../Common/GlobalComps/entityIcon';
-import { CommentType } from '@/ts/base/model';
-import cls from './index.module.less';
-import UserInfo from './UserInfo.vue';
+import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
+import { CommentType } from '@/ts/base/model'
+import UserInfo from '../UserInfo/index.vue'
+
 defineProps<{
   comment: CommentType;
 }>()
+
 const emits = defineEmits<{
   (e: 'onClick', comment: CommentType): void
 }>()
+
 </script>
 
 <template>
   <div class="comment" @click="emits('onClick', comment)">
       <div class="commentAvatar">
-        <!-- TODO: -->
-        {{ comment.userId }}
         <EntityIcon :entityId="comment.userId" showName/>
       </div>
       <div class="commentContent">
@@ -43,6 +43,8 @@ const emits = defineEmits<{
     display: inherit;
   }
   &Content {
+    display: flex;
+    align-items: center;
   }
 }
 

@@ -21,7 +21,7 @@ import { shareOpenLink } from '@/utils/tools';
 import { log } from 'console';
 
 // TODO:
-/** 执行非页面命令 */
+/** 执行非页面命令 */ 
 export const executeCmd = (cmd: string, entity: any) => {
   switch (cmd) {
     case 'qrcode':

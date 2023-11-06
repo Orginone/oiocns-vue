@@ -4,15 +4,16 @@ import { IActivity,IActivityMessage } from '@/ts/core'
 import { command } from '@/ts/base'
 import { DxScrollView } from 'devextreme-vue'
 import type {ReachBottomEvent} from 'devextreme/ui/scroll_view'
-import ActivityItem from './ActivityItem.vue';
+import ActivityItem from './ActivityMessage/index.vue'
 
 const props = defineProps<{
   height: string,
   activity: IActivity,
-  title: string
+  title?: string
 }>()
 
 const actionList = ref<IActivityMessage[]>(props.activity.activityList)
+
 // 订阅变更
 let id = ''
 onMounted(() => {
@@ -36,16 +37,13 @@ const loadMoreActivity = async(e:ReachBottomEvent) => {
     await component.release(news.length < 10);
   }
 }
-
-
-
-
 </script>
 
 <template>
   <ElCard
     v-if="actionList"
-    body-style="border: 0;width:100%"
+    body-style="border: 0;width:100%;"
+    shadow="never"
   >
     <!-- 卡片头部 -->
     <template #header>
@@ -72,19 +70,18 @@ const loadMoreActivity = async(e:ReachBottomEvent) => {
       :onReachBottom="loadMoreActivity"
       :onInitialized="loadMoreActivity"
     >
-    <!-- TODO: -->
-    
       <div class="actionList">
-        <div class="actionBody">
-          <template v-if="actionList?.length">
-            <ActivityItem
-              v-for="actionItem in actionList"
-              :key="actionItem.key"
-              :item="(actionItem as IActivityMessage)"
-              :activity="(actionItem.activity as IActivity)"
-            />
-          </template>
-          
+        <template v-if="actionList?.length">
+          <ActivityItem
+            v-for="actionItem in actionList"
+            :key="actionItem.key"
+            :item="(actionItem as IActivityMessage)"
+            :activity="(actionItem.activity as IActivity)"
+          />
+        </template>
+        <!-- 空数据 -->
+        <div v-else class="emptyList">
+          <ElEmpty/>
         </div>
       </div>
     </DxScrollView>
@@ -92,6 +89,9 @@ const loadMoreActivity = async(e:ReachBottomEvent) => {
 </template>
 
 <style lang="scss" scoped>
+.el-card {
+  height: 100%;
+}
 .emptyList {
   width: 100%;
   height: 300px;

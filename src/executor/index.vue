@@ -30,7 +30,7 @@ const resetContent = () => {
 let id = ''
 onMounted(()=>{
   id = command.subscribe((type, cmd, ...args: any[]) => {
-    if (type != 'executor') return;
+    if (type != 'executor')  return
     if (cmd === 'link') return router.push(args[0]);
     // 执行页面命令(executeCmd返回false则为页面命令)
     if (executeCmd(cmd, args[0]) === false) {

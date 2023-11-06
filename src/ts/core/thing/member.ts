@@ -2,7 +2,7 @@ import { OperateModel } from '@/ts/base/model';
 import { schema } from '../../base';
 import { IDirectory } from './directory';
 import { FileInfo, IFileInfo } from './fileinfo';
-import { memberOperates, targetOperates } from '../public';
+import { entityOperates, memberOperates, targetOperates } from '../public';
 
 /** 成员接口类 */
 export interface IMemeber extends IFileInfo<schema.XTarget> {
@@ -21,6 +21,9 @@ export class Member extends FileInfo<schema.XTarget> implements IMemeber {
   get cacheFlag(): string {
     return 'members';
   }
+  get groupTags(): string[] {
+    return ['成员'];
+  }
   get fullId(): string {
     return `${this.directory.belongId}-${this._metadata.id}`;
   }
@@ -37,8 +40,11 @@ export class Member extends FileInfo<schema.XTarget> implements IMemeber {
   async delete(): Promise<boolean> {
     throw new Error('暂不支持.');
   }
+  async hardDelete(): Promise<boolean> {
+    throw new Error('暂不支持.');
+  }
   override operates(): OperateModel[] {
-    const operates = super.operates(1);
+    const operates = [entityOperates.Remark, entityOperates.QrCode];
     if (
       this.metadata.id != this.directory.belongId &&
       this.directory.target.hasRelationAuth()

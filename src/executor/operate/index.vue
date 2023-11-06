@@ -2,14 +2,14 @@
 import { useRouter } from 'vue-router';
 import { IEntity, TargetType } from '@/ts/core';
 
-// import EntityForm from './entityForm';
+import EntityForm from './entityForm/index.vue';
 import ActivityPublisher from './pubActivity/index.vue';
 // import SettingAuth from './settingModal/settingAuth';
 // import SettingStation from './settingModal/settingStation';
 // import SettingIdentity from './settingModal/settingIdentity';
 // import { schema } from '@/ts/base';
 // import PullMember from './pullMember';
-// import JoinTarget from './joinTarget';
+import JoinTarget from './joinTarget/index.vue';
 // import FileTaskList from './fileTaskList';
 
 // 实体类型字典
@@ -46,11 +46,6 @@ const setContent = (component: any,props: object) => {
   contentComponent.value = component;
   dynamicProps.value = props
 }
-// 重置动态组件
-const resetContent = () => {
-  contentComponent.value = null;
-  dynamicProps.value={}
-}
 
 onMounted(()=>{
   if (Array.isArray(props.args) && props.args.length > 0) {
@@ -72,9 +67,8 @@ onMounted(()=>{
         // return <SettingStation company={args[0].target} finished={finished} />;
       
       case 'pubActivity':
-        // TODO:
         // return <ActivityPublisher activity={args[0]} finish={finished} />;
-        return setContent(ActivityPublisher, {activity: props.args[0], finished: props.finished})
+        return setContent(ActivityPublisher, {activity: props.args[0], finish: props.finished})
       case 'update':
         return console.log('来这改');
         // {
@@ -97,11 +91,14 @@ onMounted(()=>{
         // }
         break;
       default:
-        return console.log('来这改');
-        // if (cmd.startsWith('join')) {
-        //   return <JoinTarget cmd={cmd} current={args[0]} finished={finished} />;
-        // }
-        // return <EntityForm cmd={cmd} entity={args[0]} finished={finished} />;
+        if (props.cmd.startsWith('join')) {   
+          // return <JoinTarget cmd={cmd} current={args[0]} finished={finished} />
+          return setContent(JoinTarget, {cmd:props.cmd,current: props.args[0], finished: props.finished})
+        }
+        // return <EntityForm cmd={cmd} entity={args[0]} finished={finished} />
+        // TODO:
+        console.log('来这改');
+        // return setContent(EntityForm, {cmd: props.cmd, entity: props.args[0], finished: props.finished})
     }
   }
 })

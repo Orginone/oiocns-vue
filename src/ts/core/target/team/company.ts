@@ -13,6 +13,7 @@ import { Storage } from '../outTeam/storage';
 import { companyJoins } from '../../public/operates';
 import { Cohort } from '../outTeam/cohort';
 import { ISession } from '../../chat/session';
+import { IFile } from '../../thing/fileinfo';
 
 /** 单位类型接口 */
 export interface ICompany extends IBelong {
@@ -113,9 +114,9 @@ export class Company extends Belong implements ICompany {
     const metadata = await this.create(data);
     if (metadata) {
       const group = new Group([this.key], metadata, [this.id], this);
-      await group.deepLoad();
       this.groups.push(group);
       await group.pullMembers([this.metadata]);
+      await group.deepLoad();
       return group;
     }
   }
@@ -233,6 +234,7 @@ export class Company extends Belong implements ICompany {
       await this.loadDepartments(reload),
       await this.loadMembers(reload),
       await this.loadSuperAuth(reload),
+      await this.loadIdentitys(reload),
       await this.directory.loadDirectoryResource(reload),
     ]);
     await Promise.all(
@@ -255,6 +257,11 @@ export class Company extends Belong implements ICompany {
         await cohort.deepLoad(reload);
       }),
     );
+    await Promise.all(
+      this.storages.map(async (storage) => {
+        await storage.deepLoad(reload);
+      }),
+    );
     this.superAuth?.deepLoad(reload);
   }
 
@@ -275,8 +282,14 @@ export class Company extends Belong implements ICompany {
     return operates;
   }
 
-  content(_mode?: number | undefined): ITarget[] {
-    return [...this.groups, ...this.departments, ...this.cohorts, ...this.storages];
+  content(): IFile[] {
+    return [
+      this.memberDirectory,
+      ...this.groups,
+      ...this.departments,
+      ...this.cohorts,
+      ...this.storages,
+    ];
   }
 
   override async removeMembers(

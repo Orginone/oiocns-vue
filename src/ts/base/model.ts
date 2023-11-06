@@ -1,5 +1,6 @@
 import {
   XApplication,
+  XAttributeProps,
   XAuthority,
   Xbase,
   XDirectory,
@@ -9,6 +10,7 @@ import {
   XSpecies,
   XStandard,
   XTarget,
+  XThing,
 } from './schema';
 // 请求类型定义
 export type ReqestType = {
@@ -21,6 +23,8 @@ export type ReqestType = {
 };
 // 请求数据核类型定义
 export type DataProxyType = {
+  // 标签
+  flag: string;
   // 模块
   module: string;
   // 方法
@@ -559,23 +563,6 @@ export type GetDirectoryModel = {
   page: PageModel | undefined;
 };
 
-export type AnyThingModel = {
-  /** 唯一ID */
-  Id: string;
-  /** 名称 */
-  Name: string;
-  /** 状态 */
-  Status: string;
-  /** 创建人 */
-  Creater: string;
-  /** 创建时间 */
-  CreateTime: string;
-  /** 变更时间 */
-  ModifiedTime: string;
-  /** 其它信息 */
-  [field: string]: any;
-};
-
 export type WorkDefineModel = {
   // 流程ID
   id: string;
@@ -653,6 +640,10 @@ export type FieldModel = {
   valueType: string;
   /** 规则(特性规则) */
   rule?: string;
+  /** 组件 */
+  widget?: string;
+  /** 参数 */
+  options?: XAttributeProps;
   /** 备注(特性描述) */
   remark: string;
   /** 字典(字典项/分类项) */
@@ -674,11 +665,13 @@ export type FiledLookup = {
 
 export type FormEditData = {
   /** 操作前数据体 */
-  before: AnyThingModel[];
+  before: XThing[];
   /** 操作后数据体 */
-  after: AnyThingModel[];
+  after: XThing[];
   /** 流程节点Id */
   nodeId: string;
+  /** 表单名称 */
+  formName: string;
   /** 操作人 */
   creator: string;
   /** 操作时间 */
@@ -828,6 +821,8 @@ export type FileItemShare = {
   size: number;
   /** 名称 */
   name: string;
+  /** 视频封面 */
+  poster?: string;
   /** 文件类型 */
   contentType?: string;
   /** 共享链接 */
@@ -862,6 +857,7 @@ export enum BucketOpreates {
   'Copy' = 'Copy',
   'Delete' = 'Delete',
   'Upload' = 'Upload',
+  'HslSplit' = 'HslSplit',
   'AbortUpload' = 'AbortUpload',
 }
 
@@ -907,6 +903,7 @@ export type OperateModel = {
   sort: number;
   label: string;
   iconType: string;
+  model?: string;
   menus?: OperateModel[];
 };
 
@@ -1019,6 +1016,8 @@ export type Sheet<T> = {
   columns: Column[];
   // 数据
   data: T[];
+  // 其它
+  headers: number;
 };
 
 /**
@@ -1031,6 +1030,8 @@ export interface Column {
   dataIndex: string;
   // 类型
   valueType: string;
+  // 是否隐藏
+  hide?: boolean;
 }
 
 // 映射
@@ -1198,56 +1199,6 @@ export type SchemaType = {
   properties: Record<string, object>;
   column: 1 | 2 | 3;
 };
-
-export type CommonAppplication = {
-  // 应用Id
-  id: string;
-  // 展示归属组织
-  spaceId: string;
-};
-
-/** 代码构建 */
-export type codeBuildType = {
-  git: string;
-  dockerfile: string;
-  image: string;
-  registry_tokencreateTime: string;
-};
-/** 新建文档 */
-export type documentType = {
-  name: string;
-};
-// 页面设计
-export interface IPageTemplate<T extends string> {
-  kind: T;
-  // 其他属性通过模块补充增加
-}
-
-export interface ShopTemplate extends IPageTemplate<"shop"> {
-
-}
-
-export interface NewsTemplate extends IPageTemplate<"news"> {
-
-}
-
-export interface PageTemplatePresetMap {
-  "shop": ShopTemplate;
-  "news": NewsTemplate;
-}
-
-export type PageTemplatePreset = PageTemplatePresetMap[keyof PageTemplatePresetMap];
-
-/** 类型保护，判断一个模板是不是内置模板 */
-export function isPageTemplatePreset(template: PageTemplate): template is PageTemplatePreset {
-  return ["shop", "news"].includes(template.kind);
-}
-
-export type PageTemplate<T extends string = string> =  T extends keyof PageTemplatePresetMap
-  ? PageTemplatePresetMap[T]
-  : IPageTemplate<T>;
-
-export type XPageTemplate<T extends string = string> = XStandard & PageTemplate<T>;
 
 export type DiskInfoType = {
   // 状态

@@ -1,18 +1,19 @@
+<!-- 群动态 -->
 <script setup lang="ts">
-import { IActivity } from '@/ts/core';
-import useCtrlUpdate from '@/hooks/useCtrlUpdate';
-// import useAsyncLoad from '@/hooks/useAsyncLoad';
-import { useWindowSize } from '@vueuse/core';
-import { DxResizable } from 'devextreme-vue/resizable';
-import ActivityItem from './ActivityItem.vue';
-import Activity from './Activity.vue';
+import { IActivity,IActivityMessage } from '@/ts/core'
+import useCtrlUpdate from '@/hooks/useCtrlUpdate'
+// import useAsyncLoad from '@/hooks/useAsyncLoad'
+import { useWindowSize } from '@vueuse/core'
+import { DxResizable } from 'devextreme-vue/resizable'
+import ActivityItem from '@/components/TargetActivity/ActivityMessage/index.vue'
+import Activity from '@/components/TargetActivity/index.vue'
 
 // 接收参数
 const props = defineProps<{
   activity: IActivity
 }>()
 // 有动态的群列表
-let activitys:IActivity[] = []
+const activitys = ref<IActivity[]>([])
 // 加载标识量
 const isLoading = ref(true)
 // 窗口尺寸
@@ -23,14 +24,13 @@ const current =ref<IActivity>(props.activity)
 onMounted(async() => {
   // TODO:
   const res = await props.activity.load(10)
-  console.log('拿到的数据:',props.activity.activitys);///////////////////////////////////
-  activitys = props.activity.activitys.filter((i) => i.activityList.length>0)
+  // console.log('拿到的数据:',props.activity.activitys);///////////////////
+  activitys.value = props.activity.activitys.filter((i) => i.activityList.length>0)
   isLoading.value = false
-  console.log('有效数据:',activitys);//////////////////////////////////////////////////
+  // console.log('有效数据:',activitys);///////////////
 })
 // 订阅动态监听
 const [key] = useCtrlUpdate(props.activity)
-
 </script>
 
 <template>
@@ -39,32 +39,30 @@ const [key] = useCtrlUpdate(props.activity)
       <!-- 左侧列表 -->
       <DxResizable 
         v-if="size.width.value>1000 && !isLoading"
-        handles = "right"
-        style="overflow: auto;width: 760px;"
+        :handles = "'right'"
+        style="width:800px"
       >
-        <div :key="key" class="groupList">
-          <div
-            class="groupListItem"
-            v-for="item in activitys"
-            :key="item.key"
+        <div class="groupList" :key="key">
+          <div class="groupListItem" :class="{'groupListItemSelected':current.key===item.key}"
+            v-for="item in activitys.filter((i) => i.activityList.length>0)" :key="item.key"
             @click="current = item"
           >
             <ActivityItem
-              :item = "item.activityList[0]"
-              :activity="item"
+              :item = "(item.activityList[0] as IActivityMessage)"
+              :activity="(item as IActivity)"
               :hideResource="true"
             />
           </div>
         </div>
       </DxResizable>
       <!-- 右侧列表 -->
-      <div :style="{ height: '100%', width: '100%' }">
-        <!-- TODO: -->
+      <div :style="{ height: '100%', width: '100%', zIndex: 100 }">
         <Activity
           v-if="!isLoading && current"
           :height="'calc(100vh - 335px)'"
-          :activity="current as IActivity"
           :title="current.name + '动态'"
+          :activity="current"
+          :key="current.key"
         >
         </Activity>
       </div>
@@ -93,7 +91,7 @@ const [key] = useCtrlUpdate(props.activity)
       padding: 8px;
       min-width: 500px;
       // TODO:background: @component-background;
-      background-color: aqua;
+      background-color: #fafafa;
       box-shadow: 0 0 2px 2px #ededed;
 
       &Item {
@@ -101,10 +99,10 @@ const [key] = useCtrlUpdate(props.activity)
         padding: 8px;
         border-radius: 6px;
         // TODO:border-bottom: 1px solid @border-color-base;
-        border-bottom: 1px solid aqua;
-        &:hover {
+        border-bottom: 1px solid #e6f1ff;
+        &Selected {
           // background: @active-background;
-          background-color: red;
+          background-color: #e6f1ff;
         }
       }
     }

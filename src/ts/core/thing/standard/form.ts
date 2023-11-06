@@ -1,5 +1,5 @@
 import { schema, model } from '../../../base';
-import { orgAuth } from '../../../core/public';
+import { entityOperates, fileOperates, orgAuth } from '../../../core/public';
 import { IDirectory } from '../directory';
 import { IStandardFileInfo, StandardFileInfo } from '../fileinfo';
 
@@ -9,11 +9,12 @@ export interface IForm extends IStandardFileInfo<schema.XForm> {
   attributes: schema.XAttribute[];
   /** 表单字段 */
   fields: model.FieldModel[];
+  /** 加载分类字典项 */
+  loadItems(speciesIds: string[]): Promise<schema.XSpeciesItem[]>;
+  /** 保存 */
+  save(): Promise<boolean>;
   /** 新建表单特性 */
-  createAttribute(
-    data: model.AttributeModel,
-    property?: schema.XProperty,
-  ): Promise<schema.XAttribute | undefined>;
+  createAttribute(propertys: schema.XProperty[]): Promise<schema.XAttribute[]>;
   /** 更新表单特性 */
   updateAttribute(
     data: model.AttributeModel,
@@ -26,12 +27,22 @@ export interface IForm extends IStandardFileInfo<schema.XForm> {
 export class Form extends StandardFileInfo<schema.XForm> implements IForm {
   constructor(_metadata: schema.XForm, _directory: IDirectory) {
     super(_metadata, _directory, _directory.resource.formColl);
+    this.canDesign = !_metadata.id.includes('_');
     this.setEntity();
   }
+  canDesign: boolean;
   private _fieldsLoaded: boolean = false;
   fields: model.FieldModel[] = [];
   get attributes(): schema.XAttribute[] {
-    return this.metadata.attributes || [];
+    const attrs: schema.XAttribute[] = [];
+    const prodIds: string[] = [];
+    for (const item of this.metadata.attributes || []) {
+      if (item.propId && item.propId.length > 0 && !prodIds.includes(item.propId)) {
+        attrs.push(item);
+        prodIds.push(item.propId);
+      }
+    }
+    return attrs;
   }
   get id(): string {
     return this._metadata.id.replace('_', '');
@@ -39,68 +50,85 @@ export class Form extends StandardFileInfo<schema.XForm> implements IForm {
   get cacheFlag(): string {
     return 'forms';
   }
+  get groupTags(): string[] {
+    return ['表单', ...super.groupTags];
+  }
+  async save(): Promise<boolean> {
+    return this.update(this.metadata);
+  }
   async loadContent(reload: boolean = false): Promise<boolean> {
     await this.loadFields(reload);
     return true;
   }
   async loadFields(reload: boolean = false): Promise<model.FieldModel[]> {
     if (!this._fieldsLoaded || reload) {
-      this.fields = [];
-      await Promise.all(
-        this.attributes.map(async (attr) => {
-          if (attr.property) {
-            const field: model.FieldModel = {
-              id: attr.id,
-              rule: attr.rule,
-              name: attr.name,
-              code: 'T' + attr.property.id,
-              remark: attr.remark,
-              lookups: [],
-              valueType: attr.property.valueType,
-            };
-            if (attr.property.speciesId && attr.property.speciesId.length > 0) {
-              const data = await this.directory.resource.speciesItemColl.loadSpace({
-                options: { match: { speciesId: attr.property.speciesId } },
+      const speciesIds = this.attributes
+        .map((i) => i.property?.speciesId)
+        .filter((i) => i && i.length > 0)
+        .map((i) => i!);
+      const data = await this.loadItems(speciesIds);
+      this.fields = this.attributes
+        .filter((i) => i.property && i.property.id)
+        .map((attr) => {
+          const field: model.FieldModel = {
+            id: attr.id,
+            rule: attr.rule,
+            name: attr.name,
+            widget: attr.widget,
+            options: attr.options,
+            code: `T${attr.propId}`,
+            remark: attr.remark,
+            lookups: [],
+            valueType: attr.property!.valueType,
+          };
+          if (attr.property!.speciesId && attr.property!.speciesId.length > 0) {
+            field.lookups = data
+              .filter((i) => i.speciesId === attr.property!.speciesId)
+              .map((i) => {
+                return {
+                  id: i.id,
+                  text: i.name,
+                  value: `S${i.id}`,
+                  icon: i.icon,
+                  parentId: i.parentId,
+                };
               });
-              if (data.length > 0) {
-                field.lookups = data.map((i) => {
-                  return {
-                    id: i.id,
-                    text: i.name,
-                    value: i.code,
-                    icon: i.icon,
-                    parentId: i.parentId,
-                  };
-                });
-              }
-            }
-            this.fields.push(field);
           }
-        }),
-      );
+          return field;
+        });
       this._fieldsLoaded = true;
     }
     return this.fields;
   }
-  async createAttribute(
-    data: schema.XAttribute,
-    property?: schema.XProperty,
-  ): Promise<schema.XAttribute | undefined> {
-    if (property) {
-      data.property = property;
-      data.propId = property.id;
-    }
-    if (!data.authId || data.authId.length < 5) {
-      data.authId = orgAuth.SuperAuthId;
-    }
-    data.id = 'snowId()';
-    const res = await this.update({
-      ...this.metadata,
-      attributes: [...(this.metadata.attributes || []), data],
+  async loadItems(speciesIds: string[]): Promise<schema.XSpeciesItem[]> {
+    const ids = speciesIds.filter((i) => i && i.length > 0);
+    if (ids.length < 1) return [];
+    return await this.directory.resource.speciesItemColl.loadSpace({
+      options: {
+        match: {
+          speciesId: { _in_: ids },
+        },
+      },
     });
-    if (res) {
-      return data;
-    }
+  }
+  async createAttribute(propertys: schema.XProperty[]): Promise<schema.XAttribute[]> {
+    const data = propertys.map((prop) => {
+      return {
+        id: 'snowId()',
+        propId: prop.id,
+        name: prop.name,
+        code: prop.code,
+        rule: '{}',
+        remark: prop.remark,
+        property: prop,
+        authId: orgAuth.SuperAuthId,
+      } as schema.XAttribute;
+    });
+    await this.update({
+      ...this.metadata,
+      attributes: [...(this.metadata.attributes || []), ...data],
+    });
+    return data;
   }
   async updateAttribute(
     data: schema.XAttribute,
@@ -143,5 +171,11 @@ export class Form extends StandardFileInfo<schema.XForm> implements IForm {
       return await super.moveTo(destination.id, destination.resource.formColl);
     }
     return false;
+  }
+  override operates(): model.OperateModel[] {
+    if (this.canDesign) {
+      return super.operates();
+    }
+    return [fileOperates.Copy, entityOperates.Remark];
   }
 }

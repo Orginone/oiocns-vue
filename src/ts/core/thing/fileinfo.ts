@@ -1,7 +1,5 @@
-import { encodeKey, sleep } from '../../base/common';
-import { BucketOpreates, FileItemModel } from '../../base/model';
+import { sleep } from '../../base/common';
 import { command, model, schema } from '../../base';
-import { FileItemShare } from '../../base/model';
 import { IDirectory } from './directory';
 import { Entity, IEntity, entityOperates } from '../public';
 import { fileOperates } from '../public';
@@ -19,6 +17,8 @@ export interface IFileInfo<T extends schema.XEntity> extends IEntity<T> {
   belongId: string;
   /** 是否为继承的类别 */
   isInherited: boolean;
+  /** 是否允许设计 */
+  canDesign: boolean;
   /** 是否为容器 */
   isContainer: boolean;
   /** 目录 */
@@ -49,7 +49,7 @@ export interface IFileInfo<T extends schema.XEntity> extends IEntity<T> {
   /** 加载文件内容 */
   loadContent(reload?: boolean): Promise<boolean>;
   /** 目录下的内容 */
-  content(mode?: number): IFile[];
+  content(): IFile[];
   /** 缓存用户数据 */
   cacheUserData(notify?: boolean): Promise<boolean>;
 }
@@ -98,9 +98,18 @@ export abstract class FileInfo<T extends schema.XEntity>
   }
   abstract cacheFlag: string;
   abstract delete(): Promise<boolean>;
-  abstract rename(name: string): Promise<boolean>;
-  abstract copy(destination: IDirectory): Promise<boolean>;
-  abstract move(destination: IDirectory): Promise<boolean>;
+  async rename(_: string): Promise<boolean> {
+    await sleep(0);
+    return true;
+  }
+  async copy(_: IDirectory): Promise<boolean> {
+    await sleep(0);
+    return true;
+  }
+  async move(_: IDirectory): Promise<boolean> {
+    await sleep(0);
+    return true;
+  }
   async restore(): Promise<boolean> {
     await sleep(0);
     return true;
@@ -135,157 +144,27 @@ export abstract class FileInfo<T extends schema.XEntity>
   async loadContent(reload: boolean = false): Promise<boolean> {
     return await sleep(reload ? 10 : 0);
   }
-  content(_mode: number = 0): IFile[] {
+  content(): IFile[] {
     return [];
   }
-  operates(mode: number = 0): model.OperateModel[] {
-    const operates = super.operates(mode);
-    if (mode % 2 === 0) {
-      if (this.target.space.hasRelationAuth()) {
-        operates.unshift(fileOperates.Copy);
-      }
-      if (this.target.hasRelationAuth()) {
-        operates.unshift(
-          fileOperates.Move,
-          fileOperates.Rename,
-          fileOperates.Download,
-          entityOperates.Update,
-          entityOperates.Delete,
-        );
-        if (this.canDesign) {
-          operates.unshift(entityOperates.Design);
-        }
+  operates(): model.OperateModel[] {
+    const operates = super.operates();
+    if (this.target.space.hasRelationAuth()) {
+      operates.unshift(fileOperates.Copy);
+    }
+    if (this.target.hasRelationAuth()) {
+      operates.unshift(
+        fileOperates.Move,
+        fileOperates.Rename,
+        fileOperates.Download,
+        entityOperates.Update,
+        entityOperates.Delete,
+      );
+      if (this.canDesign) {
+        operates.unshift(entityOperates.Design);
       }
     }
     return operates;
-  }
-}
-/** 系统文件接口 */
-export interface ISysFileInfo extends IFileInfo<schema.XEntity> {
-  /** 文件系统项对应的目标 */
-  filedata: FileItemModel;
-  /** 分享信息 */
-  shareInfo(): FileItemShare;
-}
-/** 文件转实体 */
-export const fileToEntity = (
-  data: model.FileItemModel,
-  belongId: string,
-  belong: schema.XTarget | undefined,
-): schema.XEntity => {
-  return {
-    id: data.shareLink?.substring(1),
-    name: data.name,
-    code: data.key,
-    icon: JSON.stringify(data),
-    belongId: belongId,
-    typeName: data.contentType,
-    createTime: data.dateCreated,
-    updateTime: data.dateModified,
-    belong: belong,
-  } as schema.XEntity;
-};
-/** 文件类实现 */
-export class SysFileInfo extends FileInfo<schema.XEntity> implements ISysFileInfo {
-  constructor(_metadata: model.FileItemModel, _directory: IDirectory) {
-    super(
-      fileToEntity(_metadata, _directory.metadata.belongId, _directory.metadata.belong),
-      _directory,
-    );
-    this.filedata = _metadata;
-  }
-  get cacheFlag(): string {
-    return 'files';
-  }
-  get groupTags(): string[] {
-    const gtags: string[] = [];
-    if (this.typeName.startsWith('image')) {
-      gtags.push('图片');
-    } else if (this.typeName.startsWith('video')) {
-      gtags.push('视频');
-    } else if (this.typeName.startsWith('text')) {
-      gtags.push('文本');
-    } else if (this.typeName.includes('pdf')) {
-      gtags.push('PDF');
-    } else if (this.typeName.includes('office')) {
-      gtags.push('Office');
-    }
-    return [...gtags, '文件'];
-  }
-  filedata: FileItemModel;
-  shareInfo(): model.FileItemShare {
-    return {
-      size: this.filedata.size,
-      name: this.filedata.name,
-      extension: this.filedata.extension,
-      contentType: this.filedata.contentType,
-      shareLink: this.filedata.shareLink,
-      thumbnail: this.filedata.thumbnail,
-    };
-  }
-  async rename(name: string): Promise<boolean> {
-    if (this.filedata.name != name) {
-      const res = await this.directory.resource.bucketOpreate<FileItemModel>({
-        name: name,
-        key: encodeKey(this.filedata.key),
-        operate: BucketOpreates.Rename,
-      });
-      if (res.success && res.data) {
-        this.filedata = res.data;
-        return true;
-      }
-    }
-    return false;
-  }
-  async delete(): Promise<boolean> {
-    const res = await this.directory.resource.bucketOpreate<FileItemModel[]>({
-      key: encodeKey(this.filedata.key),
-      operate: BucketOpreates.Delete,
-    });
-    if (res.success) {
-      this.directory.files = this.directory.files.filter((i) => i.key != this.key);
-    }
-    return res.success;
-  }
-  async hardDelete(): Promise<boolean> {
-    return await this.delete();
-  }
-  async copy(destination: IDirectory): Promise<boolean> {
-    if (destination.id != this.directory.id) {
-      const res = await this.directory.resource.bucketOpreate<FileItemModel[]>({
-        key: encodeKey(this.filedata.key),
-        destination: destination.id,
-        operate: BucketOpreates.Copy,
-      });
-      if (res.success) {
-        destination.files.push(this);
-      }
-      return res.success;
-    }
-    return false;
-  }
-  async move(destination: IDirectory): Promise<boolean> {
-    if (destination.id != this.directory.id) {
-      const res = await this.directory.resource.bucketOpreate<FileItemModel[]>({
-        key: encodeKey(this.filedata.key),
-        destination: destination.id,
-        operate: BucketOpreates.Move,
-      });
-      if (res.success) {
-        this.directory.files = this.directory.files.filter((i) => i.key != this.key);
-        this.directory = destination;
-        destination.files.push(this);
-      }
-      return res.success;
-    }
-    return false;
-  }
-  override operates(_mode?: number): model.OperateModel[] {
-    const operates = super.operates();
-    return operates.filter((i) => i.cmd != 'update');
-  }
-  content(_mode?: number | undefined): IFile[] {
-    return [];
   }
 }
 export interface IStandardFileInfo<T extends schema.XStandard> extends IFileInfo<T> {
@@ -294,9 +173,11 @@ export interface IStandardFileInfo<T extends schema.XStandard> extends IFileInfo
   /** 设置当前元数据 */
   setMetadata(_metadata: schema.XStandard): void;
   /** 变更通知 */
-  notify(operate: string, data: schema.XEntity[]): Promise<boolean>;
+  notify(operate: string, data: T): Promise<boolean>;
   /** 更新 */
   update(data: T): Promise<boolean>;
+  /** 接收通知 */
+  receive(operate: string, data: schema.XStandard): boolean;
 }
 export interface IStandard extends IStandardFileInfo<schema.XStandard> {}
 export abstract class StandardFileInfo<T extends schema.XStandard>
@@ -326,15 +207,14 @@ export abstract class StandardFileInfo<T extends schema.XStandard>
     );
   }
   async update(data: T): Promise<boolean> {
-    console.log(data);
-    const res = await this.coll.replace({
+    const result = await this.coll.replace({
       ...this.metadata,
       ...data,
       directoryId: this.metadata.directoryId,
       typeName: this.metadata.typeName,
     });
-    if (res) {
-      await this.notify('replace', [res]);
+    if (result) {
+      await this.notify('replace', result);
       return true;
     }
     return false;
@@ -343,7 +223,7 @@ export abstract class StandardFileInfo<T extends schema.XStandard>
     if (this.directory) {
       const data = await this.coll.delete(this.metadata);
       if (data) {
-        await this.notify('delete', [this.metadata]);
+        await this.notify('delete', this.metadata);
       }
     }
     return false;
@@ -352,7 +232,7 @@ export abstract class StandardFileInfo<T extends schema.XStandard>
     if (this.directory) {
       const data = await this.coll.remove(this.metadata);
       if (data) {
-        await this.notify('remove', [this.metadata]);
+        await this.notify('remove', this.metadata);
       }
     }
     return false;
@@ -370,7 +250,7 @@ export abstract class StandardFileInfo<T extends schema.XStandard>
     });
     if (data) {
       return await coll.notity({
-        data: [data],
+        data: data,
         operate: 'insert',
       });
     }
@@ -382,15 +262,31 @@ export abstract class StandardFileInfo<T extends schema.XStandard>
       directoryId: directoryId,
     });
     if (data) {
-      await this.notify('delete', [this.metadata]);
+      await this.notify('remove', this.metadata);
       return await coll.notity({
-        data: [data],
+        data: data,
         operate: 'insert',
       });
     }
     return false;
   }
-  async notify(operate: string, data: schema.XStandard[]): Promise<boolean> {
+  async notify(operate: string, data: T): Promise<boolean> {
     return await this.coll.notity({ data, operate });
+  }
+  receive(operate: string, data: schema.XStandard): boolean {
+    switch (operate) {
+      case 'delete':
+      case 'replace':
+        if (data) {
+          if (operate === 'delete') {
+            data = { ...data, isDeleted: true } as unknown as T;
+            this.setMetadata(data as T);
+          } else {
+            this.setMetadata(data as T);
+            this.loadContent(true);
+          }
+        }
+    }
+    return true;
   }
 }

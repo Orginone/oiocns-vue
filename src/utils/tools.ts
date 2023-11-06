@@ -265,7 +265,8 @@ const pySegSortObj = (objArr: any[], field: string) => {
   return segs;
 };
 
-const findMenuItemByKey = (item: MenuItemType, key: string): MenuItemType | undefined => {
+/** 根据key查找菜单项 */
+const  findMenuItemByKey = (item: MenuItemType, key: string): MenuItemType | undefined => {
   for (const node of item.children || []) {
     if (node.key === key) {
       node.parentMenu = item;

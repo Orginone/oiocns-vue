@@ -13,17 +13,20 @@ const props = defineProps<{
   title?: string;
   onCancel?: () => void;
   width?: string | number;
-  destoryOnClose: boolean;
+  destroyOnClose?: boolean;
 }>()
 
 
 const isShow = ref(props.open)
+watch(() => props.open, (v) => {
+  isShow.value = v
+})
 
 // 是否全屏（false全屏）
 const modalState = ref(!props.fullScreen)
 
 const onClose=() => {
-  props.onCancel()
+  props.onCancel && props.onCancel()
   isShow.value = false
 }
 
@@ -32,20 +35,25 @@ const emits = defineEmits(['fullscreenToggle'])
 
 <template>
   <ElDialog
+    class = "fullScreenModal"
     v-model="isShow"
     :close-on-click-modal="false"
     :show-close="false"
     :width="width"
     :fullscreen="!modalState"
-    :destroy-on-close="destoryOnClose"
+    :destroy-on-close="destroyOnClose"
+    top="10vh"
   >
-    <!-- 自定义头部 -->
+    <!-- 自定义头部——header插槽 -->
     <template #header>
       <div class="modalHeader">
-        <ElSpace wrap spacer="|" :size="2">
-          {{icon}}
-          {{title}}
-        </ElSpace>
+        <div class="modalHeaderTitle">
+          <ElSpace wrap spacer="|" :size="2">
+            {{icon}}
+            {{title}}
+          </ElSpace>
+        </div>
+        
         <!-- 右侧按钮 -->
         <ElSpace wrap spacer="|" :size="2">
           <a 
@@ -75,11 +83,11 @@ const emits = defineEmits(['fullscreenToggle'])
         </ElSpace>
       </div>
     </template>
-    <!-- 主体 -->
-    <div class="main" :style="{ height: bodyHeight }">
+    <!-- 主体——默认插槽 -->
+    <div class="main" :style="`height: ${bodyHeight};overflow: auto;`">
       <slot>默认内容</slot>
     </div>
-    <!-- 自定义footer -->
+    <!-- 自定义footer——footer插槽 -->
     <template #footer>
       <slot name="footer" />
     </template>
@@ -92,6 +100,14 @@ const emits = defineEmits(['fullscreenToggle'])
   display: flex;
   justify-content: space-between;
   align-items: center;
+  .modalHeaderTitle {
+    margin: 0;
+    color: rgba(0,0,0,.85);
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 22px;
+    word-wrap: break-word;
+  }
   .headerBtn{
     font-size: 16px;
     cursor: pointer;
@@ -101,5 +117,23 @@ const emits = defineEmits(['fullscreenToggle'])
     justify-content: center;
   }
 }
-
+</style>
+<style lang="scss">
+.fullScreenModal {
+  border-radius: 4px;
+  .el-dialog__header{
+    padding: 12px 16px;
+    border-radius: 4px 4px 0 0;
+    color: rgba(0,0,0,.85);
+    background: #fafafa;
+    font-family: PingFang SC;
+  }
+  .el-dialog__body{
+    padding: 0;
+    border: 1px solid #ebeef5;
+  }
+  .el-dialog__footer {
+    padding: 12px;
+  }
+} 
 </style>

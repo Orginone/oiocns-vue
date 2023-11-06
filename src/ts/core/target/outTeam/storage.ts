@@ -1,6 +1,12 @@
 import { OperateModel } from '@/ts/base/model';
 import { kernel, schema } from '../../../base';
-import { OperateType, TargetType, companyTypes, targetOperates } from '../../public';
+import {
+  OperateType,
+  TargetType,
+  companyTypes,
+  entityOperates,
+  targetOperates,
+} from '../../public';
 import { IBelong } from '../base/belong';
 import { ITarget, Target } from '../base/target';
 import { ISession } from '../../chat/session';
@@ -20,6 +26,7 @@ export class Storage extends Target implements IStorage {
       TargetType.Person,
     ]);
   }
+  isContainer: boolean = false;
   async exit(): Promise<boolean> {
     if (this.metadata.belongId !== this.space.id) {
       if (await this.removeMembers([this.user.metadata])) {
@@ -37,7 +44,10 @@ export class Storage extends Target implements IStorage {
     return success;
   }
   override operates(): OperateModel[] {
-    const operates = [...super.operates()];
+    const operates = [entityOperates.Remark, entityOperates.QrCode];
+    if (this.hasRelationAuth()) {
+      operates.unshift(entityOperates.Update, entityOperates.HardDelete);
+    }
     if (!this.isActivate) {
       operates.push(targetOperates.Activate);
     }
@@ -69,12 +79,10 @@ export class Storage extends Target implements IStorage {
     }
     return false;
   }
-  content(_mode?: number | undefined): ITarget[] {
-    return [];
-  }
   async deepLoad(reload: boolean = false): Promise<void> {
-    if (this.metadata.belongId === this.userId) {
+    if (this.hasRelationAuth()) {
       await this.loadMembers(reload);
+      await this.loadIdentitys(reload);
     }
   }
 }

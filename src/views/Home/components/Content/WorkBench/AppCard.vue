@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { IApplication } from '@/ts/core'
-import EntityIcon from '@components/Common/GlobalComps/entityIcon.vue'
+import EntityIcon from '@components/Common/GlobalComps/entityIcon/index.vue'
 defineProps<{
   app: IApplication
 }>()
@@ -23,12 +23,11 @@ const switchCommon = (app: IApplication, value: boolean) => {
     <div class="appCard">
       <template v-if="app.cache.tags?.includes('常用')">
         <ElBadge is-dot>
-          <!-- TODO:图标 -->
           <EntityIcon :entity="app.metadata" :size="35" />
         </ElBadge>
       </template>
       <template v-else>
-        <EntityIcon entity={app.metadata} size={35} />
+        <EntityIcon :entity="app.metadata" :size="35" />
       </template>
       <div class="appName">{{ app.name}}</div>
       <div class="teamName">{{app.directory.target.name}}</div>
@@ -55,16 +54,18 @@ const switchCommon = (app: IApplication, value: boolean) => {
   .appName {
     font-size: 14px;
     font-weight: bold;
+    padding: 4px 0;
   }
   .teamName {
     color: #686868;
     font-size: 12px;
+    padding: 3px 0;
   }
   &:hover {
     border-radius: 10px;
     // TODO:
     // background: @active-background;
-    background-color: red;
+    background-color: #e6f1ff;
   }
 }
 </style>

@@ -658,6 +658,43 @@ export default class KernelApi {
     });
   }
   /**
+   * 根据ID查询流程实例
+   * @param  过滤参数
+   * @returns {schema.XWorkInstance | undefined} 流程实例对象
+   */
+  public async findInstance(
+    belongId: string,
+    instanceId: string,
+  ): Promise<schema.XWorkInstance | undefined> {
+    const res = await this.dataProxy({
+      module: 'Collection',
+      action: 'Load',
+      belongId,
+      params: {
+        options: {
+          match: {
+            id: instanceId,
+          },
+          limit: 1,
+          lookup: {
+            from: 'work-task',
+            localField: 'id',
+            foreignField: 'instanceId',
+            as: 'tasks',
+          },
+        },
+        collName: 'work-instance',
+      },
+      relations: [],
+      flag: '-work-instance-',
+    });
+    if (res.success && res.data && res.data.data) {
+      if (Array.isArray(res.data.data) && res.data.data.length > 0) {
+        return res.data.data[0];
+      }
+    }
+  }
+  /**
    * 获取对象数据
    * @param {string} belongId 对象所在的归属用户ID
    * @param {string} key 对象名称（eg: rootName.person.name）
@@ -673,6 +710,7 @@ export default class KernelApi {
       belongId,
       relations,
       params: {},
+      flag: 'diskInfo',
     });
   }
   /**
@@ -689,6 +727,7 @@ export default class KernelApi {
     return await this.dataProxy({
       module: 'Object',
       action: 'Get',
+      flag: key,
       belongId,
       relations,
       params: key,
@@ -710,6 +749,7 @@ export default class KernelApi {
     return await this.dataProxy({
       module: 'Object',
       action: 'Set',
+      flag: key,
       belongId,
       relations,
       params: {
@@ -732,6 +772,7 @@ export default class KernelApi {
     return await this.dataProxy({
       module: 'Object',
       action: 'Delete',
+      flag: key,
       belongId,
       relations,
       params: key,
@@ -757,6 +798,7 @@ export default class KernelApi {
       belongId,
       copyId,
       relations,
+      flag: collName,
       params: { collName, data },
     });
   }
@@ -780,6 +822,7 @@ export default class KernelApi {
       belongId,
       copyId,
       relations,
+      flag: collName,
       params: { collName, collSet },
     });
   }
@@ -803,6 +846,7 @@ export default class KernelApi {
       belongId,
       copyId,
       relations,
+      flag: collName,
       params: { collName, replace },
     });
   }
@@ -826,6 +870,7 @@ export default class KernelApi {
       belongId,
       copyId,
       relations,
+      flag: collName,
       params: { collName, update },
     });
   }
@@ -849,6 +894,7 @@ export default class KernelApi {
       belongId,
       copyId,
       relations,
+      flag: collName,
       params: { collName, match },
     });
   }
@@ -860,6 +906,7 @@ export default class KernelApi {
   public async collectionLoad<T>(
     belongId: string,
     relations: string[],
+    collName: string,
     options: any,
   ): Promise<model.LoadResult<T>> {
     options.belongId = belongId;
@@ -867,8 +914,12 @@ export default class KernelApi {
       module: 'Collection',
       action: 'Load',
       belongId,
-      params: options,
+      params: {
+        ...options,
+        collName: collName,
+      },
       relations,
+      flag: `-${collName}`,
     });
     return { ...res, ...res.data };
   }
@@ -888,41 +939,11 @@ export default class KernelApi {
     return await this.dataProxy({
       module: 'Collection',
       action: 'Aggregate',
+      flag: collName,
       belongId,
       relations,
       params: { collName, options },
     });
-  }
-  /**
-   * 从数据集查询数据
-   * @param {string} collName 数据集名称（eg: history-message）
-   * @param {any} options 聚合管道(eg: {match:{a:1},skip:10,limit:10})
-   * @param {string} belongId 对象所在的归属用户ID
-   * @returns {model.ResultType<T>} 对象异步结果
-   */
-  public async collectionPageRequest<T>(
-    belongId: string,
-    relations: string[],
-    collName: string,
-    options: any,
-    page: model.PageModel,
-  ): Promise<model.ResultType<model.PageResult<T>>> {
-    const total = await this.collectionAggregate(belongId, relations, collName, options);
-    if (total.data && Array.isArray(total.data) && total.data.length > 0) {
-      options.skip = page.offset;
-      options.limit = page.limit;
-      const res = await this.collectionAggregate(belongId, relations, collName, options);
-      return {
-        ...res,
-        data: {
-          offset: page.offset,
-          limit: page.limit,
-          total: total.data[0].count,
-          result: res.data,
-        },
-      };
-    }
-    return total;
   }
   /**
    * 桶操作
@@ -939,41 +960,45 @@ export default class KernelApi {
       action: 'Operate',
       belongId,
       relations,
+      flag: 'bucketOpreate',
       params: data,
     });
   }
   /**
    * 加载物
    * @param  过滤参数
-   * @returns {model.ResultType<T>} 移除异步结果
+   * @returns {model.LoadResult<T>} 移除异步结果
    */
-  public async loadThing<T>(
+  public async loadThing(
     belongId: string,
     relations: string[],
     options: any,
-  ): Promise<model.ResultType<T>> {
+  ): Promise<model.LoadResult<schema.XThing[]>> {
     options.belongId = belongId;
-    return await this.dataProxy({
+    const res = await this.dataProxy({
       module: 'Thing',
       action: 'Load',
       belongId,
       relations,
+      flag: 'loadThing',
       params: options,
     });
+    return { ...res, ...res.data };
   }
   /**
    * 创建物
    * @param name 物的名称
-   * @returns {model.ResultType<model.AnyThingModel>} 移除异步结果
+   * @returns {model.ResultType<schema.XThing>} 移除异步结果
    */
   public async createThing(
     belongId: string,
     relations: string[],
     name: string,
-  ): Promise<model.ResultType<model.AnyThingModel>> {
+  ): Promise<model.ResultType<schema.XThing>> {
     return await this.dataProxy({
       module: 'Thing',
       action: 'Create',
+      flag: 'createThing',
       belongId,
       relations,
       params: name,
@@ -1121,8 +1146,8 @@ export default class KernelApi {
               logger.error(e as Error);
             }
           } else if (!data.onlineOnly) {
-            const data = this._cacheData[flag] || [];
-            this._cacheData[flag] = [...data, data.data];
+            const _cache = this._cacheData[flag] || [];
+            this._cacheData[flag] = [..._cache, data.data];
           }
         }
         break;
@@ -1144,7 +1169,7 @@ export default class KernelApi {
               }
               this.onlineNotify.changCallback();
             }
-            command.emitter('_', res.target.toLowerCase(), res.data);
+            command.emitter('executor', res.target.toLowerCase(), res.data);
           }
         }
         break;
@@ -1188,36 +1213,6 @@ export default class KernelApi {
         } else {
           logger.warn('操作失败,' + result.msg);
         }
-      }
-      return result;
-    }
-    return model.badRequest();
-  }
-  /**
-   * 请求一个代码构建方法
-   * @param {ReqestType} reqs 请求体
-   * @returns 结果
-   */
-  public async codeBuild(req: model.codeBuildType): Promise<model.ResultType<any>> {
-    var res: model.ResultType<any>;
-    res = await this._restBuildRequest('v1/build', req);
-    return res;
-  }
-  private async _restBuildRequest(
-    methodName: string,
-    args: any,
-    timeout: number = 2,
-  ): Promise<model.ResultType<any>> {
-    const res = await this._axiosInstance({
-      method: 'post',
-      timeout: timeout * 1000,
-      url: '/api/' + methodName,
-      data: args,
-    });
-    if (res.data && (res.data as model.ResultType<any>)) {
-      const result = res.data as model.ResultType<any>;
-      if (result.status !== 201) {
-        logger.warn('操作失败,' + result.msg);
       }
       return result;
     }

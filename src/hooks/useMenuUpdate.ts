@@ -22,14 +22,18 @@ const useMenuUpdate = (
   const rootMenu = ref<MenuItemType>();
   const selectMenu = ref<MenuItemType>();
   const ctrl = controller || orgCtrl;
-
+  
   /** 刷新菜单 */
   const refreshMenu = () => {
-    key.value = generateUuid();
-    const newMenus = loadMenu();
-    var item = findMenuItemByKey(newMenus, ctrl.currentKey);
-    item === undefined ? item = newMenus: ''
-    ctrl.currentKey = item.key as string;
+    key.value = generateUuid()
+    const newMenus = loadMenu()
+    let item = findMenuItemByKey(newMenus, ctrl.currentKey);
+    
+    if (item === undefined) {
+      item = newMenus;
+    }
+    
+    ctrl.currentKey = item.key
     selectMenu.value = item
     rootMenu.value = newMenus
   };
@@ -39,21 +43,22 @@ const useMenuUpdate = (
     if (typeof item === 'string') {
       ctrl.currentKey = item;
     } else {
-      ctrl.currentKey = item.key as string;
+      ctrl.currentKey = item.key;
     }
     refreshMenu();
   };
 
-  onMounted(() => {
-    const id = ctrl.subscribe((k) => {
-      key.value = k;
-      refreshMenu();
-    });
-    return () => {
-      ctrl.unsubscribe(id);
-    };
-  })
+  let id = ''
 
+  onMounted(() => {
+    id = ctrl.subscribe((k) => {
+      key.value = k
+      refreshMenu()
+    })
+  })
+  onBeforeUnmount(() => {
+    ctrl.unsubscribe(id);
+  })
 
   return [key, rootMenu, selectMenu, onSelectMenu];
 }

@@ -1,6 +1,4 @@
-import React from 'react';
 import { ICompany } from '@/ts/core';
-import { RouteConfig } from 'react-router-config';
 
 interface DataType {
   [key: string]: any;
@@ -17,7 +15,7 @@ export type PageData<T> = {
   data: T[];
   msg?: string;
 };
-interface IRouteConfig extends RouteConfig {
+export interface IRouteConfig extends RouteConfig {
   // 路由路径
   path: string;
   // 路由组件
@@ -37,7 +35,7 @@ interface IRouteConfig extends RouteConfig {
   routes?: IRouteConfig[];
 }
 
-interface MenuItemType {
+export interface MenuItemType {
   item?: any;
   key: string;
   label: string;
@@ -55,7 +53,7 @@ interface MenuItemType {
   beforeLoad?: () => Promise<void>;
 }
 
-interface OperateMenuType {
+export interface OperateMenuType {
   key: string;
   label: string;
   model?: string;

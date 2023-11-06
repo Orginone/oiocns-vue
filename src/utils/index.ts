@@ -1,11 +1,14 @@
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-prototype-builtins */
+/* eslint-disable no-unused-vars */
 /* --------------------------------------------公共方法--------------------------------- */
 // 获取URL参数
 const getQueryString = (name: string) => {
-  const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
-  const r = window.location.search.substr(1).match(reg)
-  if (r !== null) return decodeURI(r[2])
-  return null
-}
+  const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)');
+  const r = window.location.search.substr(1).match(reg);
+  if (r !== null) return decodeURI(r[2]);
+  return null;
+};
 
 /**
  * Date 转化为指定格式的String<br>
@@ -33,15 +36,15 @@ const getQueryString = (name: string) => {
  * // => 2006-7-2 8:9:4.18
  */
 const formatDate = (date?: any, fmt?: string) => {
-  if (date === void 0) date = new Date()
-  if (fmt === void 0) fmt = 'yyyy-MM-dd HH:mm:ss'
+  if (date === void 0) date = new Date();
+  if (fmt === void 0) fmt = 'yyyy-MM-dd HH:mm:ss';
 
   if (typeof date === 'string') {
-    date = new Date(date)
+    date = new Date(date);
   } else if (typeof date === 'number') {
-    date = new Date(date)
+    date = new Date(date);
   }
-  let o:any = {
+  let o: any = {
     'M+': date.getMonth() + 1, // 月份
     'd+': date.getDate(), // 日
     'h+': date.getHours() % 12 === 0 ? 12 : date.getHours() % 12, // 小时
@@ -49,63 +52,63 @@ const formatDate = (date?: any, fmt?: string) => {
     'm+': date.getMinutes(), // 分
     's+': date.getSeconds(), // 秒
     'q+': Math.floor((date.getMonth() + 3) / 3), // 季度
-    S: date.getMilliseconds() // 毫秒
-  }
-  let week:any = {
+    S: date.getMilliseconds(), // 毫秒
+  };
+  let week: any = {
     '0': '\u65e5',
     '1': '\u4e00',
     '2': '\u4e8c',
     '3': '\u4e09',
     '4': '\u56db',
     '5': '\u4e94',
-    '6': '\u516d'
-  }
+    '6': '\u516d',
+  };
 
   if (/(y+)/.test(fmt)) {
-    fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length))
+    fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
   }
 
   if (/(E+)/.test(fmt)) {
     fmt = fmt.replace(
       RegExp.$1,
       (RegExp.$1.length > 1 ? (RegExp.$1.length > 2 ? '\u661f\u671f' : '\u5468') : '') +
-        week[date.getDay() + '']
-    )
+        week[date.getDay() + ''],
+    );
   }
 
   for (let k in o) {
     if (new RegExp('(' + k + ')').test(fmt)) {
       fmt = fmt.replace(
         RegExp.$1,
-        RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length)
-      )
+        RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length),
+      );
     }
   }
 
-  return fmt
-}
+  return fmt;
+};
 function formatTimeByPattern(val: any) {
   // 2016-05-23 13:58:02.0
   if (val.length > 19) {
-    val = val.substring(0, 19)
+    val = val.substring(0, 19);
   }
 
-  let pattern = /-|\./g
-  let year
-  let month
-  let day
-  let reset
+  let pattern = /-|\./g;
+  let year;
+  let month;
+  let day;
+  let reset;
 
   if (pattern.test(val)) {
-    return val.replace(pattern, '/')
+    return val.replace(pattern, '/');
   } else {
     // 若无’-‘，则不处理
     if (!~val.indexOf('-')) {
-      year = val.slice(0, 4)
-      month = val.slice(4, 6)
-      day = val.slice(6, 8)
-      reset = val.slice(8)
-      return year + '/' + month + '/' + day + reset
+      year = val.slice(0, 4);
+      month = val.slice(4, 6);
+      day = val.slice(6, 8);
+      reset = val.slice(8);
+      return year + '/' + month + '/' + day + reset;
     }
   }
 }
@@ -121,27 +124,27 @@ function formatTimeByPattern(val: any) {
  * // => 1天前
  */
 function formatTimeAgo(ms: any) {
-  ms = parseInt(ms)
+  ms = parseInt(ms);
 
-  let timeNow = Date.now()
-  let diff = (timeNow - ms) / 1000
-  let date = new Date()
+  let timeNow = Date.now();
+  let diff = (timeNow - ms) / 1000;
+  let date = new Date();
   // 向下取整更精确些
-  let days = Math.floor(diff / (24 * 60 * 60))
-  let hours = Math.floor(diff / (60 * 60))
-  let minutes = Math.floor(diff / 60)
-  let second = Math.floor(diff)
+  let days = Math.floor(diff / (24 * 60 * 60));
+  let hours = Math.floor(diff / (60 * 60));
+  let minutes = Math.floor(diff / 60);
+  let second = Math.floor(diff);
 
   if (days > 0 && days < 2) {
-    return days + '天前'
+    return days + '天前';
   } else if (days <= 0 && hours > 0) {
-    return hours + '小时前'
+    return hours + '小时前';
   } else if (hours <= 0 && minutes > 0) {
-    return minutes + '分钟前'
+    return minutes + '分钟前';
   } else if (minutes <= 0 && second >= 0) {
-    return '刚刚'
+    return '刚刚';
   } else {
-    date.setTime(ms)
+    date.setTime(ms);
 
     return (
       date.getFullYear() +
@@ -153,11 +156,11 @@ function formatTimeAgo(ms: any) {
       f(date.getHours()) +
       ':' +
       f(date.getMinutes())
-    )
+    );
   }
 
   function f(n: any) {
-    return n < 10 ? '0' + n : n
+    return n < 10 ? '0' + n : n;
   }
 }
 
@@ -167,9 +170,9 @@ function formatTimeAgo(ms: any) {
  * @return {boolean} 正则校验结果 true: 是emoji表情 false: 不是emoji表情
  */
 function isEmoji(value: any) {
-  let arr = ['\ud83c[\udf00-\udfff]', '\ud83d[\udc00-\ude4f]', '\ud83d[\ude80-\udeff]']
+  let arr = ['\ud83c[\udf00-\udfff]', '\ud83d[\udc00-\ude4f]', '\ud83d[\ude80-\udeff]'];
 
-  return new RegExp(arr.join('|'), 'g').test(value)
+  return new RegExp(arr.join('|'), 'g').test(value);
 }
 
 /**
@@ -178,40 +181,10 @@ function isEmoji(value: any) {
  * @returns {boolean} 正则校验结果 true: 是特殊字符 false: 不是特殊字符
  */
 function isSpecialChar(value: any) {
-  let regEn = /[`~!@#$%^&*()_+<>?:"{},.\/;'[\]\s]/im
-  let regCn = /[·！#￥（——）：；“”‘、，|《。》？、【】[\]\s]/im
+  let regEn = /[`~!@#$%^&*()_+<>?:"{},.\/;'[\]\s]/im;
+  let regCn = /[·！#￥（——）：；“”‘、，|《。》？、【】[\]\s]/im;
 
-  return regEn.test(value) || regCn.test(value)
-}
-
-/**
- * 压缩文件名显示（中间隐藏，用..代替）
- * @param name 文件名
- * @param limit 压缩限制
- * @param start 头
- * @param end 尾
- */
-function zipFileName(name: string, limit: number, start: number, end: number) {
-  if(!name) {
-    return ''
-  }
-  if(name.length > limit) {
-    const rp = name.substring(start, name.length - end);
-    return rp != name ? name.replace(rp, "..") : name
-  } else {
-    return name
-  }
-}
-
-/**
- * 文件大小单位转换
- * @param a 容量大小，单位字节
- * @param b 保留小数点后几位
- */
-function formatBytes(a: number, b: number) {
-  if(0 == a) return '0 B'
-  const c = 1024, d = b || 2, e = ['B', 'KB', 'MB', 'GB', 'TB'], f = Math.floor(Math.log(a) / Math.log(c))
-  return parseFloat((a / Math.pow(c, f)).toFixed(d)) + ' ' + e[f]
+  return regEn.test(value) || regCn.test(value);
 }
 
 /**
@@ -226,15 +199,151 @@ function formatBytes(a: number, b: number) {
  */
 function filterEmptyPropObj(obj: any) {
   if (!(typeof obj == 'object')) {
-    return
+    return;
   }
 
   for (let key in obj) {
-    if (obj.hasOwnProperty(key) && (obj[key] == null || obj[key] == undefined || obj[key] === '')) {
-      delete obj[key]
+    if (
+      obj.hasOwnProperty(key) &&
+      (obj[key] == null || obj[key] == undefined || obj[key] === '')
+    ) {
+      delete obj[key];
     }
   }
-  return obj
+  return obj;
 }
 
-export { getQueryString, formatDate, formatTimeAgo, isEmoji, isSpecialChar, zipFileName, formatBytes, filterEmptyPropObj }
+/**
+ * 递归访问整个树
+ */
+function visitTree(
+  tree: any[],
+  cb: (item: any, parent: any, deep: number) => void,
+  options?: {
+    /** 子项名，默认：`'children'` */
+    childrenMapName?: string;
+  },
+) {
+  options = {
+    childrenMapName: 'children',
+    ...options,
+  };
+  const inFn = (data: any[], parent: any, deep: number) => {
+    for (const item of data) {
+      cb(item, parent, deep);
+      const childrenVal = item[options!.childrenMapName!];
+      if (childrenVal && childrenVal.length > 0) {
+        inFn(childrenVal, item, deep + 1);
+      }
+    }
+  };
+  inFn(tree, null, 1);
+}
+
+/**
+ *  处理表格组件，添加字段展示宽度，文本溢出省略显示
+ * @param propsColumns 传入的表头
+ * @returns
+ */
+function getScrollX(propsColumns: { [key: string]: any }[]) {
+  let scrollx = 0 as number;
+  const columnsRes = propsColumns.map((item) => {
+    const { dataIndex, title, width, key, fixed } = item;
+    const type = Object.prototype.toString.call(title);
+    let _width = 0 as number;
+    if (!width) {
+      switch (type) {
+        case '[object Object]':
+          _width = title.props.title.length * 14 + 20;
+          break;
+        case '[object String]':
+          _width = title.length * 14 + 20;
+          break;
+        default:
+          _width = width;
+      }
+    } else {
+      _width = width;
+    }
+    scrollx += _width;
+    return {
+      ...item,
+      key: key || dataIndex,
+      width: _width,
+      ellipsis: !fixed,
+    };
+  });
+  return { columnsRes, scrollx };
+}
+
+function getJsonText(fileUrl: string): Promise<string> {
+  return new Promise((ok, error) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', fileUrl);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          // 获取响应数据的原始文本内容
+          const rawText = xhr.responseText;
+          ok(rawText);
+        } else {
+          error('请求失败');
+        }
+      }
+    };
+    xhr.send();
+  });
+}
+
+const ellipsisText = (text: string, length: number) => {
+  if (text.length > length) {
+    return text.substring(0, length) + '...';
+  }
+  return text;
+};
+
+/**
+ * 根据传入keys顺序，对传入obj对象键值对排序
+ * @param obj
+ * @param sortedKeys
+ */
+function sortObjByKeys<T extends object>(obj: T, sortedKeys: string[]): T {
+  const sortedObj: Partial<T> = {};
+  sortedKeys.forEach((key) => {
+    if (obj?.hasOwnProperty(key)) {
+      sortedObj[key as keyof T] = obj[key as keyof T];
+    }
+  });
+  // 将原对象的其他键值对复制到排序后的对象中
+  for (const key in obj) {
+    if (!sortedObj.hasOwnProperty(key)) sortedObj[key] = obj[key];
+  }
+  return sortedObj as T;
+}
+
+/**
+ * 赋给新对象中没有的老对象的值
+ * @param old
+ */
+function assignment(oldObj: { [key: string]: any }, newObj: { [key: string]: any }) {
+  Object.keys(oldObj).forEach((key) => {
+    if (!(key in newObj)) {
+      newObj[key] = oldObj[key];
+    }
+  });
+}
+
+export {
+  assignment,
+  ellipsisText,
+  filterEmptyPropObj,
+  formatDate,
+  formatTimeAgo,
+  getJsonText,
+  getQueryString,
+  getScrollX,
+  isEmoji,
+  isSpecialChar,
+  sortObjByKeys,
+  visitTree,
+};

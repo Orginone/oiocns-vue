@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import {h} from 'vue'
 import { ElDivider } from 'element-plus';
-import { Star,ChatDotRound, Delete, StarFilled } from '@element-plus/icons-vue';
 import { IActivity,IActivityMessage,MessageType } from '@/ts/core';
 import { ActivityType } from '@/ts/base/model';
 import { XEntity } from '@/ts/base/schema';
 import orgCtrl from '@/ts/controller';
 import { parseHtmlToText, showChatTime } from '@/utils/tools';
-import ActivityComment from './ActivityComment.vue';
-import ActivityResource from './ActivityResource.vue';
+import ActivityComment from '../ActivityComment/index.vue'
+import ActivityResource from '@/components/Activity/ActivityResource/index.vue'
+import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
+import { Bin, LikeOutlined, MessageOutlined } from '@/icons/im';
 
 const props = defineProps<{
   hideResource?: boolean;
@@ -16,7 +17,7 @@ const props = defineProps<{
   activity: IActivity;
 }>()
 // 
-const metadata = ref<ActivityType>()
+const metadata = ref<ActivityType>(null)
 // 订阅
 let id = ''
 onMounted(() => {
@@ -47,9 +48,9 @@ const handleReply = async (userId: string = '') => {
 <template>
   <li class="listItem" v-if="metadata">
     <div class="listItemMeta"> 
-      <!-- TODO: 图标-->
-      <!-- <EntityIcon entity={activity.metadata} size={50} /> -->
-      <div class="listItemMetaAvatar"><ElAvatar :size="50"/></div>
+      <div class="listItemMetaAvatar" style="margin-right: 16px;">
+        <EntityIcon :entity="activity.metadata" :size="50" />
+      </div>
       <div class="listItemMetaContent">
         <!-- 群名 -->
         <span class="listItemTitle" :style="{fontWeight: 'bold',marginRight: '10px'}">
@@ -122,8 +123,8 @@ const handleReply = async (userId: string = '') => {
           <!-- 发布时间和操作 -->
           <div class="activityItemFooter">
             <!-- 发布时间 -->
-            <div>
-              TODO:图片<EntityIcon entityId={metadata.createUser} showName />
+            <div style="display: flex;align-items: center;color: rgba(0,0,0,.45)">
+              <EntityIcon :entityId="metadata.createUser" showName />
               <span class="activityTime">
                 发布于{{showChatTime(item.metadata.createTime)}}
               </span>
@@ -131,32 +132,21 @@ const handleReply = async (userId: string = '') => {
             <!-- 操作 -->
             <div v-if="!hideResource">
               <ElSpace :spacer="h(ElDivider, { direction: 'vertical' })" wrap :size="2">
-                <ElButton
-                  type="text"
-                  size="small"
-                  @click="async ()=>await item.like()"
-                >
+                <!-- 点赞按钮 -->
+                <ElButton @click="async ()=>await item.like()" text size="small">
                   <template v-if="metadata.likes.includes(orgCtrl.user.id)">
-                    <ElIcon><StarFilled /></ElIcon> <span>取消</span>
+                    <ElIcon color="#cb4747"><LikeOutlined/></ElIcon> <span>取消</span>
                   </template>
                   <template v-else>
-                    <ElIcon><Star /></ElIcon> <span>点赞</span>
+                    <ElIcon><LikeOutlined /></ElIcon> <span>点赞</span>
                   </template>
                 </ElButton>
-                <ElButton
-                  type="text"
-                  size="small"
-                  @click="handleReply()"
-                >
-                  <ElIcon><ChatDotRound /></ElIcon> <span>评论</span>
+                <!-- 评论按钮 -->
+                <ElButton @click="handleReply()" text size="small">
+                  <ElIcon><MessageOutlined /></ElIcon> <span>评论</span>
                 </ElButton>
-                <ElButton
-                  v-if="item.canDelete"
-                  type="text"
-                  size="small"
-                  @click="item.delete()"
-                >
-                  <ElIcon><Delete /></ElIcon> <span>删除</span>
+                <ElButton v-if="item.canDelete" text size="small" @click="item.delete()">
+                  <ElIcon><Bin /></ElIcon> <span>删除</span>
                 </ElButton>
               </ElSpace>
             </div>
@@ -173,7 +163,7 @@ const handleReply = async (userId: string = '') => {
                 v-if="metadata.likes.length"
                 style="font-size: 18px;color: #888"
               >
-                <ElIcon :size="18" color="#cb4747"><StarFilled/></ElIcon>
+                <ElIcon :size="18" color="#cb4747"><LikeOutlined/></ElIcon>
                 <b style="margin-left: 6px">{{metadata.likes.length}}</b>
               </span>
               <!-- 评论数 -->
@@ -181,20 +171,18 @@ const handleReply = async (userId: string = '') => {
                 v-if="metadata.comments.length"
                 style="font-size: 18px;color: #888"
               >
-                <ElIcon :size="18" color="#cb4747"><ChatDotRound/></ElIcon>
-                <b :style="{ marginLeft: 6 }">{{metadata.comments.length}}</b>
+                <ElIcon :size="18" color="#4747cb"><MessageOutlined/></ElIcon>
+                <b :style="{ marginLeft: '6px' }">{{metadata.comments.length}}</b>
               </span>
             </template>
             <!-- 点赞列表 -->
             <template v-else>
-              <ElIcon :size="18" color="#cb4747"><StarFilled/></ElIcon>
+              <ElIcon :size="18" color="#cb4747"><LikeOutlined /></ElIcon>
               <div
                 v-for="userId in metadata.likes" 
                 :key="userId" 
                 :style="{ alignItems: 'center', display: 'flex' }"
               >
-                <!-- TODO: -->
-                {{ userId }}
                 <EntityIcon :entityId="userId" showName/>
               </div>
             </template>
@@ -273,6 +261,9 @@ const handleReply = async (userId: string = '') => {
       -ms-flex-align: start;
       align-items: flex-start;
       max-width: 100%;
+      &Content {
+        flex: 1;
+      }
     }
   }
 
@@ -280,7 +271,7 @@ const handleReply = async (userId: string = '') => {
   padding: 8px 0;
   // TODO:
   // border-bottom: 1px solid @border-color-base;
-  border-bottom: 1px solid var(--el-border-color);
+  border-bottom: 1px solid #e6f1ff;
   &Header {
     display: flex;
     align-items: center;
