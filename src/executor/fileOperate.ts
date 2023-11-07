@@ -1,11 +1,8 @@
-
-// import TypeIcon from '@/components/Common/GlobalComps/typeIcon';
 import { command } from '@/ts/base';
 import { OperateModel } from '@/ts/base/model';
 import { IFile } from '@/ts/core';
 import { entityOperates } from '@/ts/core/public';
-import { OperateMenuType } from '@/typings/globelType';
-import { isFileServingAllowed } from 'vite';
+import { OperateMenuType } from 'typings/globelType';
 
 /** 加载文件菜单 */
 export const loadFileMenus = (file: IFile, mode: number = 0) => {
@@ -24,7 +21,6 @@ export const loadFileMenus = (file: IFile, mode: number = 0) => {
     }
     return label.replaceAll('{0}', file.typeName);
   };
-  
   return operates
     .sort((a, b) => a.sort - b.sort)
     .map((o) => {
@@ -32,8 +28,7 @@ export const loadFileMenus = (file: IFile, mode: number = 0) => {
         key: o.cmd,
         label: parseLabel(o.label),
         model: o.model ?? 'inside',
-        // TODO:
-        // icon: o.menus ? <></> : <TypeIcon iconType={o.iconType} size={16} />,
+        icon: '',
         beforeLoad: async () => {
           command.emitter('executor', o.cmd, file);
           return true;
@@ -44,8 +39,7 @@ export const loadFileMenus = (file: IFile, mode: number = 0) => {
             return {
               key: s.cmd,
               label: parseLabel(s.label),
-              // TODO:
-              // icon: <TypeIcon iconType={s.iconType} size={16} />,
+              icon: '',
               beforeLoad: async () => {
                 command.emitter('executor', s.cmd, file);
                 return true;
@@ -55,5 +49,3 @@ export const loadFileMenus = (file: IFile, mode: number = 0) => {
       } as OperateMenuType;
     });
 };
-
-

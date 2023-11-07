@@ -1,17 +1,23 @@
+<!-- 标签条 -->
 <script setup lang="ts">
 import { schema } from '@/ts/base'
 import { IEntity } from '@/ts/core'
+import { Back,Right } from '@element-plus/icons-vue'
+import { h, ref } from 'vue'
+import { ElDivider } from 'element-plus'
 
 const props = defineProps<{
   select: string;
   initTags: string[];
+  excludeTags: string[];
+  extraTags: boolean;
   selectFiles: IEntity<schema.XEntity>[];
   badgeCount?: (tag: string) => number;
   entitys: IEntity<schema.XEntity>[];
   onChanged: (tag: string) => void;
 }>()
 
-// 获取分组标签集
+/** 获取分组标签集 */
 const groupTags = () => {
   const tags = props.initTags.map((tag) => {
     return { tag, count: 0 };
@@ -19,47 +25,59 @@ const groupTags = () => {
   if (props.selectFiles.length > 0) {
     tags.push({ tag: '已选中', count: props.selectFiles.length });
   }
-  // console.log('tagsbar.props.entitys[0]', props.entitys[0])
-  
-  props.entitys.forEach((entity) => {
-    entity.groupTags?.forEach((tag) => {
-      const index = tags.findIndex((i) => i.tag === tag);
-      if (index > -1) {
-        tags[index].count += 1;
-      } else {
-        tags.push({ tag, count: 1 });
-      }
+  if (props.extraTags) {
+    props.entitys.forEach((entity) => {
+      entity.groupTags.forEach((tag) => {
+        if (!props.excludeTags.includes(tag)) {
+          const index = tags.findIndex((i) => i.tag === tag);
+          if (index > -1) {
+            tags[index].count += 1;
+          } else {
+            tags.push({ tag, count: 1 });
+          }
+        }
+      });
     });
-  });
+  }
   return tags.sort((a, b) => {
     const aqz = a.tag === '已删除' ? 10 : 0;
     const bqz = b.tag === '已删除' ? 10 : 0;
     return aqz - bqz;
   });
 }
-
+const tagsBarRef = ref(null)
+/** 箭头滚动 */
+const arrowLeft = (num: number) => {
+  if (tagsBarRef.value) {
+    tagsBarRef.value.scrollLeft = tagsBarRef.value.scrollLeft + num;
+  }
+}
 </script>
 
 <template>
   <div class="tags_bar">
-    <ElSpace spacer="|" :size="16">
-       <!-- {groupTags().map((item) => loadBarItem(item.tag, item.count))} -->
-      <template v-for="item in groupTags()" :key="item.tag">
-        <ElBadge 
-          :hidden="badgeCount && badgeCount(item.tag)>0"  
-          :value="badgeCount && badgeCount(item.tag)" 
-        >
-          <!-- TODO::key="item.tag + '_bdg'" size="small" offset={[-7, 7]} -->
-          <div 
-            :class="item.tag === props.select ? 'tags_item_active' : 'tags_item'" 
-            @click="onChanged(item.tag)"
+    <ElIcon class="tags_bar_btn" @click="arrowLeft(-100)" color="#154ad8" :size="16"><Back/></ElIcon>
+    <div ref="tagsBarRef" class="tags_body">
+      <ElSpace :spacer="h(ElDivider, { direction: 'vertical' })" style="height: 26px;" :size="2">
+        <!-- {groupTags().map((item) => loadBarItem(item.tag, item.count))} -->
+        <template v-for="item in groupTags()" :key="item.tag">
+          <ElBadge 
+            :hidden="badgeCount && badgeCount(item.tag)===0"  
+            :value="badgeCount && badgeCount(item.tag)" 
           >
-            {{item.tag}}
-            <span v-if="item.count>0" class="item_count">{{item.count}}</span>
-          </div>
-        </ElBadge>
-      </template>
-    </ElSpace>
+            <!-- TODO::key="item.tag + '_bdg'" size="small" offset={[-7, 7]} -->
+            <div 
+              :class="item.tag === props.select ? 'tags_item_active' : 'tags_item'" 
+              @click="onChanged(item.tag)"
+            >
+              {{item.tag}}
+              <span v-if="item.count>0" class="item_count">{{item.count}}</span>
+            </div>
+          </ElBadge>
+        </template>
+      </ElSpace>
+    </div>
+    <ElIcon class="tags_bar_btn" color="#154ad8" :size="16" @click="arrowLeft(100)"><Right/></ElIcon>
   </div>
 </template>
 
@@ -67,9 +85,20 @@ const groupTags = () => {
 .tags_bar {
   width: 100%;
   height: 35px;
-  overflow-y: hidden;
-  overflow-x: scroll;
+  gap: 8px;
+  display: flex;
+  padding: 0 16px;
+  align-items: center;
+  justify-content: space-between;
   border-bottom: 1px solid #efefef;
+  &_btn {
+    cursor: pointer;
+  }
+  .tags_body {
+    overflow: hidden;
+    padding: 0 8px;
+    width: 100%;
+  }
   .tags_item {
     cursor: pointer;
     white-space: nowrap;
@@ -83,11 +112,13 @@ const groupTags = () => {
     }
     &:hover {
       border-radius: 30px;
-      // TODO:background-color:@active-background;
+      // TODO:
+      // background-color:@active-background;
       background-color: #e6f1ff;
     }
     &_active {
       cursor: not-allowed;
+      white-space: nowrap;
       border-radius: 30px;
       padding: 4px 16px;
       font-size: 12px;
@@ -96,11 +127,16 @@ const groupTags = () => {
         font-style: italic;
         transform: scale(0.9);
       }
-      // TODO: color: @text-color-inverse;
+      // TODO:
       color: white;
-      // TODO:background-color:@focus-background;
-      background-color: #3838b9;
+      background-color:#3838b9;
     }
   }
+}
+
+:deep(.el-badge__content.is-fixed){
+  top: 8px;
+  width: 16px;
+  height: 16px;
 }
 </style>

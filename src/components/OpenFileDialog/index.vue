@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// import MainLayout from '../MainLayout';
-// import Directory from '../Directory';
+import MainLayout from '../MainLayout/index.vue'
+import Directory from '../Directory/index.vue'
 import useMenuUpdate from '@/hooks/useMenuUpdate';
 import { loadSettingMenu } from './config/index';
 import FullScreenModal from '../Common/fullScreenModal.vue';
@@ -20,10 +20,11 @@ const props = defineProps<{
 }>()
 
 const selectedFiles = ref<IFile[]>()
+
 const [key, rootMenu, selectMenu, setSelectMenu] = useMenuUpdate(
   () => loadSettingMenu(props.rootKey, props.allowInherited || false),
   new Controller(orgCtrl.currentKey),
-);
+)
 </script>
 
 <template>
@@ -34,44 +35,46 @@ const [key, rootMenu, selectMenu, setSelectMenu] = useMenuUpdate(
     :onCancel="()=>{onCancel(); selectedFiles=[]}"
     destroyOnClose
     width='80vw'
-    bodyHeight='65vh'
+    top="5vh"
+    bodyHeight='60vh'
   >
-    <!-- TODO: -->
-    <span style="background-color: #ffbd2a;color:white;font-size: large;font-weight: bold;">TODO</span>
-    <!-- <MainLayout
+    <MainLayout
       leftShow
-      selectMenu={selectMenu}
-      onSelect={(data) => {
+      :selectMenu="selectMenu"
+      :onSelect="(data) => {
         setSelectMenu(data);
-      }}
-      siderMenuData={rootMenu}>
+      }"
+      :siderMenuData="rootMenu"
+    >
+      
       <Directory
-        key={key}
-        accepts={props.accepts}
-        selects={selectedFiles}
-        current={selectMenu.item}
-        excludeIds={props.excludeIds}
-        onFocused={(file) => {
-          if (!props.multiple) {
-            if (file) {
-              setSelectedFiles([file]);
-            } else {
-              setSelectedFiles([]);
+          :key="key"
+          dialog
+          previewFlag='dialog'
+          :accepts="accepts"
+          :selects="selectedFiles"
+          :current="selectMenu.item"
+          :excludeIds="props.excludeIds"
+          :onFocused="(file) => {
+            if (!props.multiple) {
+              if (file) {
+                selectedFiles=[file]
+              } else {
+                selectedFiles=[]
+              }
             }
-          }
-        }}
-        onSelected={(files) => {
-          if (props.multiple) {
-            if (props.maxCount && files.length > props.maxCount) {
-              setSelectedFiles(files.slice(-props.maxCount));
-            } else {
-              setSelectedFiles(files);
+          }"
+          :onSelected="(files) => {
+            if (multiple) {
+              if (maxCount && files.length > maxCount) {
+                selectedFiles = files.slice(-maxCount)
+              } else {
+                selectedFiles = files
+              }
             }
-          }
-        }}
-        mode={10}
-      />
-    </MainLayout> -->
+          }"
+        />
+    </MainLayout>
     
     <template #footer>
       <ElSpace spacer="|" wrap :size="2">

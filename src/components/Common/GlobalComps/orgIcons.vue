@@ -1,6 +1,6 @@
 <template>
   <div class="icons">
-      <img class="img" :src=imgUrl />
+      <img class="img" :src="imgUrl" />
   </div>
 </template>
 
@@ -8,7 +8,6 @@
   import { onBeforeMount, onBeforeUnmount,reactive,watch,ref,nextTick,getCurrentInstance, onMounted} from 'vue'
   const props = defineProps(['url'])
   const imgUrl = ref<string>('/svg/'+props.url+'.svg');
-  // console.log(imgUrl)
 </script>
 
 <style lang="scss" scoped>

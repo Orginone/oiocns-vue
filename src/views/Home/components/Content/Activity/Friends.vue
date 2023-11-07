@@ -8,8 +8,6 @@ const friendsActivity = new GroupActivity(
   [orgCtrl.user.session.activity, ...orgCtrl.user.memberChats.map((i) => i.activity)],
   true,
 )
-console.log('friendsActivity', friendsActivity);/////////////////////////////////////
-
 
 </script>
 

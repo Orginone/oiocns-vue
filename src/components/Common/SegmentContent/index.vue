@@ -1,15 +1,13 @@
 <!-- 存储——文件系统 -->
 <script setup lang="ts">
 import useStorage from '@/hooks/useStorage'
-// import * as fa from '@/icons/fa'
-import { Component } from 'vue'
+import {Th,List,Table} from '@/icons/fa'
 
-type segmentedTypes = 'icon' | 'table' | 'list';
+type segmentedTypes = 'icon' | 'table' | 'list'
 
 const props = defineProps<{
   descriptions: string;
-  // content: React.ReactNode;改成用插槽了
-  onSegmentChanged: (type: segmentedTypes) => void;
+  onSegmentChanged: (type: segmentedTypes) => void
 }>()
 
 const [segmented, setSegmented] = useStorage('segmented', 'list');
@@ -19,85 +17,64 @@ const parentRef = ref<any>()
 
 <template>
 <div id="segmentContent">
-  <ElCard shadow="never" body-class="mainContent">
-    <!-- 默认插槽 -->
-    <div class="mainContent" :ref="parentRef">
-      <slot />
+  <!-- 默认插槽 -->
+  <div class="mainContent" :ref="parentRef">
+    <slot />
+  </div>
+  <div class="footer">
+    <!-- 项目个数 -->
+    <div class="descriptions">
+      {{descriptions}}
     </div>
-    <ElAffix position="bottom" :offset="0" >
-      <!-- TODO:right:10 -->
-      <!-- <Segmented
-        :value="segmented"
-        :onChange="(value) => {
-          setSegmented(value as segmentedTypes);
-          onSegmentChanged(value as segmentedTypes);
-        }"
-        :options="[
-          {
-            value: 'list',
-            icon: (
-              <fa.FaList
-                fontSize={20}
-                color={segmented === 'list' ? 'blue' : '#9498df'}
-              />
-            ),
-          },
-          {
-            value: 'icon',
-            icon: (
-              <fa.FaTh
-                fontSize={20}
-                color={segmented === 'icon' ? 'blue' : '#9498df'}
-              />
-            ),
-          },
-          {
-            value: 'table',
-            icon: (
-              <fa.FaTable
-                fontSize={20}
-                color={segmented === 'table' ? 'blue' : '#9498df'}
-              />
-            ),
-          },
-        ]"
-      /> -->
-      <!-- 临时版 -->
-      <ElButton @click="setSegmented('list');onSegmentChanged('list');">list</ElButton>
-      <ElButton @click="setSegmented('icon');onSegmentChanged('icon');">icon</ElButton>
-      <ElButton @click="setSegmented('table');onSegmentChanged('table');">table</ElButton>
-    </ElAffix>
-    <!-- left:10 -->
-    <ElAffix position="bottom" :offset="0">
-      <ElSpace spacer="|">
-        <!-- TODO: -->
-        <!-- <Typography.Link>{{descriptions}}</Typography.Link> -->
-        <ElLink>{{descriptions}}</ElLink>
-      </ElSpace>
-    </ElAffix>
-  </ElCard>
+    <!-- 切换展示类型按钮 -->
+    <div class="footer-check">
+      <ElIcon @click="setSegmented('list');onSegmentChanged('list');" :size="20" :color="segmented === 'list' ? '#0d0dff' : '#9498df'">
+        <List/>
+      </ElIcon>
+      <ElIcon @click="setSegmented('icon');onSegmentChanged('icon');" :size="20" :color="segmented === 'icon' ? 'blue' : '#9498df'">
+        <Th/>
+      </ElIcon>
+      <ElIcon @click="setSegmented('table');onSegmentChanged('table');" :size="20" :color="segmented === 'table' ? 'blue' : '#9498df'">
+        <Table/>
+      </ElIcon>
+    </div>
+  </div>
 </div>
 </template>
 
 <style lang="scss" scoped>
 // @import '~antd/es/style/themes/variable';
 #segmentContent {
-  height: 100%;
-  &:deep(.el-card) {
-    height: calc(100% - 35px);
+  height: calc(100% - 35px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  .mainContent {
     padding-bottom: 0;
-    // TODO:
-    // & > :global(.ogo-card-body) {
-    //   height: calc(100% - 10px);
-    //   padding: 2px 6px;
-    // }
-    // & > :global(.dx-datagrid-headers) {
-    //   border-bottom: none;
-    // }
-    .mainContent {
-      padding-bottom: 0;
-      height: calc(100% - 20px);
-      overflow: auto;
+    overflow: auto;
+    height: calc(100% - 32px);
+  }
+  .footer {
+    height: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .descriptions {
+      color: #154ad8;
+      outline: none;
+      cursor: pointer;
+      -webkit-transition: color .3s;
+      transition: color .3s;
+      text-decoration: none;
+    }
+    .footer-check {
+      margin-right: 15px;
+      cursor: pointer;
+      background-color: #f0f0f0;
+      display: flex;
+      align-items: center;
+      padding: 1px;
+      border-radius: 5px;
     }
   }
 }

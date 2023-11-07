@@ -314,6 +314,22 @@ const parseHtmlToText = (html: string) => {
   return text.replace(/[\r\n]/g, ''); //去掉回车换行
 };
 
+/** */
+const cleanMenus = (items?: OperateMenuType[]): OperateMenuType[] | undefined => {
+  const newItems = items?.map((i) => {
+    return {
+      key: i.key,
+      label: i.label,
+      icon: i.icon,
+      children: cleanMenus(i.children),
+    } as OperateMenuType;
+  });
+  if (newItems && newItems.length > 0) {
+    return newItems;
+  }
+  return undefined;
+};
+
 export {
   dateFormat,
   debounce,
@@ -334,4 +350,5 @@ export {
   showMessage,
   truncateString,
   validIsSocialCreditCode,
+  cleanMenus
 };
