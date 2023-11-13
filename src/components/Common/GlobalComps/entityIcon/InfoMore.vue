@@ -16,10 +16,12 @@ defineProps<{entity: any,size: number}>()
 
 <style lang="scss" scoped>
 .infoMore {
-  position: relative;
+  position: absolute;
   z-index: 101;
   font-size: 12px;
-  top: var(--size);
+  top: 0;
+  left: 0;
+  transform: translate(-10px,-10px);
   width: 4px;
 }
 </style>

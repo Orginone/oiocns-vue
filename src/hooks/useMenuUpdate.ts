@@ -59,7 +59,6 @@ const useMenuUpdate = (
   onBeforeUnmount(() => {
     ctrl.unsubscribe(id);
   })
-
   return [key, rootMenu, selectMenu, onSelectMenu];
 }
 

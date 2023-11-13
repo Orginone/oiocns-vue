@@ -55,8 +55,6 @@ const peopleList = computed(()=>{
     })
 })
 
-
-
   /** 艾特触发人员选择 */
   const onSelect = (item: any) => {
     citeShow.value=false

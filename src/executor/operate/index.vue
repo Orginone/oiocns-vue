@@ -92,13 +92,11 @@ onMounted(()=>{
         break;
       default:
         if (props.cmd.startsWith('join')) {   
-          // return <JoinTarget cmd={cmd} current={args[0]} finished={finished} />
           return setContent(JoinTarget, {cmd:props.cmd,current: props.args[0], finished: props.finished})
         }
         // return <EntityForm cmd={cmd} entity={args[0]} finished={finished} />
         // TODO:
-        console.log('来这改');
-        // return setContent(EntityForm, {cmd: props.cmd, entity: props.args[0], finished: props.finished})
+        return setContent(EntityForm, {cmd: props.cmd, entity: props.args[0], finished: props.finished})
     }
   }
 })

@@ -1,7 +1,7 @@
-import { MenuType } from './menuType';
-// import * as im from '@/icons/im';
-import TeamIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
-import orgCtrl from '@/ts/controller';
+import { MenuType } from './menuType'
+import * as im from '@/icons/im'
+import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
+import orgCtrl from '@/ts/controller'
 import { MenuItemType } from '@/typings/globelType'
 import { ISession } from '@/ts/core'
 import OrgIcons from '@/components/Common/GlobalComps/orgIcons.vue'
@@ -18,18 +18,15 @@ const createChatMenu = (chat: ISession, children: MenuItemType[]) => {
       {
         key: '标记为未读',
         label: '标记为未读',
-        // TODO:
-        icon: 'im.ImBell',
-        // icon: <im.ImBell />,
+        icon: im.Bell,
         model: 'outside',
       },
     ],
-    icon: 'TODO:来这改',
-    // icon: <TeamIcon notAvatar={true} entity={chat.metadata} size={18} />,
+    icon: {name:EntityIcon, args:{notAvatar:true, entity:chat.metadata, size:18}},
     children: children,
   };
 };
-
+/** 加载通讯录菜单 */
 const loadBookMenu = () => {
   const companyItems = [];
   for (const company of orgCtrl.user.companys) {
@@ -42,8 +39,7 @@ const loadBookMenu = () => {
       label: company.name,
       item: company.chats.filter((i) => i.isMyChat),
       itemType: MenuType.Books,
-      icon: 'TODO:来这改',
-      // icon: <TeamIcon entity={company.metadata} size={18} />,
+      icon: {name:EntityIcon,args:{entity:company.metadata,size:18}},
       company,
       children: [
         createChatMenu(
@@ -71,8 +67,7 @@ const loadBookMenu = () => {
           .filter((i) => i.isMyChat)
           .map((item) => createChatMenu(item, [])),
       ],
-      icon: 'TODO:来这改',
-      // icon: <TeamIcon entity={orgCtrl.user.metadata} size={18} />,
+      icon: {name:EntityIcon, args:{entity:orgCtrl.user.metadata, size:18}},
     },
     ...companyItems,
   ];
@@ -84,9 +79,7 @@ export const loadChatMenu = () => {
     label: '沟通',
     itemType: 'Tab',
     children: [],
-    // TODO:
-    icon: '来这改',
-    // icon: <OrgIcons chat />,
+    icon: {name:OrgIcons,args:{chat:true}},
   } as MenuItemType;
   chatMenus.children = loadBookMenu();
   return chatMenus;

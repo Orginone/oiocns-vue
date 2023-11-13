@@ -6,8 +6,11 @@ import ChatBody from './chat/index.vue'
 import MemberContent from './member/index.vue'
 import { command } from '@/ts/base'
 import TargetActivity from '@/components/TargetActivity/index.vue'
-import { AddressBook, Qrcode, Bubbles2, Lifebuoy } from '@/icons/im'
+import { AddressBook, Qrcode, Bubbles2, Lifebuoy, Folder } from '@/icons/im'
+import orgCtrl from '@/ts/controller'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 
 const props = defineProps<{
   target: ITarget;
@@ -23,7 +26,7 @@ const bodyType=ref(props.setting ? 'activity' : 'chat');
   <div class="groupDetail">
     <!-- 头部 -->
     <div class="header">
-      <!-- 左侧群信息 -->
+      <!-- 头部-左侧群信息 -->
       <div class="left">
         <div class="avatar"><TeamIcon :entity="session.metadata" :size="50" /></div>
         <div class="txt">
@@ -35,22 +38,26 @@ const bodyType=ref(props.setting ? 'activity' : 'chat');
         </div>
         
       </div>
-      <!-- 右侧action -->
-      <div class="right">
+      <!-- 头部-右侧action -->
+      <div class="header-action">
         <ElIcon title="沟通" v-if="session.isMyChat && target.typeName !== TargetType.Group" :size="26">
           <Bubbles2  @click="bodyType='chat'"/>
         </ElIcon>
         <ElIcon title="动态" :size="26">
           <Lifebuoy  @click="bodyType='activity'"/>
         </ElIcon>
-        <ElIcon title="成员" v-if="session.members.length > 0 || session.id === session.userId" :size="26">
-          <AddressBook  @click="bodyType='member'"/>
-        </ElIcon>
+        <template v-if="session.members.length > 0 || session.id === session.userId">
+          <ElIcon title="存储" :size="26">
+            <Folder  @click="orgCtrl.currentKey = target.directory.key;router.push('/store')"/>
+          </ElIcon>          
+          <ElIcon title="成员" :size="26">
+            <AddressBook  @click="bodyType='member'"/>
+          </ElIcon>
+        </template>  
         <ElIcon title="二维码" :size="26">
           <Qrcode  @click="command.emitter('executor', 'qrcode', target)"/>
         </ElIcon>
       </div>
-      
     </div>
     <!-- 内容区域 -->
     <div class="groupDetailContent">
@@ -146,7 +153,9 @@ const bodyType=ref(props.setting ? 'activity' : 'chat');
         }
       }
     }
-    .right {
+    .header-action {
+      text-wrap: none;
+      margin-left: 48px;
       >i {
         margin: 0 8px;
       }

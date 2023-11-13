@@ -2,6 +2,7 @@ import React from 'react';
 import { ICompany } from '@/ts/core';
 import { RouteConfig } from 'react-router-config';
 import type { Properties, PropertiesHyphen } from 'csstype';
+import { Component } from 'vue';
 
 interface DataType {
   [key: string]: any;
@@ -47,7 +48,7 @@ interface MenuItemType {
   itemType: string;
   count?: number;
   tag?: string[];
-  icon?: React.ReactNode;
+  icon?: {name:Component | string,props: object};
   expIcon?: React.ReactNode;
   menus?: OperateMenuType[];
   children: MenuItemType[];
@@ -61,7 +62,7 @@ interface OperateMenuType {
   label: string;
   model?: string;
   children?: OperateMenuType[];
-  icon: React.ReactNode;
+  icon: {name:Component | string, args: object};
   beforeLoad?: () => Promise<boolean>;
 }
 

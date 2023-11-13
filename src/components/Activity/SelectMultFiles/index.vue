@@ -7,6 +7,7 @@ import {Plus} from '@element-plus/icons-vue'
 const props = defineProps<{
   maxCount: number,
   types: string[],
+  currentKey?: string,
   onChange: (fileList: ISysFileInfo[]) => void
 }>()
 
@@ -14,7 +15,7 @@ const open = ref(false)
 const fileList = ref<ISysFileInfo[]>([]);
 
 onMounted(() => {
-  props.onChange(fileList.value);
+  props.onChange(fileList.value as ISysFileInfo[])
 })
 </script>
 
@@ -27,11 +28,12 @@ onMounted(() => {
       :columns="1"
     />
 
-      <!-- 打开文件对话框 -->
+      <!-- 选择文件对话框 -->
       <OpenFileDialog
         v-if="open"
         multiple
         :rootKey="'disk'"
+        :currentKey="currentKey"
         :maxCount="maxCount"
         :accepts="types"
         allowInherited

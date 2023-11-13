@@ -1,4 +1,5 @@
 import { ICompany } from '@/ts/core';
+import { Component } from 'vue';
 
 interface DataType {
   [key: string]: any;
@@ -44,7 +45,7 @@ export interface MenuItemType {
   itemType: string;
   count?: number;
   tag?: string[];
-  icon?: React.ReactNode;
+  icon?: {name:string|Component,args:Object};
   expIcon?: React.ReactNode;
   menus?: OperateMenuType[];
   children: MenuItemType[];

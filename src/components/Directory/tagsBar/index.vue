@@ -65,11 +65,11 @@ const arrowLeft = (num: number) => {
             :hidden="badgeCount && badgeCount(item.tag)===0"  
             :value="badgeCount && badgeCount(item.tag)" 
           >
-            <!-- TODO::key="item.tag + '_bdg'" size="small" offset={[-7, 7]} -->
             <div 
               :class="item.tag === props.select ? 'tags_item_active' : 'tags_item'" 
               @click="onChanged(item.tag)"
             >
+            
               {{item.tag}}
               <span v-if="item.count>0" class="item_count">{{item.count}}</span>
             </div>
@@ -102,7 +102,7 @@ const arrowLeft = (num: number) => {
   .tags_item {
     cursor: pointer;
     white-space: nowrap;
-    padding: 4px 16px;
+    padding: 4px 12px;
     font-size: 12px;
     height: 26px;
     .item_count {

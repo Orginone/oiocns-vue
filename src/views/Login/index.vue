@@ -212,9 +212,9 @@ const userLogin = async (data: {
   remind: boolean;
 }) => {
   btnLoading.value = true;
-  console.log("orgCtrl", orgCtrl);
+  // console.log("orgCtrl", orgCtrl);
   const res = await orgCtrl.provider.login(data.username, data.password);
-  console.log("res", res);
+  // console.log("res", res);
   if (res.msg == "success") {
     router.push("/home");
   }

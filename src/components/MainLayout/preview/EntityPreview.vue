@@ -15,7 +15,7 @@ import {
 } from '@/ts/core';
 import { command, schema } from '@/ts/base'
 // import OfficeView from './office';
-import SessionBody from './session/SessionBody.vue'
+import SessionBody from './session/index.vue'
 // import StorageBody from './storage';
 // import TaskBody from './task';
 // import JoinApply from './task/joinApply';
@@ -68,7 +68,7 @@ onBeforeUnmount(() => {
     </template>
     <!-- 动态预览 -->
     <template v-else-if="entity.hasOwnProperty('activity')">
-      <SessionBody :target="(entity as ISession).target" :session="entity" />;
+      <SessionBody :target="(entity as ISession).target" :session="(entity as ISession)" />;
     </template>
     <!-- TODO:会话预览 -->
     <template v-else-if="entity.hasOwnProperty('session')">
@@ -76,7 +76,7 @@ onBeforeUnmount(() => {
         <!-- <StorageBody :storage="entity" /> -->
       </template>
       <template v-else>
-        <SessionBody :target="entity" :session="(entity as ITarget).session" setting />
+        <SessionBody :target="(entity as ITarget)" :session="(entity as ITarget).session" setting />
       </template>
     </template>
     <!--  TODO: 表单预览 -->

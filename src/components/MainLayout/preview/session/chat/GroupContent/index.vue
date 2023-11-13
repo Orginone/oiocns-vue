@@ -1,16 +1,12 @@
 <script setup lang="ts">
-/* eslint-disable no-unused-vars */
 import moment from 'moment'
-// import { CopyToClipboard } from 'react-copy-to-clipboard'
 import TeamIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
 import Information from './information.vue'
 import ForwardContentModal from './forwardContentModal.vue'
 import { showChatTime} from '@/utils/tools'
 import { IMessage, ISession, MessageType } from '@/ts/core'
 import {parseCiteMsg} from '@/views/Chats/components/parseMsg'
-// import { RiShareForwardFill } from '@/icons/ri';
-// import { BsListCheck } from '@/icons/bs';
-// import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+
 
 import showMsg from './showMsg.vue'
 import msgAction from './msgAction.vue'
@@ -39,40 +35,37 @@ const setInfoMsg = (info: IMessage) => {
 
 const messages=ref<IMessage[]>(props.chat.messages)
 
-// const filteredMessages = computed(() => {
-//   return messages.value.filter((i) => i.msgBody.includes(props.filter))
-// })
 const body = ref(null)
 const beforescrollHeight=ref(0);
 const forwardModalOpen=ref<boolean>(false) // 转发时用户
 const forwardMessages=ref<IMessage[]>([])
-// const multiSelect=ref(props.multiSelectShow)
 
-// 监听消息变更
-onMounted(() => {
-  // 监听消息变更
-  props.chat.onMessage((ms) => messages.value =([...ms]))
-  // 设置初始滚动条位置为最底部
-  if (body && body.value) {
-    if (loading) {
+// 监听消息变更，获取最新消息列表
+onMounted(() => props.chat.onMessage((ms) => messages.value =([...ms])))
+onBeforeUnmount(() => props.chat.unMessage())
+
+// 加载历史记录 | 有新消息时滚动条的变动
+watch(messages,async(val)=>{
+  if (body?.value) {
+    if (loading.value) {
+      // 加载历史记录，滚动条位于前一条记录处
       loading.value = false
       body.value.scrollTop = body.value.scrollHeight - beforescrollHeight.value
     } else {
-      body.value.scrollTop = body.value.scrollHeight;
+      // 有新消息，滚动到底部
+      setTimeout(()=>{
+        body.value.scrollTop = body.value.scrollHeight;
+      },0)
     }
   }
 })
-onBeforeUnmount(() => {
-  // 取消监听消息变更通知
-  props.chat.unMessage();
-})
 
-// 是否显示时间
+/** 是否显示时间 */
 const isShowTime = (curDate: string, beforeDate: string) => {
   if (beforeDate === '') return true
   return moment(curDate).diff(beforeDate, 'minute') > 3
 }
-// 滚动事件
+// 滚动事件-加载更多历史记录
 const onScroll = async () => {
   if (!loading.value && body.value && props.chat && body.value.scrollTop < 10) {
     loading.value = true
@@ -261,10 +254,14 @@ const viewForward = (item: IMessage[]) => {
   overflow-y: auto;
   background-color: #f2f2f2;
   position: relative;
+  &::-webkit-scrollbar {
+    background-color: transparent;
+  }
 }
 .group_content_wrap {
   
   overflow: auto;
+  overflow-x: hidden;
   padding: 20px;
   transition: all 0.7s;
   .chats_space_Time {

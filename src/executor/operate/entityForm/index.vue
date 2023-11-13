@@ -11,7 +11,7 @@ import { IDirectory, IEntity, ITarget } from '@/ts/core';
 // import ApplicationForm from './applicationForm';
 // import SpeciesForm from './speciesForm';
 // import PropertyForm from './propertyForm';
-// import TargetForm from './targetForm';
+import TargetForm from './targetForm.vue'
 // import LabelsForm from './labelsForm';
 // import RenameForm from './renameForm';
 // import TransferForm from './transferForm';
@@ -123,7 +123,7 @@ onMounted(()=>{
         target = (props.entity as IDirectory).target;
       }
       // return <TargetForm formType={props.cmd} target={target} finished={reloadFinish} />;
-      return console.log('来这改');
+      return setContent(TargetForm, {formType: props.cmd, target: target, finished: reloadFinish})
   }
 })
 </script>

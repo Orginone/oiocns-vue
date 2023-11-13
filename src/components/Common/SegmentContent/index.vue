@@ -28,13 +28,13 @@ const parentRef = ref<any>()
     </div>
     <!-- 切换展示类型按钮 -->
     <div class="footer-check">
-      <ElIcon @click="setSegmented('list');onSegmentChanged('list');" :size="20" :color="segmented === 'list' ? '#0d0dff' : '#9498df'">
+      <ElIcon :class="segmented === 'list'?'footer-check-btn checked' : 'footer-check-btn'" @click="setSegmented('list');onSegmentChanged('list');">
         <List/>
       </ElIcon>
-      <ElIcon @click="setSegmented('icon');onSegmentChanged('icon');" :size="20" :color="segmented === 'icon' ? 'blue' : '#9498df'">
+      <ElIcon :class="segmented === 'icon'?'footer-check-btn checked' : 'footer-check-btn'" @click="setSegmented('icon');onSegmentChanged('icon');">
         <Th/>
       </ElIcon>
-      <ElIcon @click="setSegmented('table');onSegmentChanged('table');" :size="20" :color="segmented === 'table' ? 'blue' : '#9498df'">
+      <ElIcon :class="segmented === 'table'?'footer-check-btn checked' : 'footer-check-btn'" @click="setSegmented('table');onSegmentChanged('table');">
         <Table/>
       </ElIcon>
     </div>
@@ -52,10 +52,15 @@ const parentRef = ref<any>()
   .mainContent {
     padding-bottom: 0;
     overflow: auto;
-    height: calc(100% - 32px);
+    overflow-x: hidden;
+    height: calc(100% - 40px);
+    &::-webkit-scrollbar{
+      background-color: transparent;
+      width: 4px;
+    }
   }
   .footer {
-    height: 32px;
+    height: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -72,9 +77,21 @@ const parentRef = ref<any>()
       cursor: pointer;
       background-color: #f0f0f0;
       display: flex;
-      align-items: center;
-      padding: 1px;
-      border-radius: 5px;
+      // align-items: center;
+      height: 34px;
+      padding: 2px;
+      border-radius: 6px;
+      .footer-check-btn {
+        padding: 5px;
+        box-sizing: content-box;
+        font-size: 20px;
+        color: #9498df;
+        border-radius: 6px;
+      }
+      .checked {
+        color: #0d0dff;
+        background-color: white;
+      }
     }
   }
 }

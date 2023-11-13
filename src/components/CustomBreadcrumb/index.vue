@@ -1,9 +1,7 @@
 <!-- 内容布局面包屑 -->
 <script setup lang="ts">
-// import { AiOutlineCaretRight } from '@/icons/ai';
-// import { Breadcrumb, Divider, Space, Tag } from 'antd';
 import { MenuItemType } from '@/typings/globelType'
-import { CaretRight } from '@element-plus/icons-vue';
+import { CaretRight,ArrowDown } from '@element-plus/icons-vue';
 
 
 const props = defineProps<{
@@ -12,17 +10,28 @@ const props = defineProps<{
   onSelect?: (item: MenuItemType) => void;
 }>()
 
-const items=ref<MenuItemType[]>([])
 
-onMounted(() => {
-  items.value = loadBreadItems([props.item], props.selectKey)
-})
-
+/** 加载面包屑下拉列表 */
+const loadItemMenus = (item: MenuItemType) => {
+  if (item.children.length > 0) {
+    return item.children.map((i) => {
+        return {
+          key: i.key,
+          icon: i.icon,
+          label: i.label,
+        };
+    })
+  }
+}
+/** 加载面包屑数据 */
 const loadBreadItems = (items: MenuItemType[], key: string) => {
   const result: MenuItemType[] = [];
   if (Array.isArray(items)) {
     for (const item of items) {
       if (item.key === key) {
+        // const {items,onClick} = loadItemMenus(item)
+        // item.items=items
+
         result.push(item);
       } else {
         const nodes = loadBreadItems(item.children, key);
@@ -34,29 +43,13 @@ const loadBreadItems = (items: MenuItemType[], key: string) => {
     }
   }
   return result;
-};
-
-  const loadItemMenus = (item: MenuItemType) => {
-    if (item.children && item.children.length > 0) {
-      return {
-        items: item.children.map((i) => {
-          return {
-            key: i.key,
-            icon: i.icon,
-            label: i.label,
-          };
-        }),
-        onClick: (info: { key: string }) => {
-          for (const i of item.children) {
-            if (i.key === info.key) {
-              props.onSelect?.apply(this, [i]);
-            }
-          }
-        },
-      };
-    }
-    return undefined;
-  };
+}
+// 面包屑数据
+const items=ref<MenuItemType[]>(loadBreadItems([props.item], props.selectKey))
+watch(()=>props.selectKey,() => {
+  items.value = loadBreadItems([props.item], props.selectKey);
+  
+})
 
 </script>
 
@@ -66,24 +59,38 @@ const loadBreadItems = (items: MenuItemType[], key: string) => {
       <slot name="leftBar"/>
       <!-- 面包屑 -->
       <ElBreadcrumb :separator-icon="CaretRight" class="customBreadcrumb">
-        <!-- TODO:menu={loadItemMenus(item)} -->
         <ElBreadcrumbItem
           v-for="item in items" :key="item.key"
-          @click="onSelect?.apply(this, [item])"
+          @click="onSelect?.apply(this, [item as MenuItemType])"
         >
-          <span :style="{ fontSize: '16px', paddingTop: '6px', paddingRight: '4px' }">
-            <ElIcon><component :is="item.icon" /></ElIcon>
-          </span>
-          {{item.label}}
-          <template v-if="item.tag">
-            <Tag 
-              v-for="tag in item.tag" :key="tag" color="success"
-            >
-              {{tag}}
-            </Tag>
-          </template>
-
-
+          <ElDropdown trigger="hover">
+            <div style="display: flex;align-items: center;">
+              <span style="padding-right: 4px;">
+                <component :is="item.icon?.name" v-bind="item.icon?.args"/>
+              </span>
+              <span style="margin-right: 6px;">{{item.label}}</span>
+              <!-- 标签 -->
+              <template v-if="item.tag">
+                <ElTag  v-for="tag in item.tag" :key="tag" type="success">
+                  {{tag}}
+                </ElTag>
+              </template>          
+              <ElIcon :size="10" v-if="item.children.length>0"><ArrowDown/></ElIcon>
+            </div>
+            <!-- 下拉列表 -->
+            <template #dropdown>
+              <ElDropdownMenu>
+                <ElDropdownItem 
+                  v-for="i in loadItemMenus(item as MenuItemType)" 
+                  :key="i.key"
+                  @click="onSelect?.apply(this,[i as MenuItemType]);console.log(i)"
+                >
+                  <component :is="i.icon?.name" v-bind="i.icon?.args"/>
+                  <span style="margin-left: 4px;">{{ i.label }}</span>
+                </ElDropdownItem>
+              </ElDropdownMenu>
+            </template>
+          </ElDropdown>
         </ElBreadcrumbItem>
       </ElBreadcrumb>
     </ElSpace>
@@ -91,11 +98,10 @@ const loadBreadItems = (items: MenuItemType[], key: string) => {
 
 <style lang="scss" scoped>
 .customBreadcrumb {
+  display: flex;
   cursor: pointer;
-  // :global {
-  //   .anticon-down {
-  //     display: none;
-  //   }
-  // }
+}
+:deep(.el-breadcrumb__inner){
+  cursor: pointer !important;
 }
 </style>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
-// import { JolPlayer } from 'jol-player';
+import { JolPlayer } from 'jol-player';
 import { FileItemShare } from '@/ts/base/model';
-// import { shareOpenLink } from '@/utils/tools';
+import { shareOpenLink } from '@/utils/tools';
 // import { FileUnknownOutlined } from '@ant-design/icons';
 import { QuestionFilled } from '@element-plus/icons-vue';
 import { command } from '@/ts/base';
@@ -33,14 +33,6 @@ const computedSize = computed(() => {
     return props.maxWidth - 8;
 })
 
-// TODO:应该位于'@/utils/tools'
-/** 获取文件的实际地址 */
-const shareOpenLink = (link: string | undefined, download: boolean = false) => {
-  if (link?.startsWith('/orginone/kernel/load/')) {
-    return download ? `${link}?download=1` : link;
-  }
-  return `/orginone/kernel/load/${link}${download ? '?download=1' : ''}`;
-};
 
 // 预览图片列表
 const previewSrcList = computed(() => {

@@ -83,6 +83,7 @@ const publishActivity = () => {
         <SelectMultFiles
           :maxCount="9"
           :types="['图片', '视频']"
+          :currentKey="activity.session.target.directory.key"
           :onChange="(fileList) => {
             resource = fileList.map((item) => item.shareInfo())
           }"

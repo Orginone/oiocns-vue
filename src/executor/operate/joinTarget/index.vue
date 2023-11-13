@@ -36,8 +36,6 @@ switch (props.cmd) {
     modalTitle = '申请加入集团';
     selectTargetType = TargetType.Group;
     break;
-  // default:
-  // return <></>;
 }
 // 确认按钮点击
 const onOk= async () => {

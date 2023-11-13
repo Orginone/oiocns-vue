@@ -11,26 +11,10 @@ import { MenuItemType } from '@/typings/globelType'
 // 搜索关键词
 const filter = ref<string>('')
 const [key, rootMenu, selectMenu,setSelectMenu] = useMenuUpdate(config.loadChatMenu)
-
-// 菜单点击回调
-const onMenuClick = async (data:MenuItemType, key:string) => {
-  const chat = data.item as ISession;
-  switch (key) {
-    case '清空消息':
-      await chat.clearMessage();
-      break;
-    case '标记为未读':
-      selectMenu.value = rootMenu.value;
-      chat.chatdata.noReadCount += 1;
-      command.emitterFlag('session');
-      break;
-  }
-}
-
-
 </script>
 
 <template>
+  <!-- selectMenu:{{ selectMenu }} -->
   <template v-if="selectMenu&&rootMenu">
     <MainLayout
       preview-flag="chat"

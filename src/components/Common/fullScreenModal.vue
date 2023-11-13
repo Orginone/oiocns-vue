@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import {FullScreen, Minus, Close} from '@element-plus/icons-vue'
+import {Close} from '@element-plus/icons-vue'
+import {AiOutlineFullscreen, AiOutlineFullscreenExit,AiOutlineSave} from '@/icons/ai'
+// import {h} from 'vue'
+// import { ElDivider } from 'element-plus'
 
 
 const props = defineProps<{
@@ -48,22 +51,21 @@ const emits = defineEmits(['fullscreenToggle'])
     <template #header>
       <div class="modalHeader">
         <div class="modalHeaderTitle">
-          <ElSpace wrap spacer="|" :size="2">
+          <ElSpace wrap :size="2">
             {{icon}}
             {{title}}
           </ElSpace>
         </div>
         
         <!-- 右侧按钮 -->
-        <ElSpace wrap spacer="|" :size="2">
+        <ElSpace wrap  :size="10">
           <a 
             class="headerBtn"
             v-if="onSave" 
             title='保存' 
             @click="props.onSave?.apply(this, [])"
           >
-            TODO:保存图标
-            <!-- <SaveOutlined /> -->
+            <ElIcon> <AiOutlineSave/></ElIcon>
           </a>
           <a
             class="headerBtn"
@@ -72,8 +74,8 @@ const emits = defineEmits(['fullscreenToggle'])
             @click="modalState=!modalState"
           >
             <ElIcon>
-              <FullScreen v-if="modalState"/>
-              <Minus v-else/>
+              <AiOutlineFullscreen v-if="modalState"/>
+              <AiOutlineFullscreenExit v-else/>
             </ElIcon>
           </a>
           <!-- 关闭 -->
@@ -118,22 +120,23 @@ const emits = defineEmits(['fullscreenToggle'])
   }
 }
 </style>
-<style lang="scss">
+<style lang="scss" scoped>
 .fullScreenModal {
   border-radius: 4px;
-  .el-dialog__header{
-    padding: 12px 16px;
-    border-radius: 4px 4px 0 0;
-    color: rgba(0,0,0,.85);
-    background: #fafafa;
-    font-family: PingFang SC;
-  }
-  .el-dialog__body{
-    padding: 0;
-    border: 1px solid #ebeef5;
-  }
-  .el-dialog__footer {
-    padding: 12px;
-  }
 } 
+:deep(.el-dialog__header){
+  padding: 12px 16px;
+  border-radius: 4px 4px 0 0;
+  color: rgba(0,0,0,.85);
+  background: #fafafa;
+  font-family: PingFang SC;
+}
+:deep(.el-dialog__body){
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 1px solid #ebeef5;
+}
+:deep(.el-dialog__footer) {
+  padding: 12px;
+}
 </style>

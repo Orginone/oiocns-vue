@@ -6,6 +6,7 @@ import { loadSettingMenu } from './config/index';
 import FullScreenModal from '../Common/fullScreenModal.vue';
 import { IFile } from '@/ts/core';
 import orgCtrl, { Controller } from '@/ts/controller';
+import { MenuItemType } from 'typings/globelType';
 
 const props = defineProps<{
   title?: string;
@@ -13,6 +14,7 @@ const props = defineProps<{
   multiple?: boolean;
   maxCount?: number;
   rootKey: string;
+  currentKey?: string;
   excludeIds?: string[];
   allowInherited?: boolean;
   onOk: (files: IFile[]) => void;
@@ -23,7 +25,7 @@ const selectedFiles = ref<IFile[]>()
 
 const [key, rootMenu, selectMenu, setSelectMenu] = useMenuUpdate(
   () => loadSettingMenu(props.rootKey, props.allowInherited || false),
-  new Controller(orgCtrl.currentKey),
+  new Controller(props.currentKey ?? orgCtrl.currentKey),
 )
 </script>
 

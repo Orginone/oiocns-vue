@@ -3,6 +3,7 @@ import { OperateModel } from '@/ts/base/model';
 import { IFile } from '@/ts/core';
 import { entityOperates } from '@/ts/core/public';
 import { OperateMenuType } from 'typings/globelType';
+import TypeIcon from '@/components/Common/GlobalComps/typeIcon.vue';
 
 /** 加载文件菜单 */
 export const loadFileMenus = (file: IFile, mode: number = 0) => {
@@ -28,7 +29,8 @@ export const loadFileMenus = (file: IFile, mode: number = 0) => {
         key: o.cmd,
         label: parseLabel(o.label),
         model: o.model ?? 'inside',
-        icon: '',
+        // TODO:
+        icon: o.menus ? null : {name:TypeIcon ,args:{ iconType:o.iconType, size:16}},
         beforeLoad: async () => {
           command.emitter('executor', o.cmd, file);
           return true;
@@ -39,7 +41,7 @@ export const loadFileMenus = (file: IFile, mode: number = 0) => {
             return {
               key: s.cmd,
               label: parseLabel(s.label),
-              icon: '',
+              icon: {name:TypeIcon, args:{iconType:s.iconType, size:16}},
               beforeLoad: async () => {
                 command.emitter('executor', s.cmd, file);
                 return true;

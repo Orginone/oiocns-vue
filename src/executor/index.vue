@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { command } from '../../src/ts/base';
-// import OpenExecutor from './open';
 // import DesignExecutor from './design';
 import OperateExecutor from './operate/index.vue';
 import { executeCmd } from './action';
-// import { useHistory } from 'react-router-dom';
 import {useRouter} from 'vue-router'
-import { finished } from 'stream';
 
 const router = useRouter()
 
@@ -38,10 +35,10 @@ onMounted(()=>{
       switch (cmd) {
         case 'open':
         case 'remark':
-          return console.log('来这改');
           // return setContent(
           //   <OpenExecutor cmd={cmd} entity={args[0]} finished={resetContent} />,
           // );
+          return setContent(OperateExecutor, {cmd: cmd, args: args, finished: resetContent})
         case 'design':
           return console.log('来这改');
           // return setContent(

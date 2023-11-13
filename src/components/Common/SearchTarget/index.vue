@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { Sunny } from '@element-plus/icons-vue';
 import SearchInput from '@/components/SearchInput/index.vue';
-// import styles from './index.module.less';
 import { XTarget } from '@/ts/base/schema';
 import orgCtrl from '@/ts/controller';
 import { TargetType, companyTypes } from '@/ts/core';
 import TeamIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
+import CheckCardGroup from './CheckCardGroup.vue'
+import CheckCard from './CheckCard.vue'
 
 const props = defineProps<{
   [key: string]: any;
@@ -13,7 +14,6 @@ const props = defineProps<{
   searchCallback: (target: XTarget[]) => void;
 }>()
 
-// const tableProps: CompanySearchTableProps = props;
 const checked = ref<string[]>([])
 const searchKey = ref<string>()
 const dataSource = ref<XTarget[]>([])
@@ -34,7 +34,6 @@ switch (props.searchType) {
     searchPlace.value = '请输入群组的编码';
     break;
 }
-
 
 // 搜索逻辑
 const onChange = async (value:string) => {
@@ -87,66 +86,72 @@ const onChange = async (value:string) => {
 
 <template>
 <div class="search-card">
+  <!-- 输入框 -->
   <SearchInput
     :value="searchKey"
     :placeholder="searchPlace"
     :onChange="onChange"
   />
-   TODO:多选卡片组
-    <!-- <CheckCard.Group
+  <!-- 多选卡片组 -->
+  <div class="check-card-group"
     v-if="dataSource.length > 0"
-      bordered={false}
-      multiple
-      value={checked}
-      style={{ width: '100%' }}
-      onChange={(value: any) => {
-        setChecked(value);
-        let checkObjs: XTarget[] = [];
-        for (const target of dataSource) {
-          if (value.includes(target.id)) {
-            checkObjs.push(target);
-          }
-        }
-        tableProps.searchCallback(checkObjs);
-      }}>
-      <Row gutter={16} style={{ width: '100%' }}>
-        {dataSource.map((target) => (
-          <Col span={24} key={target.id}>
-            <CheckCard
-              bordered
-              style={{ width: '100%' }}
-              className={`${styles.card}`}
-              avatar={<TeamIcon entityId={target.id} size={60} />}
-              title={
-                <Space>
-                  {target.name}
-                  <Tag color="blue">账号：{target.code}</Tag>
-                </Space>
+  >
+    <ElRow :gutter="16" style="width: 100%;">
+      <ElCol 
+        v-for="target in dataSource" 
+        :key="target.id"  
+        :span="24"
+      >
+        <CheckCard
+          style="width: 100%;"
+          class="card"
+          :checkedValue="checked"
+          :value="target.id"
+          :onChange="(value: any) => {
+            if(checked.includes(value)){
+              checked.splice(checked.indexOf(value), 1)
+              return
+            }
+            checked = [value]
+            let checkObjs: XTarget[] = [];
+            for (const target of dataSource) {
+              if (value.includes(target.id)) {
+                checkObjs.push(target);
               }
-              value={target.id}
-              key={target.id}
-              description={
-                <Descriptions column={2} size="small" style={{ marginTop: 16 }}>
-                  <Descriptions.Item label="简介" span={2}>
-                    {target.remark}
-                  </Descriptions.Item>
-                </Descriptions>
-              }
-            />
-          </Col>
-        ))}
-      </Row>
-    </CheckCard.Group> -->
-    
-    <!-- 结果 -->
-    <ElResult 
-      v-if="searchKey && dataSource.length == 0" 
-      title="抱歉，没有查询到相关的结果"
-    >
-      <template #icon>
-        <ElIcon><Sunny/></ElIcon>
-      </template>
-    </ElResult>
+            }
+            props.searchCallback(checkObjs)
+          }"
+        >
+          <template #avatar>
+            <TeamIcon :entityId="target.id" :size="60" />
+          </template>
+          <template #title>
+            <ElSpace>
+              {{target.name}}
+              <ElTag>账号：{{target.code}}</ElTag>
+            </ElSpace>
+          </template>
+          <template #description>
+            <div style="margin-top: 16px;">
+              <div>
+                简介：{{target.remark}}
+              </div>
+            </div>
+          </template>
+        </CheckCard>
+      </ElCol>
+    </ElRow>
+  </div>
+  
+  <!-- 结果 -->
+  <ElResult 
+    v-if="searchKey && dataSource.length == 0" 
+    title="抱歉，没有查询到相关的结果"
+  >
+    <template #icon>
+      <ElIcon><Sunny/></ElIcon>
+    </template>
+  </ElResult>
 </div>
 </template>
 
