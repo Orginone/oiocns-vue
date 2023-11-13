@@ -78,8 +78,14 @@ export const fileOperates = {
   Rename: {
     sort: 25,
     cmd: 'rename',
-    label: '重名名',
+    label: '重命名',
     iconType: 'rename',
+  },
+  HslSplit: {
+    sort: 26,
+    cmd: 'hslSplit',
+    label: '视频切片',
+    iconType: 'video',
   },
 };
 
@@ -87,7 +93,7 @@ export const fileOperates = {
 export const directoryOperates = {
   Refesh: {
     sort: 4,
-    cmd: 'refresh',
+    cmd: 'reload',
     label: '刷新目录',
     model: 'outside',
     iconType: 'refresh',
@@ -152,7 +158,7 @@ export const directoryOperates = {
     sort: 6,
     cmd: 'newWork',
     label: '新建办事',
-    iconType: '流程',
+    iconType: '办事',
   },
   NewModule: {
     sort: 7,

@@ -9,7 +9,6 @@ const cohortActivity = new GroupActivity(
   orgCtrl.chats.filter((i) => i.isMyChat && i.isGroup).map((i) => i.activity),
   false,
 )
-
 </script>
 
 <template>

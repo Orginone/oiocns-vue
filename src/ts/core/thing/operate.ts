@@ -1,10 +1,11 @@
 import { schema } from '../../base';
 import { XCollection } from '../public/collection';
 import { Directory, IDirectory } from './directory';
-import { IStandard, IStandardFileInfo, StandardFileInfo } from './fileinfo';
+import { StandardFileInfo } from './fileinfo';
 import { DataResource } from './resource';
 import { Application, IApplication } from './standard/application';
 import { Form } from './standard/form';
+import { PageTemplate } from './standard/page';
 import { Property } from './standard/property';
 import { Species } from './standard/species';
 import { Transfer } from './standard/transfer';
@@ -12,7 +13,7 @@ export interface IDirectoryOperate {
   /** 是否为空 */
   isEmpty: boolean;
   /** 加载资源 */
-  loadResource(reload?: boolean, files?: IStandard[]): Promise<void>;
+  loadResource(reload?: boolean): Promise<void>;
   /** 获取目录内容 */
   getContent<T>(typeNames: string[]): T[];
   /** 接收通知 */
@@ -20,14 +21,14 @@ export interface IDirectoryOperate {
     operate: string,
     data: T,
     coll: XCollection<T>,
-    create: (data: T, dir: IDirectory) => IStandardFileInfo<T> | undefined,
+    create: (data: T, dir: IDirectory) => StandardFileInfo<T> | undefined,
   ): Promise<boolean>;
 }
 
 export class DirectoryOperate implements IDirectoryOperate {
   directory: IDirectory;
   private resource: DataResource;
-  standardFiles: IStandard[] = [];
+  standardFiles: StandardFileInfo<schema.XStandard>[] = [];
   constructor(_directory: IDirectory, _resource: DataResource) {
     this.resource = _resource;
     this.directory = _directory;
@@ -44,8 +45,11 @@ export class DirectoryOperate implements IDirectoryOperate {
       this.subscribe(_resource.transferColl, (s, l) => {
         return new Transfer(s, l);
       });
+      this.subscribe(_resource.templateColl, (s, l) => {
+        return new PageTemplate(s, l);
+      });
       this.subscribe(_resource.applicationColl, (s, l) => {
-        if (!(s.parentId && s.parentId.length > 5)) {
+        if (s.parentId.length < 1) {
           return new Application(s, l);
         }
       });
@@ -54,7 +58,6 @@ export class DirectoryOperate implements IDirectoryOperate {
       });
     }
   }
-
   getContent<T>(typeNames: string[]): T[] {
     return this.standardFiles.filter((a) => typeNames.includes(a.typeName)) as T[];
   }
@@ -62,12 +65,28 @@ export class DirectoryOperate implements IDirectoryOperate {
   get isEmpty() {
     return this.standardFiles.length == 0;
   }
-
-  async loadResource(reload: boolean = false, files: IStandard[] = []): Promise<void> {
+  async loadResource(reload: boolean = false): Promise<void> {
     if (!this.directory.parent || reload) {
       await this.resource.preLoad(reload);
     }
-    this.standardFiles = [...files];
+    this.standardFiles = [];
+    this.standardFiles.push(
+      ...this.resource.templateColl.cache
+        .filter((i) => i.directoryId === this.directory.id)
+        .map((l) => new PageTemplate(l, this.directory)),
+      ...this.resource.transferColl.cache
+        .filter((i) => i.directoryId === this.directory.id)
+        .map((l) => new Transfer(l, this.directory)),
+      ...this.resource.formColl.cache
+        .filter((i) => i.directoryId === this.directory.id)
+        .map((l) => new Form(l, this.directory)),
+      ...this.resource.speciesColl.cache
+        .filter((i) => i.directoryId === this.directory.id)
+        .map((l) => new Species(l, this.directory)),
+      ...this.resource.propertyColl.cache
+        .filter((i) => i.directoryId === this.directory.id)
+        .map((l) => new Property(l, this.directory)),
+    );
     var apps = this.resource.applicationColl.cache.filter(
       (i) => i.directoryId === this.directory.id,
     );
@@ -109,7 +128,6 @@ export class DirectoryOperate implements IDirectoryOperate {
             }
           }
           break;
-        case 'delete':
         case 'replace':
           {
             const index = coll.cache.findIndex((a) => a.id == data.id);
@@ -117,7 +135,7 @@ export class DirectoryOperate implements IDirectoryOperate {
             this.standardFiles.find((i) => i.id === data.id)?.setMetadata(data);
           }
           break;
-        case 'remove':
+        case 'delete':
           await coll.removeCache(data.id);
           this.standardFiles = this.standardFiles.filter((a) => a.id != data.id);
           break;
@@ -149,8 +167,8 @@ export class DirectoryOperate implements IDirectoryOperate {
     coll: XCollection<T>,
     create: (data: T, dir: IDirectory) => StandardFileInfo<T> | undefined,
   ) {
-    coll.subscribe([this.directory.key], (a: { operate: string; data: T[] }) => {
-      a?.data?.forEach((s) => {
+    coll.subscribe([this.directory.key], async (a: { operate: string; data: T[] }) => {
+      a.data.forEach((s) => {
         this.receiveMessage<T>(a.operate, s, coll, create);
       });
     });

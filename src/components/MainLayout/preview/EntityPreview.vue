@@ -1,0 +1,106 @@
+<!-- 实体预览 -->
+<script setup lang="ts">
+
+// import ImageView from './image';
+// import VideoView from './video';
+import {
+  IDirectory,
+  IEntity,
+  IForm,
+  ISession,
+  ISysFileInfo,
+  ITarget,
+  IWorkTask,
+  TargetType,
+} from '@/ts/core';
+import { command, schema } from '@/ts/base'
+// import OfficeView from './office';
+import SessionBody from './session/SessionBody.vue'
+// import StorageBody from './storage';
+// import TaskBody from './task';
+// import JoinApply from './task/joinApply';
+// import EntityInfo from '@/components/Common/EntityInfo';
+// import WorkForm from '@/components/DataStandard/WorkForm';
+
+const props = defineProps<{
+  flag?: string;
+  entity: EntityType;
+}>()
+
+const officeExt = ['.md', '.pdf', '.xls', '.xlsx', '.doc', '.docx', '.ppt', '.pptx'];
+const videoExt = ['.mp4', '.avi', '.mov', '.mpg', '.swf', '.flv', '.mpeg'];
+
+type EntityType =
+  | IEntity<schema.XEntity>
+  | ISysFileInfo
+  | ISession
+  | IWorkTask
+  | IForm
+  | ITarget
+  | IDirectory
+  | string
+  | undefined;
+
+const entity=ref<EntityType>()
+entity.value = props.entity
+// watch:flag
+let id = ''
+onMounted(() => {
+  id = command.subscribe((type, flag, ...args: any[]) => {
+    if (type != 'preview' || flag != props.flag) return;
+    if (args && args.length > 0) {
+      entity.value = args[0]
+    } else {
+      entity.value = undefined
+    }
+  })
+})
+onBeforeUnmount(() => {
+  command.unsubscribe(id);
+})
+</script>
+
+<template>
+  <template v-if = "entity && (typeof entity) != 'string'"> 
+    <!-- TODO:文件预览 -->
+    <template v-if="entity.hasOwnProperty('filedata')">
+      <!-- <FilePreview :file="entity" /> -->
+    </template>
+    <!-- 动态预览 -->
+    <template v-else-if="entity.hasOwnProperty('activity')">
+      <SessionBody :target="(entity as ISession).target" :session="entity" />;
+    </template>
+    <!-- TODO:会话预览 -->
+    <template v-else-if="entity.hasOwnProperty('session')">
+      <template v-if="(entity as ITarget).typeName === TargetType.Storage">
+        <!-- <StorageBody :storage="entity" /> -->
+      </template>
+      <template v-else>
+        <SessionBody :target="entity" :session="(entity as ITarget).session" setting />
+      </template>
+    </template>
+    <!--  TODO: 表单预览 -->
+    <template v-else-if="entity.hasOwnProperty('fields')">
+      <!-- <WorkForm :form="entity" /> -->
+    </template>
+    <!-- TODO: taskdata -->
+    <template v-else-if="entity.hasOwnProperty('taskdata')">
+      <!-- switch (entity.taskdata.taskType) {
+        case '事项':
+          return <TaskBody task={entity} />;
+        case '加用户':
+          return <JoinApply task={entity} />;
+        default:
+          return <></>;
+      } -->
+    </template>
+    <!-- TODO: 其它 -->
+    <template v-else>
+      <!-- <EntityInfo :entity="entity" :column="1" /> -->
+    </template>
+  </template>
+</template>
+
+<style lang="scss" scoped>
+
+</style>

@@ -71,12 +71,12 @@ export class XCollection<T extends schema.Xbase> {
   async loadResult(options: any): Promise<LoadResult<T[]>> {
     options = options || {};
     options.userData = options.userData || [];
-    options.collName = this._collName;
     options.options = options.options || {};
     options.options.match = options.options.match || {};
     return await kernel.collectionLoad<T[]>(
       this._target.belongId,
       this._relations,
+      this._collName,
       options,
     );
   }
@@ -285,7 +285,7 @@ export class XCollection<T extends schema.Xbase> {
       copyId,
     );
     if (res.success) {
-      return res.data?.MatchedCount > 0;
+      return res.data > 0;
     }
     return false;
   }
@@ -303,7 +303,7 @@ export class XCollection<T extends schema.Xbase> {
       copyId,
     );
     if (res.success) {
-      return res.data?.MatchedCount > 0;
+      return res.data > 0;
     }
     return false;
   }
@@ -317,13 +317,13 @@ export class XCollection<T extends schema.Xbase> {
       copyId,
     );
     if (res.success) {
-      return res.data?.MatchedCount > 0;
+      return res.data > 0;
     }
     return false;
   }
 
-  async removeCache(id: string): Promise<void> {
-    this._cache = this._cache.filter((a) => a.id !== id);
+  removeCache(predicate: (value: T) => boolean): void {
+    this._cache = this._cache.filter((a) => predicate(a));
   }
 
   async notity(

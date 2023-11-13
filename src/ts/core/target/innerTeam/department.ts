@@ -6,6 +6,7 @@ import { PageAll } from '../../public/consts';
 import { ITeam } from '../base/team';
 import { targetOperates } from '../../public';
 import { ISession } from '../../chat/session';
+import { IFile } from '../../thing/fileinfo';
 
 /** 单位内部机构（部门）接口 */
 export interface IDepartment extends ITarget {
@@ -36,6 +37,7 @@ export class Department extends Target implements IDepartment {
     switch (_metadata.typeName as TargetType) {
       case TargetType.College:
         this.childrenTypes = [
+          TargetType.Department,
           TargetType.Major,
           TargetType.Office,
           TargetType.Working,
@@ -46,6 +48,7 @@ export class Department extends Target implements IDepartment {
       case TargetType.Section:
       case TargetType.Department:
         this.childrenTypes = [
+          TargetType.Department,
           TargetType.Office,
           TargetType.Working,
           TargetType.Research,
@@ -134,8 +137,8 @@ export class Department extends Target implements IDepartment {
     }
     return targets;
   }
-  content(_mode?: number | undefined): ITarget[] {
-    return [...this.children];
+  content(): IFile[] {
+    return [this.memberDirectory, ...this.children];
   }
   async deepLoad(reload: boolean = false): Promise<void> {
     await Promise.all([

@@ -101,6 +101,7 @@ export abstract class Target extends Team implements ITarget {
   cache: schema.XCache;
   identitys: IIdentity[] = [];
   memberDirectory: IDirectory;
+  canDesign: boolean = false;
   get spaceId(): string {
     return this.space.id;
   }
@@ -115,10 +116,6 @@ export abstract class Target extends Team implements ITarget {
   }
   private _identityLoaded: boolean = false;
   async restore(): Promise<boolean> {
-    await sleep(0);
-    return true;
-  }
-  async hardDelete(): Promise<boolean> {
     await sleep(0);
     return true;
   }
@@ -217,7 +214,9 @@ export abstract class Target extends Team implements ITarget {
   abstract get chats(): ISession[];
   abstract get targets(): ITarget[];
   abstract get subTarget(): ITarget[];
-  abstract content(_mode?: number | undefined): IFile[];
+  content(): IFile[] {
+    return [this.memberDirectory];
+  }
   createTarget(_data: model.TargetModel): Promise<ITeam | undefined> {
     return new Promise((resolve) => {
       resolve(undefined);

@@ -1,7 +1,6 @@
 import { IApplication, IPerson, ISession, ITarget, UserProvider } from '@/ts/core';
 import { common } from '@/ts/base';
 import { IWorkProvider } from '../core/work/provider';
-import { IPageTemplate } from '../core/thing/standard/page';
 /** 控制器基类 */
 export class Controller extends common.Emitter {
   public currentKey: string;
@@ -41,7 +40,6 @@ class IndexController extends Controller {
   get targets(): ITarget[] {
     return this.provider.targets;
   }
-  /** 加载应用 */
   async loadApplications(): Promise<IApplication[]> {
     const apps: IApplication[] = [];
     for (const directory of this.targets
@@ -61,15 +59,6 @@ class IndexController extends Controller {
       }
     }
     return chats;
-  }
-  /** 所有相关页面 */
-  async loadPages(): Promise<IPageTemplate[]> {
-    const pages: IPageTemplate[] = [];
-    for (const directory of this.targets.map((t) => t.directory)) {
-      const templates = await directory.loadAllTemplate();
-      pages.push(...templates);
-    }
-    return pages;
   }
 }
 

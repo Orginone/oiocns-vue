@@ -2,7 +2,7 @@
   <Suspense>
     <template #default>
       <el-config-provider>
-        <div class="pages" @contextmenu.prevent>
+        <div class="pages" >
           <router-view />
         </div>
       </el-config-provider>

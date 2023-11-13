@@ -1,23 +1,18 @@
-import { Command, schema } from '@/ts/base';
+import { model } from '@/ts/base';
 import { IStandardFileInfo, StandardFileInfo } from '../fileinfo';
 import { IDirectory } from '../directory';
 
-export interface IPageTemplate extends IStandardFileInfo<schema.XPageTemplate> {
-  command: Command;
-}
+export interface IPageTemplate extends IStandardFileInfo<model.XPageTemplate> {}
 
 export class PageTemplate
-  extends StandardFileInfo<schema.XPageTemplate>
+  extends StandardFileInfo<model.XPageTemplate>
   implements IPageTemplate
 {
-  canDesign: boolean = true;
-  command: Command;
   get cacheFlag() {
-    return 'pages';
+    return 'pageTemplate';
   }
-  constructor(_metadata: schema.XPageTemplate, _directory: IDirectory) {
+  constructor(_metadata: model.XPageTemplate, _directory: IDirectory) {
     super(_metadata, _directory, _directory.resource.templateColl);
-    this.command = new Command();
   }
   async copy(destination: IDirectory): Promise<boolean> {
     if (this.allowCopy(destination)) {

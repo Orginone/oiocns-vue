@@ -5,7 +5,6 @@ export {
   blobToDataUrl,
   blobToNumberArray,
   encodeKey,
-  formatDate,
   formatSize,
   sliceFile,
   StringPako,

@@ -131,9 +131,9 @@ export class Person extends Belong implements IPerson {
     const res = await this.create(data, true);
     if (res && res.id) {
       const company = createCompany(res, this);
-      await company.deepLoad();
       this.companys.push(company);
       await company.pullMembers([this.metadata]);
+      await company.deepLoad();
       return company;
     }
   }
@@ -142,9 +142,9 @@ export class Person extends Belong implements IPerson {
     const metadata = await this.create(data);
     if (metadata) {
       const storage = new Storage(metadata, [], this);
-      await storage.deepLoad();
       this.storages.push(storage);
       await storage.pullMembers([this.user.metadata]);
+      await storage.deepLoad();
       return storage;
     }
   }
@@ -283,8 +283,8 @@ export class Person extends Belong implements IPerson {
     operates.unshift(personJoins, targetOperates.NewCompany, targetOperates.NewStorage);
     return operates;
   }
-  content(_mode?: number | undefined): ITarget[] {
-    return [...this.cohorts, ...this.storages];
+  content(): IFile[] {
+    return [this.memberDirectory, ...this.cohorts, ...this.storages];
   }
   async findEntityAsync(id: string): Promise<schema.XEntity | undefined> {
     const metadata = this.findMetadata<schema.XEntity>(id);

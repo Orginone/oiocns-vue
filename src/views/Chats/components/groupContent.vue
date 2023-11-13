@@ -120,17 +120,6 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  onMounted,
-  ref,
-  nextTick,
-  reactive,
-  onBeforeUnmount,
-  inject,
-  watch,
-  computed,
-  watchEffect,
-} from "vue";
 import { debounce } from "@/utils/tools";
 import HeadImg from "@/components/headImg.vue";
 import moment from "moment";
@@ -160,7 +149,7 @@ const info = inject("reWrite", ref(""));
 const handleReWrite = (txt: string) => {
   info.value = txt;
   emit("handleReWrite", txt);
-};
+}
 
 const curShow = ref<any>(null);
 
