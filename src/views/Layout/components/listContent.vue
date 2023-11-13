@@ -87,7 +87,7 @@ const contentData = reactive({
   contentList :[],
 })
 watchEffect(() => {
-  if(contentData.currItem.item?.content()){
+  if(contentData?.currItem?.item?.content()){
     let list  = contentData.currItem.item?.content()
     console.log('list',list);
     list.forEach(item => {
