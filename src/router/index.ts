@@ -381,14 +381,6 @@ const mainRouter: RouteRecordRaw[] = [
       id: "thing"
     }
   },
-  {
-    path: '/formDesign',
-    name: 'formDesign',
-    component: () => import('@/views/SetCenter/standard/components/formDesign.vue'),
-    meta: {
-      noHeader: true
-    }
-  }
 ]
 
 // 整合路由
