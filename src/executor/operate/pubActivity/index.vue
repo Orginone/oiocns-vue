@@ -79,7 +79,7 @@ const publishActivity = () => {
         />
       </ElFormItem>
       <!-- 选择图片视频 -->
-      <ElFormItem>
+      <ElFormItem style="background-color: #fafafa;">
         <SelectMultFiles
           :maxCount="9"
           :types="['图片', '视频']"

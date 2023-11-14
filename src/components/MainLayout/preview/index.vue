@@ -1,8 +1,11 @@
 <!-- 实体预览 -->
 <script setup lang="ts">
 
-// import ImageView from './image';
-// import VideoView from './video';
+import ImageView from './image/index.vue'
+import VideoView from './video/index.vue'
+import OfficeView from './office/index.vue'
+// import EntityInfo from '@/components/Common/EntityInfo'
+
 import {
   IDirectory,
   IEntity,
@@ -14,19 +17,18 @@ import {
   TargetType,
 } from '@/ts/core';
 import { command, schema } from '@/ts/base'
-// import OfficeView from './office';
+
 import SessionBody from './session/index.vue'
 // import StorageBody from './storage';
 // import TaskBody from './task';
 // import JoinApply from './task/joinApply';
-// import EntityInfo from '@/components/Common/EntityInfo';
+
 // import WorkForm from '@/components/DataStandard/WorkForm';
 
 const props = defineProps<{
   flag?: string;
   entity: EntityType;
 }>()
-
 const officeExt = ['.md', '.pdf', '.xls', '.xlsx', '.doc', '.docx', '.ppt', '.pptx'];
 const videoExt = ['.mp4', '.avi', '.mov', '.mpg', '.swf', '.flv', '.mpeg'];
 
@@ -43,11 +45,13 @@ type EntityType =
 
 const entity=ref<EntityType>()
 entity.value = props.entity
-// watch:flag
 let id = ''
+watch(()=>props.flag,(v)=>{
+  console.log(v);
+})
 onMounted(() => {
   id = command.subscribe((type, flag, ...args: any[]) => {
-    if (type != 'preview' || flag != props.flag) return;
+    if (type !== 'preview' || flag !== props.flag) return;
     if (args && args.length > 0) {
       entity.value = args[0]
     } else {
@@ -62,9 +66,12 @@ onBeforeUnmount(() => {
 
 <template>
   <template v-if = "entity && (typeof entity) != 'string'"> 
-    <!-- TODO:文件预览 -->
+    <!-- 文件预览 -->
     <template v-if="entity.hasOwnProperty('filedata')">
-      <!-- <FilePreview :file="entity" /> -->
+      <ImageView v-if="entity.filedata.contentType?.startsWith('image')" :share="entity.filedata" />
+      <VideoView v-else-if="entity.filedata.contentType?.startsWith('video') || videoExt.includes(entity.filedata.extension ?? '-')" share="entity.filedata" />
+      <OfficeView v-else-if="officeExt.includes(entity.filedata.extension ?? '-')" share="entity.filedata" />
+      <EntityInfo v-else entity="file" column="1" />
     </template>
     <!-- 动态预览 -->
     <template v-else-if="entity.hasOwnProperty('activity')">

@@ -11,7 +11,7 @@ import { MoreFilled,Back,Right } from '@element-plus/icons-vue'
 import { DxResizable } from 'devextreme-vue'
 import BarIcon from '@/components/Common/GlobalComps/customIcon.vue'
 import useStorage from '@/hooks/useStorage'
-import EntityPreview from './preview/EntityPreview.vue'
+import EntityPreview from './preview/index.vue'
 import { cleanMenus } from '@/utils/tools'
 import {ArrowRight} from '@element-plus/icons-vue'
 
@@ -50,13 +50,15 @@ import {ArrowRight} from '@element-plus/icons-vue'
       }
     }
   };
+  /** 点击操作菜单 */
   const onOperateMenuClick = async (item: MenuItemType, key: string) => {
     const menu = findMenus(key, item.menus);
-    if (menu && menu.beforeLoad) {
+    if (menu?.beforeLoad) {
       await menu.beforeLoad();
     }
     props.onMenuClick?.apply(this, [item, key]);
-  };
+  }
+
   const onSelectClick = async (item: MenuItemType) => {
     if (item.beforeLoad) {
       await item.beforeLoad();
@@ -114,7 +116,7 @@ import {ArrowRight} from '@element-plus/icons-vue'
               <component :is="item.icon.name" v-bind="item.icon.args"/>
             </a>
           </template>
-          <!-- TODO:更多操作 -->
+          <!-- 更多操作 -->
           <ElDropdown
             v-if="inside.length > 0"
             placement="bottom"
@@ -131,7 +133,7 @@ import {ArrowRight} from '@element-plus/icons-vue'
                   <template v-if="item?.children?.length>0">
                     <ElPopover trigger="hover" placement="left-start" :show-arrow="false">
                       <template #reference>
-                        <div class="menu-item-btn" @click="onOperateMenuClick(selectMenu, item.key)">
+                        <div class="menu-item-btn" @click="onOperateMenuClick(selectMenu, item.key);">
                           <div style="width: 85px;display: flex;align-items: center;justify-content: space-between;">
                             <component v-if="item.icon" :is="item.icon.name" v-bind="item.icon.args"/>
                             <span>{{ item.label }}</span>
@@ -143,7 +145,7 @@ import {ArrowRight} from '@element-plus/icons-vue'
                         <div
                           class="menu-item-btn"  
                           v-for="i in item.children" :key="i.key" 
-                          @click="onOperateMenuClick(selectMenu, i.key)"
+                          @click="onOperateMenuClick(selectMenu, i.key);"
                         >
                           <component :is="i.icon?.name" v-bind="i.icon?.args"/>
                           {{ i.label }}
@@ -167,8 +169,8 @@ import {ArrowRight} from '@element-plus/icons-vue'
     </ElHeader>
     <!-- body -->
     <ElContainer class="body">
-      <!-- 左侧搜索栏 -->
-      <ElAside v-if="!leftShow && leftSider" class="sider" width="250px">
+      <!-- body-左侧目录 -->
+      <ElAside v-if="leftShow || leftSider" class="sider" width="250px">
         <div class="title">
           <span v-if="parentMenu.key != props.siderMenuData.key" class="backup" @click="onSelectClick(parentMenu)">
             <ElIcon :size="20"><Back/></ElIcon>
@@ -193,7 +195,7 @@ import {ArrowRight} from '@element-plus/icons-vue'
           />
         </div>
       </ElAside>
-      <!-- right -->
+      <!-- body-右侧 -->
       <ElMain v-if="rightShow || rightSider" class="main">
         <!-- 左侧 -->
         <DxResizable
@@ -237,9 +239,6 @@ import {ArrowRight} from '@element-plus/icons-vue'
     display: flex;
     justify-content: space-between;
     height: 53px;
-    .menu-item-btn {
-
-    }
   }
   .sider {
     width: 250px;
@@ -281,7 +280,7 @@ import {ArrowRight} from '@element-plus/icons-vue'
     }
   }
   .body {
-    height: calc(100vh - 60px);
+    height: calc(100% - 60px);
     display: flex;
     flex-direction: row;
     .main {
@@ -304,6 +303,21 @@ import {ArrowRight} from '@element-plus/icons-vue'
   }
 }
 :deep(.el-dropdown-menu__item){
-  padding: 0 6px !important;
+  margin: 0 6px !important;
+  padding: 0 !important;
+}
+.menu-item-btn {
+  cursor: pointer;
+  display: flex;
+  align-items: start;
+  padding: 6px;
+  border-radius: 4px;
+  // justify-content: space-between;
+  &:hover {
+    background-color: #f2f4f9;
+  }
+  >i {
+    margin-right: 6px;
+  }
 }
 </style>

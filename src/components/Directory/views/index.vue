@@ -70,13 +70,13 @@ const getContent = (filter: boolean = true) => {
     :badgeCount="badgeCount"
     :onChanged="(t) => currentTag = t"
   />
+
   <!-- 文件列表 -->
   <SegmentContent
     :onSegmentChanged="setSegmented"
     :descriptions="`${getContent().length}个项目`"
   >
-    <!-- TODO:content-默认插槽 -->
-    <!-- <TableMode
+    <TableMode
       v-if="segmented === 'table'"
       :selectFiles="selectFiles"
       :focusFile="focusFile"
@@ -91,8 +91,9 @@ const getContent = (filter: boolean = true) => {
       :content="getContent()"
       :fileOpen="fileOpen"
       :contextMenu="contextMenu"
-    /> -->
+    />
     <ListMode
+      v-else
       :selectFiles="selectFiles"
       :focusFile="focusFile"
       :content="getContent()"

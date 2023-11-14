@@ -3,8 +3,6 @@
 import { schema } from '@/ts/base'
 import { IEntity } from '@/ts/core'
 import { Back,Right } from '@element-plus/icons-vue'
-import { h, ref } from 'vue'
-import { ElDivider } from 'element-plus'
 
 const props = defineProps<{
   select: string;
@@ -58,8 +56,7 @@ const arrowLeft = (num: number) => {
   <div class="tags_bar">
     <ElIcon class="tags_bar_btn" @click="arrowLeft(-100)" color="#154ad8" :size="16"><Back/></ElIcon>
     <div ref="tagsBarRef" class="tags_body">
-      <ElSpace :spacer="h(ElDivider, { direction: 'vertical' })" style="height: 26px;" :size="2">
-        <!-- {groupTags().map((item) => loadBarItem(item.tag, item.count))} -->
+      <ElSpace style="height: 26px;" :size="8" spacer="|">
         <template v-for="item in groupTags()" :key="item.tag">
           <ElBadge 
             :hidden="badgeCount && badgeCount(item.tag)===0"  

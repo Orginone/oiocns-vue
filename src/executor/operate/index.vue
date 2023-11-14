@@ -36,8 +36,7 @@ const props = defineProps<{
   finished: () => void;
 }>()
 
-// TODO:感觉可以抽离成hooks
-// 动态组件
+// 动态组件ref对象
 const contentComponent = ref(null);
 // 动态props
 const dynamicProps = ref({})
@@ -89,13 +88,10 @@ onMounted(()=>{
         //     return <EntityForm cmd={cmd} entity={args[0]} finished={finished} />;
         //   }
         // }
-        break;
       default:
         if (props.cmd.startsWith('join')) {   
           return setContent(JoinTarget, {cmd:props.cmd,current: props.args[0], finished: props.finished})
         }
-        // return <EntityForm cmd={cmd} entity={args[0]} finished={finished} />
-        // TODO:
         return setContent(EntityForm, {cmd: props.cmd, entity: props.args[0], finished: props.finished})
     }
   }

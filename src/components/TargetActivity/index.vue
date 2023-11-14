@@ -49,7 +49,6 @@ const loadMoreActivity = async(e:ReachBottomEvent) => {
     <template #header>
       <div class="card-header" style="display: flex;justify-content: space-between;">
         <span>{{title || '动态'}}</span>
-        <!-- TODO: 点击事件-->
         <el-button 
           v-if="activity.allPublish"
           class="button" 

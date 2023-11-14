@@ -20,12 +20,12 @@ const props = defineProps<{
   <template v-for="item in content" :key="item.key">
     <div class="list" :style="{backgroundColor: focusFile?.id === item.id ? '#e6f1ff' : ''}">
       <ElDropdown trigger='contextmenu'>
-        <div class="list_item">
-          <!-- 左侧头像、内容 -->
-          <div class="list_item_meta"
+        <div class="list_item" 
             @click="fileOpen(item, false)"
             @dblclick="fileOpen(item, true)"
           >
+          <!-- 左侧头像、内容 -->
+          <div class="list_item_meta">
             <div class="list_item_meta_avatar">
               <!-- 头像 -->
               <ElBadge 

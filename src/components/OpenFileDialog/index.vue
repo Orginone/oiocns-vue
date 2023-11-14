@@ -6,7 +6,8 @@ import { loadSettingMenu } from './config/index';
 import FullScreenModal from '../Common/fullScreenModal.vue';
 import { IFile } from '@/ts/core';
 import orgCtrl, { Controller } from '@/ts/controller';
-import { MenuItemType } from 'typings/globelType';
+import { MenuItemType } from '@/typings/globelType'
+import {command} from '@/ts/base'
 
 const props = defineProps<{
   title?: string;
@@ -47,35 +48,38 @@ const [key, rootMenu, selectMenu, setSelectMenu] = useMenuUpdate(
         setSelectMenu(data);
       }"
       :siderMenuData="rootMenu"
+      :onMenuClick="(item: MenuItemType, menuKey: string)=>{
+        command.emitter('executor', menuKey, item);
+      }"
+      preview-flag="dialog"
     >
-      
       <Directory
-          :key="key"
-          dialog
-          previewFlag='dialog'
-          :accepts="accepts"
-          :selects="selectedFiles"
-          :current="selectMenu.item"
-          :excludeIds="props.excludeIds"
-          :onFocused="(file) => {
-            if (!props.multiple) {
-              if (file) {
-                selectedFiles=[file]
-              } else {
-                selectedFiles=[]
-              }
+        :key="key"
+        dialog
+        previewFlag='dialog'
+        :accepts="accepts"
+        :selects="selectedFiles"
+        :current="selectMenu.item"
+        :excludeIds="props.excludeIds"
+        :onFocused="(file) => {
+          if (!props.multiple) {
+            if (file) {
+              selectedFiles=[file]
+            } else {
+              selectedFiles=[]
             }
-          }"
-          :onSelected="(files) => {
-            if (multiple) {
-              if (maxCount && files.length > maxCount) {
-                selectedFiles = files.slice(-maxCount)
-              } else {
-                selectedFiles = files
-              }
+          }
+        }"
+        :onSelected="(files) => {
+          if (multiple) {
+            if (maxCount && files.length > maxCount) {
+              selectedFiles = files.slice(-maxCount)
+            } else {
+              selectedFiles = files
             }
-          }"
-        />
+          }
+        }"
+      />
     </MainLayout>
     
     <template #footer>

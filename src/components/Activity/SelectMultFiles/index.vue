@@ -3,6 +3,7 @@ import { ISysFileInfo } from '@/ts/core';
 import OpenFileDialog from '@/components/OpenFileDialog/index.vue';
 import ActivityResource from '@/components/Activity/ActivityResource/index.vue';
 import {Plus} from '@element-plus/icons-vue'
+import { MenuItemType } from 'typings/globelType';
 
 const props = defineProps<{
   maxCount: number,
@@ -42,8 +43,8 @@ onMounted(() => {
           fileList=[...fileList, ...files.map((i) => i as ISysFileInfo)]
           open=false
         }"
+        
       />
-
       <!-- 选择文件按钮 -->
       <div
         v-if="fileList.length < maxCount"
