@@ -4,7 +4,7 @@
 import ImageView from './image/index.vue'
 import VideoView from './video/index.vue'
 import OfficeView from './office/index.vue'
-// import EntityInfo from '@/components/Common/EntityInfo'
+import EntityInfo from '@/components/Common/EntityInfo/index.vue'
 
 import {
   IDirectory,
@@ -66,18 +66,18 @@ onBeforeUnmount(() => {
 
 <template>
   <template v-if = "entity && (typeof entity) != 'string'"> 
-    <!-- 文件预览 -->
+    <!-- 文件 -->
     <template v-if="entity.hasOwnProperty('filedata')">
       <ImageView v-if="entity.filedata.contentType?.startsWith('image')" :share="entity.filedata" />
       <VideoView v-else-if="entity.filedata.contentType?.startsWith('video') || videoExt.includes(entity.filedata.extension ?? '-')" share="entity.filedata" />
       <OfficeView v-else-if="officeExt.includes(entity.filedata.extension ?? '-')" share="entity.filedata" />
       <EntityInfo v-else entity="file" column="1" />
     </template>
-    <!-- 动态预览 -->
+    <!-- 动态 -->
     <template v-else-if="entity.hasOwnProperty('activity')">
-      <SessionBody :target="(entity as ISession).target" :session="(entity as ISession)" />;
+      <SessionBody :target="(entity as ISession).target" :session="(entity as ISession)" />
     </template>
-    <!-- TODO:会话预览 -->
+    <!-- TODO:会话 -->
     <template v-else-if="entity.hasOwnProperty('session')">
       <template v-if="(entity as ITarget).typeName === TargetType.Storage">
         <!-- <StorageBody :storage="entity" /> -->
@@ -86,7 +86,7 @@ onBeforeUnmount(() => {
         <SessionBody :target="(entity as ITarget)" :session="(entity as ITarget).session" setting />
       </template>
     </template>
-    <!--  TODO: 表单预览 -->
+    <!--  TODO: 表单 -->
     <template v-else-if="entity.hasOwnProperty('fields')">
       <!-- <WorkForm :form="entity" /> -->
     </template>
@@ -103,7 +103,7 @@ onBeforeUnmount(() => {
     </template>
     <!-- TODO: 其它 -->
     <template v-else>
-      <!-- <EntityInfo :entity="entity" :column="1" /> -->
+      <EntityInfo :entity="entity" :column="1" />
     </template>
   </template>
 </template>

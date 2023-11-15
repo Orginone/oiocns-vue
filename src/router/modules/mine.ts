@@ -49,15 +49,15 @@ const Mine: RouteRecordRaw[] = [
           id: "mine.my-cohort"
         }
       },
-      {
-        path: '/mine/friend',
-        name: 'friend1',
-        component: () => import('@/views/Mine/friend/index.vue'),
-        meta: {
-          title: '我的好友',
-          id: "mine.my-friend"
-        }
-      },
+      // {
+      //   path: '/mine/friend',
+      //   name: 'friend1',
+      //   component: () => import('@/views/Mine/friend/index.vue'),
+      //   meta: {
+      //     title: '我的好友',
+      //     id: "mine.my-friend"
+      //   }
+      // },
     ],
   },
 ];

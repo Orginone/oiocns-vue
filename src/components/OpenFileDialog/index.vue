@@ -11,13 +11,17 @@ import {command} from '@/ts/base'
 
 const props = defineProps<{
   title?: string;
+  /** 允许选择的文件类型 */
   accepts: string[];
+  /** 是否允许多选 */
   multiple?: boolean;
+  /** 最大选中数量 */
   maxCount?: number;
   rootKey: string;
   currentKey?: string;
   excludeIds?: string[];
-  allowInherited?: boolean;
+  allowInherited?: boolean
+  /** 确认回调 */
   onOk: (files: IFile[]) => void;
   onCancel: () => void;
 }>()
@@ -28,6 +32,32 @@ const [key, rootMenu, selectMenu, setSelectMenu] = useMenuUpdate(
   () => loadSettingMenu(props.rootKey, props.allowInherited || false),
   new Controller(props.currentKey ?? orgCtrl.currentKey),
 )
+/** 
+ * 聚焦文件回调
+*/
+const onFocused = (file:IFile) => {
+  if (!props.multiple) {
+    if (file) {
+      selectedFiles.value=[file]
+    } else {
+      selectedFiles.value=[]
+    }
+  }
+}
+/**
+ * 选择文件回调
+ * @param files 
+ */
+const onSelected = (files:IFile[]) => {
+  if (props.multiple) {
+    if (props.maxCount && files.length > props.maxCount) {
+      // 超过最大数量
+      selectedFiles.value = files.slice(-props.maxCount)
+    } else {
+      selectedFiles.value = files
+    }
+  }
+}
 </script>
 
 <template>
@@ -58,27 +88,11 @@ const [key, rootMenu, selectMenu, setSelectMenu] = useMenuUpdate(
         dialog
         previewFlag='dialog'
         :accepts="accepts"
-        :selects="selectedFiles"
+        :selects="selectedFiles || []"
         :current="selectMenu.item"
         :excludeIds="props.excludeIds"
-        :onFocused="(file) => {
-          if (!props.multiple) {
-            if (file) {
-              selectedFiles=[file]
-            } else {
-              selectedFiles=[]
-            }
-          }
-        }"
-        :onSelected="(files) => {
-          if (multiple) {
-            if (maxCount && files.length > maxCount) {
-              selectedFiles = files.slice(-maxCount)
-            } else {
-              selectedFiles = files
-            }
-          }
-        }"
+        :onFocused="onFocused"
+        :onSelected="onSelected"
       />
     </MainLayout>
     

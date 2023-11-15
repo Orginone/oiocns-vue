@@ -1,59 +1,39 @@
 <script lang="ts" setup>
 import NavigationBar from './components/NavigationBar/index.vue'
+import { allPages } from './components/NavigationBar/config';
 
-/** 导航项类型 */
-export interface NavigationItem {
-  key: string;
-  label: string;
-  backgroundImageUrl: string;
-  component: ReturnType<typeof defineAsyncComponent>;
-}
-/** 常用导航列表 */
-const navigationList: NavigationItem[] = [
-  {
-    key: 'app',
-    label: '工作台',
-    backgroundImageUrl: '/img/banner/digital-asset-bg.png',
-    component: defineAsyncComponent(() => import('@/views/Home/components/Content/WorkBench/index.vue')),
-  },
-  {
-    key: 'cohort',
-    label: '群动态',
-    backgroundImageUrl: '/img/banner/activity-bg.png',
-    component: defineAsyncComponent(() => import('@/views/Home/components/Content/Activity/Cohort.vue')),
-  },
-  {
-    key: 'friends',
-    label: '好友圈',
-    backgroundImageUrl: '/img/banner/circle-bg.jpeg',
-    component: defineAsyncComponent(() => import('@/views/Home/components/Content/Activity/Friends.vue')),
-  },
-]
-// 当前激活导航
-const current = ref(navigationList[0])
+console.log(allPages[0].backgroundImageUrl);
+
+
+// 当前页面
+const current = ref(allPages[0])
 
 </script>
 
 <template>
-  <div class="homepage"
-    :style="{backgroundImage: `url(${current.backgroundImageUrl})`}"
-  >
-    <!-- 顶部导航 -->
+  <!-- 门户布局 -->
+  <div class="homepage">
+    <!-- 门户——顶部导航 -->
     <NavigationBar 
-      :list="navigationList" 
+      :list="allPages" 
       @change="item=> current = item"
     />
-    <!-- banner -->
-    <div class="headBanner" :style="{backgroundImage: `url(${current.backgroundImageUrl})`}"/>
-    <!-- 内容区域 -->
-    <Suspense>
-      <template #default>
-        <component :is="current.component"></component>
-      </template>
-      <template #fallback>
-        <div>加载中...</div>
-      </template>
-    </Suspense>
+    <!-- 门户——顶部Banner图 -->
+    <div class="headBanner" 
+      v-if="current.type==='inner'"
+      :style="{backgroundImage: `url(${current.backgroundImageUrl})`}"
+    />
+    <!-- 门户——内容区域 -->
+    <div class="homepage-content">
+      <Suspense>
+        <template #default>
+          <component :is="current.component"></component>
+        </template>
+        <template #fallback>
+          <div>加载中...</div>
+        </template>
+      </Suspense>
+    </div>
   </div>
 </template>
 
@@ -61,9 +41,14 @@ const current = ref(navigationList[0])
 
 <style lang="scss" scoped>
 .homepage{
-  display: flex;
-  flex-direction: column;
+  width: 100%;
+  height: 100%;
   overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  // 设置y轴滚动吸附
+  scroll-snap-type: y mandatory;
 
   .headBanner {
     width: 100%;
@@ -73,6 +58,11 @@ const current = ref(navigationList[0])
     flex-direction: column;
     background-position: 50% 20%;
     background-size: cover;
+    scroll-snap-align: start;
+  }
+  .homepage-content {
+    // 滚动吸附对齐方式
+    scroll-snap-align: start;
   }
 }
 </style>

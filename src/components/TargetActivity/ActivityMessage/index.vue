@@ -48,14 +48,15 @@ const handleReply = async (userId: string = '') => {
 <template>
   <li class="listItem" v-if="metadata">
     <div class="listItemMeta"> 
+      <!-- 发布者头像 -->
       <div class="listItemMetaAvatar" style="margin-right: 16px;">
         <EntityIcon :entity="activity.metadata" :size="50" />
       </div>
       <div class="listItemMetaContent">
-        <!-- 群名 -->
-        <span class="listItemTitle" :style="{fontWeight: 'bold',marginRight: '10px'}">
+        <!-- 发布者名称 -->
+        <div class="listItemMetaContentTitle">
           {{ activity.metadata.name }}
-        </span>
+        </div>
         <!-- 标签 -->
         <ElTag class="listItemTag"
           v-for="(item,index) in metadata.tags" :key="index"
@@ -63,18 +64,19 @@ const handleReply = async (userId: string = '') => {
         >
           {{ item }}
         </ElTag>
-        <!-- 描述 -->
+        <!--  -->
         <div class=" listItemDescription activityItem">
           <!-- 内容 -->
           <div class="activityItemContent">
-            <!-- 文字内容 -->
+            <!-- 文字 -->
             <template v-if="metadata.typeName===MessageType.Text">
               <div>
                 {{metadata.content}}
               </div>
             </template>
+            <!-- 链接地址 -->
             <template v-else-if="metadata.typeName===MessageType.Html"> 
-              <!-- 预览版动态 -->
+              <!-- 普通链接 -->
               <template v-if="hideResource">
                 <div 
                   style="
@@ -88,10 +90,10 @@ const handleReply = async (userId: string = '') => {
                   {{parseHtmlToText(metadata.content)}}
                 </div>
               </template>
-              <!-- 显示源网页 -->
+              <!-- 超链接 -->
               <div v-else v-html="metadata.content"></div>
             </template>
-            <!-- 图片内容 -->
+            <!-- 图片 -->
             <div class="activityItemImageList" v-if="!hideResource">
               <div class="previewGroup"
                 style="
@@ -229,15 +231,6 @@ const handleReply = async (userId: string = '') => {
 </template>
 
 <style lang="scss" scoped>
-  // .listItem{
-  //   width: 100%;
-  //   display: flex;
-  //   align-items: start;
-  //   .right {
-  //     margin-left: 16px;
-      
-  //   }
-  // }
   .listItem {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -250,7 +243,7 @@ const handleReply = async (userId: string = '') => {
     justify-content: space-between;
     padding: 12px 0;
     color: rgba(0,0,0,.85);
-    &Meta {
+    .listItemMeta {
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
@@ -261,8 +254,13 @@ const handleReply = async (userId: string = '') => {
       -ms-flex-align: start;
       align-items: flex-start;
       max-width: 100%;
-      &Content {
+      .listItemMetaContent {
         flex: 1;
+        .listItemMetaContentTitle {
+          margin-top: 12px;
+          font-weight: bold;
+          margin-right: 10px;
+        }
       }
     }
   }
@@ -331,6 +329,9 @@ const handleReply = async (userId: string = '') => {
     display: flex;
     flex-direction: column;
     gap: 4px;
+  }
+  :deep(a) {
+    color:#154ad8;
   }
 }
 .activityTime {

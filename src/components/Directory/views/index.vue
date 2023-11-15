@@ -11,6 +11,7 @@ import TagsBar from '../tagsBar/index.vue';
 
 const props = defineProps<{
   content: IDEntity[]
+  /** 展示的文件类型 */
   accepts?: string[]
   selectFiles: IDEntity[]
   excludeIds?: string[]
@@ -28,6 +29,7 @@ const props = defineProps<{
 const currentTag=ref('全部')
 const [segmented, setSegmented] = useStorage('segmented', 'list')
 
+
 /** 查询内容 */
 const getContent = (filter: boolean = true) => {
   if (props.extraTags) {
@@ -39,6 +41,7 @@ const getContent = (filter: boolean = true) => {
       if (props.excludeIds && props.excludeIds.length > 0) {
         success = !props.excludeIds.includes(file.id);
       }
+      // 根据选中标签、未删除进行筛选
       if (filter && success) {
         if (currentTag.value !== '全部') {
           success = file.groupTags.includes(currentTag.value);
@@ -51,7 +54,7 @@ const getContent = (filter: boolean = true) => {
       }
       return success;
     };
-    return props.content.filter(tagFilter);
+    return props.content.filter(tagFilter)
   }
   return props.content
 }

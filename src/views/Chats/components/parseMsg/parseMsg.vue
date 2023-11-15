@@ -108,27 +108,23 @@ switch (props.item.msgType) {
       <audio :src="url" controls />
     </div>
   </template>
-  <!-- 文本 -->
-  <template v-else-if="item.msgType === MessageType.Text">
-    <div class="con_content_txt">
-      <div v-html="linkText(item.msgBody)"></div>
-    </div>
-  </template>
-  <!-- 其它 -->
-  <!-- <template v-else>
+  <!-- 文本 | 纯图片 | 文本+图片 -->
+  <template v-else>
+    <!-- 包含图片 -->
     <div v-if="item.msgBody.includes('$IMG')" class="con_content_txt">
       <ElImage
         v-for="(url,idx) in imgUrls" :key="idx"
-        class="cut_img"
         :src="url"
         :preview="[url]"
+        :preview-src-list="[url]"
       />
         <p v-if="str.trim()" style="white-space: pre-wrap; margin: 0">{{str}}</p>
     </div>
+    <!-- 纯文本 -->
     <div v-else class="con_content_txt">
       <div v-html="linkText(item.msgBody)"></div>
     </div>
-  </template> -->
+  </template>
 </template>
 
 <style lang="scss" scoped>
@@ -213,7 +209,7 @@ switch (props.item.msgType) {
         padding-left: 4px;
         color: #888;
       }
-      .con_content_txt, .con_content_forward_txt {
+      .con_content_txt, .con_content_forward_txt,.con_content_cite_txt {
         cursor: pointer;
         text-align: left;
         min-height: 30px;
@@ -226,17 +222,14 @@ switch (props.item.msgType) {
         word-wrap: break-word;
         word-break: normal;
         line-height: 15px;
+        :deep(a){
+          color: #154ad8;
+        }
       }
 
       .con_content_cite_txt {
-        cursor: pointer;
-        text-align: left;
-        min-height: 30px;
         padding: 7px 10px;
         margin-top: 4px;
-        color: black;
-        border-radius: 6px;
-        z-index: 1;
         max-width: 300px;
         word-break: normal;
         font-size: 12px;

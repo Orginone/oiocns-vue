@@ -42,10 +42,14 @@ const loadMoreActivity = async(e:ReachBottomEvent) => {
 <template>
   <ElCard
     v-if="actionList"
-    body-style="border: 0;width:100%;"
+    body-style="
+      border: 0;
+      width:100%;
+      height: calc(100% - 56px);
+    "
     shadow="never"
   >
-    <!-- 卡片头部 -->
+    <!-- 动态卡片——header -->
     <template #header>
       <div class="card-header" style="display: flex;justify-content: space-between;">
         <span>{{title || '动态'}}</span>
@@ -59,7 +63,7 @@ const loadMoreActivity = async(e:ReachBottomEvent) => {
         </el-button>
       </div>
     </template>
-    <!-- 滚动区域 -->
+    <!-- 动态卡片——滚动区域 -->
     <DxScrollView
       :key="activity.key"
       bounceEnabled

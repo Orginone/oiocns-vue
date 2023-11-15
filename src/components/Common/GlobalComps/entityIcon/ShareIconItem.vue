@@ -77,6 +77,8 @@ const fontSize = size > 14 ? 14 : size;
 .share-avatar {
   cursor: pointer;
   position: relative;
+  display: flex;
+  align-items: center;
   
   &.showInfoMore {
     margin: 12px 0 0 12px;

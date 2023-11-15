@@ -1,7 +1,7 @@
 <!-- 门户顶部导航条组件 -->
 <script setup lang="ts">
 import { ElMessage } from 'element-plus';
-import { NavigationItem } from '@/views/Home/index.vue';
+import { NavigationItem,allPages } from './config'
 import BaseTitle from '../BaseTitle/index.vue';
 import { MoreFilled,RemoveFilled,CirclePlusFilled } from '@element-plus/icons-vue';
 // 接收常用页面列表
@@ -12,39 +12,6 @@ defineProps<{
 const emits = defineEmits<{
   (e: 'change', item: NavigationItem): void
 }>()
-// 全部页面列表
-const allPages: NavigationItem[] = [
-  {
-    key: 'app',
-    label: '工作台',
-    backgroundImageUrl: '/img/banner/digital-asset-bg.png',
-    component: defineAsyncComponent(() => import('@/views/Home/components/Content/WorkBench/index.vue')),
-  },
-  {
-    key: 'cohort',
-    label: '群动态',
-    backgroundImageUrl: '/img/banner/activity-bg.png',
-    component: defineAsyncComponent(() => import('@/views/Home/components/Content/Activity/Cohort.vue')),
-  },
-  {
-    key: 'friends',
-    label: '好友圈',
-    backgroundImageUrl: '/img/banner/circle-bg.jpeg',
-    component: defineAsyncComponent(() => import('@/views/Home/components/Content/Activity/Friends.vue')),
-  },
-  {
-    key: 'warehouse',
-    label: '公物仓',
-    backgroundImageUrl: '/img/banner/activity-bg.png',
-    component: defineAsyncComponent(() => import('@/views/Home/components/Content/Warehouse.vue')),
-  },
-  {
-    key: 'digital-asset',
-    label: '数据资产',
-    backgroundImageUrl: '/img/banner/digital-asset-bg.png',
-    component: defineAsyncComponent(() => import('@/views/Home/components/Content/DigitalAsset.vue')),
-  },
-]
 // 当前激活
 const current = ref(0);
 // 展示更多

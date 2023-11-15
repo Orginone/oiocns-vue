@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ISysFileInfo } from '@/ts/core';
+import { ISysFileInfo } from '@/ts/core'
 import OpenFileDialog from '@/components/OpenFileDialog/index.vue';
 import ActivityResource from '@/components/Activity/ActivityResource/index.vue';
 import {Plus} from '@element-plus/icons-vue'
@@ -7,55 +7,54 @@ import { MenuItemType } from 'typings/globelType';
 
 const props = defineProps<{
   maxCount: number,
+  /** 允许选择的文件类型 */
   types: string[],
   currentKey?: string,
   onChange: (fileList: ISysFileInfo[]) => void
 }>()
 
 const open = ref(false)
-const fileList = ref<ISysFileInfo[]>([]);
+const fileList = ref<ISysFileInfo[]>([])
 
-onMounted(() => {
-  props.onChange(fileList.value as ISysFileInfo[])
-})
+watch(fileList,() => props.onChange(fileList.value as ISysFileInfo[]))
+
 </script>
 
 <template>
   <div class="imageUploader">
-    
+    <!-- 选中文件展示 -->
     <ActivityResource 
       :fileList="fileList.map((i) => i.shareInfo())"
       :maxWidth="200"
       :columns="1"
     />
-
-      <!-- 选择文件对话框 -->
-      <OpenFileDialog
-        v-if="open"
-        multiple
-        :rootKey="'disk'"
-        :currentKey="currentKey"
-        :maxCount="maxCount"
-        :accepts="types"
-        allowInherited
-        :onCancel="() => open=false"
-        :onOk="(files) => {
-          fileList=[...fileList, ...files.map((i) => i as ISysFileInfo)]
-          open=false
-        }"
-        
-      />
-      <!-- 选择文件按钮 -->
-      <div
-        v-if="fileList.length < maxCount"
-        class="selectFileBtn" 
-        @click="open=true"
-      >
-        <ElIcon :size="30">
-          <Plus/>
-        </ElIcon>
-        <div style="margin-top: 8px;">选择文件</div>
-      </div>
+    <!-- 选择文件按钮 -->
+    <div
+      v-if="fileList.length < maxCount"
+      class="selectFileBtn" 
+      @click="open=true"
+    >
+      <ElIcon :size="30">
+        <Plus/>
+      </ElIcon>
+      <div style="margin-top: 8px;">选择文件</div>
+    </div>
+    <!-- 选择文件对话框 -->
+    <OpenFileDialog
+      v-if="open"
+      multiple
+      :rootKey="'disk'"
+      :currentKey="currentKey"
+      :maxCount="maxCount"
+      :accepts="types"
+      allowInherited
+      :onCancel="() => open=false"
+      :onOk="(files) => {
+        fileList=[...fileList, ...files.map((i) => i as ISysFileInfo)]
+        open=false
+      }"
+      
+    />
   </div>
 </template>
 

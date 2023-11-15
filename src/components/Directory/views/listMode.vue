@@ -18,7 +18,7 @@ const props = defineProps<{
 
 <template>
   <template v-for="item in content" :key="item.key">
-    <div class="list" :style="{backgroundColor: focusFile?.id === item.id ? '#e6f1ff' : ''}">
+    <div class="list" :style="{backgroundColor: selectFiles.includes(item) ? '#e6f1ff' : ''}">
       <ElDropdown trigger='contextmenu'>
         <div class="list_item" 
             @click="fileOpen(item, false)"

@@ -11,10 +11,12 @@ import useAsyncLoad from '@/hooks/useAsyncLoad'
 import { cleanMenus } from '@/utils/tools'
 
 const props = defineProps<{
-  dialog?: boolean;
+  dialog?: boolean
+  /** 可选文件类型 */
   accepts?: string[];
   selects?: IFile[];
   excludeIds?: string[];
+  //** 预览区标识 */
   previewFlag: string;
   onFocused?: (file: IFile | undefined) => void;
   onSelected?: (files: IFile[]) => void;
@@ -65,7 +67,6 @@ const props = defineProps<{
    */
   const selectHanlder = (file: IFile, selected: boolean) => {
     if (props.selects && props.onSelected) {
-      debugger
       if (selected) {
         props.onSelected([...props.selects, file]);
       } else {

@@ -181,7 +181,7 @@ const viewForward = (item: IMessage[]) => {
                     </template>
                   </ElPopover>
                   <!-- 别人的消息 -->
-                  <div v-else style="display: flex;">
+                  <div v-else style="display: flex;gap:10px;">
                     <div>
                       <TeamIcon :entityId="item.metadata.fromId" :size="36" />
                     </div>

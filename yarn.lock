@@ -1236,10 +1236,24 @@ axios@^0.27.2:
     follow-redirects "^1.14.9"
     form-data "^4.0.0"
 
+axios@1.2.3:
+  version "1.2.3"
+  resolved "https://registry.npmmirror.com/axios/-/axios-1.2.3.tgz"
+  integrity sha512-pdDkMYJeuXLZ6Xj/Q5J3Phpe+jbGdsSzlQaFVkMQzRUL05+6+tetX8TV3p4HrU4kzuO9bt+io/yGQxuyxA/xcw==
+  dependencies:
+    follow-redirects "^1.15.0"
+    form-data "^4.0.0"
+    proxy-from-env "^1.1.0"
+
 balanced-match@^1.0.0:
   version "1.0.2"
   resolved "https://registry.npmmirror.com/balanced-match/-/balanced-match-1.0.2.tgz"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
+
+balloon-css@^1.0.3:
+  version "1.2.0"
+  resolved "https://registry.npmmirror.com/balloon-css/-/balloon-css-1.2.0.tgz"
+  integrity sha512-urXwkHgwp6GsXVF+it01485Z2Cj4pnW02ICnM0TemOlkKmCNnDLmyy+ZZiRXBpwldUXO+aRNr7Hdia4CBvXJ5A==
 
 base@^0.11.1:
   version "0.11.2"
@@ -1337,6 +1351,11 @@ buffer-from@^1.0.0:
   version "1.1.2"
   resolved "https://registry.npmmirror.com/buffer-from/-/buffer-from-1.1.2.tgz"
   integrity sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==
+
+builtin-modules@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.npmmirror.com/builtin-modules/-/builtin-modules-3.3.0.tgz"
+  integrity sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==
 
 builtins@^5.0.1:
   version "5.0.1"
@@ -2502,6 +2521,15 @@ dot-case@^3.0.4:
     no-case "^3.0.4"
     tslib "^2.0.3"
 
+dplayer@^1.22.2:
+  version "1.27.1"
+  resolved "https://registry.npmmirror.com/dplayer/-/dplayer-1.27.1.tgz"
+  integrity sha512-2laBMXs5V1B9zPwJ7eAIw/OBo+Xjvy03i4GHTk3Cg+IWbrq8rKMFO0fFr6ClAYotYOCcFGOvaJDkOZcgKllsCA==
+  dependencies:
+    axios "1.2.3"
+    balloon-css "^1.0.3"
+    promise-polyfill "8.3.0"
+
 echarts@^5.4.0:
   version "5.4.3"
   resolved "https://registry.npmmirror.com/echarts/-/echarts-5.4.3.tgz"
@@ -2815,9 +2843,9 @@ eslint-module-utils@^2.8.0:
     debug "^3.2.7"
 
 eslint-plugin-es-x@^7.1.0:
-  version "7.2.0"
-  resolved "https://registry.npmmirror.com/eslint-plugin-es-x/-/eslint-plugin-es-x-7.2.0.tgz"
-  integrity sha512-9dvv5CcvNjSJPqnS5uZkqb3xmbeqRLnvXKK7iI5+oK/yTusyc46zbBZKENGsOfojm/mKfszyZb+wNqNPAPeGXA==
+  version "7.3.0"
+  resolved "https://registry.npmmirror.com/eslint-plugin-es-x/-/eslint-plugin-es-x-7.3.0.tgz"
+  integrity sha512-W9zIs+k00I/I13+Bdkl/zG1MEO07G97XjUSQuH117w620SJ6bHtLUmoMvkGA2oYnI/gNdr+G7BONLyYnFaLLEQ==
   dependencies:
     "@eslint-community/eslint-utils" "^4.1.2"
     "@eslint-community/regexpp" "^4.6.0"
@@ -2854,15 +2882,16 @@ eslint-plugin-import@^2.22.1, eslint-plugin-import@^2.25.2:
     tsconfig-paths "^3.14.2"
 
 "eslint-plugin-n@^15.0.0 || ^16.0.0 ":
-  version "16.2.0"
-  resolved "https://registry.npmmirror.com/eslint-plugin-n/-/eslint-plugin-n-16.2.0.tgz"
-  integrity sha512-AQER2jEyQOt1LG6JkGJCCIFotzmlcCZFur2wdKrp1JX2cNotC7Ae0BcD/4lLv3lUAArM9uNS8z/fsvXTd0L71g==
+  version "16.3.1"
+  resolved "https://registry.npmmirror.com/eslint-plugin-n/-/eslint-plugin-n-16.3.1.tgz"
+  integrity sha512-w46eDIkxQ2FaTHcey7G40eD+FhTXOdKudDXPUO2n9WNcslze/i/HT2qJ3GXjHngYSGDISIgPNhwGtgoix4zeOw==
   dependencies:
     "@eslint-community/eslint-utils" "^4.4.0"
     builtins "^5.0.1"
     eslint-plugin-es-x "^7.1.0"
     get-tsconfig "^4.7.0"
     ignore "^5.2.4"
+    is-builtin-module "^3.2.1"
     is-core-module "^2.12.1"
     minimatch "^3.1.2"
     resolve "^1.22.2"
@@ -3272,7 +3301,7 @@ flatted@^3.2.9:
   resolved "https://registry.npmmirror.com/flatted/-/flatted-3.2.9.tgz"
   integrity sha512-36yxDn5H7OFZQla0/jFJmbIKTdZAQHngCedGxiMmpNfEZM0sdEeT+WczLQrjK6D7o2aiyLYDnkw0R3JK0Qv1RQ==
 
-follow-redirects@^1.14.9:
+follow-redirects@^1.14.9, follow-redirects@^1.15.0:
   version "1.15.3"
   resolved "https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.15.3.tgz"
   integrity sha512-1VzOtuEM8pC9SFU1E+8KfTjZyMztRsgEfwQl44z8A25uy13jSzTj6dyK2Df52iV0vgHCfBwLhDWevLn95w5v6Q==
@@ -3609,11 +3638,6 @@ highlight.js@^10.7.2:
   resolved "https://registry.npmmirror.com/highlight.js/-/highlight.js-10.7.3.tgz"
   integrity sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==
 
-hls.js@^1.0.10:
-  version "1.4.12"
-  resolved "https://registry.npmmirror.com/hls.js/-/hls.js-1.4.12.tgz"
-  integrity sha512-1RBpx2VihibzE3WE9kGoVCtrhhDWTzydzElk/kyRbEOLnb1WIE+3ZabM/L8BqKFTCL3pUy4QzhXgD1Q6Igr1JA==
-
 html-void-elements@^2.0.0:
   version "2.0.1"
   resolved "https://registry.npmmirror.com/html-void-elements/-/html-void-elements-2.0.1.tgz"
@@ -3819,6 +3843,13 @@ is-buffer@^1.1.5:
   version "1.1.6"
   resolved "https://registry.npmmirror.com/is-buffer/-/is-buffer-1.1.6.tgz"
   integrity sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
+
+is-builtin-module@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.npmmirror.com/is-builtin-module/-/is-builtin-module-3.2.1.tgz"
+  integrity sha512-BSLE3HnV2syZ0FK0iMA/yUGplUeMmNz4AW5fnTunbCIqZi4vG3WjJT9FHMy5D69xmAYBHXQhJdALdpwVxV501A==
+  dependencies:
+    builtin-modules "^3.3.0"
 
 is-callable@^1.1.3, is-callable@^1.1.4, is-callable@^1.2.7:
   version "1.2.7"
@@ -5185,6 +5216,16 @@ progress@^2.0.0:
   resolved "https://registry.npmmirror.com/progress/-/progress-2.0.3.tgz"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
+promise-polyfill@8.3.0:
+  version "8.3.0"
+  resolved "https://registry.npmmirror.com/promise-polyfill/-/promise-polyfill-8.3.0.tgz"
+  integrity sha512-H5oELycFml5yto/atYqmjyigJoAo3+OXwolYiH7OfQuYlAqhxNvTfiNMbV9hsC6Yp83yE5r2KTVmtrG6R9i6Pg==
+
+proxy-from-env@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmmirror.com/proxy-from-env/-/proxy-from-env-1.1.0.tgz"
+  integrity sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==
+
 psl@^1.1.33:
   version "1.9.0"
   resolved "https://registry.npmmirror.com/psl/-/psl-1.9.0.tgz"
@@ -5922,11 +5963,6 @@ text-table@^0.2.0:
   resolved "https://registry.npmmirror.com/text-table/-/text-table-0.2.0.tgz"
   integrity sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==
 
-throttle-debounce@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.npmmirror.com/throttle-debounce/-/throttle-debounce-3.0.1.tgz"
-  integrity sha512-dTEWWNu6JmeVXY0ZYoPuH5cRIwc0MeGbJwah9KUNYSJwommQpCzTySTpEe8Gs1J23aeWEuAobe4Ag7EHVt/LOg==
-
 tiny-warning@^1.0.3:
   version "1.0.3"
   resolved "https://registry.npmmirror.com/tiny-warning/-/tiny-warning-1.0.3.tgz"
@@ -6432,6 +6468,14 @@ vue-demi@>=0.14.5:
   resolved "https://registry.npmmirror.com/vue-demi/-/vue-demi-0.14.6.tgz"
   integrity sha512-8QA7wrYSHKaYgUxDA5ZC24w+eHm3sYCbp0EzcDwKqN3p6HqtTCGR/GVsPyZW92unff4UlcSh++lmqDWN3ZIq4w==
 
+vue-dplayer@^0.0.10:
+  version "0.0.10"
+  resolved "https://registry.npmmirror.com/vue-dplayer/-/vue-dplayer-0.0.10.tgz"
+  integrity sha512-l6d6OnhEUO87lhAees9mEBUFsG5Thqv/VeEVZlSQ993/S0oxvWTDLjjkzH59hO2PALimBK2kB6yNYsHyJBgotw==
+  dependencies:
+    dplayer "^1.22.2"
+    vue-github-badge "1.0.1"
+
 vue-eslint-parser@^9.0.3, vue-eslint-parser@^9.3.1:
   version "9.3.2"
   resolved "https://registry.npmmirror.com/vue-eslint-parser/-/vue-eslint-parser-9.3.2.tgz"
@@ -6444,6 +6488,11 @@ vue-eslint-parser@^9.0.3, vue-eslint-parser@^9.3.1:
     esquery "^1.4.0"
     lodash "^4.17.21"
     semver "^7.3.6"
+
+vue-github-badge@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmmirror.com/vue-github-badge/-/vue-github-badge-1.0.1.tgz"
+  integrity sha512-8X+FUWapnnDfs6cRUg3mCfHUf2r5arUfCSRdvbIn860oj9us3Rz3VOtioUgmfzh6EhaaYTs0Oh78EzJ+Z6uqAA==
 
 vue-grid-layout@^3.0.0-beta1:
   version "3.0.0-beta1"
@@ -6472,7 +6521,7 @@ vue-tsc@^0.38.4:
   dependencies:
     "@volar/vue-typescript" "0.38.9"
 
-"vue@^2.0.0 || >=3.0.0", "vue@^2.5.16 || ^3.0.0", "vue@^2.6.14 || ^3.3.0", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@^3.0.5, vue@^3.2.0, vue@^3.2.2, vue@^3.2.25, vue@^3.2.37, vue@^3.2.45, vue@>=3.0.0-0, vue@>2.0.0, "vue@2 || 3", vue@3.3.4:
+"vue@^2.0.0 || >=3.0.0", "vue@^2.5.16 || ^3.0.0", "vue@^2.6.14 || ^3.3.0", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@^3.0.5, vue@^3.2.0, vue@^3.2.25, vue@^3.2.37, vue@^3.2.45, vue@>=3.0.0-0, vue@>2.0.0, "vue@2 || 3", vue@3.3.4:
   version "3.3.4"
   resolved "https://registry.npmmirror.com/vue/-/vue-3.3.4.tgz"
   integrity sha512-VTyEYn3yvIeY1Py0WaYGZsXnz3y5UnGi62GjVEqvEGPl6nxbOrCXbVOTQWBEJUqAyTUk2uJ5JLVnYJ6ZzGbrSw==
@@ -6482,15 +6531,6 @@ vue-tsc@^0.38.4:
     "@vue/runtime-dom" "3.3.4"
     "@vue/server-renderer" "3.3.4"
     "@vue/shared" "3.3.4"
-
-vue3-video-play@^1.3.2:
-  version "1.3.2"
-  resolved "https://registry.npmmirror.com/vue3-video-play/-/vue3-video-play-1.3.2.tgz"
-  integrity sha512-eEwCJ0NIkfVQgTj0I3Kf9b1E/04Qne8mQQiE8r77BocblHsZ2T6af3q8l8Zzs/OvjlpQAQvkN/ACVUOJC3RSXg==
-  dependencies:
-    hls.js "^1.0.10"
-    throttle-debounce "^3.0.1"
-    vue "^3.2.2"
 
 webidl-conversions@^3.0.0:
   version "3.0.1"
