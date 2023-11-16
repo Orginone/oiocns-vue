@@ -81,7 +81,7 @@ const fontSize = size > 14 ? 14 : size;
   align-items: center;
   
   &.showInfoMore {
-    margin: 12px 0 0 12px;
+    // margin: 12px 0 0 12px;
   }
 }
 </style>

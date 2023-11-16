@@ -12,20 +12,23 @@ import {
 } from '@/ts/core';
 
 import orgCtrl from '@/ts/controller';
-// import QrCode from 'qrcode.react';
 import { command, model, schema } from '@/ts/base';
-import { uploadTemplate } from './tools/uploadTemplate';
+import { uploadTemplate } from '../tools/uploadTemplate';
 // import TypeIcon from '@/components/Common/GlobalComps/typeIcon';
 // import EntityIcon from '@/components/Common/GlobalComps/entityIcon';
 import { shareOpenLink } from '@/utils/tools';
-import { log } from 'console';
+// import { log } from 'console';
+import entityQrCode from './components/entityQrCode.vue'
+
+import {setContent,resetContent} from '../config'
 
 // TODO:
 /** 执行非页面命令 */ 
 export const executeCmd = (cmd: string, entity: any) => {
   switch (cmd) {
     case 'qrcode':
-      return entityQrCode(entity);
+      // return entityQrCode(entity);
+      return setContent(entityQrCode,{entity:entity,isShow:true})
     case 'refresh':
       return directoryRefresh(entity);
     case 'openChat':
@@ -66,7 +69,7 @@ export const executeCmd = (cmd: string, entity: any) => {
       return activateStorage(entity);
   }
   return false;
-};
+}
 
 /** 刷新目录 */
 const directoryRefresh = (dir: IDirectory | IApplication) => {
@@ -243,9 +246,8 @@ const removeMember = (member: IMemeber) => {
   // });
 };
 
-/** 生成实体二维码 */
-const entityQrCode = (entity: IEntity<schema.XEntity>) => {
-  console.log('来这改');
+// /** TODO:生成实体二维码 */
+// const entityQrCode = (entity: IEntity<schema.XEntity>) => {
   // Modal.info({
   //   icon: <></>,
   //   okText: '关闭',
@@ -274,7 +276,7 @@ const entityQrCode = (entity: IEntity<schema.XEntity>) => {
   //     </div>
   //   ),
   // });
-}
+// }
 
 /** 上下线提醒 */
 const onlineChanged = (cmd: string, info: model.OnlineInfo) => {

@@ -1236,24 +1236,10 @@ axios@^0.27.2:
     follow-redirects "^1.14.9"
     form-data "^4.0.0"
 
-axios@1.2.3:
-  version "1.2.3"
-  resolved "https://registry.npmmirror.com/axios/-/axios-1.2.3.tgz"
-  integrity sha512-pdDkMYJeuXLZ6Xj/Q5J3Phpe+jbGdsSzlQaFVkMQzRUL05+6+tetX8TV3p4HrU4kzuO9bt+io/yGQxuyxA/xcw==
-  dependencies:
-    follow-redirects "^1.15.0"
-    form-data "^4.0.0"
-    proxy-from-env "^1.1.0"
-
 balanced-match@^1.0.0:
   version "1.0.2"
   resolved "https://registry.npmmirror.com/balanced-match/-/balanced-match-1.0.2.tgz"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
-
-balloon-css@^1.0.3:
-  version "1.2.0"
-  resolved "https://registry.npmmirror.com/balloon-css/-/balloon-css-1.2.0.tgz"
-  integrity sha512-urXwkHgwp6GsXVF+it01485Z2Cj4pnW02ICnM0TemOlkKmCNnDLmyy+ZZiRXBpwldUXO+aRNr7Hdia4CBvXJ5A==
 
 base@^0.11.1:
   version "0.11.2"
@@ -2521,15 +2507,6 @@ dot-case@^3.0.4:
     no-case "^3.0.4"
     tslib "^2.0.3"
 
-dplayer@^1.22.2:
-  version "1.27.1"
-  resolved "https://registry.npmmirror.com/dplayer/-/dplayer-1.27.1.tgz"
-  integrity sha512-2laBMXs5V1B9zPwJ7eAIw/OBo+Xjvy03i4GHTk3Cg+IWbrq8rKMFO0fFr6ClAYotYOCcFGOvaJDkOZcgKllsCA==
-  dependencies:
-    axios "1.2.3"
-    balloon-css "^1.0.3"
-    promise-polyfill "8.3.0"
-
 echarts@^5.4.0:
   version "5.4.3"
   resolved "https://registry.npmmirror.com/echarts/-/echarts-5.4.3.tgz"
@@ -3301,7 +3278,7 @@ flatted@^3.2.9:
   resolved "https://registry.npmmirror.com/flatted/-/flatted-3.2.9.tgz"
   integrity sha512-36yxDn5H7OFZQla0/jFJmbIKTdZAQHngCedGxiMmpNfEZM0sdEeT+WczLQrjK6D7o2aiyLYDnkw0R3JK0Qv1RQ==
 
-follow-redirects@^1.14.9, follow-redirects@^1.15.0:
+follow-redirects@^1.14.9:
   version "1.15.3"
   resolved "https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.15.3.tgz"
   integrity sha512-1VzOtuEM8pC9SFU1E+8KfTjZyMztRsgEfwQl44z8A25uy13jSzTj6dyK2Df52iV0vgHCfBwLhDWevLn95w5v6Q==
@@ -5216,16 +5193,6 @@ progress@^2.0.0:
   resolved "https://registry.npmmirror.com/progress/-/progress-2.0.3.tgz"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-promise-polyfill@8.3.0:
-  version "8.3.0"
-  resolved "https://registry.npmmirror.com/promise-polyfill/-/promise-polyfill-8.3.0.tgz"
-  integrity sha512-H5oELycFml5yto/atYqmjyigJoAo3+OXwolYiH7OfQuYlAqhxNvTfiNMbV9hsC6Yp83yE5r2KTVmtrG6R9i6Pg==
-
-proxy-from-env@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.npmmirror.com/proxy-from-env/-/proxy-from-env-1.1.0.tgz"
-  integrity sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==
-
 psl@^1.1.33:
   version "1.9.0"
   resolved "https://registry.npmmirror.com/psl/-/psl-1.9.0.tgz"
@@ -5235,6 +5202,11 @@ punycode@^2.1.0, punycode@^2.1.1:
   version "2.3.0"
   resolved "https://registry.npmmirror.com/punycode/-/punycode-2.3.0.tgz"
   integrity sha512-rRV+zQD8tVFys26lAGR9WUuS4iUAngJScM+ZRSKtvl5tKeZ2t5bvdNFdNHBW9FWR4guGHlgmsZ1G7BSm2wTbuA==
+
+qrcode.vue@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.npmmirror.com/qrcode.vue/-/qrcode.vue-3.4.1.tgz"
+  integrity sha512-wq/zHsifH4FJ1GXQi8/wNxD1KfQkckIpjK1KPTc/qwYU5/Bkd4me0w4xZSg6EXk6xLBkVDE0zxVagewv5EMAVA==
 
 qrcode@^1.5.1:
   version "1.5.3"
@@ -6468,14 +6440,6 @@ vue-demi@>=0.14.5:
   resolved "https://registry.npmmirror.com/vue-demi/-/vue-demi-0.14.6.tgz"
   integrity sha512-8QA7wrYSHKaYgUxDA5ZC24w+eHm3sYCbp0EzcDwKqN3p6HqtTCGR/GVsPyZW92unff4UlcSh++lmqDWN3ZIq4w==
 
-vue-dplayer@^0.0.10:
-  version "0.0.10"
-  resolved "https://registry.npmmirror.com/vue-dplayer/-/vue-dplayer-0.0.10.tgz"
-  integrity sha512-l6d6OnhEUO87lhAees9mEBUFsG5Thqv/VeEVZlSQ993/S0oxvWTDLjjkzH59hO2PALimBK2kB6yNYsHyJBgotw==
-  dependencies:
-    dplayer "^1.22.2"
-    vue-github-badge "1.0.1"
-
 vue-eslint-parser@^9.0.3, vue-eslint-parser@^9.3.1:
   version "9.3.2"
   resolved "https://registry.npmmirror.com/vue-eslint-parser/-/vue-eslint-parser-9.3.2.tgz"
@@ -6488,11 +6452,6 @@ vue-eslint-parser@^9.0.3, vue-eslint-parser@^9.3.1:
     esquery "^1.4.0"
     lodash "^4.17.21"
     semver "^7.3.6"
-
-vue-github-badge@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmmirror.com/vue-github-badge/-/vue-github-badge-1.0.1.tgz"
-  integrity sha512-8X+FUWapnnDfs6cRUg3mCfHUf2r5arUfCSRdvbIn860oj9us3Rz3VOtioUgmfzh6EhaaYTs0Oh78EzJ+Z6uqAA==
 
 vue-grid-layout@^3.0.0-beta1:
   version "3.0.0-beta1"

@@ -8,7 +8,7 @@ const src = computed(()=>shareOpenLink(props.share.shareLink))
 <template>
   <div class="preview-image" v-if="share.shareLink">
     <ElImage
-      fit="contain"
+      fit="cover"
       :src="src"
       :preview-src-list="[src]"
       style="width: 100%;"
@@ -24,5 +24,9 @@ const src = computed(()=>shareOpenLink(props.share.shareLink))
 .preview-image {
   width: 100%;
   height: 100%;
+  overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 </style>

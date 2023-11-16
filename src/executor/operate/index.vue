@@ -59,7 +59,7 @@ onMounted(()=>{
         return console.log('来这改');
         // return <SettingAuth space={args[0].target} finished={finished} />;
       case 'settingIdentity':
-        return console.log('来这改');
+        return console.log('角色设置来这改');
         // return <SettingIdentity target={args[0].target} finished={finished} />;
       case 'settingStation':
         return console.log('来这改');

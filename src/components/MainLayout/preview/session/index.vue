@@ -154,7 +154,7 @@ const bodyType=ref(props.setting ? 'activity' : 'chat');
       }
     }
     .header-action {
-      text-wrap: none;
+      display: flex;
       margin-left: 48px;
       >i {
         margin: 0 8px;

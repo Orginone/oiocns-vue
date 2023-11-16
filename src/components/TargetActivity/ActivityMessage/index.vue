@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import {h} from 'vue'
-import { ElDivider } from 'element-plus';
 import { IActivity,IActivityMessage,MessageType } from '@/ts/core';
 import { ActivityType } from '@/ts/base/model';
 import { XEntity } from '@/ts/base/schema';
@@ -133,7 +131,7 @@ const handleReply = async (userId: string = '') => {
             </div>
             <!-- 操作 -->
             <div v-if="!hideResource">
-              <ElSpace :spacer="h(ElDivider, { direction: 'vertical' })" wrap :size="2">
+              <ElSpace spacer="|" wrap :size="2">
                 <!-- 点赞按钮 -->
                 <ElButton @click="async ()=>await item.like()" text size="small">
                   <template v-if="metadata.likes.includes(orgCtrl.user.id)">

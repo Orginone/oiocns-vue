@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import {Close} from '@element-plus/icons-vue'
 import {AiOutlineFullscreen, AiOutlineFullscreenExit,AiOutlineSave} from '@/icons/ai'
-// import {h} from 'vue'
-// import { ElDivider } from 'element-plus'
-
 
 const props = defineProps<{
   hideMaxed?: boolean;
@@ -151,6 +148,8 @@ const onClose=() => {
   border: 1px solid #ebeef5;
   height: var(--body-height,calc(100% - 102px));
   max-height: none !important;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 :deep(.el-dialog__footer) {
   padding: 12px;

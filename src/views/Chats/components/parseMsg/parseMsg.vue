@@ -41,6 +41,7 @@ switch (props.item.msgType) {
     url = URL.createObjectURL(blob)
 
   }
+
   default: {
     // 优化截图展示问题
     if (props.item.msgBody.includes('$IMG')) {
@@ -74,7 +75,7 @@ switch (props.item.msgType) {
     <div v-else class="con_content_txt">消息异常</div>
   </template>
   <!-- 视频 -->
-  <template v-if="item.msgType === MessageType.Video">
+  <template v-else-if="item.msgType === MessageType.Video">
     <!-- 有共享链接 -->
     <div 
       v-if="img && img.shareLink"
@@ -128,24 +129,6 @@ switch (props.item.msgType) {
 </template>
 
 <style lang="scss" scoped>
-// @import '@cfg/theme/variables';
-// :global {
-//   .ogo-popover-content {
-//     .ogo-popover-arrow {
-//       display: none;
-//     }
-//     .ogo-popover-inner {
-//       .ogo-popover-inner-content {
-//         display: flex;
-//         flex-direction: column;
-//         padding: 2px 3px;
-//       }
-//     }
-//   }
-//   // .ogo-popover-placement-bottom {
-//   //   margin-top: -20px;
-//   // }
-// }
 .chart_content {
   flex-grow: 1;
   overflow-y: auto;

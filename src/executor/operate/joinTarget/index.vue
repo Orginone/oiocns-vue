@@ -47,41 +47,32 @@ const onOk= async () => {
 </script>
 
 <template>
-<ElDialog
-  custom-class="my-dialog"
-  destroyOnClose
-  :title="modalTitle"
-  v-model="isShowDialog"
-  @close="finished"
-  width='670px'
->
- 
-  <!-- 搜索 -->
-  <SearchTarget
-    :searchCallback="(persons: schema.XTarget[]) => selectMembers = persons"
-    :searchType="selectTargetType"
-  />
-  <!-- 对话框底部 -->
-  <template #footer>
-    <span class="dialog-footer">
-      <el-button @click="isShowDialog = false" >取消</el-button>
-      <el-button type="primary" @click="onOk" :disabled="!selectMembers">确定</el-button>
-    </span>
-  </template>
-</ElDialog>
+  <ElDialog
+    custom-class="my-dialog"
+    destroyOnClose
+    :title="modalTitle"
+    v-model="isShowDialog"
+    @close="finished"
+    width='670px'
+  >
+  
+    <!-- 搜索 -->
+    <SearchTarget
+      :searchCallback="(persons: schema.XTarget[]) => selectMembers = persons"
+      :searchType="selectTargetType"
+    />
+    <!-- 对话框底部 -->
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="isShowDialog = false" >取消</el-button>
+        <el-button type="primary" @click="onOk" :disabled="!selectMembers">确定</el-button>
+      </span>
+    </template>
+  </ElDialog>
 </template>
 
-<style lang="scss" scoped>
-:global(.el-dialog) {
-  border-radius: 4px !important;
-}
-:global(.el-dialog__header) {
-  border-radius: 4px  4px 0 0 !important;
-}
-</style>
-
-<style>
-.el-dialog {
+<style lang="scss">
+.el-dialog.my-dialog{
   .el-dialog__header {
     .el-dialog__title {
       color: rgba(0,0,0,.85);

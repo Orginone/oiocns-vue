@@ -29,7 +29,6 @@ export const loadFileMenus = (file: IFile, mode: number = 0) => {
         key: o.cmd,
         label: parseLabel(o.label),
         model: o.model ?? 'inside',
-        // TODO:
         icon: o.menus ? null : {name:TypeIcon ,args:{ iconType:o.iconType, size:16}},
         beforeLoad: async () => {
           command.emitter('executor', o.cmd, file);

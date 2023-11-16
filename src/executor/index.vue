@@ -1,31 +1,19 @@
 <script setup lang="ts">
-import { command } from '../../src/ts/base';
-// import DesignExecutor from './design';
-import OperateExecutor from './operate/index.vue';
-import { executeCmd } from './action';
+import { command } from '../../src/ts/base'
+// import DesignExecutor from './design'
+import OperateExecutor from './operate/index.vue'
+import { executeCmd } from './action/index'
 import {useRouter} from 'vue-router'
+import {contentComponent,dynamicProps,setContent,resetContent} from './config'
 
 const router = useRouter()
 
-// TODO:感觉可以抽离成hooks
-// 动态组件
-const contentComponent = ref(null);
-// 动态props
-const dynamicProps = ref({})
-// 设置组件与参数
-const setContent = (component: any,props: object) => {
-  contentComponent.value = component;
-  dynamicProps.value = props
-}
-// 重置动态组件
-const resetContent = () => {
-  contentComponent.value = null;
-  dynamicProps.value={}
-}
+
 
 // 订阅变更,设置回调
 let id = ''
 onMounted(()=>{
+  // 重置动态组件
   id = command.subscribe((type, cmd, ...args: any[]) => {
     if (type != 'executor')  return
     if (cmd === 'link') return router.push(args[0]);
@@ -35,9 +23,6 @@ onMounted(()=>{
       switch (cmd) {
         case 'open':
         case 'remark':
-          // return setContent(
-          //   <OpenExecutor cmd={cmd} entity={args[0]} finished={resetContent} />,
-          // );
           return setContent(OperateExecutor, {cmd: cmd, args: args, finished: resetContent})
         case 'design':
           return console.log('来这改');
@@ -52,13 +37,12 @@ onMounted(()=>{
   })
 })
 
-  // 取消订阅
-  onBeforeUnmount(()=>{
-    command.unsubscribe(id);
-  })
+// 取消订阅
+onBeforeUnmount(()=>{
+  command.unsubscribe(id);
+})
 
 </script>
-
 <template>
   <component :is="contentComponent" v-bind="dynamicProps"/>
 </template>

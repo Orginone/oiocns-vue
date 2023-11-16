@@ -231,24 +231,6 @@ const viewForward = (item: IMessage[]) => {
 
 <style lang="scss" scoped>
 // TODO:
-// @import '@cfg/theme/variables';
-// :global {
-//   .ogo-popover-content {
-//     .ogo-popover-arrow {
-//       display: none;
-//     }
-//     .ogo-popover-inner {
-//       .ogo-popover-inner-content {
-//         display: flex;
-//         flex-direction: column;
-//         padding: 2px 3px;
-//       }
-//     }
-//   }
-  // .ogo-popover-placement-bottom {
-  //   margin-top: -20px;
-  // }
-// }
 .chart_content {
   flex-grow: 1;
   overflow-y: auto;

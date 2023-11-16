@@ -2,9 +2,6 @@
 import NavigationBar from './components/NavigationBar/index.vue'
 import { allPages } from './components/NavigationBar/config';
 
-console.log(allPages[0].backgroundImageUrl);
-
-
 // 当前页面
 const current = ref(allPages[0])
 
