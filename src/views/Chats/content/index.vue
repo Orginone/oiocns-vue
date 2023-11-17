@@ -2,44 +2,45 @@
 <script setup lang="ts">
   import orgCtrl from '@/ts/controller'
   import { ISession } from '@/ts/core'
-  import DirectoryViewer from '@/components/Directory/views/index.vue';
+  import DirectoryViewer from '@/components/Directory/views/index.vue'
   import { command } from '@/ts/base'
   import { useFlagCmdEmitter } from '@/hooks/useCtrlUpdate'
   import { loadChatOperation } from './common'
 
   const props = defineProps<{
-    chats: ISession[];
-    filter: string;
+    filter: string
   }>()
 
   // 选中的会话
   const focusFile=ref<ISession>()
+  // TODO:
   // 监听变更
   const {loaded, key:msgKey} = useFlagCmdEmitter('session')
 
   // 经过搜索关键词筛选排序后的所有会话列表
-  const filteredChats = computed(()=>{
-    // 没有选中的沟通，则获取所有与我相关沟通
-    const chats = props.chats ?? orgCtrl.chats.filter((i) => i.isMyChat)
-      return chats
-      .filter( 
-        (a) =>
-          a.chatdata.chatName.includes(props.filter) ||
-          a.chatdata.chatRemark.includes(props.filter) ||
-          a.metadata.belong.name.includes(props.filter) ||
-          a.chatdata.labels.filter((l) => l.includes(props.filter)).length > 0,
-      )
-      .sort((a, b) => {
-        var num = (b.chatdata.isToping ? 10 : 0) - (a.chatdata.isToping ? 10 : 0)
-        if (num === 0) {
-          if (b.chatdata.lastMsgTime == a.chatdata.lastMsgTime) {
-            num = b.isBelongPerson ? 1 : -1
-          } else {
-            num = b.chatdata.lastMsgTime > a.chatdata.lastMsgTime ? 5 : -5
-          }
+  const contents = computed(()=>{
+    const contents: ISession[] = [...orgCtrl.chats.filter((i) => i.isMyChat)]
+    // 关键词筛选
+    contents.filter( 
+      (a) =>
+        a.chatdata.chatName.includes(props.filter) ||
+        a.chatdata.chatRemark.includes(props.filter) ||
+        a.metadata.belong.name.includes(props.filter) ||
+        a.chatdata.labels.filter((l) => l.includes(props.filter)).length > 0,
+    )
+    // 排序（是否置顶）
+    contents.sort((a, b) => {
+      var num = (b.chatdata.isToping ? 10 : 0) - (a.chatdata.isToping ? 10 : 0)
+      if (num === 0) {
+        if (b.chatdata.lastMsgTime == a.chatdata.lastMsgTime) {
+          num = b.isBelongPerson ? 1 : -1
+        } else {
+          num = b.chatdata.lastMsgTime > a.chatdata.lastMsgTime ? 5 : -5
         }
-        return num;
-      })  
+      }
+      return num;
+    }) 
+    return contents 
   })
 
   /** 生成右键菜单内容 */
@@ -67,12 +68,12 @@
       extraTags
       :initTags="['全部', '@我', '未读', '置顶', '好友']"
       :excludeTags="['本人', '同事']"
-      :selectFiles="[]"
+      :selectFiles="[focusFile] || []"
       :focusFile="focusFile"
-      :content="filteredChats"
+      :content="contents"
       :badgeCount="(tag) => {
         let count = 0;
-        filteredChats
+        contents
           .filter((i) => tag === '全部' || i.groupTags.includes(tag))
           .forEach((i) => {
             count += i.badgeCount;

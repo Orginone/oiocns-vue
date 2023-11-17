@@ -23,6 +23,7 @@ const props = defineProps<{
   current: IDirectory | undefined | 'disk';
 }>()
 
+  
   const dircetory=ref<IDirectory>(props.current === 'disk' ? orgCtrl.user.directory : props.current)
   const [key] = useCtrlUpdate(dircetory.value)
   const [loaded] = useAsyncLoad(() => dircetory.value.loadContent())
@@ -66,7 +67,7 @@ const props = defineProps<{
    * @param selected 是否选中
    */
   const selectHanlder = (file: IFile, selected: boolean) => {
-    if (props.selects && props.onSelected) {
+    if (props?.onSelected) {
       if (selected) {
         props.onSelected([...props.selects, file]);
       } else {
@@ -108,6 +109,7 @@ const props = defineProps<{
     }
   }
 
+  // 文件数据
   const contents = computed(() => {
     const contents: IFile[] = [];
     if (props.current === 'disk') {

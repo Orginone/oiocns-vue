@@ -1,147 +1,135 @@
 <!-- 截图 -->
 <script setup lang='ts'>
-import Cropper from 'react-cropper' // 引入Cropper
-import 'cropperjs/dist/cropper.css' // 引入Cropper对应的css
 import html2canvas from 'html2canvas'
 import orgCtrl from '@/ts/controller'
 import dayjs from 'dayjs'
-import { message } from 'antd'
+import { ElMessage } from 'element-plus'
+import VuePictureCropper, { cropper } from 'vue-picture-cropper'
 
 const props = defineProps<{ 
   open?: boolean
   onClose?: Function 
 }>()
 
-const cropperRef = useRef<any>(null);
-  const [img, setimg] = useState<string>('');
+const img= ref<string>('')
 
-  useEffect(() => {
-    if (open) {
-      init(50);
-    } else {
-      setimg('');
-    }
-  }, [open]);
-
-  const init = (times: number = 200) => {
-    setTimeout(async () => {
-      // 获取当前网页 可视区域
-      const Dom: HTMLElement = document.documentElement;
-      //等待canvas绘制 鼠标变为加载中样式。。。
-      Dom.style.cursor = 'wait';
-      const canvas = await html2canvas(Dom);
-      // 恢复鼠标样式
-      Dom.style.cursor = 'pointer';
-      // canvas==>图片地址 用于剪切
-      const imgUrl = canvas.toDataURL();
-      // 获取截图base64
-      setimg(imgUrl);
-    }, times);
-  };
-
-  /**
-   * @description: 按钮事件处理
-   * @param {string} targetKey
-   * @param {Function} onKeyDown
-   * @return {*}
-   */
-  const useKeyPress = (targetKey: string, onKeyDown: Function) => {
-    const handler = useCallback(
-      (event: any) => {
-        // 触发特定按钮事件
-        if (event.key === targetKey) {
-          onKeyDown(event);
-        }
-        // 退出截图
-        if (event.key === 'Escape') {
-          setimg('');
-          onClose && onClose();
-        }
-      },
-      [targetKey, onKeyDown],
-    );
-    // 增加按钮监听
-    useEffect(() => {
-      document.addEventListener('keydown', handler);
-      return () => {
-        document.removeEventListener('keydown', handler);
-      };
-    }, [handler]);
-  };
-
-  /**
-   * @description: 提交截图信息
-   * @param {*} useCallback
-   * @return {*}
-   */
-  const handleSubmit = useCallback(() => {
-    cropperRef.current.cropper.getCroppedCanvas().toBlob(async (blob: any) => {
-      // 创造提交表单数据对象
-      // 添加要上传的文件
-      let file: any = new window.File(
-        [blob],
-        '截图' + dayjs(new Date()).unix() + '.jpeg',
-        {
-          type: 'image/jpeg',
-        },
-      );
-      if (file) {
-        const result = await orgCtrl.user.directory.createFile(file.name, file);
-        // 把选中裁切好的的图片传出去
-        if (result) {
-          onClose && onClose(result);
-        }
-      }
-      // 关闭弹窗
-      setimg('');
-      message.success(
-        '截屏已存入仓库/文件/沟通/截图/' + dayjs(new Date()).format('YYYY-MM-DD'),
-      );
-    });
-  }, [cropperRef]);
-
-  useKeyPress('a', (event: any) => {
-    // 判断是否按下了 Control 和 Alt 键
-    if (event.ctrlKey && event.altKey) {
-      // Control 和 Alt 键+A
-      if (!img) {
-        init();
-      }
-    }
-  });
-
-  if (!img) {
-    return <></>;
+watch(()=>props.open,() => {
+  if (props.open) {
+    init(50);
+  } else {
+    img.value = ''
   }
+}, {immediate: true})
+
+/** 将当前网页可视区域转为图片 */
+const init = (times: number = 200) => {
+  setTimeout(async () => {
+    // 获取当前网页 可视区域
+    const Dom: HTMLElement = document.documentElement;
+    //等待canvas绘制 鼠标变为加载中样式。。。
+    Dom.style.cursor = 'wait'
+    const canvas = await html2canvas(Dom);
+    // 恢复鼠标样式
+    Dom.style.cursor = 'pointer'
+    // canvas==>图片地址 用于剪切
+    const imgUrl = canvas.toDataURL();
+    // 获取截图base64
+    img.value = imgUrl
+  }, times)
+}
+
+/**
+ * @description: 按钮事件处理
+ * @param {string} targetKey
+ * @param {Function} onKeyDown
+ * @return {*}
+ */
+const useKeyPress = (targetKey: string, onKeyDown: Function) => {
+  const handler = markRaw((event: any) => {
+      // 触发特定按钮事件
+      if (event?.key === targetKey) {
+        onKeyDown(event);
+      }
+      // 退出截图
+      if (event?.key === 'Escape') {
+        img.value = ''
+        props?.onClose()
+      }
+  })
+  // 增加按钮监听
+  watch(handler,() => {
+    document.addEventListener('keydown', handler)
+    onBeforeUnmount(() => {
+      document.removeEventListener('keydown', handler)
+    })
+  },{immediate: true})
+}
+
+/** @description: 提交截图信息 */
+const handleSubmit = () => {
+  cropper.getCroppedCanvas().toBlob(async (blob: any) => {
+    // 创建文件对象
+    let file: any = new window.File(
+      [blob],
+      '截图' + dayjs(new Date()).unix() + '.jpeg',
+      {
+        type: 'image/jpeg',
+      },
+    )
+    if (file) {
+      // 添加要上传的文件
+      const result = await orgCtrl.user.directory.createFile(file)
+      // 把选中裁切好的的图片传出去
+      if (result) {
+        props?.onClose(result);
+      }
+    }
+    // 关闭弹窗
+    img.value = ''
+    ElMessage.success(
+      '截屏已存入仓库/文件/沟通/截图/' + dayjs(new Date()).format('YYYY-MM-DD'),
+    );
+  });
+}
+
+// 设置截图热键
+useKeyPress('a', (event: any) => {
+  if (event.ctrlKey && event.altKey) {
+    if (!img.value) {
+      init()
+    }
+  }
+})
 </script>
 
 <template>
-    <div className="hooks-cropper-modal">
-      <div className="modal-panel">
-        <div className="cropper-container-container">
-          <div
-            className="cropper-container"
-            onDoubleClick={() => {
-              handleSubmit();
-            }}>
-            <Cropper
-              title="双击完成截图"
-              src={img}
-              className="cropper"
-              ref={cropperRef}
-              autoCrop={false} //当初始化时，可以自动生成图像
-              zoomable={false} //缩放-禁止
-              movable={true}
-              aspectRatio={undefined} // 固定为1:1  可以自己设置比例, 默认情况为自由比例
-              background={true}
-              rotatable={false} // rotatable true 可旋转图片
-              cropBoxResizable={true} //允许对以圈定区域进行调整
-              // preview=".cropper-preview" // 预览的窗帘样式类名指定
-            />
-          </div>
+  <div class="hooks-cropper-modal" v-if="img">
+    <div class="modal-panel">
+      <div class="cropper-container-container">
+        <div
+          class="cropper-container"
+          @dblclick="handleSubmit"
+          title="双击完成截图"
+        >
+          <VuePictureCropper
+            :boxStyle="{
+              width: '100%',
+              height: '100%',
+              backgroundColor: '#f8f8f8',
+            }"
+            :img="img"
+            :options="{
+              viewMode: 1, // 裁切框活动范围
+              dragMode: 'crop', // 拖拽图片模式： 图片不可移动，生成新的裁剪框
+              autoCrop: false, // 禁用自动裁剪
+              scalable: false, // 是否可以缩放图片（改变长宽）
+              zoomable: false, // 是否可以缩放图片（改变焦距）
+            }"
+          />
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <style lang='scss' scoped>

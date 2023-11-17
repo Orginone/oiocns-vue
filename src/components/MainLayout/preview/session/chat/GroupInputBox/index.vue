@@ -8,13 +8,14 @@ import { CircleClose } from '@element-plus/icons-vue'
 // import React, { useEffect, useState } from 'react'
 import { IMessage, ISession, ISysFileInfo, MessageType } from '@/ts/core'
 import { parseAvatar } from '@/ts/base'
-import Cutting from '../../cutting/index.vue';
+import Cutting from '../components/cutting/index.vue'
 // import './index.less'
 import OpenFileDialog from '@/components/OpenFileDialog/index.vue'
 import { parseCiteMsg } from '@/views/Chats/components/parseMsg'
 import Emoji from '../components/emoji/index.vue'
 import PullDown from '../components/pullDown/index.vue'
 import { ClickOutside as vClickOutside } from 'element-plus'
+import {Scissor} from '@element-plus/icons-vue'
 
 const props = defineProps<{
   chat: ISession;
@@ -31,7 +32,8 @@ watch(()=>props.writeContent,(val)=>{
 
 // 输入区域ref对象
 const editArea = ref(null)
-const openEmoji = ref(false) // 是否打开表情选择器
+// 是否打开表情选择器
+const openEmoji = ref(false) 
 
 // 聊天框初始化内容
 onMounted(() => {
@@ -144,16 +146,16 @@ const reCreatChatContent = (
   }
   return [];
 }
-
+/** 是否开启截屏 */
 const isCut = ref(false)
-/** 截屏后放入输入区发出消息 */
+/** 截屏后将图片放入输入区 */
 const handleCutImgSelect = async (result: any) => {
-  const img = document.createElement('img');
-  img.src = result.shareInfo().shareLink;
-  img.className = `cutImg`;
-  img.style.display = 'block';
-  img.style.marginBottom = '10px';
-  document.getElementById('innerHtml')?.append(img);
+  const src = result.shareInfo().shareLink
+  const img = document.createElement('img')
+  img.src = src
+  img.className = `cutImg`
+  img.style.display = 'block'
+  editArea.value.append(img)
 }
 
 /** 选择文件对话框是否可见 */
@@ -177,6 +179,7 @@ const handleOk = async (files: IFile[]) => {
 
 <template>
   <div class="group-input-box">
+    <!-- 工具条 -->
     <div class="group-input-box__toolbar">
       <!-- 表情功能 -->   
       <ElPopover
@@ -190,7 +193,15 @@ const handleOk = async (files: IFile[]) => {
       >
         <template #reference>
           <div  style="padding-top: 6px;">
-            <ElIcon :size="18" color='#9498df' @click="openEmoji=true" @contextmenu="openEmoji=true"><Smile/></ElIcon>
+            <ElIcon 
+              title="表情"
+              :size="18" 
+              color='#9498df' 
+              @click="openEmoji=true" 
+              @contextmenu="openEmoji=true"
+            >
+              <Smile/>
+            </ElIcon>
           </div>
         </template>
         <template #default>
@@ -204,11 +215,19 @@ const handleOk = async (files: IFile[]) => {
         </template>
       </ElPopover>
       <!-- 语音功能 -->
-      <ElIcon :size="18" color="#9498df" @click="ElMessage.warning('功能暂未开放')" ><Mic /></ElIcon>
-      <!-- 文件 -->
-      <ElIcon :size="18" color="#9498df" @click="open=true"><Folder /></ElIcon>
-      <!-- 录像机 -->
-      <ElIcon :size="18" color="#9498df" @click="ElMessage.warning('功能暂未开放')"><VideoCamera /></ElIcon>
+      <ElIcon title="语音" :size="18" color="#9498df" @click="ElMessage.warning('功能暂未开放')" ><Mic /></ElIcon>
+      <!-- 发送文件 -->
+      <ElIcon title="发送文件" :size="18" color="#9498df" @click="open=true"><Folder /></ElIcon>
+      <!-- 视频 -->
+      <ElIcon title="视频" :size="18" color="#9498df" @click="ElMessage.warning('功能暂未开放')"><VideoCamera /></ElIcon>
+      <!-- 截屏 -->
+      <ElIcon 
+        title="截屏(alt+ctrl+a)" 
+        :size="18" color="#9498df" 
+        @click="isCut=true"
+      >
+        <Scissor />
+      </ElIcon>
     </div>
     <!-- 输入区 -->
     <div class="group-input-box__input-area">
@@ -230,13 +249,13 @@ const handleOk = async (files: IFile[]) => {
         @keydown="keyDown"
       >
       </div>
-      <!-- 引用消息 -->
+      <!-- 引用消息展示区 -->
       <div v-if="citeText" class="cite-text">
         <div class="cite-text__content"><parseCiteMsg :item="citeText" /></div>
         <ElIcon class="cite-text__close-icon" @click="closeCite('')"><CircleClose/></ElIcon>
       </div>
     </div>
-    <!-- 操作 -->
+    <!-- 操作——发送按钮 -->
     <div class="group-input-box__action-bar">
       <ElButton
         type="primary"
@@ -251,19 +270,19 @@ const handleOk = async (files: IFile[]) => {
   <Cutting
     :open="isCut"
     :onClose="(file: any) => {
-      file && handleCutImgSelect(file)
+      handleCutImgSelect(file)
       isCut = false
     }"
   />
   <!-- 选择文件对话框-->
-    <OpenFileDialog
-      v-if="open"
-      rootKey='disk'
-      :accepts="['文件']"
-      allowInherited
-      :onCancel="()=>open=false"
-      :onOk="handleOk"
-    />
+  <OpenFileDialog
+    v-if="open"
+    rootKey='disk'
+    :accepts="['文件']"
+    allowInherited
+    :onCancel="()=>open=false"
+    :onOk="handleOk"
+  />
 </template>
 
 
@@ -300,27 +319,26 @@ const handleOk = async (files: IFile[]) => {
       overflow-y: auto;
       outline: none;
       border: none;
+      &::-webkit-scrollbar{
+        background-color: transparent;
+      }
 
       .emoji {
         width: 20px;
         height: 20px;
         margin: 3px;
       }
-
-      .cutImg {
+      :deep(.cutImg) {
         width: 150px !important;
         max-height: 300px;
       }
     }
-
     .textarea:empty::before {
       content: attr(placeholder);
       position: absolute;
       color: #ccc;
       background-color: transparent;
     }
-
-
     .cite-text {
       display: flex;
       &__content {

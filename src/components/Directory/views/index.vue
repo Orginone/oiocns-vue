@@ -25,6 +25,10 @@ const props = defineProps<{
   contextMenu: (file?: IDEntity) => any
 }>()
 
+  watch(()=>props.selectFiles,()=>{
+    console.log('selects:',props.selectFiles);
+  })
+  
 /** 当前tag */
 const currentTag=ref('全部')
 const [segmented, setSegmented] = useStorage('segmented', 'list')
@@ -103,6 +107,8 @@ const getContent = (filter: boolean = true) => {
       :fileOpen="fileOpen"
       :contextMenu="contextMenu"
     />
+    <!-- 为空 -->
+    <ElEmpty v-if="getContent().length === 0" description="暂无数据"></ElEmpty>
   </SegmentContent>
 </template>
 

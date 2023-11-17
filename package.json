@@ -30,6 +30,7 @@
     "echarts": "^5.4.0",
     "element-china-area-data": "^5.0.2",
     "emoji-mart-vue-fast": "^15.0.0",
+    "html2canvas": "^1.4.1",
     "lodash": "^4.17.21",
     "mitt": "^3.0.0",
     "moment": "^2.29.4",
@@ -46,7 +47,8 @@
     "vite-plugin-auto-zip": "^1.0.4",
     "vite-plugin-compression": "^0.5.1",
     "vue": "^3.2.37",
-    "vue-grid-layout": "^3.0.0-beta1"
+    "vue-grid-layout": "^3.0.0-beta1",
+    "vue-picture-cropper": "^0.7.0"
   },
   "devDependencies": {
     "@element-plus/icons-vue": "^2.0.6",

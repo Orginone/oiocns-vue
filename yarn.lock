@@ -63,6 +63,13 @@
   dependencies:
     regenerator-runtime "^0.14.0"
 
+"@bassist/utils@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.npmmirror.com/@bassist/utils/-/utils-0.4.0.tgz"
+  integrity sha512-aoFTl0jUjm8/tDZodP41wnEkvB+C5O9NFCuYN/ztL6jSUSsuBkXq90/1ifBm1XhV/zySHgLYlU1+tgo3XtQ+nA==
+  dependencies:
+    "@withtypes/mime" "^0.1.2"
+
 "@braintree/sanitize-url@^3.1.0":
   version "3.1.0"
   resolved "https://registry.npmmirror.com/@braintree/sanitize-url/-/sanitize-url-3.1.0.tgz"
@@ -936,6 +943,13 @@
   resolved "https://registry.npmmirror.com/@wcjiang/notify/-/notify-2.1.0.tgz"
   integrity sha512-x+vM4QihcVtHslN9mUi3GkMqMRV7w/EThZ+l9z9oMx5/2wIU/NHp5e5kBU5/qQkKVxN4+L0ARkKXCoPRzUdNzA==
 
+"@withtypes/mime@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.npmmirror.com/@withtypes/mime/-/mime-0.1.2.tgz"
+  integrity sha512-PB9BfZGzwblUONJY0LiOwsHCA6uV3DIPj/w9ReekdHxPOl0VdUFgI5s4avKycuuq9Gf5Nz2ZPA2O36GAUzlMPA==
+  dependencies:
+    mime "^3.0.0"
+
 "@yzfe/svgicon-gen@^1.2.2":
   version "1.2.2"
   resolved "https://registry.npmmirror.com/@yzfe/svgicon-gen/-/svgicon-gen-1.2.2.tgz"
@@ -1253,6 +1267,11 @@ base@^0.11.1:
     isobject "^3.0.1"
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
+
+base64-arraybuffer@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.npmmirror.com/base64-arraybuffer/-/base64-arraybuffer-1.0.2.tgz"
+  integrity sha512-I3yl4r9QB5ZRY3XuJVEPfc2XhZO6YweFPI+UovAzn+8/hb3oJ6lnysaFcjVpkCPfVWFUDvoZ8kmVDP7WyRtYtQ==
 
 batch-processor@1.0.0:
   version "1.0.0"
@@ -1650,6 +1669,11 @@ cors@^2.8.5:
     object-assign "^4"
     vary "^1"
 
+cropperjs@^1.6.1:
+  version "1.6.1"
+  resolved "https://registry.npmmirror.com/cropperjs/-/cropperjs-1.6.1.tgz"
+  integrity sha512-F4wsi+XkDHCOMrHMYjrTEE4QBOrsHHN5/2VsVAaRq8P7E5z7xQpT75S+f/9WikmBEailas3+yo+6zPIomW+NOA==
+
 cross-spawn@^7.0.2, cross-spawn@^7.0.3:
   version "7.0.3"
   resolved "https://registry.npmmirror.com/cross-spawn/-/cross-spawn-7.0.3.tgz"
@@ -1658,6 +1682,13 @@ cross-spawn@^7.0.2, cross-spawn@^7.0.3:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
+
+css-line-break@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.npmmirror.com/css-line-break/-/css-line-break-2.1.0.tgz"
+  integrity sha512-FHcKFCZcAha3LwfVBhCQbW2nCNbkZXn7KVUJcsT5/P8YmfsVja0FMPJr0B903j/E69HUphKiV9iQArX8SDYA4w==
+  dependencies:
+    utrie "^1.0.2"
 
 css-select@^4.1.3:
   version "4.3.0"
@@ -3620,6 +3651,14 @@ html-void-elements@^2.0.0:
   resolved "https://registry.npmmirror.com/html-void-elements/-/html-void-elements-2.0.1.tgz"
   integrity sha512-0quDb7s97CfemeJAnW9wC0hw78MtW7NU3hqtCD75g2vFlDLt36llsYD7uB7SUzojLMP24N5IatXf7ylGXiGG9A==
 
+html2canvas@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.npmmirror.com/html2canvas/-/html2canvas-1.4.1.tgz"
+  integrity sha512-fPU6BHNpsyIhr8yyMpTLLxAbkaK8ArIBcmZIRiBLiDhjeqvXolaEmDGmELFuX9I4xDcaKKcJl+TKZLqruBbmWA==
+  dependencies:
+    css-line-break "^2.1.0"
+    text-segmentation "^1.0.3"
+
 htmlparser2@^3.8.3:
   version "3.10.1"
   resolved "https://registry.npmmirror.com/htmlparser2/-/htmlparser2-3.10.1.tgz"
@@ -4575,6 +4614,11 @@ mime-types@^2.1.12:
   integrity sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==
   dependencies:
     mime-db "1.52.0"
+
+mime@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmmirror.com/mime/-/mime-3.0.0.tgz"
+  integrity sha512-jSCU7/VB1loIWBZe14aEYHU/+1UMEHoaO7qxCOVJOw9GgH72VAWppxNcjU+x9a2k3GSIBXNKxXQFqRvvZ7vr3A==
 
 mimic-fn@^2.1.0:
   version "2.1.0"
@@ -5930,6 +5974,13 @@ terser@^5.14.2, terser@^5.4.0:
     commander "^2.20.0"
     source-map-support "~0.5.20"
 
+text-segmentation@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.npmmirror.com/text-segmentation/-/text-segmentation-1.0.3.tgz"
+  integrity sha512-iOiPUo/BGnZ6+54OsWxZidGCsdU8YbE4PSpdPinp7DeMtUJNJBoJ/ouUSTJjHkh1KntHaltHl/gDs2FC4i5+Nw==
+  dependencies:
+    utrie "^1.0.2"
+
 text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.npmmirror.com/text-table/-/text-table-0.2.0.tgz"
@@ -6321,6 +6372,13 @@ util-deprecate@^1.0.1, util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   resolved "https://registry.npmmirror.com/util-deprecate/-/util-deprecate-1.0.2.tgz"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
 
+utrie@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.npmmirror.com/utrie/-/utrie-1.0.2.tgz"
+  integrity sha512-1MLa5ouZiOmQzUbjbu9VmjLzn1QLXBhwpUa7kdLUQK+KQ5KA9I1vk5U4YHe/X2Ch7PYnJfWuWT+VbuxbGwljhw==
+  dependencies:
+    base64-arraybuffer "^1.0.2"
+
 v8-compile-cache@^2.0.3:
   version "2.4.0"
   resolved "https://registry.npmmirror.com/v8-compile-cache/-/v8-compile-cache-2.4.0.tgz"
@@ -6466,6 +6524,14 @@ vue-grid-layout@^3.0.0-beta1:
     element-resize-detector "^1.2.1"
     mitt "^2.1.0"
 
+vue-picture-cropper@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.npmmirror.com/vue-picture-cropper/-/vue-picture-cropper-0.7.0.tgz"
+  integrity sha512-NF7+Dgso6d0GB16E5d/BbrcTIHm1VWz8dS3IjLhoBl+ZeC+yDA46CyJphQuO32SisaPmrKHN8VbiE2LgAfhnkQ==
+  dependencies:
+    "@bassist/utils" "^0.4.0"
+    cropperjs "^1.6.1"
+
 vue-router@^4.1.2:
   version "4.2.5"
   resolved "https://registry.npmmirror.com/vue-router/-/vue-router-4.2.5.tgz"
@@ -6480,7 +6546,7 @@ vue-tsc@^0.38.4:
   dependencies:
     "@volar/vue-typescript" "0.38.9"
 
-"vue@^2.0.0 || >=3.0.0", "vue@^2.5.16 || ^3.0.0", "vue@^2.6.14 || ^3.3.0", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@^3.0.5, vue@^3.2.0, vue@^3.2.25, vue@^3.2.37, vue@^3.2.45, vue@>=3.0.0-0, vue@>2.0.0, "vue@2 || 3", vue@3.3.4:
+"vue@^2.0.0 || >=3.0.0", "vue@^2.5.16 || ^3.0.0", "vue@^2.6.14 || ^3.3.0", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@^3.0.5, vue@^3.2.0, vue@^3.2.25, vue@^3.2.37, vue@^3.2.45, vue@>=3.0.0-0, vue@>=3.2.13, vue@>2.0.0, "vue@2 || 3", vue@3.3.4:
   version "3.3.4"
   resolved "https://registry.npmmirror.com/vue/-/vue-3.3.4.tgz"
   integrity sha512-VTyEYn3yvIeY1Py0WaYGZsXnz3y5UnGi62GjVEqvEGPl6nxbOrCXbVOTQWBEJUqAyTUk2uJ5JLVnYJ6ZzGbrSw==

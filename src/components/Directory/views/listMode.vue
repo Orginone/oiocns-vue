@@ -71,7 +71,8 @@ const props = defineProps<{
       </ElDropdown>
     </div>
   </template>
-  <div class="blank_area"></div>
+  <!-- 空白区域 -->
+  <!-- <div class="blank_area"></div> -->
 </template>
 
 <style lang="scss" scoped>
