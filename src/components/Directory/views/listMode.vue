@@ -18,47 +18,51 @@ const props = defineProps<{
 
 <template>
   <template v-for="item in content" :key="item.key">
-    <div class="list_item" :style="{backgroundColor: focusFile?.id === item.id ? '#e6f1ff' : ''}">
+    <div class="list" :style="{backgroundColor: selectFiles.includes(item) ? '#e6f1ff' : ''}">
       <ElDropdown trigger='contextmenu'>
-        <!-- 内容 -->
-        <div class="list_item_meta"
-          @click="fileOpen(item, false)"
-          @dblclick="fileOpen(item, true)"
-        >
-          <!-- 头像 -->
-          <ElBadge 
-            :value="item.badgeCount" 
-            size="small"
-            :hidden="item.badgeCount===0"
+        <div class="list_item" 
+            @click="fileOpen(item, false)"
+            @dblclick="fileOpen(item, true)"
           >
-            <EntityIcon :entity="item.metadata" :size="40" />
-          </ElBadge>
-          <!-- middle -->
-          <div class="middle">
-            <!-- 名称&标签 -->
-            <div style="margin-bottom: 4px;">
-              <span style="margin-right: 10px;margin-bottom: 4px;color: rgba(0,0,0,.85);font-size: 14px;line-height: 1.5715;">
-                {{item.name}}
-              </span>
-              <ElTag 
-                v-for="label in item.groupTags.filter((i) => i.length > 0)" 
-                :key="label" 
-                :type="label === '置顶' ? 'danger' : 'success'"
+          <!-- 左侧头像、内容 -->
+          <div class="list_item_meta">
+            <div class="list_item_meta_avatar">
+              <!-- 头像 -->
+              <ElBadge 
+                :value="item.badgeCount" 
+                size="small"
+                :hidden="item.badgeCount===0"
               >
-                {{label}}
-              </ElTag>
+                <EntityIcon :entity="item.metadata" :size="40" />
+              </ElBadge>
             </div>
-            <!-- 描述 | 消息 -->
-            <div class="description">
-              {{ item.remark || item.code }}
+            <div class="list_item_meta_content">
+              <!-- 名称&标签 -->
+              <div style="margin-bottom: 4px;">
+                <span style="margin-right: 10px;margin-bottom: 4px;color: rgba(0,0,0,.85);font-size: 14px;line-height: 1.5715;">
+                  {{item.name}}
+                </span>
+                <ElTag 
+                  v-for="label in item.groupTags.filter((i) => i.length > 0)" 
+                  :key="label" 
+                  :type="label === '置顶' ? 'danger' : 'success'"
+                >
+                  {{label}}
+                </ElTag>
+              </div>
+              <!-- 描述 | 消息 -->
+              <div class="description">
+                {{ item.remark || item.code }}
+              </div>
             </div>
+
           </div>
           <!-- 右侧时间 -->
-          <div class="right-time" :key="item.id" :title="item.updateTime">
+          <div class="list_item_time" :key="item.id" :title="item.updateTime">
             {{showChatTime(item.updateTime)}}
           </div>
         </div>
-        <!-- 右键dropdown菜单 -->
+          <!-- 右键dropdown菜单 -->
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item v-for="op in contextMenu(item)" :key="op.title" @click="op.onClick">{{op.title}}</el-dropdown-item>
@@ -67,7 +71,8 @@ const props = defineProps<{
       </ElDropdown>
     </div>
   </template>
-  <div class="blank_area"></div>
+  <!-- 空白区域 -->
+  <!-- <div class="blank_area"></div> -->
 </template>
 
 <style lang="scss" scoped>
@@ -76,11 +81,11 @@ const props = defineProps<{
   padding: 12px 10px;
   border-radius: 10px;
   border-bottom: 1px solid #ebeef5;
-  &_meta {
+  display: flex;
+  justify-content: space-between;  
+  .list_item_meta {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .middle {
+    .list_item_meta_content {
       margin-left: 16px;
       .description {
         color: rgba(0,0,0,.45);
@@ -88,21 +93,18 @@ const props = defineProps<{
       line-height: 1.5715;
       }
     }
-    .right-time {
-      margin-left: 48px;
-      color: rgba(0,0,0,.45);
-      font-size: 14px;
-      line-height: 1.5715;
-      text-align: center;
-      text-wrap: nowrap;
-    }
+  }
+  .list_item_time {
+    margin-left: 48px;
+    color: rgba(0,0,0,.45);
+    font-size: 14px;
+    line-height: 1.5715;
+    text-align: center;
+    text-wrap: nowrap;
+    display: flex;
+    align-items: center;
   }
 }
-
-// .item_title {
-//   display: inline;
-//   margin-right: 10px;
-// }
 
 .list_item:hover {
   background-color: #f1f1f1;
@@ -128,5 +130,8 @@ const props = defineProps<{
 }
 :deep(.el-tag){
   margin-right: 8px;
+}
+:deep(.el-badge__content.is-fixed){
+  
 }
 </style>

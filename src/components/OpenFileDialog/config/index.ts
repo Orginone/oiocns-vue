@@ -18,9 +18,7 @@ const createMenu = (target: ITarget, children: MenuItemType[]) => {
     itemType: target.directory.typeName,
     menus: loadFileMenus(target.directory, 2),
     tag: [target.typeName],
-    // TODO:
-    // icon: <EntityIcon notAvatar={true} entityId={target.id} size={18} />,
-    icon: 'components/OpenFileDialog/config/index',
+    icon: {name:EntityIcon,args:{notAvatar:true, entityId:target.id, size:18}},
     children: children,
   };
 };
@@ -54,8 +52,7 @@ const buildDirectoryTree = (directorys: IDirectory[]): MenuItemType[] => {
       item: directory,
       label: directory.name,
       tag: [directory.typeName],
-      // TODO:
-      // icon: (<EntityIcon entityId={directory.id} typeName={directory.typeName} size={18} />),
+      icon: {name:EntityIcon, args:{entityId:directory.id, typeName:directory.typeName, size:18,}},
       itemType: directory.typeName,
       menus: loadFileMenus(directory),
       children: [
@@ -75,8 +72,7 @@ const buildWorks = (works: IWork[]): MenuItemType[] => {
         item: work,
         label: work.name,
         tag: [work.typeName],
-        // TODO:
-        // icon: <EntityIcon entityId={work.id} typeName={work.typeName} size={18} />,
+        icon: {name:EntityIcon, args:{entityId:work.id, typeName:work.typeName, size:18,}},
         itemType: work.typeName,
         menus: loadFileMenus(work),
         children: buildForms(work),
@@ -91,8 +87,7 @@ const buildForms = (work: IWork): MenuItemType[] => {
       item: form,
       label: form.name,
       tag: [form.typeName],
-      // TODO:
-      // icon: <EntityIcon entityId={form.id} typeName={form.typeName} size={18} />,
+      icon: {name:EntityIcon, args:{entityId:form.id, typeName:form.typeName, size:18}},
       itemType: form.typeName,
       menus: loadFileMenus(form),
       children: [],
@@ -108,8 +103,7 @@ const buildApplicationTree = (applications: IApplication[]): MenuItemType[] => {
       item: application,
       label: application.name,
       tag: [application.typeName],
-      // TODO:
-      // icon: (<EntityIcon entityId={application.id} typeName={application.typeName} size={18} />),
+      icon: {name:EntityIcon, args:{entityId:application.id, typeName:application.typeName, size:18}},
       itemType: application.typeName,
       menus: loadFileMenus(application),
       children: [
@@ -156,8 +150,7 @@ export const loadSettingMenu = (rootKey: string, allowInherited: boolean) => {
     itemType: 'Tab',
     item: 'disk',
     children: [getUserMenu(allowInherited), ...getTeamMenu(allowInherited)],
-    // TODO:
-    // icon: <EntityIcon :notAvatar="true" :entityId="orgCtrl.user.id" :size="18" />,
+    icon: {name:EntityIcon,args:{notAvatar:true,entityId:orgCtrl.user.id,size:18}},
   };
   const findMenu = findMenuItemByKey(rootMenu, rootKey);
   if (findMenu) {

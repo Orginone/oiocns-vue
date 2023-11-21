@@ -8,13 +8,13 @@ import CustomMenu from '@/components/CustomMenu/index.vue'
 import CustomBreadcrumb from '@/components/CustomBreadcrumb/index.vue'
 import { MenuItemType, OperateMenuType } from '@/typings/globelType';
 import { MoreFilled,Back,Right } from '@element-plus/icons-vue'
-import { DxResizable } from 'devextreme-vue';
+import { DxResizable } from 'devextreme-vue'
 import BarIcon from '@/components/Common/GlobalComps/customIcon.vue'
 import useStorage from '@/hooks/useStorage'
-import EntityPreview from './preview/EntityPreview.vue'
+import EntityPreview from './preview/index.vue'
 import { cleanMenus } from '@/utils/tools'
+import {ArrowRight} from '@element-plus/icons-vue'
 
-// const { Content, Sider } = Layout;
 
   const props = defineProps<{
     previewFlag?: string;
@@ -31,8 +31,9 @@ import { cleanMenus } from '@/utils/tools'
   const [rightSider, setRightSider] = useStorage<boolean>('rightSider', false);
   const [mainWidth, setMainWidth] = useStorage<string | number>('mainWidth', '40%');
   const parentMenu = props.selectMenu.parentMenu ?? props.siderMenuData;
-  const outside =
-    props.selectMenu.menus?.filter((item) => item.model === 'outside') ?? [];
+  
+  const outside = props.selectMenu.menus?.filter((item) => item.model === 'outside') ?? [];
+ 
   const inside = props.selectMenu.menus?.filter((item) => item.model != 'outside') ?? [];
   const findMenus = (
     key: string,
@@ -49,19 +50,22 @@ import { cleanMenus } from '@/utils/tools'
       }
     }
   };
+  /** 点击操作菜单 */
   const onOperateMenuClick = async (item: MenuItemType, key: string) => {
     const menu = findMenus(key, item.menus);
-    if (menu && menu.beforeLoad) {
+    if (menu?.beforeLoad) {
       await menu.beforeLoad();
     }
     props.onMenuClick?.apply(this, [item, key]);
-  };
+  }
+
   const onSelectClick = async (item: MenuItemType) => {
     if (item.beforeLoad) {
       await item.beforeLoad();
     }
     props.onSelect?.apply(this, [item]);
   }
+  
 </script>
 
 <template>
@@ -80,7 +84,8 @@ import { cleanMenus } from '@/utils/tools'
       </div>
       <!-- 切换主测栏-辅助侧栏-右侧插槽-else -->
       <div>
-        <ElSpace wrap spacer="|" :size="2">
+        <ElSpace wrap :size="20">
+          <!-- 切换主侧栏 -->
           <div>
             <a
               v-if="!leftShow"
@@ -101,17 +106,17 @@ import { cleanMenus } from '@/utils/tools'
           </div>
           <!-- 右侧栏插槽 -->
           <slot name="rightBar" />
-          <!--  -->
           <template v-if="outside.length > 0">
             <a
               v-for="item in outside" :key="item.key"
               :title="item.label"
-              style="font-size: 18px;"
+              style="font-size: 18px;cursor: pointer;"
               @click="onOperateMenuClick(props.selectMenu, item.key)"
             >
-              TODO:item.icon
+              <component :is="item.icon.name" v-bind="item.icon.args"/>
             </a>
           </template>
+          <!-- 更多操作 -->
           <ElDropdown
             v-if="inside.length > 0"
             placement="bottom"
@@ -124,11 +129,37 @@ import { cleanMenus } from '@/utils/tools'
                   v-for="item in cleanMenus(inside)" 
                   :key="item.key"
                 >
-                <div>
-                  <ElButton v-if="item.menu" @click="onOperateMenuClick(selectMenu, item.key)">
-                    {{item.menu}}
-                  </ElButton>
-                </div>
+                  <!-- 含子项 -->
+                  <template v-if="item?.children?.length>0">
+                    <ElPopover trigger="hover" placement="left-start" :show-arrow="false">
+                      <template #reference>
+                        <div class="menu-item-btn" @click="onOperateMenuClick(selectMenu, item.key);">
+                          <div style="width: 85px;display: flex;align-items: center;justify-content: space-between;">
+                            <component v-if="item.icon" :is="item.icon.name" v-bind="item.icon.args"/>
+                            <span>{{ item.label }}</span>
+                            <el-icon style="margin-right: 0;"><ArrowRight /></el-icon>
+                          </div>
+                        </div>
+                      </template>
+                      <template #default>
+                        <div
+                          class="menu-item-btn"  
+                          v-for="i in item.children" :key="i.key" 
+                          @click="onOperateMenuClick(selectMenu, i.key);"
+                        >
+                          <component :is="i.icon?.name" v-bind="i.icon?.args"/>
+                          {{ i.label }}
+                        </div>
+                      </template>
+                    </ElPopover>
+                  </template>
+                  <!-- 不含子项 -->
+                  <template v-else>
+                    <div class="menu-item-btn"  @click="onOperateMenuClick(selectMenu, item.key)">
+                      <component v-if="item.icon" :is="item.icon.name" v-bind="item.icon.args"/>
+                      <span>{{ item.label }}</span>
+                    </div>
+                  </template>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -138,15 +169,15 @@ import { cleanMenus } from '@/utils/tools'
     </ElHeader>
     <!-- body -->
     <ElContainer class="body">
-      <!-- 左侧搜索栏 -->
-      <ElAside v-if="!leftShow && leftSider" class="sider" width="250px">
+      <!-- body-左侧目录 -->
+      <ElAside v-if="leftShow || leftSider" class="sider" width="250px">
         <div class="title">
           <span v-if="parentMenu.key != props.siderMenuData.key" class="backup" @click="onSelectClick(parentMenu)">
             <ElIcon :size="20"><Back/></ElIcon>
           </span>
           <div class="label" @click="onSelectClick(parentMenu)">
             <span style="margin-right: 6px;">
-              <component :is="parentMenu.icon" />
+              <component :is="parentMenu.icon.name" v-bind="parentMenu.icon.args"/>
             </span>
             <ElText truncated>{{parentMenu.label}}</ElText>
           </div>
@@ -164,7 +195,7 @@ import { cleanMenus } from '@/utils/tools'
           />
         </div>
       </ElAside>
-      <!-- right -->
+      <!-- body-右侧 -->
       <ElMain v-if="rightShow || rightSider" class="main">
         <!-- 左侧 -->
         <DxResizable
@@ -197,8 +228,8 @@ import { cleanMenus } from '@/utils/tools'
   height: 100%;
   .header {
     // TODO:-color: @component-background;
-    // TODO:border-radius: @border-radius-base;
-    // TODO:border-bottom: 2px solid @border-color;
+    // border-radius: @border-radius-base;
+    // border-bottom: 2px solid @border-color;
     background-color: #fafafa;
     padding: 12px;
     border-radius: 4px;
@@ -207,11 +238,12 @@ import { cleanMenus } from '@/utils/tools'
     box-shadow: inset -20px 0 10px 10px #f8f9ff;
     display: flex;
     justify-content: space-between;
+    height: 53px;
   }
   .sider {
     width: 250px;
     height: 100%;
-    // TODO:background-color: @component-background;
+    // background-color: @component-background;
     background-color: #fafafa;
     // border-right: 1px solid @border-color;
     border-right: 1px solid #efefef;
@@ -223,12 +255,12 @@ import { cleanMenus } from '@/utils/tools'
     }
     .container {
       height: calc(100% - 60px);
-      // TODO:padding: 0 @padding-xs;
+      // padding: 0 @padding-xs;
       padding: 0 10px;
       overflow-y: scroll;
     }
     .title {
-      // TODO:border-radius: @border-radius-base;
+      // border-radius: @border-radius-base;
       border-radius: 10px;
       clear: both;
       padding: 8px;
@@ -248,7 +280,7 @@ import { cleanMenus } from '@/utils/tools'
     }
   }
   .body {
-    height: calc(100vh - 60px);
+    height: calc(100% - 60px);
     display: flex;
     flex-direction: row;
     .main {
@@ -261,7 +293,7 @@ import { cleanMenus } from '@/utils/tools'
       height: 100%;
       padding: 12px;
       border-right: 1px solid #efefef;
-      // TODO:background-color: @component-background;
+      // background-color: @component-background;
       // border-radius: @border-radius-base;
       background-color:#fafafa;
       border-radius: 10px;
@@ -270,5 +302,22 @@ import { cleanMenus } from '@/utils/tools'
     }
   }
 }
-
+:deep(.el-dropdown-menu__item){
+  margin: 0 6px !important;
+  padding: 0 !important;
+}
+.menu-item-btn {
+  cursor: pointer;
+  display: flex;
+  align-items: start;
+  padding: 6px;
+  border-radius: 4px;
+  // justify-content: space-between;
+  &:hover {
+    background-color: #f2f4f9;
+  }
+  >i {
+    margin-right: 6px;
+  }
+}
 </style>

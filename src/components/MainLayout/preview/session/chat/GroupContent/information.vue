@@ -8,8 +8,6 @@ const props = defineProps<{
 }>()
 const emits=defineEmits(['close'])
 
-console.log(props.msg);////////////////////////////////
-
 const isShow = ref(true)
 watch(() => props.msg, (n) => {
   if(n){isShow.value = true}

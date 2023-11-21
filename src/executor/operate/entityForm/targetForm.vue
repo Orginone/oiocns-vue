@@ -1,7 +1,3 @@
-<template>
-
-</template>
-  
 <script lang="ts" setup>
 // import SchemaForm from '@/components/SchemaForm';
 import { TargetModel } from '@/ts/base/model';
@@ -21,6 +17,10 @@ let typeName = ref('')
 let types: string[] = [props.target.typeName];
 const readonly = props.formType === 'remark';
 let initialValue: any = props.target.metadata;
+
+// TODO:
+console.log('targetForm来这改');
+
 
 onMounted(()=>{
   switch (props.formType) {
@@ -81,7 +81,13 @@ onMounted(()=>{
       return
   }
 })
+
+
 </script>
+
+<template>
+  
+</template>
 
 <style scoped>
 

@@ -8,11 +8,11 @@ const props = defineProps<{item: IMessage;viewForward: (item: IMessage[]) => voi
 </script>
 
 <template>
-  <!-- 合并转发 -->
+  <!-- 合并 & 转发 -->
   <template v-if="item.forward && item.forward.length">
     <parseForwardMsg :item="item.forward" :viewForward="viewForward"/>
   </template>
-  <!-- 默认 -->
+  <!-- 普通 -->
   <template v-else>
     <parseMsg :item="item" />
   </template>

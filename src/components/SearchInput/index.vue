@@ -25,7 +25,7 @@ const modelValue = ref<string>(value)
         :prefix-icon="Search"
         :placeholder="placeholder || '请输入'"
         :input-style="{border: 0}"
-        @change="onChange(modelValue)"
+        @input="onChange(modelValue)"
       />
     </div>
   </ElCol>
@@ -36,24 +36,6 @@ const modelValue = ref<string>(value)
 </template>
 
 <style lang="scss" scoped>
-// @import (reference) '~antd/es/style/themes/variable';
-
-.search-input {
-  // background-color: @item-hover-bg;
-  // padding: 0 @padding-xxs;
-  // height: @height-base;
-  // line-height: @height-base;
-  // width: 300px;
-  // border-radius: 20px;
-  input {
-    // background-color: @item-hover-bg;
-  }
-  
-  .icon {
-    // font-size: 18px;
-    // color: @input-placeholder-color;
-  }
-
   :deep(.el-input__wrapper) {
     align-items: center;
     box-shadow: none;
@@ -62,7 +44,5 @@ const modelValue = ref<string>(value)
     height: 32px;
     line-height: 32px;
     border-radius: 20px;
-
   }
-}
 </style>

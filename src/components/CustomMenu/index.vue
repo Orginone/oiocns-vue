@@ -130,7 +130,6 @@ const loadOpenKeys = (items: MenuItemType[], key: string) => {
   // 数据
   const data=ref(loadMenus(props.item.children, []))
 
-  console.log('data',data.value[0]);//////////////////////////////////////////////////////////////////////////
   
   
   // TODO:watch(()=>props,()=>{

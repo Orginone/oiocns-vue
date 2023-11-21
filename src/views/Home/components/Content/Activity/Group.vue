@@ -22,12 +22,9 @@ const size = useWindowSize()
 const current =ref<IActivity>(props.activity)
 // 初始化加载数据
 onMounted(async() => {
-  // TODO:
-  const res = await props.activity.load(10)
-  // console.log('拿到的数据:',props.activity.activitys);///////////////////
+  await props.activity.load(10)
   activitys.value = props.activity.activitys.filter((i) => i.activityList.length>0)
   isLoading.value = false
-  // console.log('有效数据:',activitys);///////////////
 })
 // 订阅动态监听
 const [key] = useCtrlUpdate(props.activity)
@@ -59,7 +56,6 @@ const [key] = useCtrlUpdate(props.activity)
       <div :style="{ height: '100%', width: '100%', zIndex: 100 }">
         <Activity
           v-if="!isLoading && current"
-          :height="'calc(100vh - 335px)'"
           :title="current.name + '动态'"
           :activity="current"
           :key="current.key"
@@ -78,7 +74,8 @@ const [key] = useCtrlUpdate(props.activity)
   background: linear-gradient(#f5f5f5ee, #f1f1f1);
   .groupCtx {
     width: 100%;
-    height: calc(100vh - 200px);
+    // height: calc(100vh - 200px);
+    height: 100vh;
     box-sizing: border-box;
     padding: 12px;
     display: flex;
@@ -90,7 +87,7 @@ const [key] = useCtrlUpdate(props.activity)
       border-radius: 4px;
       padding: 8px;
       min-width: 500px;
-      // TODO:background: @component-background;
+      // background: @component-background;
       background-color: #fafafa;
       box-shadow: 0 0 2px 2px #ededed;
 
@@ -98,7 +95,7 @@ const [key] = useCtrlUpdate(props.activity)
         cursor: pointer;
         padding: 8px;
         border-radius: 6px;
-        // TODO:border-bottom: 1px solid @border-color-base;
+        // border-bottom: 1px solid @border-color-base;
         border-bottom: 1px solid #e6f1ff;
         &Selected {
           // background: @active-background;

@@ -11,6 +11,7 @@ import TagsBar from '../tagsBar/index.vue';
 
 const props = defineProps<{
   content: IDEntity[]
+  /** 展示的文件类型 */
   accepts?: string[]
   selectFiles: IDEntity[]
   excludeIds?: string[]
@@ -24,9 +25,14 @@ const props = defineProps<{
   contextMenu: (file?: IDEntity) => any
 }>()
 
+  watch(()=>props.selectFiles,()=>{
+    console.log('selects:',props.selectFiles);
+  })
+  
 /** 当前tag */
 const currentTag=ref('全部')
 const [segmented, setSegmented] = useStorage('segmented', 'list')
+
 
 /** 查询内容 */
 const getContent = (filter: boolean = true) => {
@@ -39,6 +45,7 @@ const getContent = (filter: boolean = true) => {
       if (props.excludeIds && props.excludeIds.length > 0) {
         success = !props.excludeIds.includes(file.id);
       }
+      // 根据选中标签、未删除进行筛选
       if (filter && success) {
         if (currentTag.value !== '全部') {
           success = file.groupTags.includes(currentTag.value);
@@ -51,7 +58,7 @@ const getContent = (filter: boolean = true) => {
       }
       return success;
     };
-    return props.content.filter(tagFilter);
+    return props.content.filter(tagFilter)
   }
   return props.content
 }
@@ -70,13 +77,13 @@ const getContent = (filter: boolean = true) => {
     :badgeCount="badgeCount"
     :onChanged="(t) => currentTag = t"
   />
+
   <!-- 文件列表 -->
   <SegmentContent
     :onSegmentChanged="setSegmented"
     :descriptions="`${getContent().length}个项目`"
   >
-    <!-- TODO:content-默认插槽 -->
-    <!-- <TableMode
+    <TableMode
       v-if="segmented === 'table'"
       :selectFiles="selectFiles"
       :focusFile="focusFile"
@@ -91,14 +98,17 @@ const getContent = (filter: boolean = true) => {
       :content="getContent()"
       :fileOpen="fileOpen"
       :contextMenu="contextMenu"
-    /> -->
+    />
     <ListMode
+      v-else
       :selectFiles="selectFiles"
       :focusFile="focusFile"
       :content="getContent()"
       :fileOpen="fileOpen"
       :contextMenu="contextMenu"
     />
+    <!-- 为空 -->
+    <ElEmpty v-if="getContent().length === 0" description="暂无数据"></ElEmpty>
   </SegmentContent>
 </template>
 

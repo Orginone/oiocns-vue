@@ -1,46 +1,36 @@
 <!-- Layout -->
 <template>
-  <el-container class="pages home-wrap">
-      <slide></slide>
-      <!-- 命令执行器 -->
-      <Executor />
-      <!-- 内容布局 -->
-      <div class="content">
-        <Suspense>
-          <template #default>
-            <router-view v-slot="{ Component }">
-              <!-- <transition name="fade-transform"> -->
-              <keep-alive v-if="$route.meta.keepAlive">
-                <component :is="Component" />
-              </keep-alive>
-              <component v-else :is="Component" />
-              <!-- </transition> -->
-            </router-view>
-          </template>
+  <el-container class=" pages home-wrap">
+    <!-- Layout——侧边导航 -->
+    <slide></slide>
+    <!-- Layout——命令执行器 -->
+    <Executor />
+    <!-- Layout——内容 -->
+    <div class="layout-content">
+      <Suspense>
+        <template #default>
+          <router-view v-slot="{ Component }">
+            <keep-alive v-if="$route.meta.keepAlive">
+              <component :is="Component" />
+            </keep-alive>
+            <component v-else :is="Component" />
+          </router-view>
+        </template>
 
-          <template #fallback>
-            <!-- <LoadingVue /> -->
-          </template>
-        </Suspense>
-        <!-- 头部 -->
-        <!-- <headContent></headContent> -->
-        <!-- 内容布局 -->
-        <!-- <routerContent></routerContent> -->
-      </div>
+        <template #fallback>
+          <LoadingVue />
+        </template>
+      </Suspense>
+    </div>
   </el-container>
 </template>
 
 <script lang="ts" setup>
-  import slide from './components/slide.vue';
-  import headContent from './components/headContent.vue';
-  import routerContent from './components/routerContent.vue';
+  import slide from './components/slide.vue'
 
-  import { getCurrentInstance, onMounted} from 'vue';
-  import {
-  Document,  Menu as IconMenu,  Location, Setting,} from '@element-plus/icons-vue'
-  onMounted(() => {
+  import { getCurrentInstance, onMounted} from 'vue'
+  import {Document,  Menu as IconMenu,  Location, Setting} from '@element-plus/icons-vue'
 
-  })
   const handleOpen = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
   }
@@ -60,26 +50,15 @@ div{
 </style>
 <style lang="scss" scoped>
   .pages{
+    height: 100%;
+    width: 100%;
     display: flex;
+
+  }
+  .layout-content {
+    height: 100%;
+    width: 100%;
   }
 
-  .item{
-    padding: 10px 0;
-    img{
-      width: 26px;
-      height: 26px;
-    }
-    .item-text{
-      font-size: 12px;
-      line-height: 18px;
-      color: #888;
-    }
-  }
-  .content{
-    flex: 1;
-    overflow:hidden;
-    display: flex;
-    flex-direction: column;
-  }
 
 </style>

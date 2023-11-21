@@ -3,8 +3,6 @@
 import { schema } from '@/ts/base'
 import { IEntity } from '@/ts/core'
 import { Back,Right } from '@element-plus/icons-vue'
-import { h, ref } from 'vue'
-import { ElDivider } from 'element-plus'
 
 const props = defineProps<{
   select: string;
@@ -58,18 +56,17 @@ const arrowLeft = (num: number) => {
   <div class="tags_bar">
     <ElIcon class="tags_bar_btn" @click="arrowLeft(-100)" color="#154ad8" :size="16"><Back/></ElIcon>
     <div ref="tagsBarRef" class="tags_body">
-      <ElSpace :spacer="h(ElDivider, { direction: 'vertical' })" style="height: 26px;" :size="2">
-        <!-- {groupTags().map((item) => loadBarItem(item.tag, item.count))} -->
+      <ElSpace style="height: 26px;" :size="8" spacer="|">
         <template v-for="item in groupTags()" :key="item.tag">
           <ElBadge 
             :hidden="badgeCount && badgeCount(item.tag)===0"  
             :value="badgeCount && badgeCount(item.tag)" 
           >
-            <!-- TODO::key="item.tag + '_bdg'" size="small" offset={[-7, 7]} -->
             <div 
               :class="item.tag === props.select ? 'tags_item_active' : 'tags_item'" 
               @click="onChanged(item.tag)"
             >
+            
               {{item.tag}}
               <span v-if="item.count>0" class="item_count">{{item.count}}</span>
             </div>
@@ -102,7 +99,7 @@ const arrowLeft = (num: number) => {
   .tags_item {
     cursor: pointer;
     white-space: nowrap;
-    padding: 4px 16px;
+    padding: 4px 12px;
     font-size: 12px;
     height: 26px;
     .item_count {

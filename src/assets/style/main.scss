@@ -114,3 +114,14 @@
   background-color:#6690FF;
 }
 
+// element plus 样式重写
+.el-popper__arrow{
+  display: none!important;
+}
+.el-dialog {
+  border-radius: 4px !important;
+  overflow: hidden;
+  .el-dialog__header {
+    background-color: transparent !important;
+  }
+}

@@ -47,6 +47,7 @@ import Lifebuoy from './im/Lifebuoy.vue'
 import Smile from './im/Smile.vue'
 import Mic from './im/Mic.vue'
 import VideoCamera  from './im/VideoCamera.vue'
+import Bell from './im/Bell.vue'
 
 export {
   Smile,
@@ -97,6 +98,7 @@ export {
   MessageOutlined,
   Lifebuoy,
   Mic,
-  VideoCamera
+  VideoCamera,
+  Bell,
   
 }

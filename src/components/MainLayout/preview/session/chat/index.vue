@@ -150,7 +150,6 @@ const multiBatchSend = () => {
     flex: 1;
     overflow: hidden;
     background-color: #f2f2f25c;
-    padding-left: 12px;
 
     .chart_input {
       height: max-content;

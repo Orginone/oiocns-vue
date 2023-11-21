@@ -41,6 +41,7 @@ switch (props.item.msgType) {
     url = URL.createObjectURL(blob)
 
   }
+
   default: {
     // 优化截图展示问题
     if (props.item.msgBody.includes('$IMG')) {
@@ -74,7 +75,7 @@ switch (props.item.msgType) {
     <div v-else class="con_content_txt">消息异常</div>
   </template>
   <!-- 视频 -->
-  <template v-if="item.msgType === MessageType.Video">
+  <template v-else-if="item.msgType === MessageType.Video">
     <!-- 有共享链接 -->
     <div 
       v-if="img && img.shareLink"
@@ -108,48 +109,26 @@ switch (props.item.msgType) {
       <audio :src="url" controls />
     </div>
   </template>
-  <!-- 文本 -->
-  <template v-else-if="item.msgType === MessageType.Text">
-    <div class="con_content_txt">
-      <div v-html="linkText(item.msgBody)"></div>
-    </div>
-  </template>
-  <!-- 其它 -->
-  <!-- <template v-else>
+  <!-- 文本 | 纯图片 | 文本+图片 -->
+  <template v-else>
+    <!-- 包含图片 -->
     <div v-if="item.msgBody.includes('$IMG')" class="con_content_txt">
       <ElImage
         v-for="(url,idx) in imgUrls" :key="idx"
-        class="cut_img"
         :src="url"
         :preview="[url]"
+        :preview-src-list="[url]"
       />
         <p v-if="str.trim()" style="white-space: pre-wrap; margin: 0">{{str}}</p>
     </div>
+    <!-- 纯文本 -->
     <div v-else class="con_content_txt">
       <div v-html="linkText(item.msgBody)"></div>
     </div>
-  </template> -->
+  </template>
 </template>
 
 <style lang="scss" scoped>
-// @import '@cfg/theme/variables';
-// :global {
-//   .ogo-popover-content {
-//     .ogo-popover-arrow {
-//       display: none;
-//     }
-//     .ogo-popover-inner {
-//       .ogo-popover-inner-content {
-//         display: flex;
-//         flex-direction: column;
-//         padding: 2px 3px;
-//       }
-//     }
-//   }
-//   // .ogo-popover-placement-bottom {
-//   //   margin-top: -20px;
-//   // }
-// }
 .chart_content {
   flex-grow: 1;
   overflow-y: auto;
@@ -213,7 +192,7 @@ switch (props.item.msgType) {
         padding-left: 4px;
         color: #888;
       }
-      .con_content_txt, .con_content_forward_txt {
+      .con_content_txt, .con_content_forward_txt,.con_content_cite_txt {
         cursor: pointer;
         text-align: left;
         min-height: 30px;
@@ -226,17 +205,14 @@ switch (props.item.msgType) {
         word-wrap: break-word;
         word-break: normal;
         line-height: 15px;
+        :deep(a){
+          color: #154ad8;
+        }
       }
 
       .con_content_cite_txt {
-        cursor: pointer;
-        text-align: left;
-        min-height: 30px;
         padding: 7px 10px;
         margin-top: 4px;
-        color: black;
-        border-radius: 6px;
-        z-index: 1;
         max-width: 300px;
         word-break: normal;
         font-size: 12px;

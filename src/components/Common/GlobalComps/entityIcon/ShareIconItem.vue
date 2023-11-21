@@ -21,7 +21,7 @@ const fontSize = size > 14 ? 14 : size;
   <template v-if="share">
     <!-- 有缩略图 -->
     <template v-if="share.avatar?.thumbnail">
-      <div style="display: contents; cursor: pointer;" :title="title ?? ''">
+      <div class="share-avatar" :class="{'showInfoMore':entity&&size>18}" :title="title ?? ''">
         <InfoMore :entity="props?.entity" :size="size"/>
         <ElAvatar shape="square" :size="size" :src="share.avatar.thumbnail" />
         <strong v-if="showName" :style="{ marginLeft: '6px', fontSize: fontSize }">
@@ -41,7 +41,7 @@ const fontSize = size > 14 ? 14 : size;
       </template>
       <!-- 是头像 -->
       <template v-else>
-        <div style="display: contents;">
+        <div class="share-avatar" :class="{'showInfoMore':entity&&size>18}">
           <InfoMore :entity="props?.entity" :size="size"/>
           <ElAvatar
             shape="square"
@@ -74,5 +74,14 @@ const fontSize = size > 14 ? 14 : size;
 </template>
 
 <style lang="scss" scoped>
-
+.share-avatar {
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  
+  &.showInfoMore {
+    // margin: 12px 0 0 12px;
+  }
+}
 </style>

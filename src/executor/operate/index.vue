@@ -36,8 +36,7 @@ const props = defineProps<{
   finished: () => void;
 }>()
 
-// TODO:感觉可以抽离成hooks
-// 动态组件
+// 动态组件ref对象
 const contentComponent = ref(null);
 // 动态props
 const dynamicProps = ref({})
@@ -60,7 +59,7 @@ onMounted(()=>{
         return console.log('来这改');
         // return <SettingAuth space={args[0].target} finished={finished} />;
       case 'settingIdentity':
-        return console.log('来这改');
+        return console.log('角色设置来这改');
         // return <SettingIdentity target={args[0].target} finished={finished} />;
       case 'settingStation':
         return console.log('来这改');
@@ -89,16 +88,11 @@ onMounted(()=>{
         //     return <EntityForm cmd={cmd} entity={args[0]} finished={finished} />;
         //   }
         // }
-        break;
       default:
         if (props.cmd.startsWith('join')) {   
-          // return <JoinTarget cmd={cmd} current={args[0]} finished={finished} />
           return setContent(JoinTarget, {cmd:props.cmd,current: props.args[0], finished: props.finished})
         }
-        // return <EntityForm cmd={cmd} entity={args[0]} finished={finished} />
-        // TODO:
-        console.log('来这改');
-        // return setContent(EntityForm, {cmd: props.cmd, entity: props.args[0], finished: props.finished})
+        return setContent(EntityForm, {cmd: props.cmd, entity: props.args[0], finished: props.finished})
     }
   }
 })

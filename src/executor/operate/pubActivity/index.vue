@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import FullScreenModal from '@/components/Common/fullScreenModal.vue';
-import SelectMultFiles from '@/components/Activity/SelectMultFiles/index.vue';
+import FullScreenModal from '@/components/Common/fullScreenModal.vue'
+import SelectMultFiles from '@/components/Activity/SelectMultFiles/index.vue'
 import { IActivity, MessageType } from '@/ts/core'
 import { model } from '@/ts/base';
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
@@ -18,9 +18,10 @@ const setEditor = (editor: IDomEditor) => {
   editorRef.value = editor
 }
 const valueHtml = ref('')
+/** 附带文件 */
 const resource = ref<model.FileItemShare[]>([])
 
-/** 发布动态 */
+/** 发布动态功能封装 */
 const publishActivity = () => {
   if (editorRef) {
     const text = editorRef.value.getText();
@@ -79,10 +80,11 @@ const publishActivity = () => {
         />
       </ElFormItem>
       <!-- 选择图片视频 -->
-      <ElFormItem>
+      <ElFormItem style="background-color: #fafafa;">
         <SelectMultFiles
           :maxCount="9"
           :types="['图片', '视频']"
+          :currentKey="activity.session.target.directory.key"
           :onChange="(fileList) => {
             resource = fileList.map((item) => item.shareInfo())
           }"
