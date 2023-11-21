@@ -342,33 +342,6 @@ const mainRouter: RouteRecordRaw[] = [
           id: "store.appPublic"
         }
       },
-      {
-        path: '/store/appRegister',
-        name: 'storeAppRegister',
-        component: () => import('@/views/Store/appRegister/index.vue'),
-        meta: {
-          isHidden: true,
-          title: '应用创建'
-        }
-      },
-      {
-        path: '/store/appRegister2',
-        name: 'storeAppRegisters',
-        component: () => import('@/views/Store/appRegister2/index.vue'),
-        meta: {
-          isHidden: true,
-          title: '应用创建'
-        }
-      },
-      {
-        path: '/store/userManage',
-        name: 'storeUserManage',
-        component: () => import('@/views/Store/userManage/index.vue'),
-        meta: {
-          title: '人员管理',
-          id: "store.UserManage"
-        }
-      },
     ]
   },
   {

@@ -7,7 +7,7 @@ export function encrypt(secret: string, word: string) {
   //   mode: Crypto.mode.ECB,
   //   padding: Crypto.pad.Pkcs7,
   // });
-  // return encrypted.toString();
+  return word.toString();
 }
 export function decrypt(password: string, word: string) {
   // const key = Crypto.enc.Utf8.parse(password);
@@ -15,5 +15,5 @@ export function decrypt(password: string, word: string) {
   //   mode: Crypto.mode.ECB,
   //   padding: Crypto.pad.Pkcs7,
   // });
-  // return Crypto.enc.Utf8.stringify(decrypt).toString();
+  return word.toString();
 }

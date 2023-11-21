@@ -208,13 +208,13 @@ import { formatDate } from "@/utils/index";
 import HeadImg from "@/components/headImg.vue";
 import { useRoute } from "vue-router";
 import searchFriend from "@/components/searchs/index.vue";
-import FriendServices from "@/module/relation/friend";
+// import FriendServices from "@/module/relation/friend";
 import Loading from "@/views/Layout/components/loading.vue";
 import _ from "lodash";
-import { format } from "path";
+// import { format } from "path";
 
 const routerParams = useRoute().params;
-const friendServices = new FriendServices();
+// const friendServices = new FriendServices();
 
 const groupChats = ref([]);
 const friendsChats = ref([]);

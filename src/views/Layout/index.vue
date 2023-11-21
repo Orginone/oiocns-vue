@@ -19,7 +19,7 @@
           </template>
 
           <template #fallback>
-            <LoadingVue />
+            <!-- <LoadingVue /> -->
           </template>
         </Suspense>
         <!-- 头部 -->

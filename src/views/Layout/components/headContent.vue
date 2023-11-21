@@ -4,14 +4,11 @@
       <div class="router-link">
         <el-dropdown>
           <span class="el-dropdown-link">
-            <img src="/svg/home.svg" alt="" />门户
+            <img src="/svg/home.svg" alt="" />设置
             <el-tag class="ml-2" type="success">群组</el-tag>
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>列表 1</el-dropdown-item>
-              <el-dropdown-item>列表 2</el-dropdown-item>
-              <el-dropdown-item>列表 3</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -19,14 +16,11 @@
       <div class="router-link">
         <el-dropdown>
           <span class="el-dropdown-link">
-            <img src="/svg/home.svg" alt="" />设置
+            <img src="/svg/home.svg" alt="" />我的
             <el-tag class="ml-2" type="success">菜单</el-tag>
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>列表 1</el-dropdown-item>
-              <el-dropdown-item>列表 2</el-dropdown-item>
-              <el-dropdown-item>列表 3</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>

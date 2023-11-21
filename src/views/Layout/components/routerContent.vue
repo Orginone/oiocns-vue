@@ -9,7 +9,6 @@
       <div class="meni-common">
         <!-- <MenuList :items="menuList" @select="changeActive" :active-index="data.key"/> -->
         <el-tree :data="data.newMenuList" :props="defaultProps" @node-click="handleNodeClick" />
-
       </div>
     </div>
     <div class="active">
@@ -24,7 +23,7 @@
           <span :class="showType =='部门'?'view-nav-item-active':''">部门</span> 
         </div>
       </div>
-      <listContent></listContent>
+      <listContent :item="data.item"></listContent>
     </div>
   </div>
 </template>
@@ -39,7 +38,8 @@ const store= setCenterStore();
 const ctrl = orgCtrl;
 const data = reactive<any>({
   key:"",
-  newMenuList:[]
+  newMenuList:[],
+  item:{}
 })
 const defaultProps = {
   children: 'children',
@@ -70,10 +70,11 @@ const handleNodeClick = async (item: any) => {
   if (item?.beforeLoad) {
     await item.beforeLoad();
   }
-  store.setCurrItem(item);
+  console.log(item);
   if (item === undefined) {
     item = newMenus;
   }
+  data.item = item.item.content();
 }
 console.log('ac',props);
 const handleOpen = (key: string, keyPath: string[]) => {
@@ -140,5 +141,39 @@ const changeActive = (key:any)=>{
         }
       }
     }
+  } 
+  .list{
+    height: 500px;
+    overflow-y: auto;
+  }
+  .list-item{
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid #eee;
+      padding: 12px;
+      img{
+          width: 42px;
+          margin-right: 20px;
+      }
+      .list-item-com{
+          flex: 1;
+          .list-item-name{
+              font-size: 14px;
+              font-weight: bold;
+              color: rgba(0, 0, 0, 0.85);
+              .ml-2{
+                  margin-left: 10px;
+              }
+          }
+          .list-item-text{
+              color: rgba(0, 0, 0, 0.45);
+              padding-right: 20px;
+          }
+      }
+      .list-item-time{
+          color: rgba(0, 0, 0, 0.45);
+      }
   }
 </style>
