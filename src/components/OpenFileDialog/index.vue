@@ -28,7 +28,7 @@ const props = defineProps<{
 
 const selectedFiles = ref<IFile[]>()
 
-const [key, rootMenu, selectMenu, setSelectMenu] = useMenuUpdate(
+const {key, rootMenu, selectMenu, onSelectMenu:setSelectMenu} = useMenuUpdate(
   () => loadSettingMenu(props.rootKey, props.allowInherited || false),
   new Controller(props.currentKey ?? orgCtrl.currentKey),
 )
@@ -78,9 +78,6 @@ const onSelected = (files:IFile[]) => {
         setSelectMenu(data);
       }"
       :siderMenuData="rootMenu"
-      :onMenuClick="(item: MenuItemType, menuKey: string)=>{
-        command.emitter('executor', menuKey, item);
-      }"
       preview-flag="dialog"
     >
       <Directory

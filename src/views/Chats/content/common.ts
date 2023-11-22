@@ -42,7 +42,6 @@ export const loadChatOperation = (item: ISession | undefined): {title: string, o
       operates.push({
           title:"取消置顶",
           onClick: async () => {
-            item.chatdata.labels = item.chatdata.labels.filter((i) => i != '置顶');
             item.chatdata.isToping = false;
             item.cacheChatData(true);
             command.emitterFlag('session');
@@ -54,9 +53,6 @@ export const loadChatOperation = (item: ISession | undefined): {title: string, o
           title:"置顶会话",
           onClick: async () => {
             item.chatdata.isToping = true;
-            if (item.chatdata.labels.every((i) => i != '置顶')) {
-              item.chatdata.labels.push('置顶');
-            }
             item.cacheChatData(true);
             command.emitterFlag('session');
           }

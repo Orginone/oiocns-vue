@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue';
-import { onKeyDown } from '@vueuse/core';
 // import { Select } from 'antd';
 // import React, { memo, useEffect, useState } from 'react';
 
@@ -8,58 +7,42 @@ import { onKeyDown } from '@vueuse/core';
 const props = defineProps<{
   /** 引用成员列表 */
   people: Array<any> 
+  /** 选择回调 */
   onSelect?: any
-  editRef?: any
 }>()
 
 const { people, onSelect} = props;
-const select = ref(people[0])
-// TODO:聚焦
+const select = ref<string>()
 const selectRef = ref(null)
 onMounted(()=>{
-  props.editRef.blur()
+  selectRef.value.focus()
 })
 
-// 回车选择
-const onKeyDown = (e:any)=>{
-  console.log(11111);
-  
-  e.stopPropagation;
-  e.preventDefault;
-  console.log(1111);
-  onSelect(select.value)
-}
+
 
 </script>
 
 <template>
-  <ElPopover 
-    :visible="true" 
-    :teleported="false" 
-    placement="top-start" 
-    :show-arrow="false"
-    :width="200"
-    :popper-style="{padding: '4px 0'}"
-  >
-    <template #reference>
-      <div></div>
-    </template>
-    <input type="text">
-    <ul  class="select" @keydown="console.log(22222)">
-      <li 
-        v-for="item in people" :key="item.id" 
-        :class="item.id===select.id?'option optionSelected':'option'"
-        @mouseenter="select=item"
-        @click="onSelect(item)"
-      >
-        <EntityIcon :entityId="item.id" :size="30" />
-        <strong style="margin-left: 6px;">{{item.name}}</strong>
-      </li>
-    </ul>
-  </ElPopover>
+  {{ select }}
+  <ElSelect v-model="select" ref="selectRef" placement="top" automatic-dropdown @change="onSelect(people.find((p) => p.id === select))">
+    <el-option
+      v-for="item in people"
+      :key="item.id"
+      :value="item.id"
+    >
+        <EntityIcon :entityId="item.id" showName />
+    </el-option>
+  </ElSelect>
 </template>
 
 <style lang="scss" scoped>
+.el-select {
+  height: 0;
+  width: 200px;
+  overflow: hidden;
+}
+
+
 .select {
   max-height: 220px;
   overflow: auto;

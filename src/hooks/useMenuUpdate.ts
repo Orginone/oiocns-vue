@@ -12,20 +12,14 @@ import { Ref } from 'vue';
 const useMenuUpdate = (
   loadMenu: () => MenuItemType,
   controller?: Controller,
-): [
-  Ref<string>,
-  Ref<MenuItemType | undefined>,
-  Ref<MenuItemType | undefined>,
-  (item: MenuItemType) => void,
-] => {
-  const key = ref<string>('');
+)=> {
+  const key = ref<string>(generateUuid())
   const rootMenu = ref<MenuItemType>();
   const selectMenu = ref<MenuItemType>();
   const ctrl = controller || orgCtrl;
   
   /** 刷新菜单 */
   const refreshMenu = () => {
-    key.value = generateUuid()
     const newMenus = loadMenu()
     let item = findMenuItemByKey(newMenus, ctrl.currentKey);
     
@@ -51,6 +45,7 @@ const useMenuUpdate = (
   let id = ''
 
   onMounted(() => {
+    
     id = ctrl.subscribe((k) => {
       key.value = k
       refreshMenu()
@@ -59,7 +54,7 @@ const useMenuUpdate = (
   onBeforeUnmount(() => {
     ctrl.unsubscribe(id);
   })
-  return [key, rootMenu, selectMenu, onSelectMenu];
+  return {key, rootMenu, selectMenu, onSelectMenu}
 }
 
 export default useMenuUpdate;

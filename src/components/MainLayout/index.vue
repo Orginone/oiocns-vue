@@ -54,9 +54,9 @@ import {ArrowRight} from '@element-plus/icons-vue'
   const onOperateMenuClick = async (item: MenuItemType, key: string) => {
     const menu = findMenus(key, item.menus);
     if (menu?.beforeLoad) {
-      await menu.beforeLoad();
+      await menu.beforeLoad()
     }
-    props.onMenuClick?.apply(this, [item, key]);
+    props.onMenuClick?.apply(this, [item, key])
   }
 
   const onSelectClick = async (item: MenuItemType) => {
@@ -65,7 +65,6 @@ import {ArrowRight} from '@element-plus/icons-vue'
     }
     props.onSelect?.apply(this, [item]);
   }
-  
 </script>
 
 <template>
@@ -106,17 +105,18 @@ import {ArrowRight} from '@element-plus/icons-vue'
           </div>
           <!-- 右侧栏插槽 -->
           <slot name="rightBar" />
+          <!-- 头部——右侧操作 -->
           <template v-if="outside.length > 0">
-            <a
+            <div
               v-for="item in outside" :key="item.key"
               :title="item.label"
               style="font-size: 18px;cursor: pointer;"
               @click="onOperateMenuClick(props.selectMenu, item.key)"
             >
               <component :is="item.icon.name" v-bind="item.icon.args"/>
-            </a>
+            </div>
           </template>
-          <!-- 更多操作 -->
+          <!-- 头部——右侧操作——更多操作 -->
           <ElDropdown
             v-if="inside.length > 0"
             placement="bottom"
@@ -215,7 +215,6 @@ import {ArrowRight} from '@element-plus/icons-vue'
       </ElMain>
       <!-- 内容-默认插槽 -->
       <ElMain v-else class="content">
-        <!-- <slot name="children"/> -->
         <slot></slot>
       </ElMain>
     </ElContainer>

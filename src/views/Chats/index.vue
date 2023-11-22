@@ -4,17 +4,15 @@ import * as config from './config/menuOperate'
 import MainLayout from '@/components/MainLayout/index.vue'
 import useMenuUpdate from '@/hooks/useMenuUpdate'
 import { Search } from '@element-plus/icons-vue'
-import { ISession } from '@/ts/core'
 import { command } from '@/ts/base'
-import { MenuItemType } from '@/typings/globelType'
 
 // 搜索关键词
 const filter = ref<string>('')
-const [key, rootMenu, selectMenu,setSelectMenu] = useMenuUpdate(config.loadChatMenu)
+const {key, rootMenu, selectMenu,onSelectMenu:setSelectMenu} = useMenuUpdate(config.loadChatMenu)
+
 </script>
 
 <template>
-  <!-- selectMenu:{{ selectMenu }} -->
   <template v-if="selectMenu&&rootMenu">
     <MainLayout
       preview-flag="chat"
@@ -34,7 +32,7 @@ const [key, rootMenu, selectMenu,setSelectMenu] = useMenuUpdate(config.loadChatM
         />        
       </template>
       <!-- 通讯录 -->
-      <Content :key="key" :chats="selectMenu.item" :filter="filter" />
+      <Content :filter="filter" />
     </MainLayout>
   </template>
 </template>

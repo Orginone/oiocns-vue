@@ -174,6 +174,7 @@ const handleOk = async (files: IFile[]) => {
   }
   open.value=false
 }
+
 </script>
 
 
@@ -236,7 +237,6 @@ const handleOk = async (files: IFile[]) => {
         v-if="citeShow"
         :people="peopleList"
         :onSelect="onSelect"
-        :edit-ref="editArea"
       />
       <!-- 输入框 -->
       <div
@@ -322,7 +322,10 @@ const handleOk = async (files: IFile[]) => {
       &::-webkit-scrollbar{
         background-color: transparent;
       }
-
+      // 文本换行
+      :deep(>span) {
+        white-space: normal !important;
+      }
       .emoji {
         width: 20px;
         height: 20px;

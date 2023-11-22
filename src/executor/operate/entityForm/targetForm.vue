@@ -18,10 +18,6 @@ let types: string[] = [props.target.typeName];
 const readonly = props.formType === 'remark';
 let initialValue: any = props.target.metadata;
 
-// TODO:
-console.log('targetForm来这改');
-
-
 onMounted(()=>{
   switch (props.formType) {
     case 'newCohort':
@@ -82,7 +78,83 @@ onMounted(()=>{
   }
 })
 
-
+// const columns: ProFormColumnsType<TargetModel>[] = [
+//     {
+//       title: '图标',
+//       dataIndex: 'icon',
+//       colProps: { span: 24 },
+//       renderFormItem: (_, __, form) => {
+//         return (
+//           <UploadItem
+//             readonly={readonly}
+//             typeName={typeName}
+//             icon={initialValue.icon}
+//             onChanged={(icon) => {
+//               form.setFieldValue('icon', icon);
+//             }}
+//             directory={props.current.directory}
+//           />
+//         );
+//       },
+//     },
+//     {
+//       title: '名称',
+//       dataIndex: 'name',
+//       readonly: readonly,
+//       formItemProps: {
+//         rules: [{ required: true, message: '分类名称为必填项' }],
+//       },
+//     },
+//     {
+//       title: '类型',
+//       dataIndex: 'typeName',
+//       valueType: 'select',
+//       initialValue: types[0],
+//       readonly: readonly,
+//       fieldProps: {
+//         options: types.map((i) => {
+//           return {
+//             value: i,
+//             label: i,
+//           };
+//         }),
+//       },
+//       formItemProps: {
+//         rules: [{ required: true, message: '类型为必填项' }],
+//       },
+//     },
+//     {
+//       title: '代码',
+//       dataIndex: 'code',
+//       readonly: readonly,
+//       formItemProps: {
+//         rules: [{ required: true, message: '分类代码为必填项' }],
+//       },
+//     },
+//     {
+//       title: '简称',
+//       dataIndex: 'teamName',
+//       readonly: readonly,
+//     },
+//     {
+//       title: '标识',
+//       dataIndex: 'teamCode',
+//       readonly: readonly,
+//     },
+//   ];
+//   if (readonly) {
+//     columns.push(...EntityColumns(props.current.metadata));
+//   }
+//   columns.push({
+//     title: '简介',
+//     dataIndex: 'remark',
+//     valueType: 'textarea',
+//     colProps: { span: 24 },
+//     readonly: readonly,
+//     formItemProps: {
+//       rules: [{ required: true, message: '简介为必填项' }],
+//     },
+//   });
 </script>
 
 <template>

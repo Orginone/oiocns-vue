@@ -102,6 +102,8 @@ const arrowLeft = (num: number) => {
     padding: 4px 12px;
     font-size: 12px;
     height: 26px;
+    display: flex;
+    align-items: center;
     .item_count {
       color: #2b00ff;
       font-style: italic;
@@ -120,6 +122,8 @@ const arrowLeft = (num: number) => {
       padding: 4px 16px;
       font-size: 12px;
       height: 26px;
+      display: flex;
+      align-items: center;
       .item_count {
         font-style: italic;
         transform: scale(0.9);

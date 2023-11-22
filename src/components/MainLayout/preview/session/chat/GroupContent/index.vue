@@ -36,7 +36,8 @@ const setInfoMsg = (info: IMessage) => {
 const messages=ref<IMessage[]>(props.chat.messages)
 
 const body = ref(null)
-const beforescrollHeight=ref(0);
+/** 上一次聊天记录总高度 */
+const beforescrollHeight=ref(0)
 const forwardModalOpen=ref<boolean>(false) // 转发时用户
 const forwardMessages=ref<IMessage[]>([])
 
@@ -44,36 +45,40 @@ const forwardMessages=ref<IMessage[]>([])
 onMounted(() => props.chat.onMessage((ms) => messages.value =([...ms])))
 onBeforeUnmount(() => props.chat.unMessage())
 
-// 加载历史记录 | 有新消息时滚动条的变动
-watch(messages,async(val)=>{
-  if (body?.value) {
-    if (loading.value) {
-      // 加载历史记录，滚动条位于前一条记录处
-      loading.value = false
-      body.value.scrollTop = body.value.scrollHeight - beforescrollHeight.value
-    } else {
-      // 有新消息，滚动到底部
-      setTimeout(()=>{
-        body.value.scrollTop = body.value.scrollHeight;
-      },0)
-    }
+// 滚动加载更多历史记录
+const onScroll = async () => {
+  if (!loading.value && body.value && props.chat && body.value.scrollTop === 0) {
+    loading.value = true
+    // 记录之前的聊天记录总高度
+    beforescrollHeight.value = body.value.scrollHeight
+    await props.chat.moreMessage()
+    messages.value = [...props.chat.messages]
   }
+}
+
+// 滚动条的变动（监听消息列表的变动）
+watch(messages,(newValue,oldValue) => {
+  // 删除、撤回消息，滚动条不动
+  if(newValue.length < oldValue.length) return
+  if (loading.value) {// 加载历史记录，滚动条位于前一条记录处
+    loading.value = false
+    nextTick(()=>{
+      body.value.scrollTop = body.value.scrollHeight - beforescrollHeight.value
+    })
+  } else {// 有新消息，滚动到底部
+    nextTick(()=>{
+      body.value.scrollTo({top:body.value.scrollHeight})
+    })
+  }
+  // 记录聊天记录总高度
+  beforescrollHeight.value = body.value.scrollHeight
 })
+
 
 /** 是否显示时间 */
 const isShowTime = (curDate: string, beforeDate: string) => {
   if (beforeDate === '') return true
   return moment(curDate).diff(beforeDate, 'minute') > 3
-}
-// 滚动事件-加载更多历史记录
-const onScroll = async () => {
-  if (!loading.value && body.value && props.chat && body.value.scrollTop < 10) {
-    loading.value = true
-    beforescrollHeight.value = body.value.scrollHeight
-    await props.chat.moreMessage()
-    messages.value = [...props.chat.messages]
-    loading.value=false
-  }
 }
 
 // 转发消息查看对话框关闭前的回调
@@ -83,6 +88,8 @@ const handleForwadModalClose = () => {
 }
 // 查看转发消息
 const viewForward = (item: IMessage[]) => {
+  console.log('1111');
+  
   forwardModalOpen.value = true
   forwardMessages.value = item
 }
@@ -126,7 +133,7 @@ const viewForward = (item: IMessage[]) => {
                 class="con_body"
                 @contextmenu="(e) => {e.preventDefault();e.stopPropagation()}"
               >
-                <!-- 多选转发的选择框 -->
+                <!-- 多选的选择框 -->
                 <ElCheckbox
                   v-if = "props.multiSelectShow"
                   class="multiSelectStyl"
@@ -143,9 +150,8 @@ const viewForward = (item: IMessage[]) => {
                     :popper-style="{ padding: '3px' }"
                     :show-arrow="false"
                   >
-                    <!-- 消息内容 -->
                     <template #reference>
-                      <div style="display: flex;">
+                      <div style="display: flex;justify-content: end;">
                         <div class="con_content">
                           <!-- 消息发送者可见 -->
                           <template v-if="chat.isBelongPerson">
@@ -170,7 +176,7 @@ const viewForward = (item: IMessage[]) => {
                             {{item.readedinfo}}
                           </div>
                         </div>
-                        <div style="color: #888">
+                        <div class="con_avatar">
                           <TeamIcon :entityId="item.metadata.fromId" :size="36" />
                         </div>
                       </div>
@@ -241,7 +247,6 @@ const viewForward = (item: IMessage[]) => {
   }
 }
 .group_content_wrap {
-  
   overflow: auto;
   overflow-x: hidden;
   padding: 20px;
@@ -260,18 +265,25 @@ const viewForward = (item: IMessage[]) => {
       color: #a8abb2;
     }
   }
-
   .user_head_img_wrap {
     margin-right: 0;
   }
-
   .history_more {
     text-align: center;
     color: var(--el-color-primary);
   }
+  .recall {
+    font-size: 12px;
+    justify-content: center;
 
+    .reWrite {
+      margin-left: 4px;
+      cursor: pointer;
+      color: #3e5ed8;
+    }
+  }  
   .con_body {
-    max-width: 40vw;
+    max-width: 100%;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -279,6 +291,9 @@ const viewForward = (item: IMessage[]) => {
     -webkit-box-direction: normal;
     -ms-flex-direction: row;
     flex-direction: row;
+    .viewMsg {
+      width: 100%;
+    }
   }
 
   .con {
@@ -294,7 +309,7 @@ const viewForward = (item: IMessage[]) => {
       max-height: 400px;
     }
     .con_content {
-      max-width: 50%;
+      max-width: 90%;
       .name {
         font-size: 12px;
         padding-left: 4px;
@@ -352,28 +367,10 @@ const viewForward = (item: IMessage[]) => {
       }
     }
   }
-
-  .recall {
-    font-size: 12px;
-    justify-content: center;
-
-    .reWrite {
-      margin-left: 4px;
-      cursor: pointer;
-      color: #3e5ed8;
-    }
-  }
-
   .group_content_left {
-    position: relative;
     .con_content {
-      max-width: 100%;
-      overflow: hidden;
-      flex-direction: column;
-      justify-content: flex-end;
       .con_content_txt, .con_content_forward_txt {
         background-color: white;
-        max-width: 100%;
         box-shadow: inset 0 0 2px #cacaca;
       }
     }
@@ -381,17 +378,10 @@ const viewForward = (item: IMessage[]) => {
 
   .group_content_right {
     justify-content: flex-end;
-    position: relative;
     .con_content {
-      max-width: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      align-items: flex-end;
       .con_content_txt, .con_content_forward_txt {
         background-color: #b4ccf9;
         margin-right: 10px;
-        max-width: 100%;
         box-shadow: inset 0 0 2px #9292ff;
       }
       .information {

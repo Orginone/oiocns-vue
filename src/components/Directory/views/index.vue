@@ -24,10 +24,6 @@ const props = defineProps<{
   fileOpen: (file: IDEntity | undefined, dblclick: boolean) => void;
   contextMenu: (file?: IDEntity) => any
 }>()
-
-  watch(()=>props.selectFiles,()=>{
-    console.log('selects:',props.selectFiles);
-  })
   
 /** 当前tag */
 const currentTag=ref('全部')

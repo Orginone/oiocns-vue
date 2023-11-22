@@ -10,11 +10,6 @@ const props = defineProps<{
   contextMenu: (file?: IDEntity) => any
 }>()
 
-watch(()=>props.selectFiles,()=>{
-    console.log('icon-selects:',props.selectFiles);
-    console.log('content',props.content);
-})
-
 </script>
 <template>
   <div class="icon-mode">
@@ -28,7 +23,7 @@ watch(()=>props.selectFiles,()=>{
             <ElCard
               size="small"
               bodyClass="fileCard"
-              :bodyStyle="selectFiles.includes(el)? {backgroundColor: '#e6f1ff'} : {}"
+              :bodyStyle="selectFiles.includes(el) || focusFile?.key === el.key ? {backgroundColor: '#e6f1ff'} : {}"
               :key="el.key"  
               shadow="never"
             >
@@ -36,7 +31,6 @@ watch(()=>props.selectFiles,()=>{
                 @click="fileOpen(el, false)"
                 @dblclick="fileOpen(el, true)"
               >
-                {{ selectFiles.includes(el)}}
                 <div class="fileImage">
                   <ElBadge :value="el.badgeCount" size="small" :hidden="el.badgeCount===0">
                     <EntityIcon :entity="el.metadata" :size="50" />
@@ -58,6 +52,11 @@ watch(()=>props.selectFiles,()=>{
                 </div>                
               </div>
             </ElCard>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="op in contextMenu(el)" :key="op.title" @click="op.onClick">{{op.title}}</el-dropdown-item>
+              </el-dropdown-menu>  
+            </template>          
           </ElDropdown>
         </template>
       </div>

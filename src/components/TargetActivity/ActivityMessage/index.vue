@@ -239,7 +239,7 @@ const handleReply = async (userId: string = '') => {
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
     justify-content: space-between;
-    padding: 12px 0;
+    padding: 12px 0 0 10px;
     color: rgba(0,0,0,.85);
     .listItemMeta {
       display: -webkit-box;

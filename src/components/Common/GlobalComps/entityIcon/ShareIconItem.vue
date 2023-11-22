@@ -24,9 +24,7 @@ const fontSize = size > 14 ? 14 : size;
       <div class="share-avatar" :class="{'showInfoMore':entity&&size>18}" :title="title ?? ''">
         <InfoMore :entity="props?.entity" :size="size"/>
         <ElAvatar shape="square" :size="size" :src="share.avatar.thumbnail" />
-        <strong v-if="showName" :style="{ marginLeft: '6px', fontSize: fontSize }">
-          {{share.name}}
-        </strong>
+        <b v-if="showName" :style="{ marginLeft: '6px', fontSize: fontSize }">{{share.name}}</b>
       </div>     
     </template>
     <!-- 无缩略图 -->
@@ -54,7 +52,7 @@ const fontSize = size > 14 ? 14 : size;
               :size="size"
             />            
           </ElAvatar>
-          <b v-if="showName" :style="{ marginLeft: 6, fontSize: fontSize }">{{share.name}}</b>
+          <b v-if="showName" :style="{ marginLeft: '6px', fontSize: fontSize }">{{share.name}}</b>
         </div>        
       </template>
     </template>
@@ -68,14 +66,13 @@ const fontSize = size > 14 ? 14 : size;
       >
         <TypeIcon avatar iconType='其它' :size='size' />
       </ElAvatar>
-      <strong v-if="showName" :style="{ marginLeft: 6, fontSize: fontSize }">{{entity?.id}}</strong>
+      <strong v-if="showName" :style="{ marginLeft: '6px', fontSize: fontSize }">{{entity?.id}}</strong>
     </div>
   </template>
 </template>
 
 <style lang="scss" scoped>
 .share-avatar {
-  cursor: pointer;
   position: relative;
   display: flex;
   align-items: center;

@@ -17,7 +17,7 @@ const props = defineProps<{
   selects?: IFile[];
   excludeIds?: string[];
   //** 预览区标识 */
-  previewFlag: string;
+  previewFlag?: string;
   onFocused?: (file: IFile | undefined) => void;
   onSelected?: (files: IFile[]) => void;
   current: IDirectory | undefined | 'disk';
@@ -59,7 +59,7 @@ const props = defineProps<{
         }
       }
     }
-  };
+  }
 
   /**
    * 选择文件
@@ -74,7 +74,7 @@ const props = defineProps<{
         props.onSelected(props.selects.filter((i) => i.key !== file.key));
       }
     }
-  };
+  }
 
   const fileFocused = (file: IFile | undefined) => {
     if (file) {
@@ -84,7 +84,7 @@ const props = defineProps<{
       return props.selects?.find((i) => i.key === file.key) !== undefined;
     }
     return false;
-  };
+  }
 
   const focusHanlder = (file: IFile | undefined) => {
     const focused = fileFocused(file);
@@ -98,7 +98,7 @@ const props = defineProps<{
     if (file && props.onSelected) {
       selectHanlder(file, !focused);
     }
-  };
+  }
 
   const clickHanlder = (file: IFile | undefined, dblclick: boolean) => {
     if (dblclick) {
@@ -120,8 +120,11 @@ const props = defineProps<{
     } else {
       contents.push(...props.current!.content());
     }
+    
+    
     return contents;
   })
+  
 </script>
 
 <template>
