@@ -94,59 +94,6 @@ if (Array.isArray(props.args) && props.args.length > 0) {
 }
 })
 
-
-// watch(()=>props.cmd,()=>{
-// if (Array.isArray(props.args) && props.args.length > 0) {
-//   switch (props.cmd) {
-//     case 'pull':
-//       return console.log('来这改');
-//       // return <PullMember finished={finished} current={args[0]} />;
-//     case 'taskList':
-//       // 上传进度列表
-//       return setContent(FileTaskList, {directory: props.args[0], finished: props.finished})
-//     case 'settingAuth':
-//       return console.log('来这改');
-//       // return <SettingAuth space={args[0].target} finished={finished} />;
-//     case 'settingIdentity':
-//       return console.log('角色设置来这改');
-//       // return <SettingIdentity target={args[0].target} finished={finished} />;
-//     case 'settingStation':
-//       return console.log('来这改');
-//       // return <SettingStation company={args[0].target} finished={finished} />;
-    
-//     case 'pubActivity':
-//       return setContent(ActivityPublisher, {activity: props.args[0], finish: props.finished})
-//     case 'update':
-//       return console.log('来这改');
-//       // {
-//       //   const entity: IEntity<schema.XEntity> = args[0];
-//       //   if (entity.groupTags && entity.groupTags.includes('表单')) {
-//       //     return <EntityForm cmd={cmd + 'Form'} entity={args[0]} finished={finished} />;
-//       //   }
-//       //   if (Object.keys(entityMap).includes(args[0].typeName)) {
-//       //     return (
-//       //       <EntityForm
-//       //         cmd={cmd + entityMap[args[0].typeName]}
-//       //         entity={args[0]}
-//       //         finished={finished}
-//       //       />
-//       //     );
-//       //   }
-//       //   if (Object.values(TargetType).includes(args[0].typeName as TargetType)) {
-//       //     return <EntityForm cmd={cmd} entity={args[0]} finished={finished} />;
-//       //   }
-//       // }
-//     default:
-//       if (props.cmd.startsWith('join')) {   
-//         return setContent(JoinTarget, {cmd:props.cmd,current: props.args[0], finished: props.finished})
-//       }
-//       return setContent(EntityForm, {cmd: props.cmd, entity: props.args[0], finished: props.finished})
-//   }
-// }
-// },{immediate: true})
-
-
-
 </script>
 
 <template>

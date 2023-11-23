@@ -168,13 +168,13 @@ const viewForward = (item: IMessage[]) => {
                               <parseCiteMsg v-if="item.cite" :item="item.cite" />
                             </ElBadge>
                           </template>
-                          <!-- 已读、未读 -->
-                          <div
+                          <!-- TODO:已读、未读 -->
+                          <!-- <div
                             :class="item.readedinfo.includes('已读') ? 'information readed' : 'information'"
                             @click="setInfoMsg(item)"
                           >
                             {{item.readedinfo}}
-                          </div>
+                          </div> -->
                         </div>
                         <div class="con_avatar">
                           <TeamIcon :entityId="item.metadata.fromId" :size="36" />

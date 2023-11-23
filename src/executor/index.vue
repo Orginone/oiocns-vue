@@ -55,7 +55,6 @@ onMounted(()=>{
           //   <DesignExecutor cmd={cmd} entity={args[0]} finished={resetContent} />,
           // );
         default:
-          console.log(contentComponent.value,contentProps);
           return setContent(OperateExecutor, {key: cmd,cmd: cmd, args: args, finished: resetContent})
       }
 

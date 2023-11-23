@@ -22,11 +22,12 @@ const config = {
 <template>
   <div class="office-preview" v-if="share.shareLink">
     <template v-if="['.xls','.xlsx'].includes(share.extension)">
-      TODO:C:\Users\zjdex\Desktop\11-8\src\components\MainLayout\preview\office\index.vue
+      TODO:src\components\MainLayout\preview\office\index.vue
       <!-- <SheetViewer {...config} /> -->
     </template>
     <template v-else-if="share.extension === '.docx'">
-      TODO:<DocxViewer {...config} />
+      TODO:src\components\MainLayout\preview\office\index.vue
+      <!-- <DocxViewer {...config} /> -->
     </template>
     <template v-else-if="share.extension === '.pdf'">
       <iframe
@@ -38,7 +39,8 @@ const config = {
       />      
     </template>
     <template v-else-if="share.extension === '.md'">
-      TODO:<Markdown share={share} />
+      TODO:src\components\MainLayout\preview\office\index.vue
+      <!-- <Markdown share={share} /> -->
     </template>
   </div>  
 </template>

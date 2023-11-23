@@ -1,33 +1,35 @@
-<template>
-  <div class="nav">
-    
-    <div class="slide">
-      <div class="user">
-        <!-- TODO:改用entityicon -->
-        <img src="/svg/home.svg" alt="" />
-      </div>
-      <RouterLink 
-        :to="item.path"
-        class="item" 
-        v-for="(item, index) in actions" :key="index"
-        @click=""
-      >
-        <orgIcons :url="item.icon"></orgIcons>
-        <div class="item-text">{{ item.text }}</div>
-      </RouterLink>
-    </div>
-    <div class="exit" url="exit">
-      <orgIcons :url="'exit'"></orgIcons>
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
-import { getCurrentInstance, onMounted } from "vue";
-import orgIcons from "@/components/Common/GlobalComps/orgIcons.vue";
-const { proxy } = getCurrentInstance();
-const msgCount: Number = 0;
-const workCount: Number = 0;
+import orgIcons from "@/components/Common/GlobalComps/orgIcons.vue"
+import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
+import orgCtrl from '@/ts/controller'
+import { useFlagCmdEmitter } from '@/hooks/useCtrlUpdate'
+import { kernel, model, schema } from '@/ts/base'
+import navItem from './navItem.vue'
+
+const workCount = ref(0)
+const msgCount = ref(0)
+const online = ref (0)
+const onlineVisible = ref(false)
+useFlagCmdEmitter('session', () => {
+  let noReadCount = 0;
+  for (const item of orgCtrl.chats) {
+    if (item.isMyChat) {
+      noReadCount += item.badgeCount;
+    }
+  }
+  msgCount.value = noReadCount
+})
+onMounted(() => {
+  const workId = orgCtrl.work.notity.subscribe(async () => {
+    workCount.value = orgCtrl.work.todos.length
+  })
+  kernel.onlineNotify.subscribe(() => {
+    online.value = kernel.onlineIds.length
+  })
+  return () => {
+    orgCtrl.work.notity.unsubscribe(workId)
+  }
+})
 const actions = [
   {
     text: "门户",
@@ -59,8 +61,43 @@ const actions = [
     path: "/setting",
     count: 0,
   },
-];
+]
+
 </script>
+
+<template>
+  <div class="nav">
+    <div class="slide">
+      <div class="user">
+        <ElBadge :value="online" :hidden="!(online>0)">
+          <EntityIcon :entityId="orgCtrl.user.id" :size="45" />
+        </ElBadge>
+      </div>
+      <ElSpace 
+        direction="vertical" 
+        wrap 
+        alignment="center" 
+        :size="25"
+        class="nav-bar"
+      >
+        <navItem v-for="item in actions" :key="item.path"
+          :item = "item"
+        />
+        <!-- TODO: -->
+        <!-- <OnlineInfo v-if="onlineVisible" onClose={() => setOnlineVisible(false)} />} -->
+      </ElSpace>
+    </div>
+    <div class="exit" url="exit">
+      <RouterLink to="/login">
+        <orgIcons :size="22" exit selected />
+        <div>退出</div>
+      </RouterLink>
+      
+    </div>
+  </div>
+</template>
+
+
 
 <style lang="scss" scoped>  
 .nav{
@@ -86,6 +123,8 @@ const actions = [
   }
   .exit{
     margin-bottom: 10px;
+    text-align: center;
+    color:#366ef4;
   }
 }
 .item {

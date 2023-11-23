@@ -38,7 +38,6 @@ const {component,propsObj,setComponent,resetComponent} = useDyncamicComponent()
 
 
 onMounted(() => {
-  debugger
   if (props.entity === undefined) return
   if ('size' in props.entity || 'filedata' in props.entity) { // TODO: 文件预览
     const data = 'size' in props.entity ? props.entity : props.entity.filedata;
@@ -115,7 +114,7 @@ onMounted(() => {
     //     }
     // }
   } else { // 实体信息预览
-    return <EntityPreview entity={props.entity} finished={props.finished} />;
+    return setComponent(EntityPreview,{entity:props.entity,finished:props.finished})
   }
 })
 

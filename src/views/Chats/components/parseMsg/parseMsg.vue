@@ -5,6 +5,7 @@ import { IMessage,MessageType } from '@/ts/core'
 import { parseAvatar,command } from '@/ts/base'
 import { shareOpenLink, truncateString } from '@/utils/tools'
 import { formatSize } from '@/ts/base/common'
+import typeIcon from '@/components/Common/GlobalComps/typeIcon.vue'
 
 const props = defineProps<{
   item: IMessage
@@ -97,8 +98,13 @@ switch (props.item.msgType) {
       class="con_content_txt"
       @click="command.emitter('executor', 'open', file,'preview')"
     >
-      <div>{{file.name}}</div>
-      <div>{{formatSize(file.size)}}</div>
+      <div style="display: flex;">
+        <div style="margin-right: 5px;">
+          <div>{{file.name}}</div>
+          <div style="font-size: 12px;color: rgba(0, 0, 0, 0.45);">{{formatSize(file.size)}}</div>
+        </div>
+        <typeIcon :iconType="file.contentType" :size="28" color="blue"/>
+      </div>
     </div>
   </template>
   <!-- 语音 -->

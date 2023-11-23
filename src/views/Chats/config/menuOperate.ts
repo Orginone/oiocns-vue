@@ -79,7 +79,7 @@ export const loadChatMenu = () => {
     label: '沟通',
     itemType: 'Tab',
     children: [],
-    icon: {name:OrgIcons,args:{chat:true}},
+    icon: {name:OrgIcons,args:{chat:true,selected:true}},
   } as MenuItemType;
   chatMenus.children = loadBookMenu();
   return chatMenus;

@@ -9,12 +9,12 @@ import * as fa from '@/icons/fa'
 const props = defineProps<{
   avatar?: boolean;
   size?: number;
+  color?: string;
   iconType: string;
 }>()
 
 const {size,avatar,iconType} = props
 
-const config: {size: number, color: string} = { size: size || 12, color: '#9498df' }
 
 const loadIcon = () => {
   switch (iconType) {
@@ -150,7 +150,7 @@ const loadFileIcon = () => {
 
 <template>
   <!-- <div :style="avatar ? '' : 'padding-right: 10px;'"> -->
-    <ElIcon v-bind="config">
+    <ElIcon :size="size || 12" :color="color || '#9498df'">
       <component :is="loadIcon()" />
     </ElIcon>
 </template>

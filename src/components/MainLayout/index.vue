@@ -71,16 +71,14 @@ import {ArrowRight} from '@element-plus/icons-vue'
   <ElContainer class="main_layout">
     <!-- header -->
     <ElHeader class="header">
-      <!-- 面包屑 -->
-      <div>
-        <CustomBreadcrumb
-          :selectKey="selectMenu.key"
-          :item="siderMenuData"
-          :onSelect="(item:MenuItemType) => {
-            onSelectClick(item);
-          }"
-        />
-      </div>
+      <!-- 面包屑+左侧栏 -->
+      <CustomBreadcrumb
+        :selectKey="selectMenu.key"
+        :item="siderMenuData"
+        :onSelect="(item:MenuItemType) => {
+          onSelectClick(item);
+        }"
+      />
       <!-- 切换主测栏-辅助侧栏-右侧插槽-else -->
       <div>
         <ElSpace wrap :size="20">
