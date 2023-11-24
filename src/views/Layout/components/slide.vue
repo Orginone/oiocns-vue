@@ -83,8 +83,8 @@ const actions = [
         <navItem v-for="item in actions" :key="item.path"
           :item = "item"
         />
-        <!-- TODO: -->
-        <!-- <OnlineInfo v-if="onlineVisible" onClose={() => setOnlineVisible(false)} />} -->
+        <!-- 在线信息 -->
+        <OnlineInfo v-if="onlineVisible" :onClose="() => onlineVisible = false" />
       </ElSpace>
     </div>
     <div class="exit" url="exit">

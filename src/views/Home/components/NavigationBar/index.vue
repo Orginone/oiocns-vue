@@ -49,7 +49,7 @@ const setMore = (value:boolean) => {
       </div>
       <!-- 常用页面 -->
       <div class="navigationBarConfigSection">
-        <h5>常用页面</h5>
+        <h5 class="title">常用页面</h5>
         <ElSpace :size="16">
         <div 
           v-for="(item, index) in list" :key="index"
@@ -68,7 +68,7 @@ const setMore = (value:boolean) => {
       </div>
       <!-- 全部页面 -->
       <div class="navigationBarConfigSection">
-        <h5>常用页面</h5>
+        <h5 class="title">常用页面</h5>
         <ElSpace :size="16">
         <div 
           v-for="(item, index) in allPages" :key="index"
@@ -115,17 +115,16 @@ const setMore = (value:boolean) => {
 
 <style lang="scss" scoped>
 .navigationBar {
+  // TODO:
   border-radius: 30px;
   position: fixed;
   top: 16px;
   right: calc(50vw - 160px);
   margin-left: 60px;
-  // TODO:
   // background-color: rgba(@component-background, 0.7);
   background-color: rgba(white,0.7);
   display: flex;
   font-size: 14px;
-  // TODO:
   // color: @text-color;
   color: #000;
   align-items: center;
@@ -173,14 +172,16 @@ const setMore = (value:boolean) => {
     padding: 30px 20px 40px;
     // TODO:
     // background-color: @component-background;
-    background-color: var(--el-bg-color-page);
+    background-color: #fafafa;
     z-index: 1;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
   }
 
 
   &Config {
-    width: 100%;
+    // width: 100%;
+    min-width: 400px;
+    max-width: 800px;
     &Header {
       display: flex;
       justify-content: space-between;
@@ -190,6 +191,13 @@ const setMore = (value:boolean) => {
 
     &Section {
       margin-bottom: 20px;
+      .title {
+        margin-bottom: 0.5em;
+        color: rgba(0,0,0,.85);
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 1.5;
+      }
     }
 
     &PageCard {

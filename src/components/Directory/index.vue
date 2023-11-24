@@ -124,7 +124,7 @@ const props = defineProps<{
     
     return contents;
   })
-  
+
 </script>
 
 <template>
