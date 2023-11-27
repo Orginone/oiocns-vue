@@ -2,7 +2,7 @@
   <div class="content-wrap">
     <div class="content" ref="buttonRef" @contextmenu="onContextMenu">
         <div class="list" v-if="contentData.showIndex ==1">
-            <div class="list-item" v-for="(item,index) in contentData.contentList" :key="index">
+            <div class="list-item" v-for="(item,index) in listData" :key="index">
                 <img src="/svg/home.svg" alt="" />
                 <div class="list-item-com">
                     <p class="list-item-name">{{item._metadata.name}} <el-tag class="ml-2" type="success">{{item._metadata.typeName}} </el-tag> </p>
@@ -19,7 +19,7 @@
                   <p class="card-item-type">{{item._metadata.typeName}}</p>
               </div>
           </div>
-        </div> -->
+        </div>-->
         <div class="list-foot">
             <div class="foot-num">{{contentData.contentList.length}}个项目</div>
             <div class="foot-check">
@@ -30,7 +30,7 @@
                   <img src="/svg/table.png" alt="">
                 </div>
             </div>
-        </div>
+        </div> 
     </div>
     <el-dialog width="40%" v-model="dialogFormVisible" title="表单">
         <el-form :model="form">
@@ -69,7 +69,10 @@
 </template>
 
 <script lang="ts" setup>
+
 //@ts-nocheck
+import InfiniteList from 'vue3-infinite-list';
+
 import ContextMenu from '@imengyu/vue3-context-menu'
 import { command, parseAvatar, schema } from '@/ts/base';
 import { ElMessage } from 'element-plus'
@@ -77,51 +80,34 @@ import { Plus } from '@element-plus/icons-vue'
 import type { UploadProps } from 'element-plus'
 import { setCenterStore } from "@/store/setting";
 import {storeToRefs} from 'pinia';
-import { command } from '@/ts/base';
-
 const props = defineProps({
+  item: {
+    type:Object
+  },
   parentMenu: Object,
 })
-
-const newMenu = () => {
-  props.parentMenu?.children[0]?.menus.forEach(items=>{
-    items.onClick = () => {
-      command.emitter('executor', items.key, '' );
-    }
-    if(items.children && items.children.length > 0){
-      items.children.forEach(its=>{
-        its.onClick = () => {
-          command.emitter('executor', its.key, '' );
-        }
-      })
-    }
-  })
-  return props.parentMenu?.children[0]?.menus
-}
-
 //创建仓库对象
 const store= setCenterStore();
-let {currItem}=storeToRefs(store);//结构store
+// let {currItem}=storeToRefs(store);//结构store
 const dialogFormVisible =ref(false) ;
 const contentData = reactive({
   showIndex:1,
-  currItem : currItem,
   contentList :[],
+  list:[]
 })
-watchEffect(() => {
-  if(contentData.currItem.item?.content()){
-    let list  = contentData.currItem.item?.content()
-    console.log('list',list);
-    list.forEach(item => {
-      // if(item?._metadata?.icon){
-      //   item?._metadata?.icon = parseAvatar(item?._metadata?.icon)
-      // }
+let listData = ref([]);
+watch(() => props.item, (n) => {
+  console.log('b',n);
+  // if(n?.item?.content()){
+    // let list  = n?.item?.content()
+    let list = n;
+    let newArray = list.map(function(obj) {
+      return { _metadata: obj._metadata };
     });
-    contentData.contentList = list
-  }
-  // console.log('current',contentData.currItem.item,contentData.currItem.item?.cacheFlag)
-  // console.log('currItem change-->',); 
-});
+    console.log(newArray);
+    listData.value = newArray;
+  // }
+})
 const getContent = () => {
   const contents: IFile[] = [];
   if (props.current === 'disk') {
@@ -149,6 +135,24 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   }
   return true
 }
+
+
+const newMenu = () => {
+  props.parentMenu?.children[0]?.menus.forEach(items=>{
+    items.onClick = () => {
+      command.emitter('executor', items.key, '' );
+    }
+    if(items.children && items.children.length > 0){
+      items.children.forEach(its=>{
+        its.onClick = () => {
+          command.emitter('executor', its.key, '' );
+        }
+      })
+    }
+  })
+  return props.parentMenu?.children[0]?.menus
+}
+
 const onContextMenu = (e : MouseEvent)=> {
   //prevent the browser's default menu
   e.preventDefault();
@@ -159,6 +163,7 @@ const onContextMenu = (e : MouseEvent)=> {
     items: newMenu()
   }); 
 }
+
 const forwardingMessage =()=>{
   dialogFormVisible.value = true;
 }
@@ -175,13 +180,6 @@ const form = reactive({
   desc: '',
 })
 </script>
-
-<script lang="ts">
-export default {
-  name: "listContent",
-}
-</script>
-
 <style lang="scss" scoped>
 .content-wrap {
   width: 100%;
@@ -198,7 +196,8 @@ export default {
     overflow-y: auto;
     position: relative;
     .list{
-        height: 2000px;
+        height: calc(100% - 0px);
+        overflow-y: auto;
         .list-item{
             width: 100%;
             display: flex;
