@@ -11,7 +11,7 @@
                 <div class="list-item-time">{{item._metadata.createTime.slice(5,16)}}</div>
             </div>
         </div>
-        <div class="card" v-else>
+        <!-- <div class="card" v-else>
           <div class="card-item" v-for="(item,index) in contentData.contentList" :key="index">
               <img src="/svg/home.svg" alt="" />
               <div class="card-item-com">
@@ -19,7 +19,7 @@
                   <p class="card-item-type">{{item._metadata.typeName}}</p>
               </div>
           </div>
-        </div>
+        </div> -->
         <div class="list-foot">
             <div class="foot-num">{{contentData.contentList.length}}个项目</div>
             <div class="foot-check">
