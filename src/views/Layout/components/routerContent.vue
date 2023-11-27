@@ -51,7 +51,7 @@ watch(
   ()=>props.menuList,
   (val,preVal)=>{
       //val为修改后的值,preVal为修改前的值
-      console.log("message",val)
+      // console.log("message",val)
   },
   {
       immediate:true,

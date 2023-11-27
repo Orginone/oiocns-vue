@@ -55,6 +55,9 @@ const handleSelect = async (key: string) => {
   ctrl.currentKey = key;
   let newMenus = await config.loadBrowserMenu();
   var item = findMenuItemByKey(newMenus, ctrl.currentKey);
+  if (item.beforeLoad) {
+    await item.beforeLoad();
+  }
   store.setCurrItem(item);
   if (item === undefined) {
     item = newMenus;

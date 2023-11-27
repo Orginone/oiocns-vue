@@ -204,6 +204,18 @@ export class StandardFiles {
       return result;
     }
   }
+  async createApplication(
+    data: schema.XApplication,
+  ): Promise<schema.XApplication | undefined> {
+    const result = await this.resource.applicationColl.insert({
+      ...data,
+      directoryId: this.id,
+    });
+    if (result) {
+      await this.resource.applicationColl.notity({ data: result, operate: 'insert' });
+      return result;
+    }
+  }
   async operateStandradFile(
     to: DataResource,
     action: 'replaceMany' | 'removeMany',
