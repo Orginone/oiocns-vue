@@ -35,7 +35,12 @@ const publishActivity = () => {
     }
   }
 };
+</script>
 
+<script lang="ts">
+export default {
+  name: "ActivityPublisher",
+}
 </script>
 
 <template>

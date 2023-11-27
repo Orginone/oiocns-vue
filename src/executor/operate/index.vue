@@ -9,7 +9,7 @@ import ActivityPublisher from './pubActivity/index.vue';
 // import SettingIdentity from './settingModal/settingIdentity';
 // import { schema } from '@/ts/base';
 // import PullMember from './pullMember';
-// import JoinTarget from './joinTarget';
+import JoinTarget from './joinTarget/index.vue';
 // import FileTaskList from './fileTaskList';
 
 // 实体类型字典
@@ -53,6 +53,7 @@ const resetContent = () => {
 }
 
 onMounted(()=>{
+  console.log(props,'props');
   if (Array.isArray(props.args) && props.args.length > 0) {
     switch (props.cmd) {
       case 'pull':
@@ -97,17 +98,19 @@ onMounted(()=>{
         // }
         break;
       default:
-        return console.log('来这改');
-        // if (cmd.startsWith('join')) {
-        //   return <JoinTarget cmd={cmd} current={args[0]} finished={finished} />;
-        // }
+        if (props.cmd.startsWith('join')) {
+          return setContent(JoinTarget, {cmd: props.cmd, current: props.args[0], finished: props.finished})
+        }
         // return <EntityForm cmd={cmd} entity={args[0]} finished={finished} />;
     }
   }
 })
+</script>
 
-
-
+<script lang="ts">
+export default {
+  name: "OperateExecutor",
+}
 </script>
 
 <template>

@@ -107,6 +107,28 @@ import { Plus } from '@element-plus/icons-vue'
 import type { UploadProps } from 'element-plus'
 import { setCenterStore } from "@/store/setting";
 import {storeToRefs} from 'pinia';
+import { command } from '@/ts/base';
+
+const props = defineProps({
+  parentMenu: Object,
+})
+
+const newMenu = () => {
+  props.parentMenu?.children[0]?.menus.forEach(items=>{
+    items.onClick = () => {
+      command.emitter('executor', items.key, '' );
+    }
+    if(items.children && items.children.length > 0){
+      items.children.forEach(its=>{
+        its.onClick = () => {
+          command.emitter('executor', its.key, '' );
+        }
+      })
+    }
+  })
+  return props.parentMenu?.children[0]?.menus
+}
+
 //创建仓库对象
 const store= setCenterStore();
 let {currItem}=storeToRefs(store);//结构store
@@ -141,22 +163,7 @@ const onContextMenu = (e : MouseEvent)=> {
   ContextMenu.showContextMenu({
     x: e.x,
     y: e.y,
-    items: [
-      { 
-        label: "打开表单", 
-        onClick: () => {
-            forwardingMessage();
-        }
-      },
-      { 
-        label: "二级目录", 
-        children: [
-          { label: "测试目录1" },
-          { label: "测试目录2" },
-          { label: "测试目录3" },
-        ]
-      },
-    ]
+    items: newMenu()
   }); 
 }
 const forwardingMessage =()=>{
@@ -175,6 +182,13 @@ const form = reactive({
   desc: '',
 })
 </script>
+
+<script lang="ts">
+export default {
+  name: "listContent",
+}
+</script>
+
 <style lang="scss" scoped>
 .content-wrap {
   width: 100%;

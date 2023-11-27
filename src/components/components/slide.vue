@@ -62,6 +62,11 @@ const actions = [
 ];
 </script>
 
+<script lang="ts">
+export default {
+  name: "slide",
+}
+</script>
 <style lang="scss" scoped>  
 .nav{
   width: 60px;

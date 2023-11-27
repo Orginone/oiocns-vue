@@ -65,6 +65,12 @@ const rightShow = ref<boolean>(false)
 
 </script>
 
+<script lang="ts">
+export default {
+  name: "headContent",
+}
+</script>
+
 <style lang="scss" scoped>
 .head {
   height: 65px;

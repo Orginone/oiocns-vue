@@ -1,5 +1,5 @@
 import { schema, model } from '../../../base';
-import { orgAuth } from '../../../core/public';
+import { entityOperates, fileOperates, orgAuth } from '../../../core/public';
 import { IDirectory } from '../directory';
 import { IStandardFileInfo, StandardFileInfo } from '../fileinfo';
 
@@ -9,6 +9,10 @@ export interface IForm extends IStandardFileInfo<schema.XForm> {
   attributes: schema.XAttribute[];
   /** 表单字段 */
   fields: model.FieldModel[];
+  /** 加载分类字典项 */
+  loadItems(speciesIds: string[]): Promise<schema.XSpeciesItem[]>;
+  /** 保存 */
+  save(): Promise<boolean>;
   /** 新建表单特性 */
   createAttribute(propertys: schema.XProperty[]): Promise<schema.XAttribute[]>;
   /** 更新表单特性 */
@@ -23,9 +27,10 @@ export interface IForm extends IStandardFileInfo<schema.XForm> {
 export class Form extends StandardFileInfo<schema.XForm> implements IForm {
   constructor(_metadata: schema.XForm, _directory: IDirectory) {
     super(_metadata, _directory, _directory.resource.formColl);
+    this.canDesign = !_metadata.id.includes('_');
     this.setEntity();
   }
-  canDesign: boolean = true;
+  canDesign: boolean;
   private _fieldsLoaded: boolean = false;
   fields: model.FieldModel[] = [];
   get attributes(): schema.XAttribute[] {
@@ -48,49 +53,63 @@ export class Form extends StandardFileInfo<schema.XForm> implements IForm {
   get groupTags(): string[] {
     return ['表单', ...super.groupTags];
   }
+  async save(): Promise<boolean> {
+    return this.update(this.metadata);
+  }
   async loadContent(reload: boolean = false): Promise<boolean> {
     await this.loadFields(reload);
     return true;
   }
   async loadFields(reload: boolean = false): Promise<model.FieldModel[]> {
     if (!this._fieldsLoaded || reload) {
-      this.fields = [];
       const speciesIds = this.attributes
         .map((i) => i.property?.speciesId)
-        .filter((i) => i && i.length > 0);
-      const data = await this.directory.resource.speciesItemColl.loadSpace({
-        options: { match: { speciesId: { _in_: speciesIds } } },
-      });
-      this.attributes.forEach(async (attr) => {
-        if (attr.property) {
+        .filter((i) => i && i.length > 0)
+        .map((i) => i!);
+      const data = await this.loadItems(speciesIds);
+      this.fields = this.attributes
+        .filter((i) => i.property && i.property.id)
+        .map((attr) => {
           const field: model.FieldModel = {
             id: attr.id,
             rule: attr.rule,
             name: attr.name,
-            code: 'T' + attr.property.id,
+            widget: attr.widget,
+            options: attr.options,
+            code: `T${attr.propId}`,
             remark: attr.remark,
             lookups: [],
-            valueType: attr.property.valueType,
+            valueType: attr.property!.valueType,
           };
-          if (attr.property.speciesId && attr.property.speciesId.length > 0) {
+          if (attr.property!.speciesId && attr.property!.speciesId.length > 0) {
             field.lookups = data
               .filter((i) => i.speciesId === attr.property!.speciesId)
               .map((i) => {
                 return {
                   id: i.id,
                   text: i.name,
-                  value: i.code || `S${i.id}`,
+                  value: `S${i.id}`,
                   icon: i.icon,
                   parentId: i.parentId,
                 };
               });
           }
-          this.fields.push(field);
-        }
-      });
+          return field;
+        });
       this._fieldsLoaded = true;
     }
     return this.fields;
+  }
+  async loadItems(speciesIds: string[]): Promise<schema.XSpeciesItem[]> {
+    const ids = speciesIds.filter((i) => i && i.length > 0);
+    if (ids.length < 1) return [];
+    return await this.directory.resource.speciesItemColl.loadSpace({
+      options: {
+        match: {
+          speciesId: { _in_: ids },
+        },
+      },
+    });
   }
   async createAttribute(propertys: schema.XProperty[]): Promise<schema.XAttribute[]> {
     const data = propertys.map((prop) => {
@@ -152,5 +171,11 @@ export class Form extends StandardFileInfo<schema.XForm> implements IForm {
       return await super.moveTo(destination.id, destination.resource.formColl);
     }
     return false;
+  }
+  override operates(): model.OperateModel[] {
+    if (this.canDesign) {
+      return super.operates();
+    }
+    return [fileOperates.Copy, entityOperates.Remark];
   }
 }

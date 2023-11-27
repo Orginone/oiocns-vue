@@ -1,5 +1,6 @@
 import {
   XApplication,
+  XAttributeProps,
   XAuthority,
   Xbase,
   XDirectory,
@@ -22,6 +23,8 @@ export type ReqestType = {
 };
 // 请求数据核类型定义
 export type DataProxyType = {
+  // 标签
+  flag: string;
   // 模块
   module: string;
   // 方法
@@ -637,10 +640,16 @@ export type FieldModel = {
   valueType: string;
   /** 规则(特性规则) */
   rule?: string;
+  /** 组件 */
+  widget?: string;
+  /** 参数 */
+  options?: XAttributeProps;
   /** 备注(特性描述) */
   remark: string;
   /** 字典(字典项/分类项) */
   lookups?: FiledLookup[];
+  /** 计量单位 */
+  unit?: string;
 };
 
 export type FiledLookup = {
@@ -814,6 +823,8 @@ export type FileItemShare = {
   size: number;
   /** 名称 */
   name: string;
+  /** 视频封面 */
+  poster?: string;
   /** 文件类型 */
   contentType?: string;
   /** 共享链接 */
@@ -848,6 +859,7 @@ export enum BucketOpreates {
   'Copy' = 'Copy',
   'Delete' = 'Delete',
   'Upload' = 'Upload',
+  'HslSplit' = 'HslSplit',
   'AbortUpload' = 'AbortUpload',
 }
 

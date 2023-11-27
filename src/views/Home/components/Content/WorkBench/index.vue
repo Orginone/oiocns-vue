@@ -68,61 +68,60 @@ const entrys = [
   },
 ]
 // 订阅各种变更
-useFlagCmdEmitter('session',()=>{
-  state.chat.loaded = false;
-  state.chat.msgCount = 0;
-  state.chat.friendCount = 0;
-  state.chat.groupCount = 0;
-  // 通过控制器获取所有相关会话，遍历所有相关会话
-  for (const item of orgCtrl.chats) {
-    // 未读
-    if (item.isMyChat) {
-      state.chat.msgCount+=item.chatdata.noReadCount
-    }
-    // 其它计数
-    if (item.isFriend) {
-      if(item.typeName==='人员') state.chat.friendCount++;
-      else if (item.typeName==='单位') state.chat.companyCount++;
-      if(item.isGroup) state.chat.groupCount++;
-    }
-  }
-  // TODO:可能有问题
-  if(orgCtrl.chats.length>1){
-    state.chat.loaded = true
-  }
-})
-useFlagCmdEmitter('work',()=>{
-  state.work.loaded = false
-  state.work.todoCount = orgCtrl.work.todos.length
-  orgCtrl.work.loadApplyCount().then((v) => {
-    state.work.applyCount = v
-  })
-  orgCtrl.work.loadCompletedCount().then((v) => {
-    state.work.doneCount = v
-  })
-  // TODO:
-  // console.log(orgCtrl.work);
-  if(orgCtrl.work?._todoLoaded===true){
-    state.work.loaded = true;
-  }
+// useFlagCmdEmitter('session',()=>{
+//   state.chat.loaded = false;
+//   state.chat.msgCount = 0;
+//   state.chat.friendCount = 0;
+//   state.chat.groupCount = 0;
+//   // 通过控制器获取所有相关会话，遍历所有相关会话
+//   for (const item of orgCtrl.chats) {
+//     // 未读
+//     if (item.isMyChat) {
+//       state.chat.msgCount+=item.chatdata.noReadCount
+//     }
+//     // 其它计数
+//     if (item.isFriend) {
+//       if(item.typeName==='人员') state.chat.friendCount++;
+//       else if (item.typeName==='单位') state.chat.companyCount++;
+//       if(item.isGroup) state.chat.groupCount++;
+//     }
+//   }
+//   // TODO:可能有问题
+//   if(orgCtrl.chats.length>1){
+//     state.chat.loaded = true
+//   }
+// })
+// useFlagCmdEmitter('work',()=>{
+//   state.work.loaded = false
+//   state.work.todoCount = orgCtrl.work.todos.length
+//   orgCtrl.work.loadApplyCount().then((v) => {
+//     state.work.applyCount = v
+//   })
+//   orgCtrl.work.loadCompletedCount().then((v) => {
+//     state.work.doneCount = v
+//   })
+//   // TODO:
+//   // console.log(orgCtrl.work);
+//   if(orgCtrl.work?._todoLoaded===true){
+//     state.work.loaded = true;
+//   }
   
-})
-useFlagCmdEmitter('applications',async()=>{
-  state.application.loaded = true;
-  state.application.all = await orgCtrl.loadApplications();
-  state.application.commonUse = state.application.all.filter(item => {
-    return item.cache.tags?.includes('常用')
-  })
-  state.application.mine = state.application.all.filter(item => {
-    return item.metadata.createUser === item.userId
-  })
-  state.application.share = state.application.all.filter(item => {
-    return item.metadata.createUser !== item.userId
-  })
+// })
+// useFlagCmdEmitter('applications',async()=>{
+//   state.application.loaded = true;
+//   state.application.all = await orgCtrl.loadApplications();
+//   state.application.commonUse = state.application.all.filter(item => {
+//     return item.cache.tags?.includes('常用')
+//   })
+//   state.application.mine = state.application.all.filter(item => {
+//     return item.metadata.createUser === item.userId
+//   })
+//   state.application.share = state.application.all.filter(item => {
+//     return item.metadata.createUser !== item.userId
+//   })
   
-  state.application.loaded = true
-
-})
+//   state.application.loaded = true
+// })
 //获取存储信息
 orgCtrl.user.getDiskInfo().then((value) => {
   state.storage.files = value.files

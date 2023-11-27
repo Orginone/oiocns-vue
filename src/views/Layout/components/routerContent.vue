@@ -22,12 +22,13 @@
           <span :class="showType =='部门'?'view-nav-item-active':''">部门</span> 
         </div>
       </div>
-      <listContent></listContent>
+      <listContent :parentMenu="parentMenu"></listContent>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { watch } from 'vue'
 import listContent from './listContent.vue';
 import MenuList from './subMenu/menu-list.vue'
 
@@ -35,10 +36,16 @@ const data = reactive<any>({
   key:"",
 })
 const props = defineProps({
-  menuList: {
-    type:Object
-  },
+  menuList: Object,
+  selectMenu: Object,
+  siderMenuData: Object,
+  onSelect: Function
 })
+
+const parentMenu = props.selectMenu.parentMenu ?? props.siderMenuData;
+const outside =
+  props.selectMenu.menus?.filter((item: any) => item.model === 'outside') ?? [];
+const inside = props.selectMenu.menus?.filter((item: any) => item.model != 'outside') ?? [];
 // const emit = defineEmits(['select'])
 watch(
   ()=>props.menuList,
@@ -64,6 +71,12 @@ const changeNav = (name:string)=>{
 }
 const changeActive = (key:any)=>{
     // data.key = obj.key
+}
+</script>
+
+<script lang="ts">
+export default {
+  name: "routerContent",
 }
 </script>
 

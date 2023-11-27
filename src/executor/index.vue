@@ -30,6 +30,7 @@ const resetContent = () => {
 let id = ''
 onMounted(()=>{
   id = command.subscribe((type, cmd, ...args: any[]) => {
+    console.log(type, cmd, '12345');
     if (type != 'executor') return;
     if (cmd === 'link') return router.push(args[0]);
     // 执行页面命令(executeCmd返回false则为页面命令)
@@ -48,18 +49,17 @@ onMounted(()=>{
           //   <DesignExecutor cmd={cmd} entity={args[0]} finished={resetContent} />,
           // );
         default:
+          console.log(cmd,'cmd');
           return setContent(OperateExecutor, {cmd: cmd, args: args, finished: resetContent})
       }
-
     }
   })
 })
 
-  // 取消订阅
-  onBeforeUnmount(()=>{
-    command.unsubscribe(id);
-  })
-
+// 取消订阅
+onBeforeUnmount(()=>{
+  command.unsubscribe(id);
+})
 </script>
 
 <template>

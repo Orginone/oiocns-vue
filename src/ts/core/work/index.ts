@@ -4,7 +4,7 @@ import { IForm, Form } from '../thing/standard/form';
 import { FileInfo, IFile, IFileInfo } from '../thing/fileinfo';
 import { IDirectory } from '../thing/directory';
 import { IWorkApply, WorkApply } from './apply';
-import { fileOperates } from '../public';
+import { entityOperates, fileOperates } from '../public';
 
 export interface IWork extends IFileInfo<schema.XWorkDefine> {
   /** 主表 */
@@ -24,6 +24,10 @@ export interface IWork extends IFileInfo<schema.XWorkDefine> {
     taskId?: string,
     pdata?: model.InstanceDataModel,
   ): Promise<IWorkApply | undefined>;
+  /** 通知变更 */
+  notify(operate: string, data: any): void;
+  /** 接收通知 */
+  receive(operate: string, data: schema.XWorkDefine): boolean;
 }
 
 export const fullDefineRule = (data: schema.XWorkDefine) => {
@@ -44,7 +48,6 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
   constructor(_metadata: schema.XWorkDefine, _application: IApplication) {
     super(fullDefineRule(_metadata), _application.directory);
     this.application = _application;
-    this.isContainer = _application.isInherited;
   }
   canDesign: boolean = true;
   primaryForms: IForm[] = [];
@@ -67,6 +70,7 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
       });
       if (res.success) {
         this.application.works = this.application.works.filter((a) => a.id != this.id);
+        this.notify('workRemove', this.metadata);
       }
       return res.success;
     }
@@ -113,11 +117,10 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
           resource: node,
         });
         if (success) {
-          this.directory.standard.propertys = this.directory.standard.propertys.filter(
-            (i) => i.key != this.key,
-          );
           this.application = app;
           app.works.push(this);
+          app.changCallback();
+          this.notify('workRemove', this.metadata);
         } else {
           this.setMetadata({ ...this.metadata, applicationId: this.application.id });
         }
@@ -126,16 +129,15 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
     }
     return false;
   }
-  content(_mode: number = 0): IFile[] {
+  content(): IFile[] {
     if (this.node) {
-      return this.forms.filter(
-        (a) => this.node!.forms.findIndex((s) => s.id == a.id) > -1,
-      );
+      const ids = this.node.forms?.map((i) => i.id) ?? [];
+      return this.forms.filter((a) => ids.includes(a.id));
     }
     return [];
   }
   async loadContent(_reload: boolean = false): Promise<boolean> {
-    await this.loadWorkNode();
+    await this.loadWorkNode(_reload);
     return this.forms.length > 0;
   }
   async update(data: model.WorkDefineModel): Promise<boolean> {
@@ -143,9 +145,7 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
     data.applicationId = this.metadata.applicationId;
     const res = await kernel.createWorkDefine(data);
     if (res.success && res.data.id) {
-      this.setMetadata(fullDefineRule(res.data));
-      this.node = data.resource;
-      this.recursionForms(this.node!);
+      this.notify('workReplace', res.data);
     }
     return res.success;
   }
@@ -196,12 +196,19 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
       );
     }
   }
-  override operates(mode?: number): model.OperateModel[] {
-    return super
-      .operates(mode)
-      .filter(
-        (a) => ![fileOperates.Copy, fileOperates.Move, fileOperates.Download].includes(a),
-      );
+  override operates(): model.OperateModel[] {
+    const operates = super.operates();
+    if (this.isInherited) {
+      operates.push({ sort: 3, cmd: 'workForm', label: '查看表单', iconType: '表单' });
+    }
+    if (operates.includes(entityOperates.Delete)) {
+      operates.push(entityOperates.HardDelete);
+    }
+    return operates
+      .filter((i) => i != fileOperates.Copy)
+      .filter((i) => i != fileOperates.Move)
+      .filter((i) => i != fileOperates.Download)
+      .filter((i) => i != entityOperates.Delete);
   }
   private async recursionForms(node: model.WorkNodeModel) {
     node.detailForms = await this.directory.resource.formColl.find(
@@ -230,5 +237,22 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
         }
       }
     }
+  }
+  notify(operate: string, data: any): void {
+    this.application.notify(operate, {
+      ...data,
+      typeName: '办事',
+      parentId: this.application.metadata.id,
+      directoryId: this.application.metadata.directoryId,
+    });
+  }
+  receive(operate: string, data: schema.XWorkDefine): boolean {
+    if (operate === 'workReplace' && data && data.id === this.id) {
+      this.setMetadata(fullDefineRule(data));
+      this.loadContent(true).then(() => {
+        this.changCallback();
+      });
+    }
+    return true;
   }
 }
