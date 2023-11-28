@@ -43,17 +43,12 @@ const useMenuUpdate = (
     }
     refreshMenu();
   };
-
-  onMounted(() => {
-    const id = ctrl.subscribe((k) => {
-      key.value = k;
-      refreshMenu();
-    });
-    return () => {
-      ctrl.unsubscribe(id);
-    };
-  })
-
+  
+  const id = ctrl.subscribe((k) => {
+    key.value = k;
+    refreshMenu();
+  });
+  ctrl.unsubscribe(id);
 
   return [key, rootMenu, selectMenu, onSelectMenu];
 }

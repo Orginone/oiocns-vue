@@ -7,7 +7,8 @@
       </div>
       <!-- --{{menuList}}-- -->
       <div class="meni-common">
-        <MenuList :items="menuList" @select="changeActive" :active-index="data.key"/>
+        <!-- <MenuList :items="menuList" @select="changeActive" :active-index="data.key"/> -->
+        <el-tree :data="data.newMenuList" :props="defaultProps" @node-click="handleNodeClick" />
       </div>
     </div>
     <div class="active">
@@ -22,23 +23,36 @@
           <span :class="showType =='部门'?'view-nav-item-active':''">部门</span> 
         </div>
       </div>
-      <listContent></listContent>
+      <listContent :item="data.item" :parentMenu="parentMenu"></listContent>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { watch } from 'vue'
 import listContent from './listContent.vue';
-import MenuList from './subMenu/menu-list.vue'
-
+import { findMenuItemByKey } from "@/utils/tools";
+import orgCtrl from "@/ts/controller";
+import * as config from "@/views/setting/config/menuOperate";
+import { setCenterStore } from "@/store/setting";
+const store= setCenterStore();
+const ctrl = orgCtrl;
 const data = reactive<any>({
   key:"",
+  newMenuList:[],
+  item:{}
 })
 const props = defineProps({
-  menuList: {
-    type:Object
-  },
+  menuList: Object,
+  selectMenu: Object,
+  siderMenuData: Object,
+  onSelect: Function
 })
+
+const parentMenu = props.selectMenu.parentMenu ?? props.siderMenuData;
+const outside =
+  props.selectMenu.menus?.filter((item: any) => item.model === 'outside') ?? [];
+const inside = props.selectMenu.menus?.filter((item: any) => item.model != 'outside') ?? [];
 // const emit = defineEmits(['select'])
 watch(
   ()=>props.menuList,
@@ -51,6 +65,19 @@ watch(
       deep:true,
   }
 )
+const handleNodeClick = async (item: any) => {
+  ctrl.currentKey = item.key;
+  let newMenus = await config.loadBrowserMenu();
+  var item:any = findMenuItemByKey(newMenus, ctrl.currentKey);
+  if (item?.beforeLoad) {
+    await item.beforeLoad();
+  }
+  console.log(item);
+  if (item === undefined) {
+    item = newMenus;
+  }
+  data.item = item.item.content();
+}
 console.log('ac',props);
 const handleOpen = (key: string, keyPath: string[]) => {
   console.log(key, keyPath);
@@ -64,6 +91,12 @@ const changeNav = (name:string)=>{
 }
 const changeActive = (key:any)=>{
     // data.key = obj.key
+}
+</script>
+
+<script lang="ts">
+export default {
+  name: "routerContent",
 }
 </script>
 

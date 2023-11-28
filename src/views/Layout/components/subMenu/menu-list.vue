@@ -10,7 +10,7 @@
     <template v-for="(item, index) in items?.children">
       <template v-if="item.children.length > 0">
         <el-sub-menu
-          :index="String(item.key)"
+          :index="String(item.key)" :key="item.key"
           popper-class="el-sub-menu-popper-class"
         >
           <template #title>
