@@ -7,7 +7,8 @@
       </div>
       <!-- --{{menuList}}-- -->
       <div class="meni-common">
-        <MenuList :items="menuList" @select="changeActive" :active-index="data.key"/>
+        <!-- <MenuList :items="menuList" @select="changeActive" :active-index="data.key"/> -->
+        <el-tree :data="data.newMenuList" :props="defaultProps" @node-click="handleNodeClick" />
       </div>
     </div>
     <div class="active">
@@ -22,7 +23,7 @@
           <span :class="showType =='部门'?'view-nav-item-active':''">部门</span> 
         </div>
       </div>
-      <listContent :parentMenu="parentMenu"></listContent>
+      <listContent :item="data.item" :parentMenu="parentMenu"></listContent>
     </div>
   </div>
 </template>
@@ -30,10 +31,16 @@
 <script lang="ts" setup>
 import { watch } from 'vue'
 import listContent from './listContent.vue';
-import MenuList from './subMenu/menu-list.vue'
-
+import { findMenuItemByKey } from "@/utils/tools";
+import orgCtrl from "@/ts/controller";
+import * as config from "@/views/setting/config/menuOperate";
+import { setCenterStore } from "@/store/setting";
+const store= setCenterStore();
+const ctrl = orgCtrl;
 const data = reactive<any>({
   key:"",
+  newMenuList:[],
+  item:{}
 })
 const props = defineProps({
   menuList: Object,
@@ -58,6 +65,19 @@ watch(
       deep:true,
   }
 )
+const handleNodeClick = async (item: any) => {
+  ctrl.currentKey = item.key;
+  let newMenus = await config.loadBrowserMenu();
+  var item:any = findMenuItemByKey(newMenus, ctrl.currentKey);
+  if (item?.beforeLoad) {
+    await item.beforeLoad();
+  }
+  console.log(item);
+  if (item === undefined) {
+    item = newMenus;
+  }
+  data.item = item.item.content();
+}
 console.log('ac',props);
 const handleOpen = (key: string, keyPath: string[]) => {
   console.log(key, keyPath);
