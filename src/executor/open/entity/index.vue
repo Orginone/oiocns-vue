@@ -1,19 +1,20 @@
 <script setup lang='ts'>
-// import { ProFormColumnsType } from '@ant-design/pro-components';
-import SchemaForm from '@/components/SchemaForm/index.vue'
-import { TargetModel } from '@/ts/base/model'
 import UploadItem from '../../tools/uploadItem.vue'
 import { schema } from '@/ts/base'
 import { formatZhDate } from '@/utils/tools'
-import orgCtrl from '@/ts/controller'
 import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
+import { TargetType } from '@orginone/oiocns-ts'
+import { IFile } from '@/ts/core'
 
 const props = defineProps<{
-  entity: schema.XEntity;
+  entity: schema.XEntity | IFile;
   finished: () => void;
 }>()
 
 const isOpen = ref(true)
+
+console.log('@props.entity',props.entity);
+
 </script>
 
 
@@ -32,7 +33,7 @@ const isOpen = ref(true)
         <UploadItem
           readonly
           :typeName="entity.typeName"
-          :icon="entity.icon"
+          :icon="(entity as schema.XEntity)?.icon || (entity as IFile)?.metadata?.icon"
         />
       </div>
       
@@ -59,13 +60,13 @@ const isOpen = ref(true)
       <div class="col-title">标识</div>
       <div class="col-content">-</div>
     </ElCol>
-    <ElCol :span="12" title="归属" v-if="entity.belongId !== entity.id">
+    <ElCol :span="12" title="归属" v-if="entity.belongId !== entity.id && entity.typeName!==TargetType.Person">
       <div class="col-title">归属</div>
       <div class="col-content">
         <EntityIcon :entityId="entity.belongId" showName />
       </div>
     </ElCol>
-    <ElCol :span="12" title="创建人" v-if="entity.createUser !== entity.id">
+    <ElCol :span="12" title="创建人" v-if="entity.createUser !== entity.id && entity.typeName!==TargetType.Person">
       <div class="col-title">创建人</div>
       <div class="col-content">
         <EntityIcon :entityId="entity.createUser" showName />

@@ -49,7 +49,7 @@ onMounted(() => {
       return setComponent(
         h(
           fullScreenModal,
-          {open:true,width: '80vw',destroyOnClose: true,title:data.name,bodyHeight: '70vh',onCancel:()=>props.finished()}, //fullScreenModal的参数
+          {open:true,destroyOnClose: true,title:data.name,onCancel:()=>props.finished()}, //fullScreenModal的参数
           h( 
             VideoView,{share:data}
           )
@@ -71,51 +71,59 @@ onMounted(() => {
     }
     if ( data.contentType?.startsWith('audio') || audioExt.includes(data.extension ?? '-') ) { // TODO:语音
       const dir = 'filedata' in props.entity ? props.entity.directory : undefined;
-      return console.log('来这改');
+      return console.log('语音预览来这改');
       // return <AudioPlayer finished={props.finished} directory={dir} share={data} />;
     }
     if (data.contentType?.startsWith('text')) { // TODO:文本
-      return console.log('来这改');
-      
+      return console.log('文本预览来这改');
       // return <CodeEditor share={data} finished={props.finished} />;
     }
-  } else if ('key' in props.entity) { // TODO:
-    console.log('来这改');
-    // switch (props.entity.typeName) {
-    //   case '表单':
-    //   case '事项配置':
-    //   case '实体配置':
-    //     return <FormView form={props.entity as any} finished={props.finished} />;
-    //   case '迁移配置':
-    //     return <TransferView current={props.entity as any} finished={props.finished} />;
-    //   case '页面模板':
-    //     return <TemplateView current={props.entity as any} finished={props.finished} />;
-    //   case '办事':
-    //   case '子流程':
-    //     return <WorkStart current={props.entity as any} finished={props.finished} />;
-    //   case '加用户':
-    //     return <JoinApply current={props.entity as any} finished={props.finished} />;
-    //   case '事项':
-    //     return <TaskContent current={props.entity as any} finished={props.finished} />;
-    //   default:
-    //     if (remarkTypes[props.entity.typeName]) {
-    //       return (
-    //         <EntityForm
-    //           cmd={`remark${remarkTypes[props.entity.typeName]}`}
-    //           entity={props.entity}
-    //           finished={props.finished}
-    //         />
-    //       );
-    //     }
-    //     if (Object.values(TargetType).includes(props.entity.typeName as TargetType)) {
-    //       return (
-    //         <EntityForm cmd="remark" entity={props.entity} finished={props.finished} />
-    //       );
-    //     }
-    // }
-  } else { // 实体信息预览
-    return setComponent(EntityPreview,{entity:props.entity,finished:props.finished})
   }
+  if ('key' in props.entity) { // TODO:
+    switch (props.entity.typeName) {
+      case '表单':
+      case '事项配置':
+      case '实体配置':
+        return console.log('表单、事项配置、实体配置来这改');
+        // return <FormView form={props.entity as any} finished={props.finished} />;
+      case '迁移配置':
+        return console.log('迁移配置来这改');
+        // return <TransferView current={props.entity as any} finished={props.finished} />;
+      case '页面模板':
+        return console.log('页面模板来这改');
+        // return <TemplateView current={props.entity as any} finished={props.finished} />;
+      case '办事':
+      case '子流程':
+        return console.log('办事、子流程来这改');
+        // return <WorkStart current={props.entity as any} finished={props.finished} />;
+      case '加用户':
+        return console.log('加用户来这改');
+        // return <JoinApply current={props.entity as any} finished={props.finished} />;
+      case '事项':
+        return console.log('事项来这改');
+        // return <TaskContent current={props.entity as any} finished={props.finished} />;
+      default:
+        if (remarkTypes[props.entity.typeName]) {
+          return console.log('来这改');
+        //   return (
+        //     <EntityForm
+        //       cmd={`remark${remarkTypes[props.entity.typeName]}`}
+        //       entity={props.entity}
+        //       finished={props.finished}
+        //     />
+        //   );
+        }
+        // TODO:
+        // if (Object.values(TargetType).includes(props.entity.typeName as TargetType)) {
+        //   // return console.log('来这改');
+        //   // return (
+        //   //   <EntityForm cmd="remark" entity={props.entity} finished={props.finished} />
+        //   // );
+        // }
+    }
+  } 
+  // 实体信息预览
+  return setComponent(EntityPreview,{entity:props.entity,finished:props.finished})
 })
 
 </script>

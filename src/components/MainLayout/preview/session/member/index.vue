@@ -10,7 +10,7 @@ const props = defineProps<{dircetory: IDirectory}>()
 
 /** 右键菜单数据 */
 const contextMenu = (file?: IFile) => {
-  var entity = file || props.dircetory
+  let entity = file || props.dircetory
   if ('targets' in entity) {
     entity = entity.directory
   }
@@ -19,11 +19,12 @@ const contextMenu = (file?: IFile) => {
       loadFileMenus(entity)?.filter(
         (i) => !['openChat', 'copy', 'parse'].includes(i.key),
       ) ?? [],
-    onClick: ({ key }: { key: string }) => {
-      command.emitter('executor', key, entity, props.dircetory.key)
+    onClick: ({key}:{key:string}) => {
+      command.emitter('executor',key,entity,'preview')
     },
   }
 }
+
 </script>
 
 <template>
@@ -69,11 +70,12 @@ const contextMenu = (file?: IFile) => {
               </ElText>
             </div>
           </ElCard>
+          <!-- 单个成员操作的右键菜单 -->
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item 
                 v-for="item in contextMenu(el).items" :key="item.key"
-                @click="contextMenu().onClick(item)"
+                @click="contextMenu(el).onClick(item)"
               >
                 <component :is="item.icon.name" v-bind="item.icon.args"/>
                 {{item.label}}
@@ -82,6 +84,7 @@ const contextMenu = (file?: IFile) => {
           </template>
         </ElDropdown>
       </div>
+      <!-- 整体右键菜单 -->
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item 

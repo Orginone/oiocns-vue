@@ -80,8 +80,9 @@ switch (props.item.msgType) {
       v-if="img && img.shareLink"
       class="con_content_txt"
       @click="command.emitter('executor', 'open', img,'preview')"
+      
     >
-      <ElImage :src="img.thumbnail" />
+      <img :src="img.thumbnail" :width="300"/>
     </div>
     <!-- 无数据或无共享链接 -->
     <div v-else class="con_content_txt">消息异常</div>

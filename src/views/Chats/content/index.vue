@@ -16,31 +16,10 @@
   // 监听变更
   const {loaded, key:msgKey} = useFlagCmdEmitter('session')
 
-  // 会话列表(关键词筛选+置顶排序)
-  // const contents = computed(()=>{
-  //   let contents: ISession[] = [...orgCtrl.chats.filter((i) => i.isMyChat)]
-  //   // 关键词筛选
-  //   contents = contents.filter(item=>
-  //       item.chatdata.chatName.includes(props.filter) ||
-  //       item.chatdata.chatRemark.includes(props.filter) ||
-  //       item.groupTags.filter((l) => l.includes(props.filter)).length > 0
-  //   )
-  //   // 排序（是否置顶）
-  //   contents =  contents.sort((a, b) => {
-  //     var num = (b.chatdata.isToping ? 10 : 0) - (a.chatdata.isToping ? 10 : 0)
-  //     if (num === 0) {
-  //       if (b.chatdata.lastMsgTime == a.chatdata.lastMsgTime) {
-  //         num = b.isBelongPerson ? 1 : -1
-  //       } else {
-  //         num = b.chatdata.lastMsgTime > a.chatdata.lastMsgTime ? 5 : -5
-  //       }
-  //     }
-  //     return num;
-  //   }) 
-  //   return contents
-  // })
+  // 会话列表
   const contents = ref<ISession[]>()
-  watch(msgKey,()=>{
+  // 当关键词或排序改变时，重新计算会话列表
+  watch([msgKey,()=>props.filter],()=>{
     contents.value = [...orgCtrl.chats.filter((i) => i.isMyChat)]
     // 关键词筛选
     contents.value = contents.value.filter(item=>

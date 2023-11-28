@@ -20,7 +20,7 @@ const locationOrigin = ref(location.origin)
       :value="`${locationOrigin}/${entity.id}`"
     />
     <dic class="entity-qr-code-img">
-      <img :src="`${entity.share.avatar?.thumbnail ?? ''}`" alt="">
+      <img v-if="entity.share.avatar?.thumbnail" :src="`${entity.share.avatar?.thumbnail}`" alt="">
     </dic>
     <div class="entity-qr-code-txt">
       {{entity.name}}

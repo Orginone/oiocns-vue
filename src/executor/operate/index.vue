@@ -8,7 +8,7 @@ import ActivityPublisher from './pubActivity/index.vue';
 // import SettingStation from './settingModal/settingStation';
 // import SettingIdentity from './settingModal/settingIdentity';
 // import { schema } from '@/ts/base';
-// import PullMember from './pullMember';
+import PullMember from './pullMember/index.vue'
 import JoinTarget from './joinTarget/index.vue'
 import FileTaskList from './fileTaskList/index.vue'
 import { useDyncamicComponent } from '../dynamicComponentHooks'
@@ -49,8 +49,7 @@ onMounted(()=>{
 if (Array.isArray(props.args) && props.args.length > 0) {
   switch (props.cmd) {
     case 'pull':
-      return console.log('来这改');
-      // return <PullMember finished={finished} current={args[0]} />;
+      return setContent(PullMember,{finished: props.finished, current:props.args[0]})
     case 'taskList': // 上传进度列表
       return setContent(FileTaskList, {directory: props.args[0], finished: props.finished})
     case 'settingAuth':

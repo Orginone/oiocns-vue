@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { XTarget } from '@/ts/base/schema'
 import { IBelong, TargetType } from '@/ts/core'
-import SearchTarget from '@/components/Common/SearchTarget/index.vue';
-import { schema } from '@/ts/base';
+import SearchTarget from '@/components/Common/SearchTarget/index.vue'
+import { schema } from '@/ts/base'
+import { ElMessage } from 'element-plus'
 
 const props = defineProps<{
   cmd: string;
@@ -39,10 +40,13 @@ switch (props.cmd) {
 }
 // 确认按钮点击
 const onOk= async () => {
+  console.log(props.current);///////
   if (await props.current.applyJoin(selectMembers.value)) {
     props.finished()
     isShowDialog.value = false
+    return ElMessage.success('邀请成功')
   }
+  return ElMessage.error('邀请失败')
 }
 </script>
 
@@ -71,7 +75,7 @@ const onOk= async () => {
   </ElDialog>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .el-dialog.my-dialog{
   .el-dialog__header {
     .el-dialog__title {

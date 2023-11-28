@@ -252,21 +252,24 @@ const deleteEntity = (entity: IFile, hardDelete: boolean) => {
 
 /** 移除成员 */
 const removeMember = (member: IMemeber) => {
-  console.log('here');
-  
-  // Modal.confirm({
-  //   icon: <></>,
-  //   title: `确认要移除成员[${member.name}]吗?`,
-  //   onOk: () => {
-  //     member.directory.target
-  //       .removeMembers([member.metadata])
-  //       .then((success: boolean) => {
-  //         if (success) {
-  //           orgCtrl.changCallback();
-  //         }
-  //       });
-  //   },
-  // });
+  ElMessageBox.alert(
+    `确认要移除成员[${member.name}]吗?`,
+    '',
+    {
+      confirmButtonText: '确认',
+      showCancelButton: true,
+      cancelButtonText: '取消',
+      callback:  () => {
+        member.directory.target
+        .removeMembers([member.metadata])
+        .then((success: boolean) => {
+          if (success) {
+            orgCtrl.changCallback();
+          }
+        });
+      }
+    }
+  )
 }
 
 /** 上下线提醒 */

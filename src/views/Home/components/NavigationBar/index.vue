@@ -173,7 +173,7 @@ const setMore = (value:boolean) => {
     // TODO:
     // background-color: @component-background;
     background-color: #fafafa;
-    z-index: 1;
+    z-index: 1000;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
   }
 

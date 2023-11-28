@@ -50,7 +50,7 @@ onMounted(()=>{
           
         case 'design':
           // TODO: 设计器
-          return console.log('来这改');
+          return console.log('设计器来这改');
           // return setContent(
           //   <DesignExecutor cmd={cmd} entity={args[0]} finished={resetContent} />,
           // );
