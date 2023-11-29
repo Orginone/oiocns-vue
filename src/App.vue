@@ -1,26 +1,40 @@
 <template>
   <Suspense>
     <template #default>
-      <el-config-provider>
+      <el-config-provider :locale="locale">
         <div class="pages" >
           <router-view />
         </div>
       </el-config-provider>
     </template>
-    <template #fallback> Loading ... </template>
+    <template #fallback>
+      <div class="pages" v-loading></div>
+    </template>
   </Suspense>
 </template>
 
-<script lang="ts">
-// import 'element-plus/theme-chalk/el-loading.css'
-// import 'element-plus/theme-chalk/el-message.css'
+<script lang="ts" setup>
 
 import { defineComponent } from 'vue'
 import { ElConfigProvider,ElMessage } from 'element-plus'
-// import zhCn from 'element-plus/lib/locale/lang/zh-cn'
-// import { logger,LoggerLevel } from '@/ts/coreIndex';
-import moment from 'moment'
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import { logger,LoggerLevel } from '@/ts/coreIndex'
 
+// TODO:
+// import moment from 'moment'
+// import 'moment/locale/zh-cn'
+// import config from 'devextreme/core/config'
+// import { loadMessages, locale } from 'devextreme/localization'
+// import zhMessage from 'devextreme/localization/messages/zh.json'
+
+// moment.locale('zh-cn')
+// config({ defaultCurrency: 'zh' })
+// loadMessages(zhMessage)
+// locale('zh')
+
+const locale = ref(zhCn)
+
+// TODO:
 // logger.onLogger = (level:LoggerLevel, msg:any) => {
 //   switch (level) {
 //     case LoggerLevel.info:
@@ -49,16 +63,7 @@ import moment from 'moment'
 //       // return r.push('/login');
 //   }
 // }
-export default defineComponent({
-  components: {
-    ElConfigProvider
-  },
-  setup() {
-    return {
-      // locale: zhCn
-    }
-  }
-})
+
 </script>
 
 <style lang="scss">
