@@ -21,26 +21,24 @@ const props = defineProps<{
 </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
   .dataItem {
     min-width: 120px;
     padding: 16px;
     text-align: center;
-    &Title{
+    &Title {
       color: #686868;
       font-size: 14px;
       margin-bottom: 10px;
     }
-    &Number{
+    &Number {
       font-weight: bold;
       color: #313131;
       font-size: 28px;
     }
     &:hover {
       border-radius: 10px;
-      // TODO:
-      // background: @active-background;
-      background-color: #e6f1ff;
+      background: @active-background;
     }
   }
 </style>

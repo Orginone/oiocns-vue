@@ -48,6 +48,7 @@ import Smile from './im/Smile.vue'
 import Mic from './im/Mic.vue'
 import VideoCamera  from './im/VideoCamera.vue'
 import Bell from './im/Bell.vue'
+import Rocket from './im/Rocket.vue'
 
 export {
   Smile,
@@ -100,5 +101,5 @@ export {
   Mic,
   VideoCamera,
   Bell,
-  
+  Rocket
 }

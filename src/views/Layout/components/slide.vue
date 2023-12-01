@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+  <script lang="ts" setup>
 import orgIcons from "@/components/Common/GlobalComps/orgIcons.vue"
 import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
 import orgCtrl from '@/ts/controller'
@@ -8,7 +8,6 @@ import navItem from './navItem.vue'
 
 const workCount = ref(0)
 const msgCount = ref(0)
-const online = ref (0)
 const onlineVisible = ref(false)
 useFlagCmdEmitter('session', () => {
   let noReadCount = 0;
@@ -23,42 +22,39 @@ onMounted(() => {
   const workId = orgCtrl.work.notity.subscribe(async () => {
     workCount.value = orgCtrl.work.todos.length
   })
-  kernel.onlineNotify.subscribe(() => {
-    online.value = kernel.onlineIds.length
-  })
   return () => {
     orgCtrl.work.notity.unsubscribe(workId)
   }
 })
 const actions = [
   {
-    text: "门户",
-    icon: "home",
-    path: "/home",
+    text: '门户',
+    icon: 'home',
+    path: '/home',
     count: 0,
   },
   {
-    text: "沟通",
-    icon: "chat",
-    path: "/chat",
+    text: '沟通',
+    icon: 'chat',
+    path: '/chat',
     count: msgCount,
   },
   {
-    text: "办事",
-    icon: "work",
-    path: "/work",
+    text: '办事',
+    icon: 'work',
+    path: '/work',
     count: workCount,
   },
   {
-    text: "存储",
-    icon: "store",
-    path: "/store",
+    text: '数据',
+    icon: 'store',
+    path: '/store',
     count: 0,
   },
   {
-    text: "设置",
-    icon: "setting",
-    path: "/setting",
+    text: '关系',
+    icon: 'relation',
+    path: '/relation',
     count: 0,
   },
 ]
@@ -83,7 +79,7 @@ const actions = [
         <navItem v-for="item in actions" :key="item.path"
           :item = "item"
         />
-        <!-- 在线信息 -->
+        <!-- TODO:在线信息 -->
         <OnlineInfo v-if="onlineVisible" :onClose="() => onlineVisible = false" />
       </ElSpace>
     </div>
@@ -113,19 +109,23 @@ const actions = [
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-  .user{
-    margin: 10px 0;
-    img{
-      width: 45px;
-      height: 45px;
+    .user{
+      margin: 10px 0;
+      img{
+        width: 45px;
+        height: 45px;
+      }
     }
+    .nav-bar {
+      padding-top: 25px;
+    }
+    .exit{
+      margin-bottom: 10px;
+      text-align: center;
+      color:#366ef4;
+    }    
   }
-  .exit{
-    margin-bottom: 10px;
-    text-align: center;
-    color:#366ef4;
-  }
+
 }
 .item {
   padding: 10px 0;

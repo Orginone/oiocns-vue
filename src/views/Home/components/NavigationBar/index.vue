@@ -9,6 +9,7 @@ import { command } from '@/ts/base'
 import orgCtrl from '@/ts/controller'
 import { generateUuid } from '@/utils/excel'
 import ViewerHost from '@/executor/open/page/view/ViewerHost.vue'
+import ViewerManager from '@/executor/open/page/view/ViewerManger'
 import { h } from 'vue'
 
 const props = defineProps<{
@@ -26,7 +27,7 @@ const more = ref(false)
 const pages = ref<IPageTemplate[]>()
 // 首页显示的页面
 const homePages = ref<NavigationItem[]>()
-// 订阅页面变化，获取被设为常用的页面
+// 订阅页面变化，获取并处理被设为常用的页面
 const id = command.subscribeByFlag('pages', async () => {
   pages.value = await orgCtrl.loadPages()
   homePages.value = [
@@ -39,9 +40,8 @@ const id = command.subscribeByFlag('pages', async () => {
         label: item.name,
         backgroundImageUrl: '',
         type: 'page',
-        // component: <ViewerHost ctx={{ view: new ViewerManager(item) }} />,
-        // component: h(ViewerHost,{ctx:{view:new ViewerManager(item)}}),
-        component: h(ViewerHost),
+        component: h(ViewerHost,{ctx:{view:new ViewerManager(item)}}),
+        // component: h(ViewerHost),
       } 
       return navigation
     })   
@@ -150,13 +150,14 @@ const onSave = () => {
 <style lang="scss" scoped>
 // TODO:
 .navigationBar {
+  z-index: 10;
   border-radius: 30px;
   position: fixed;
   top: 16px;
-  right: calc(50vw - 160px);
-  margin-left: 60px;
+  left: 50%;
+  transform: translateX(-50%);
   // background-color: rgba(@component-background, 0.7);
-  background-color: rgba(white,0.7);
+  background-color: rgba(250,250,250,.6);
   display: flex;
   font-size: 14px;
   // color: @text-color;
@@ -167,12 +168,12 @@ const onSave = () => {
   &Content {
     display: flex;
     justify-content: center;
-    gap: 16px;
+    gap: 8px;
     flex: 1;
     &__item {
       transition: .2s;
       cursor: pointer;
-      padding: 4px 16px;
+      padding: 5px 16px;
       &:hover {
         border-radius: 30px;
         // background-color:@active-background;
@@ -254,6 +255,4 @@ const onSave = () => {
     }
   }
 }
-
-
 </style>

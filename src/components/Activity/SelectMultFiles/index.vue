@@ -12,7 +12,6 @@ const props = defineProps<{
   currentKey?: string,
   onChange: (fileList: ISysFileInfo[]) => void
 }>()
-
 const open = ref(false)
 const fileList = ref<ISysFileInfo[]>([])
 

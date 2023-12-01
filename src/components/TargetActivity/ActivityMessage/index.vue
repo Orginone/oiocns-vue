@@ -253,7 +253,8 @@ const handleReply = async (userId: string = '') => {
       align-items: flex-start;
       max-width: 100%;
       .listItemMetaContent {
-        flex: 1;
+        flex: 1 0;
+        width: 0;
         .listItemMetaContentTitle {
           margin-top: 12px;
           font-weight: bold;

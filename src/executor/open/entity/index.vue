@@ -3,7 +3,7 @@ import UploadItem from '../../tools/uploadItem.vue'
 import { schema } from '@/ts/base'
 import { formatZhDate } from '@/utils/tools'
 import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
-import { TargetType } from '@orginone/oiocns-ts'
+import { TargetType } from '@/ts/core'
 import { IFile } from '@/ts/core'
 
 const props = defineProps<{

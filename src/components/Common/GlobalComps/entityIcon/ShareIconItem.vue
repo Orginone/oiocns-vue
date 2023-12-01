@@ -24,7 +24,11 @@ const fontSize = size > 14 ? 14 : size;
       <div class="share-avatar" :class="{'showInfoMore':entity&&size>18}" :title="title ?? ''">
         <InfoMore :entity="props?.entity" :size="size"/>
         <ElAvatar shape="square" :size="size" :src="share.avatar.thumbnail" />
-        <b v-if="showName" :style="{ marginLeft: '6px', fontSize: fontSize }">{{share.name}}</b>
+        <strong class="pickupName" v-if="showName" 
+          :style="{ marginLeft: '6px', fontSize: fontSize }"
+        >
+          {{share.name}}
+        </strong>
       </div>     
     </template>
     <!-- 无缩略图 -->
@@ -52,7 +56,7 @@ const fontSize = size > 14 ? 14 : size;
               :size="size"
             />            
           </ElAvatar>
-          <b v-if="showName" :style="{ marginLeft: '6px', fontSize: fontSize }">{{share.name}}</b>
+          <strong class="pickupName" v-if="showName" :style="{ marginLeft: '6px', fontSize: fontSize }">{{share.name}}</strong>
         </div>        
       </template>
     </template>
@@ -66,7 +70,7 @@ const fontSize = size > 14 ? 14 : size;
       >
         <TypeIcon avatar iconType='其它' :size='size' />
       </ElAvatar>
-      <strong v-if="showName" :style="{ marginLeft: '6px', fontSize: fontSize }">{{entity?.id}}</strong>
+      <strong class="pickupName" v-if="showName" :style="{ marginLeft: '6px', fontSize: fontSize }">{{entity?.id}}</strong>
     </div>
   </template>
 </template>
@@ -80,5 +84,11 @@ const fontSize = size > 14 ? 14 : size;
   &.showInfoMore {
     // margin: 12px 0 0 12px;
   }
+}
+.pickupName {
+  color: #003CAB;
+  margin-left: 6px;
+  font-size: 12px;
+  vertical-align: middle;
 }
 </style>

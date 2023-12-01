@@ -15,16 +15,11 @@ const props = defineProps<{
 const actionList = ref<IActivityMessage[]>(props.activity.activityList)
 
 // 订阅变更
-let id = ''
-onMounted(() => {
-  const id = props.activity.subscribe(() => {
-    actionList.value = [...props.activity.activityList]
-  })
+const id = props.activity.subscribe(() => {
+  actionList.value = [...props.activity.activityList]
 })
 // 取消订阅
-onBeforeUnmount(() => {
-  props.activity.unsubscribe(id);
-})
+onBeforeUnmount(() => props.activity.unsubscribe(id))
 
 // 加载更多
 const loadMoreActivity = async(e:ReachBottomEvent) => {
@@ -40,13 +35,7 @@ const loadMoreActivity = async(e:ReachBottomEvent) => {
 </script>
 
 <template>
-  <ElCard
-    v-if="actionList"
-    body-style="
-      border: 0;
-      width:100%;
-      height: calc(100% - 56px);
-    "
+  <ElCard v-if="actionList"
     shadow="never"
   >
     <!-- 动态卡片——header -->
@@ -76,8 +65,7 @@ const loadMoreActivity = async(e:ReachBottomEvent) => {
       <div class="actionList">
         <template v-if="actionList?.length">
           <ActivityItem
-            v-for="actionItem in actionList"
-            :key="actionItem.key"
+            v-for="actionItem in actionList" :key="actionItem.key"
             :item="(actionItem as IActivityMessage)"
             :activity="(actionItem.activity as IActivity)"
           />

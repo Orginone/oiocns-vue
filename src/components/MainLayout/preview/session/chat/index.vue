@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import GroupContent from './GroupContent/index.vue'
-import GroupInputBox from './GroupInputBox/index.vue'
+import SendBox from './SendBox/index.vue'
 import ChatShareForward from './ChatShareForward/index.vue';
 import { ISession, IMessage } from '@/ts/core';
 // import { RiShareForwardLine } from '@/icons/ri';
@@ -85,12 +85,11 @@ const multiDelete = async() => {
     />
     <!-- 输入区 -->
     <div class="chart_input" v-if="!multiSelectShow">
-      <GroupInputBox
+      <SendBox
         :chat="chat"
         :writeContent="writeContent"
         :citeText="(citeText as any)"
         :closeCite="(e: string) => citeText = e" 
-        :enterCiteMsg="(e: any) => enterCiteMsg = e" 
       />
     </div>
     <!-- 多选操作 -->
@@ -147,7 +146,7 @@ const multiDelete = async() => {
 </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .cohort_wrap {
   width: 100%;
   height: 100%;
@@ -155,14 +154,6 @@ const multiDelete = async() => {
   justify-content: space-between;
   overflow: hidden;
   position: relative;
-  // margin-top: -10px;
-  // border-top: 1px solid #f2f2f2;
-  .custom_group_silder_menu {
-    width: 300px;
-    // border-right: 1px solid #dcdfe6;
-    background-color: #fff;
-  }
-
   .chart_page {
     height: 100%;
     display: flex;
@@ -174,7 +165,6 @@ const multiDelete = async() => {
 
     .chart_input {
       height: max-content;
-      min-height: 227px;
       border-top: 1px solid #dde4f3;
       .el-textarea__inner {
         // color: #fff;

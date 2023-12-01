@@ -213,7 +213,7 @@ const userLogin = async (data: {
 }) => {
   btnLoading.value = true;
   // console.log("orgCtrl", orgCtrl);
-  const res = await orgCtrl.provider.login(data.username, data.password);
+  const res = await orgCtrl.auth.login({account:data.username, password:data.password})
   // console.log("res", res);
   if (res.msg == "success") {
     router.push("/home");

@@ -2,7 +2,7 @@ import { model } from '@/ts/base';
 import moment from 'moment';
 import { formatDate } from '@/utils/index';
 import { ElMessage } from 'element-plus';
-import { DataType, MenuItemType, PageData } from '@/typings/globelType';
+import { DataType, MenuItemType, OperateMenuType, PageData } from '@/typings/globelType';
 
 const dateFormat: string = 'YYYY-MM-DD';
 
@@ -314,7 +314,7 @@ const parseHtmlToText = (html: string) => {
   return text.replace(/[\r\n]/g, ''); //去掉回车换行
 };
 
-/** */
+/** 清空菜单 */
 const cleanMenus = (items?: OperateMenuType[]): OperateMenuType[] | undefined => {
   const newItems = items?.map((i) => {
     return {
@@ -328,7 +328,40 @@ const cleanMenus = (items?: OperateMenuType[]): OperateMenuType[] | undefined =>
     return newItems;
   }
   return undefined;
-};
+}
+/** 根据节点id获取节点信息 */
+const getNodeByNodeId = (
+  id: string,
+  node: model.WorkNodeModel | undefined,
+): model.WorkNodeModel | undefined => {
+  if (node) {
+    if (id === node.id) return node;
+    const find = getNodeByNodeId(id, node.children);
+    if (find) return find;
+    for (const subNode of node?.branches ?? []) {
+      const find = getNodeByNodeId(id, subNode.children);
+      if (find) return find;
+    }
+  }
+}
+/** 加载网关节点 */
+const loadGatewayNodes = (
+  node: model.WorkNodeModel,
+  memberNodes: model.WorkNodeModel[],
+) => {
+  if (node.type == '网关') {
+    memberNodes.push(node);
+  }
+  if (node.children) {
+    memberNodes = loadGatewayNodes(node.children, memberNodes);
+  }
+  for (const branch of node.branches ?? []) {
+    if (branch.children) {
+      memberNodes = loadGatewayNodes(branch.children, memberNodes);
+    }
+  }
+  return memberNodes;
+}
 
 export {
   dateFormat,
@@ -350,5 +383,7 @@ export {
   showMessage,
   truncateString,
   validIsSocialCreditCode,
-  cleanMenus
-};
+  cleanMenus,
+  getNodeByNodeId,
+  loadGatewayNodes
+}
