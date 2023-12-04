@@ -24,7 +24,7 @@ const props = defineProps<{
 
   
   const dircetory=ref<IDirectory>(props.current === 'disk' ? orgCtrl.user.directory : props.current)
-  const [key] = useCtrlUpdate(dircetory.value)
+  const [key] = useCtrlUpdate(dircetory.value as IDirectory)
   const [loaded] = useAsyncLoad(() => dircetory.value.loadContent())
   const focusFile=ref<IFile>()
   const [submitHanlder,clearHanlder]=useTimeoutHanlder()
@@ -128,16 +128,15 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="directory-viewer" v-if="current" :v-loading="!loaded" element-loading-text="'加载中...'">
+  <div class="directory-viewer" v-if="current" v-loading="!loaded" element-loading-text="'加载中...'">
     <DirectoryViewer
-      :key="key"
+      :content="contents"
       extraTags
       :initTags="['全部']"
       :accepts="accepts"
       :excludeIds="excludeIds"
       :selectFiles="selects || []"
       :focusFile="focusFile"
-      :content="contents"
       :fileOpen="(entity, dblclick) => clickHanlder(entity as IFile, dblclick)"
       :contextMenu="(entity) => contextMenu(entity as IFile)"
     />

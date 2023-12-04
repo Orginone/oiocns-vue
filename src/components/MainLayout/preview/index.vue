@@ -47,9 +47,6 @@ type EntityType =
 const entity=ref<EntityType>()
 entity.value = props.entity
 let id = ''
-watch(()=>props.flag,(v)=>{
-  console.log(v);
-})
 onMounted(() => {
   id = command.subscribe((type, flag, ...args: any[]) => {
     if (type !== 'preview' || flag !== props.flag) return;
@@ -117,8 +114,8 @@ onBeforeUnmount(() => {
       } -->
     </template>
     <!-- 全部文件 -->
-    <template v-else-if="entity.hasOwnProperty('standard')">
-      <Directory :current="(entity as IDirectory)" />
+    <template v-else-if="entity?.isContainer">
+      <Directory :key="(entity as IDirectory).key" :root="(entity as IDirectory)" />
     </template>
     <!-- 实体信息展示 -->
     <template v-else>

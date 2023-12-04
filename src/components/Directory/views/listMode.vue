@@ -12,6 +12,9 @@ const props = defineProps<{
   contextMenu: (file?: IDEntity) => any
 }>()
 
+onBeforeUpdate(()=>{
+  console.count('update')
+})
 
 </script>
 
@@ -70,8 +73,6 @@ const props = defineProps<{
       </ElDropdown>
     </div>
   </template>
-  <!-- 空白区域 -->
-  <!-- <div class="blank_area"></div> -->
 </template>
 
 <style lang="scss" scoped>

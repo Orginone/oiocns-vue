@@ -50,10 +50,7 @@ const onSelect = (item: any) => {
   message.value+=item.name
 }
 /** 点击空白处取消 @ 弹窗 */
-window.addEventListener('click', () => {
-  citeShow.value = false
-})
-
+window.addEventListener('click', () => citeShow.value = false)
 /** @description: 提交聊天内容 */
 const submit = async () => {
   if (message.value.length > 0) {
@@ -67,26 +64,6 @@ const submit = async () => {
     message.value = ''
     props.closeCite()
   }
-}
-/**  @description: 解析聊天内容 */
-const reCreatChatContent = (
-  elementChild: NodeList | any[],
-  mentions: string[],
-): Array<string> => {
-  // 判断聊天格式
-  const arrElement = Array.from(elementChild);
-  if (arrElement.length > 0) {
-    return arrElement.map((n) => {
-      if (n.nodeName == 'AT') {
-        mentions.push(n.id);
-      }
-      if (n.nodeName == 'IMG') {
-        return `$IMG[${n.src}]`;
-      }
-      return `${n.textContent}`;
-    });
-  }
-  return [];
 }
 /** 是否开启截屏 */
 const isCut = ref(false)
@@ -196,13 +173,14 @@ const handleOk = async (files: IFile[]) => {
       </div>
     </div>
     <!-- 发送按钮 -->
-    <ElIcon title="发送"
-      :size="26"
-      @click="submit"
-      :color="message?.length > 0 ? '#3838b9' : '#909090'"
-    >
-      <Rocket />
-    </ElIcon>
+    <ElButton title="发送" link @click="submit">
+      <ElIcon 
+        :size="26"
+        :color="message?.length > 0 ? '#3838b9' : '#909090'"
+      >
+        <Rocket />
+      </ElIcon>
+    </ElButton>
   </div>
   <!-- 截图功能 -->
   <Cutting

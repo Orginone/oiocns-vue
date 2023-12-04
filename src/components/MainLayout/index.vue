@@ -3,7 +3,6 @@
 <!-- 插槽：rightBar、default -->
 <script setup lang="ts">
 
-// import { Col, Divider, Dropdown, Layout, Row, Space, Typography, Button } from 'antd';
 import CustomMenu from '@/components/CustomMenu/index.vue'
 import CustomBreadcrumb from '@/components/CustomBreadcrumb/index.vue'
 import { MenuItemType, OperateMenuType } from '@/typings/globelType';
@@ -27,14 +26,11 @@ import {ArrowRight} from '@element-plus/icons-vue'
     onMenuClick?: (item: MenuItemType, menuKey: string) => void;
   }>()
 
-  const [leftSider, setLeftSider] = useStorage<boolean>('leftSider', false);
-  const [rightSider, setRightSider] = useStorage<boolean>('rightSider', false);
-  const [mainWidth, setMainWidth] = useStorage<string | number>('mainWidth', '40%');
+  const [leftSider, setLeftSider] = useStorage<boolean>('leftSider', false)
+  const [rightSider, setRightSider] = useStorage<boolean>('rightSider', false)
+  const [mainWidth, setMainWidth] = useStorage<string | number>('mainWidth', '40%')
   const parentMenu = props.selectMenu.parentMenu ?? props.siderMenuData;
-  
-  const outside = props.selectMenu.menus?.filter((item) => item.model === 'outside') ?? [];
- 
-  const inside = props.selectMenu.menus?.filter((item) => item.model != 'outside') ?? [];
+
   const findMenus = (
     key: string,
     menus?: OperateMenuType[],
@@ -49,7 +45,7 @@ import {ArrowRight} from '@element-plus/icons-vue'
         }
       }
     }
-  };
+  }
   /** 点击操作菜单 */
   const onOperateMenuClick = async (item: MenuItemType, key: string) => {
     const menu = findMenus(key, item.menus);
@@ -61,15 +57,15 @@ import {ArrowRight} from '@element-plus/icons-vue'
 
   const onSelectClick = async (item: MenuItemType) => {
     if (item.beforeLoad) {
-      await item.beforeLoad();
+      await item.beforeLoad()
     }
-    props.onSelect?.apply(this, [item]);
+    props.onSelect?.apply(this, [item])
   }
 </script>
 
 <template>
   <ElContainer class="main_layout">
-    <!-- header -->
+    <!-- MainLayout-header -->
     <ElHeader class="header">
       <!-- 面包屑+左侧栏 -->
       <CustomBreadcrumb
@@ -79,7 +75,7 @@ import {ArrowRight} from '@element-plus/icons-vue'
           onSelectClick(item);
         }"
       />
-      <!-- 切换主测栏-辅助侧栏-右侧插槽-else -->
+      <!-- 右侧操作&右侧插槽 -->
       <div>
         <ElSpace wrap :size="20">
           <!-- 切换主侧栏 -->
@@ -103,71 +99,13 @@ import {ArrowRight} from '@element-plus/icons-vue'
           </div>
           <!-- 右侧栏插槽 -->
           <slot name="rightBar" />
-          <!-- 头部——右侧操作 -->
-          <template v-if="outside.length > 0">
-            <div
-              v-for="item in outside" :key="item.key"
-              :title="item.label"
-              style="font-size: 18px;cursor: pointer;"
-              @click="onOperateMenuClick(props.selectMenu, item.key)"
-            >
-              <component :is="item.icon.name" v-bind="item.icon.args"/>
-            </div>
-          </template>
-          <!-- 头部——右侧操作——更多操作 -->
-          <ElDropdown
-            v-if="inside.length > 0"
-            placement="bottom"
-            :trigger="['click', 'contextmenu']"
-          >
-            <ElIcon :size="22" style="cursor: pointer;"><MoreFilled /></ElIcon>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item 
-                  v-for="item in cleanMenus(inside)" 
-                  :key="item.key"
-                >
-                  <!-- 含子项 -->
-                  <template v-if="item?.children?.length>0">
-                    <ElPopover trigger="hover" placement="left-start" :show-arrow="false">
-                      <template #reference>
-                        <div class="menu-item-btn" @click="onOperateMenuClick(selectMenu, item.key);">
-                          <div style="width: 85px;display: flex;align-items: center;justify-content: space-between;">
-                            <component v-if="item.icon" :is="item.icon.name" v-bind="item.icon.args"/>
-                            <span>{{ item.label }}</span>
-                            <el-icon style="margin-right: 0;"><ArrowRight /></el-icon>
-                          </div>
-                        </div>
-                      </template>
-                      <template #default>
-                        <div
-                          class="menu-item-btn"  
-                          v-for="i in item.children" :key="i.key" 
-                          @click="onOperateMenuClick(selectMenu, i.key);"
-                        >
-                          <component :is="i.icon?.name" v-bind="i.icon?.args"/>
-                          {{ i.label }}
-                        </div>
-                      </template>
-                    </ElPopover>
-                  </template>
-                  <!-- 不含子项 -->
-                  <template v-else>
-                    <div class="menu-item-btn"  @click="onOperateMenuClick(selectMenu, item.key)">
-                      <component v-if="item.icon" :is="item.icon.name" v-bind="item.icon.args"/>
-                      <span>{{ item.label }}</span>
-                    </div>
-                  </template>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </ElDropdown>
         </ElSpace>
       </div>
     </ElHeader>
-    <!-- body -->
+    <!-- MainLayout-body -->
     <ElContainer class="body">
-      <!-- body-左侧目录 -->
+
+      <!-- body-左侧菜单目录 -->
       <ElAside v-if="leftShow || leftSider" class="sider" width="250px">
         <div class="title">
           <span v-if="parentMenu.key != props.siderMenuData.key" class="backup" @click="onSelectClick(parentMenu)">
@@ -180,7 +118,7 @@ import {ArrowRight} from '@element-plus/icons-vue'
             <ElText truncated>{{parentMenu.label}}</ElText>
           </div>
         </div>
-        <!-- 菜蛋 -->
+        <!-- 菜单 -->
         <div class="container" id="templateMenu">
           <CustomMenu
             :item="parentMenu"
@@ -194,26 +132,22 @@ import {ArrowRight} from '@element-plus/icons-vue'
         </div>
       </ElAside>
       <!-- body-右侧 -->
-      <ElMain v-if="rightShow || rightSider" class="main">
-        <!-- 左侧 -->
+      <ElMain  class="main">
+        <!-- 文件目录 -->
         <DxResizable
           handles='right'
-          :width="mainWidth"
+          :width="(rightShow || rightSider) ? mainWidth : '100%'"
           :onResize="(e:any) => setMainWidth(e.width)"
         >
-          <div class="content" style="width: 100%;">
-            <!-- 内容-默认插槽 -->
+          <!-- 内容-默认插槽 -->
+          <div class="content" style="width: 100%;" >
             <slot />
           </div>
         </DxResizable>
-        <!-- 右侧 -->
-        <div class="content">
+        <!-- 预览-->
+        <div class="content" v-show="rightShow || rightSider">
           <EntityPreview v-if="previewFlag?.length>0" :entity="selectMenu.item" :flag="previewFlag" />
         </div>
-      </ElMain>
-      <!-- 内容-默认插槽 -->
-      <ElMain v-else class="content">
-        <slot></slot>
       </ElMain>
     </ElContainer>
   </ElContainer>

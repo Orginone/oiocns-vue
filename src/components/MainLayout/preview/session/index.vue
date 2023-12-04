@@ -1,18 +1,14 @@
 <script setup lang="ts">
 import TeamIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
-import { ISession, ITarget, TargetType } from '@/ts/core'
-import { ellipsisText } from '@/utils'
+import { IDEntity, ISession, ITarget, TargetType,IFile } from '@/ts/core'
 import ChatBody from './chat/index.vue'
-import MemberContent from './member/index.vue'
 import { command } from '@/ts/base'
 import TargetActivity from '@/components/TargetActivity/index.vue'
-import { AddressBook, Qrcode, Bubbles2, Lifebuoy, Folder } from '@/icons/im'
-import orgCtrl from '@/ts/controller'
-import { useRouter } from 'vue-router'
+import { loadFileMenus } from '@/executor/fileOperate'
 import OrgIcons from '@/components/Common/GlobalComps/orgIcons.vue'
 import Directory from '@/components/Directory/index.vue'
-
-const router = useRouter()
+import DirectoryViewer from '@/components/Directory/views/index.vue'
+import { cleanMenus } from '@/utils/tools'
 
 const props = defineProps<{
   target: ITarget;
@@ -22,6 +18,7 @@ const props = defineProps<{
 
 const actions = ref<string[]>()
 const bodyType=ref(props.setting ? 'activity' : 'chat')
+
 watch(() => props.session, () => {
   const newActions: string[] = []
   if (props.session.target.typeName === TargetType.Storage) {
@@ -108,20 +105,25 @@ const getTitle = (flag: string) => {
       <ChatBody v-if=" bodyType==='chat'"  :chat="session" filter='' />
       <!-- 动态 -->
       <TargetActivity v-else-if="bodyType==='activity'" height="700" :activity="session.activity" />      
-      <!-- TODO:数据 -->
+      <!-- 数据 -->
       <Directory v-else-if="bodyType==='store'" :root="session.target.directory"/>
-      <!-- TODO:关系 -->
-      <template v-else-if="bodyType==='member'">
-        <template v-if="session.members.length > 0 || session.id === session.userId">
-          <MemberContent :dircetory="target.memberDirectory" />
-        </template> 
-        <template v-else-if="setting">
-          <TargetActivity height="700" :activity="session.activity" />
-        </template>
-        <template v-else>
-          <ChatBody :chat="session" filter='' />;
-        </template>
-      </template>
+      <!-- 关系 -->
+      <DirectoryViewer v-else-if="bodyType==='relation'" 
+        extraTags
+        :initTags="['成员']"
+        :selectFiles="[]"
+        :content="session.target.memberDirectory.content()"
+        :fileOpen="()=>{}"
+        :contextMenu="(entity: IDEntity | undefined) => {
+          const file = (entity as IFile) || session.target.memberDirectory;
+          return {
+            items: cleanMenus(loadFileMenus(file)) || [],
+            onClick: ({ key }) => {
+              command.emitter('executor', key, file);
+            },
+          }
+        }"
+      />
     </div>
   </div>
 </template>

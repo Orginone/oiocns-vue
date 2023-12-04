@@ -3,7 +3,6 @@
 
 import IconMode from './iconMode.vue'
 import ListMode from './listMode.vue'
-// import TableMode from './tableMode.vue'
 import useStorage from '@/hooks/useStorage'
 import SegmentContent from '@/components/Common/SegmentContent/index.vue'
 import { IDEntity } from '@/ts/core'
@@ -28,7 +27,10 @@ const props = defineProps<{
   badgeCount?: (tag: string) => number
   tagChanged?: (tag: string) => void
   fileOpen: (file: IDEntity | undefined, dblclick: boolean) => void;
-  contextMenu: (file?: IDEntity) => any
+  contextMenu: (file?: IDEntity) => {
+    items: any
+    onClick: (item: any) => void
+  }
 }>()
 
 
@@ -36,11 +38,10 @@ const props = defineProps<{
 const currentTag=ref(props.initTags.length > 0 ? props.initTags[0] : '')
 const [segmented, setSegmented] = useStorage('segmented', 'list')
 
-
-/** 查询内容 */
-const getContent = (filter: boolean = true) => {
+/** 经过筛选的内容 */
+const filteredContent = computed(() => {
   if (props.extraTags) {
-    if (filter && currentTag.value == '已选中') {
+    if (currentTag.value == '已选中') {
       return props.selectFiles
     }
     const tagFilter = (file: IDEntity) => {
@@ -49,7 +50,7 @@ const getContent = (filter: boolean = true) => {
         success = !props.excludeIds.includes(file.id);
       }
       // 根据选中标签、未删除进行筛选
-      if (filter && success) {
+      if (success) {
         if (currentTag.value !== '全部' && currentTag.value != '最近') {
           success = file.groupTags.includes(currentTag.value);
         } else {
@@ -59,46 +60,39 @@ const getContent = (filter: boolean = true) => {
       if (success && props.accepts && props.accepts.length > 0) {
         success = file.groupTags.some((i) => props.accepts!.includes(i));
       }
-      return success;
+      return success
     }
     return props.content.filter(tagFilter)
   }
   return props.content
-}
-
+})
 </script>
 
 <template>
   <!-- 标签栏 -->
   <TagsBar
     :select="currentTag"
+    :showBack="preDirectory != undefined"
+    :onBack="()=>fileOpen(preDirectory,true)"
     :extraTags="extraTags"
     :excludeTags="excludeTags || []"
     :initTags="initTags"
     :selectFiles="selectFiles"
-    :entitys="getContent(false)"
+    :entitys="content"
     :badgeCount="badgeCount"
+    :menus="contextMenu()"
     :onChanged="(t) => currentTag = t"
   />
-
   <!-- 文件列表 -->
   <SegmentContent
     :onSegmentChanged="setSegmented"
-    :descriptions="`${getContent().length}个项目`"
+    :descriptions="`${filteredContent.length}个项目`"
   >
-    <!-- <TableMode
-      v-if="segmented === 'table'"
-      :selectFiles="selectFiles"
-      :focusFile="focusFile"
-      :content="getContent()"
-      :fileOpen="fileOpen"
-      :contextMenu="contextMenu"
-    /> -->
     <IconMode
       v-if="segmented === 'icon'"
       :selectFiles="selectFiles"
       :focusFile="focusFile"
-      :content="getContent()"
+      :content="filteredContent"
       :fileOpen="fileOpen"
       :contextMenu="contextMenu"
     />
@@ -106,12 +100,12 @@ const getContent = (filter: boolean = true) => {
       v-else
       :selectFiles="selectFiles"
       :focusFile="focusFile"
-      :content="getContent()"
+      :content="filteredContent"
       :fileOpen="fileOpen"
       :contextMenu="contextMenu"
     />
     <!-- 为空 -->
-    <ElEmpty v-if="getContent().length === 0" description="暂无数据"></ElEmpty>
+    <ElEmpty v-if="content.length === 0" description="暂无数据"></ElEmpty>
   </SegmentContent>
 </template>
 

@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-// import ImageView from '/image'
+import ImageView from './image/index.vue'
 import VideoView from '@/components/MainLayout/preview/video/index.vue'
 // import React from 'react';
 // import FormView from './form';
@@ -41,9 +41,8 @@ onMounted(() => {
   if (props.entity === undefined) return
   if ('size' in props.entity || 'filedata' in props.entity) { // TODO: 文件预览
     const data = 'size' in props.entity ? props.entity : props.entity.filedata;
-    if (data.contentType?.startsWith('image')) {//TODO: 图片预览
-      return console.log('来这改'); 
-      // return setComponent(ImageView,{share:data,finished:props.finished})
+    if (data.contentType?.startsWith('image')) {// 图片预览
+      return setComponent(ImageView,{share:data,finished:props.finished})
     }
     if ( data.contentType?.startsWith('video') || videoExt.includes(data.extension ?? '-') ) { // 视频预览
       return setComponent(

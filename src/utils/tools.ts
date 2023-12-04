@@ -1,8 +1,7 @@
 import { model } from '@/ts/base';
 import moment from 'moment';
 import { formatDate } from '@/utils/index';
-import { ElMessage } from 'element-plus';
-import { DataType, MenuItemType, OperateMenuType, PageData } from '@/typings/globelType';
+import { DataType, MenuItemType, OperateMenuType, PageData } from 'typings/globelType';
 
 const dateFormat: string = 'YYYY-MM-DD';
 
@@ -265,8 +264,7 @@ const pySegSortObj = (objArr: any[], field: string) => {
   return segs;
 };
 
-/** 根据key查找菜单项 */
-const  findMenuItemByKey = (item: MenuItemType, key: string): MenuItemType | undefined => {
+const findMenuItemByKey = (item: MenuItemType, key: string): MenuItemType | undefined => {
   for (const node of item.children || []) {
     if (node.key === key) {
       node.parentMenu = item;
@@ -280,10 +278,25 @@ const  findMenuItemByKey = (item: MenuItemType, key: string): MenuItemType | und
   return undefined;
 };
 
+const cleanMenus = (items?: OperateMenuType[]): OperateMenuType[] | undefined => {
+  const newItems = items?.map((i) => {
+    return {
+      key: i.key,
+      label: i.label,
+      icon: i.icon,
+      model: i.model,
+      children: cleanMenus(i.children),
+    } as OperateMenuType;
+  });
+  if (newItems && newItems.length > 0) {
+    return newItems;
+  }
+  return undefined;
+};
 /** url下载 */
 const downloadByUrl = (url: string) => {
   if (!url) {
-    return message.error('资源路径不存在，请重试！');
+    return ElMessage.error('资源路径不存在，请重试！');
   }
   const DownA = document.createElement('a'); // 创建a标签
   DownA.setAttribute('download', url); // download属性(为下载的文件起个名)
@@ -314,21 +327,6 @@ const parseHtmlToText = (html: string) => {
   return text.replace(/[\r\n]/g, ''); //去掉回车换行
 };
 
-/** 清空菜单 */
-const cleanMenus = (items?: OperateMenuType[]): OperateMenuType[] | undefined => {
-  const newItems = items?.map((i) => {
-    return {
-      key: i.key,
-      label: i.label,
-      icon: i.icon,
-      children: cleanMenus(i.children),
-    } as OperateMenuType;
-  });
-  if (newItems && newItems.length > 0) {
-    return newItems;
-  }
-  return undefined;
-}
 /** 根据节点id获取节点信息 */
 const getNodeByNodeId = (
   id: string,
@@ -343,8 +341,8 @@ const getNodeByNodeId = (
       if (find) return find;
     }
   }
-}
-/** 加载网关节点 */
+};
+
 const loadGatewayNodes = (
   node: model.WorkNodeModel,
   memberNodes: model.WorkNodeModel[],
@@ -361,9 +359,10 @@ const loadGatewayNodes = (
     }
   }
   return memberNodes;
-}
+};
 
 export {
+  cleanMenus,
   dateFormat,
   debounce,
   downloadByUrl,
@@ -371,8 +370,10 @@ export {
   findMenuItemByKey,
   formatZhDate,
   getNewKeyWithString,
+  getNodeByNodeId,
   getUuid,
   handleFormatDate,
+  loadGatewayNodes,
   parseHtmlToText,
   pySegSort,
   pySegSortObj,
@@ -383,7 +384,4 @@ export {
   showMessage,
   truncateString,
   validIsSocialCreditCode,
-  cleanMenus,
-  getNodeByNodeId,
-  loadGatewayNodes
-}
+};
