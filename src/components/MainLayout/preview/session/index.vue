@@ -9,6 +9,8 @@ import TargetActivity from '@/components/TargetActivity/index.vue'
 import { AddressBook, Qrcode, Bubbles2, Lifebuoy, Folder } from '@/icons/im'
 import orgCtrl from '@/ts/controller'
 import { useRouter } from 'vue-router'
+import OrgIcons from '@/components/Common/GlobalComps/orgIcons.vue'
+import Directory from '@/components/Directory/index.vue'
 
 const router = useRouter()
 
@@ -18,7 +20,48 @@ const props = defineProps<{
   setting?: boolean;
 }>()
 
-const bodyType=ref(props.setting ? 'activity' : 'chat');
+const actions = ref<string[]>()
+const bodyType=ref(props.setting ? 'activity' : 'chat')
+watch(() => props.session, () => {
+  const newActions: string[] = []
+  if (props.session.target.typeName === TargetType.Storage) {
+    newActions.push('relation', 'activity');
+  } else {
+    if (props.session.isMyChat && props.session.target.typeName !== TargetType.Group) {
+      newActions.push('chat');
+    }
+    newActions.push('activity');
+    if (props.session.id === props.session.target.id) {
+      newActions.push('store', 'relation');
+    }
+  }
+  if (props.session.target.hasRelationAuth()) {
+    newActions.push('setting');
+  }
+  actions.value = newActions
+  if (!newActions.includes(bodyType.value)) {
+    if (props.setting && newActions.includes('relation')) {
+      bodyType.value = 'relation'
+    } else {
+      bodyType.value = newActions[0]
+    }
+  }
+},{immediate:true})
+
+const getTitle = (flag: string) => {
+  switch (flag) {
+    case 'chat':
+      return '沟通';
+    case 'activity':
+      return '动态';
+    case 'store':
+      return '数据';
+    case 'relation':
+      return '关系';
+    default:
+      return '设置';
+  }
+}
 
 </script>
 
@@ -34,38 +77,40 @@ const bodyType=ref(props.setting ? 'activity' : 'chat');
             <span style="margin-right: 10px;">{{session.chatdata.chatName}}</span>
             <span class="number" v-if="session.members.length > 0">({{session.members.length}})</span>
           </div>
-          <div class="description">{{ellipsisText(session.chatdata.chatRemark, 50)}}</div>
+          <!-- 标签 -->
+          <div class="description">
+            <ElTag
+              v-for="label in session.groupTags.filter(i=>i.length>0)" 
+              :key="label" 
+              :type="label === '置顶' ? 'danger' : 'success'"
+            >
+              {{ label }}
+            </ElTag>
+          </div>
         </div>
         
       </div>
       <!-- 头部-右侧action -->
       <div class="header-action">
-        <ElIcon title="沟通" v-if="session.isMyChat && target.typeName !== TargetType.Group" :size="26">
-          <Bubbles2  @click="bodyType='chat'"/>
-        </ElIcon>
-        <ElIcon title="动态" :size="26">
-          <Lifebuoy  @click="bodyType='activity'"/>
-        </ElIcon>
-        <template v-if="session.members.length > 0 || session.id === session.userId">
-          <ElIcon title="存储" :size="26">
-            <Folder  @click="orgCtrl.currentKey = target.directory.key;router.push('/store')"/>
-          </ElIcon>          
-          <ElIcon title="成员" :size="26">
-            <AddressBook  @click="bodyType='member'"/>
-          </ElIcon>
-        </template>  
-        <ElIcon title="二维码" :size="26">
-          <Qrcode  @click="command.emitter('executor', 'qrcode', target)"/>
-        </ElIcon>
+        <a
+          v-for="flag in actions"
+          :key="flag"
+          :title="getTitle(flag)"
+          @click="bodyType = flag"
+        >
+          <OrgIcons :key="bodyType" :type="flag" :selected="bodyType === flag" :size="26" />
+        </a>        
       </div>
     </div>
     <!-- 内容区域 -->
     <div class="groupDetailContent">
       <!-- 聊天 -->
-      <template v-if="bodyType==='chat'">
-        <ChatBody :chat="session" filter='' />
-      </template>
-      <!-- 成员 -->
+      <ChatBody v-if=" bodyType==='chat'"  :chat="session" filter='' />
+      <!-- 动态 -->
+      <TargetActivity v-else-if="bodyType==='activity'" height="700" :activity="session.activity" />      
+      <!-- TODO:数据 -->
+      <Directory v-else-if="bodyType==='store'" :root="session.target.directory"/>
+      <!-- TODO:关系 -->
       <template v-else-if="bodyType==='member'">
         <template v-if="session.members.length > 0 || session.id === session.userId">
           <MemberContent :dircetory="target.memberDirectory" />
@@ -77,16 +122,11 @@ const bodyType=ref(props.setting ? 'activity' : 'chat');
           <ChatBody :chat="session" filter='' />;
         </template>
       </template>
-      <!-- 动态 -->
-      <template v-else-if="bodyType==='activity'">
-        <TargetActivity height="700" :activity="session.activity" />
-      </template>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-// @import '~antd/es/style/themes/variable';
 .img_list_add {
   cursor: pointer;
   width: 50px;
@@ -117,6 +157,7 @@ const bodyType=ref(props.setting ? 'activity' : 'chat');
 }
 
 .groupDetail {
+  height: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -155,9 +196,10 @@ const bodyType=ref(props.setting ? 'activity' : 'chat');
     }
     .header-action {
       display: flex;
+      gap: 10px;
       margin-left: 48px;
-      >i {
-        margin: 0 8px;
+      >a {
+        cursor: pointer;
       }
     }
   }
@@ -171,7 +213,8 @@ const bodyType=ref(props.setting ? 'activity' : 'chat');
     }
   }
   &Content {
-    height: calc(100vh - 175px);
+    height: 0;
+    flex:1 0;
   }
   &ActionArea {
     width: 100%;

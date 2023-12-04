@@ -10,56 +10,48 @@ const current = ref(allPages[0])
 <template>
   <!-- 门户布局 -->
   <div class="homepage">
-    <!-- 门户——顶部导航 -->
-    <NavigationBar 
-      :list="allPages" 
-      @change="item=> current = item"
-    />
     <!-- 门户——顶部Banner图 -->
     <div class="headBanner" 
       v-if="current.type==='inner'"
       :style="{backgroundImage: `url(${current.backgroundImageUrl})`}"
     />
     <!-- 门户——内容区域 -->
-    <div class="homepage-content">
-      <Suspense>
-        <template #default>
-          <component :is="current.component"></component>
-        </template>
-        <template #fallback>
-          <div>加载中...</div>
-        </template>
-      </Suspense>
+    <div class="content">
+      <component :is="current.component" />
     </div>
+    <!-- 门户——顶部导航 -->
+    <NavigationBar
+      :list="allPages" 
+      @change="item=> current = item"
+    />    
   </div>
 </template>
 
 
 
-<style lang="scss" scoped>
-.homepage{
-  width: 100%;
+<style lang="less" scoped>
+.homepage {
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  overflow: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  // 设置y轴滚动吸附
-  scroll-snap-type: y mandatory;
-
+  overflow-y: scroll;
+  background-color: @portal-background;
+  position: relative;
   .headBanner {
     width: 100%;
-    height: 200px;
+    min-height: 400px;
+    background-size: 100% 400px;
+    background-repeat: no-repeat;
     display: flex;
     align-items: center;
     flex-direction: column;
-    background-position: 50% 20%;
-    background-size: cover;
-    scroll-snap-align: start;
   }
-  .homepage-content {
-    // 滚动吸附对齐方式
-    scroll-snap-align: start;
+  .content {
+    width: 100%;
+    position: absolute;
+    top: 315px;
   }
+  
 }
+
 </style>

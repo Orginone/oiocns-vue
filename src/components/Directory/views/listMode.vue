@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { IDEntity } from '@/ts/core';
-// import { Badge, Dropdown, List, MenuProps, Tag } from 'antd';
 import { showChatTime } from '@/utils/tools'
 import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue';
 
@@ -21,9 +20,9 @@ const props = defineProps<{
     <div class="list" :style="{backgroundColor: selectFiles.includes(item) ? '#e6f1ff' : ''}">
       <ElDropdown trigger='contextmenu'>
         <div class="list_item" 
-            @click="fileOpen(item, false)"
-            @dblclick="fileOpen(item, true)"
-          >
+          @click="fileOpen(item, false)"
+          @dblclick="fileOpen(item, true)"
+        >
           <!-- 左侧头像、内容 -->
           <div class="list_item_meta">
             <div class="list_item_meta_avatar">

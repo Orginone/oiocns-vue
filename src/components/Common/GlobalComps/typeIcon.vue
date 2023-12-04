@@ -4,20 +4,17 @@ import { TargetType } from '@/ts/core'
 import * as im from '@/icons/im'
 import * as fa from '@/icons/fa'
 
-
-
 const props = defineProps<{
   avatar?: boolean;
   size?: number;
+  color?: string;
   iconType: string;
 }>()
-
-const {size,avatar,iconType} = props
-
-const config: {size: number, color: string} = { size: size || 12, color: '#9498df' }
+const {iconType,size,color} = props
+const config: any = { size: size || 12, color: color || '#3838b9' }
 
 const loadIcon = () => {
-  switch (iconType) {
+  switch (props.iconType) {
     case '动态':
       return im.Safari
     case '目录':
@@ -124,9 +121,8 @@ const loadIcon = () => {
       return loadFileIcon();
   }
 }
-
 const loadFileIcon = () => {
-  switch (iconType) {
+  switch (props.iconType) {
     case 'application/pdf':
       return fa.FilePdf
     case 'application/x-zip-compressed':
@@ -149,10 +145,14 @@ const loadFileIcon = () => {
 </script>
 
 <template>
-  <!-- <div :style="avatar ? '' : 'padding-right: 10px;'"> -->
+  <ElIcon v-if="avatar" v-bind="config">
+    <component :is="loadIcon()" />
+  </ElIcon>
+  <div v-else style="padding-right: 10px;">
     <ElIcon v-bind="config">
       <component :is="loadIcon()" />
     </ElIcon>
+  </div>  
 </template>
 
 <style lang="scss" scoped>

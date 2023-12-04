@@ -22,6 +22,11 @@ defineProps<{entity: any,size: number}>()
   top: 0;
   left: 0;
   transform: translate(-10px,-10px);
-  width: 4px;
+  cursor: pointer;
+  &:hover {
+    >i {
+      --color: #4e80f8 !important;
+    }
+  }
 }
 </style>

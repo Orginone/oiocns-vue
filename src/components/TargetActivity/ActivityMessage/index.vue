@@ -239,7 +239,7 @@ const handleReply = async (userId: string = '') => {
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
     justify-content: space-between;
-    padding: 12px 0;
+    padding: 12px 0 0 10px;
     color: rgba(0,0,0,.85);
     .listItemMeta {
       display: -webkit-box;
@@ -253,7 +253,8 @@ const handleReply = async (userId: string = '') => {
       align-items: flex-start;
       max-width: 100%;
       .listItemMetaContent {
-        flex: 1;
+        flex: 1 0;
+        width: 0;
         .listItemMetaContentTitle {
           margin-top: 12px;
           font-weight: bold;

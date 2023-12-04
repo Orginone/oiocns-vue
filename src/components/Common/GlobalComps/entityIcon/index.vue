@@ -42,16 +42,15 @@ if(props.entityId) {
   </template>
   <!-- entityId -->
   <template v-else-if="entityId">
-    <!-- <div v-loading="!loaded">  -->
-      <ShareIconItem
-        v-if="loadedEntity"
-        v-bind="props"
-        :share="{
-          name: loadedEntity.name,
-          typeName: loadedEntity.typeName,
-          avatar: parseAvatar(loadedEntity.icon),
-        }"
-      />
+    <ShareIconItem
+      v-if="loadedEntity"
+      v-bind="props"
+      :share="{
+        name: loadedEntity.name,
+        typeName: loadedEntity.typeName,
+        avatar: parseAvatar(loadedEntity.icon),
+      }"
+    />
   </template>
   <!-- typeName -->
   <template v-else-if="typeName">
@@ -60,6 +59,8 @@ if(props.entityId) {
 
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+</style>
 
   

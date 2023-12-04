@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import GroupContent from './GroupContent/index.vue'
-import GroupInputBox from './GroupInputBox/index.vue'
+import SendBox from './SendBox/index.vue'
 import ChatShareForward from './ChatShareForward/index.vue';
 import { ISession, IMessage } from '@/ts/core';
 // import { RiShareForwardLine } from '@/icons/ri';
-import { Promotion,Close } from '@element-plus/icons-vue'
+import { Promotion,Close,Delete } from '@element-plus/icons-vue'
 // import { AiOutlineClose } from '@/icons/ai';
 
 const props = defineProps<{ 
@@ -27,6 +27,7 @@ const btachType=ref<string>('');
 const handleReWrites = (write: string) => {
   writeContent.value = write
 }
+/** 逐条转发 */
 const multiSingleSend = () => {
   if(forwardMessage.value.length){
     showShareForward.value = true
@@ -35,7 +36,8 @@ const multiSingleSend = () => {
     ElMessage.warning('请选择需要转发的消息')
   }
   
-};
+}
+/** 合并转发 */
 const multiBatchSend = () => {
   if(forwardMessage.value.length){
     showShareForward.value = true
@@ -43,6 +45,12 @@ const multiBatchSend = () => {
   }else {
     ElMessage.warning('请选择需要转发的消息')
   }
+}
+/** 批量删除 */
+const multiDelete = async() => {
+  if(forwardMessage.value.length===0) return ElMessage.warning('请选择需要删除的消息')
+  const res = await Promise.all(forwardMessage.value.map(item=> props.chat.deleteMessage(item.id)))
+  if(res) return ElMessage.success('删除成功')
 }
 </script>
 
@@ -76,18 +84,18 @@ const multiBatchSend = () => {
       :enterCiteMsg="enterCiteMsg"
     />
     <!-- 输入区 -->
-    <div class="chart_input">
-      <GroupInputBox
+    <div class="chart_input" v-if="!multiSelectShow">
+      <SendBox
         :chat="chat"
         :writeContent="writeContent"
         :citeText="(citeText as any)"
         :closeCite="(e: string) => citeText = e" 
-        :enterCiteMsg="(e: any) => enterCiteMsg = e" 
       />
     </div>
-    <!-- 多选操作内容 -->
-    <div class="chart_mulit_select" v-if="multiSelectShow">
+    <!-- 多选操作 -->
+    <div class="chart_mulit_select" v-else>
       <div class="chart_mulit_select_wrap">
+        <!-- 逐条转发 -->
         <div
           class="chart_mulit_select_action"
           @click="multiSingleSend"
@@ -97,6 +105,7 @@ const multiBatchSend = () => {
           </span>
           <span>逐条转发</span>
         </div>
+        <!-- 合并转发 -->
         <div
           class="chart_mulit_select_action"
           @click="multiBatchSend">
@@ -105,8 +114,19 @@ const multiBatchSend = () => {
           </span>
           <span>合并转发</span>
         </div>
+        <!-- 批量删除 -->
+        <div 
+          class="chart_mulit_select_action"
+          @click="multiDelete"
+        >
+          <span class="chart_mulit_select_icon">
+            <ElIcon :size="22" ><Delete/></ElIcon>
+          </span>
+          <span>批量删除</span>
+        </div>
+        <!-- 取消 -->
         <div>
-          <ElIcon :size="22" ><Close style="cursor: pointer;"/></ElIcon>
+          <ElIcon :size="22" @click="multiSelectShow=false"><Close style="cursor: pointer;"/></ElIcon>
         </div>
       </div>
     </div>
@@ -126,7 +146,7 @@ const multiBatchSend = () => {
 </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .cohort_wrap {
   width: 100%;
   height: 100%;
@@ -134,14 +154,6 @@ const multiBatchSend = () => {
   justify-content: space-between;
   overflow: hidden;
   position: relative;
-  // margin-top: -10px;
-  // border-top: 1px solid #f2f2f2;
-  .custom_group_silder_menu {
-    width: 300px;
-    // border-right: 1px solid #dcdfe6;
-    background-color: #fff;
-  }
-
   .chart_page {
     height: 100%;
     display: flex;
@@ -153,22 +165,14 @@ const multiBatchSend = () => {
 
     .chart_input {
       height: max-content;
-      min-height: 227px;
       border-top: 1px solid #dde4f3;
       .el-textarea__inner {
         // color: #fff;
       }
-      // TODO:
-      // :global {
-      //   .ogo-spin-nested-loading {
-      //     height: 100%;
-      //     .ogo-spin-container {
-      //       height: 100%;
-      //     }
-      //   }
-      // }
     }
     .chart_mulit_select {
+      height: max-content;
+      min-height: 227px;
       .chart_mulit_select_wrap {
         display: flex;
         flex-direction: row;

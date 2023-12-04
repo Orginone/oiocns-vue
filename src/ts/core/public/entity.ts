@@ -1,4 +1,4 @@
-import { Emitter } from '@/ts/base/common';
+import { Emitter } from '../../base/common';
 import { schema, model, parseAvatar, kernel } from '../../base';
 import { generateUuid } from '../../base/common/uuid';
 import { entityOperates } from './operates';
@@ -91,7 +91,7 @@ export abstract class Entity<T extends schema.XEntity>
     return this._metadata;
   }
   get userId(): string {
-    return kernel.userId;
+    return kernel.user!.id;
   }
   get belongId(): string {
     return this._metadata.belongId;

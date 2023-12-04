@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import MainLayout from '../MainLayout/index.vue'
-import Directory from '../Directory/index.vue'
-import useMenuUpdate from '@/hooks/useMenuUpdate';
-import { loadSettingMenu } from './config/index';
-import FullScreenModal from '../Common/fullScreenModal.vue';
-import { IFile } from '@/ts/core';
-import orgCtrl, { Controller } from '@/ts/controller';
+import Content from './content/index.vue'
+import useMenuUpdate from '@/hooks/useMenuUpdate'
+import { loadSettingMenu } from './config/index'
+import FullScreenModal from '../Common/fullScreenModal.vue'
+import { IFile } from '@/ts/core'
+import orgCtrl, { Controller } from '@/ts/controller'
 import { MenuItemType } from '@/typings/globelType'
 import {command} from '@/ts/base'
 
@@ -25,10 +25,9 @@ const props = defineProps<{
   onOk: (files: IFile[]) => void;
   onCancel: () => void;
 }>()
-
 const selectedFiles = ref<IFile[]>()
 
-const [key, rootMenu, selectMenu, setSelectMenu] = useMenuUpdate(
+const {key, rootMenu, selectMenu, onSelectMenu:setSelectMenu} = useMenuUpdate(
   () => loadSettingMenu(props.rootKey, props.allowInherited || false),
   new Controller(props.currentKey ?? orgCtrl.currentKey),
 )
@@ -75,15 +74,12 @@ const onSelected = (files:IFile[]) => {
       leftShow
       :selectMenu="selectMenu"
       :onSelect="(data) => {
-        setSelectMenu(data);
+        setSelectMenu(data)
       }"
       :siderMenuData="rootMenu"
-      :onMenuClick="(item: MenuItemType, menuKey: string)=>{
-        command.emitter('executor', menuKey, item);
-      }"
       preview-flag="dialog"
     >
-      <Directory
+      <Content
         :key="key"
         dialog
         previewFlag='dialog'

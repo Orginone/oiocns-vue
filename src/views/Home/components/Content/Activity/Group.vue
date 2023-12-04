@@ -19,7 +19,7 @@ const isLoading = ref(true)
 // 窗口尺寸
 const size = useWindowSize()
 // 当前动态对象
-const current =ref<IActivity>(props.activity)
+const current =ref<IActivity>(props.activity as IActivity)
 // 初始化加载数据
 onMounted(async() => {
   await props.activity.load(10)
@@ -31,16 +31,19 @@ const [key] = useCtrlUpdate(props.activity)
 </script>
 
 <template>
-  <div class="content" v-loading="isLoading" element-loading-text="加载中,请稍后...">
+  <div class="activityContent" 
+    v-loading="isLoading" 
+    element-loading-text="加载中,请稍后..."
+  >
     <div class="groupCtx">
-      <!-- 左侧列表 -->
+      <!-- 左侧 -->
       <DxResizable 
         v-if="size.width.value>1000 && !isLoading"
-        :handles = "'right'"
+        handles = 'right'
         style="width:800px"
       >
-        <div class="groupList" :key="key">
-          <div class="groupListItem" :class="{'groupListItemSelected':current.key===item.key}"
+        <div class="groupList">
+          <div :class="`groupList-${item.id === current.id ? 'selected' : 'item'}`"
             v-for="item in activitys.filter((i) => i.activityList.length>0)" :key="item.key"
             @click="current = item"
           >
@@ -52,12 +55,12 @@ const [key] = useCtrlUpdate(props.activity)
           </div>
         </div>
       </DxResizable>
-      <!-- 右侧列表 -->
-      <div :style="{ height: '100%', width: '100%', zIndex: 100 }">
-        <Activity
-          v-if="!isLoading && current"
+      <!-- 右侧 -->
+      <div class="loadContext">
+        <Activity v-if="!isLoading && current"
+          height="calc(100vh - 110px)"
           :title="current.name + '动态'"
-          :activity="current"
+          :activity="(current as IActivity)"
           :key="current.key"
         >
         </Activity>
@@ -66,40 +69,51 @@ const [key] = useCtrlUpdate(props.activity)
   </div>
 </template>
 
-<style lang="scss" scoped>
-.content {
-  // TODO:
-  width: 100%;
-  background-color: #f1f1f1;
-  background: linear-gradient(#f5f5f5ee, #f1f1f1);
+<style lang="less" scoped>
+/**
+  ActivityContent
+*/
+
+.activityContent {
+  .loadContext {
+    height: 100%;
+    width: 100%;
+    // .ogo-card-body {
+    //   background-color: rgba(0,0,0,0)
+    // }
+    // .ogo-list-item {
+    //   border-bottom: 1px solid @border-color-base;
+    //   margin: 8px 0;
+    // }
+  }
   .groupCtx {
     width: 100%;
-    // height: calc(100vh - 200px);
-    height: 100vh;
+    // height: calc(100vh - 300px);
     box-sizing: border-box;
     padding: 12px;
     display: flex;
+    gap: 6px;
     .groupList {
       display: flex;
       flex-direction: column;
       overflow-y: scroll;
-      height: 100%;
+      height: calc(100vh - 30px);
       border-radius: 4px;
       padding: 8px;
       min-width: 500px;
-      // background: @component-background;
-      background-color: #fafafa;
-      box-shadow: 0 0 2px 2px #ededed;
-
-      &Item {
+      background: @component-background;
+      &-selected {
         cursor: pointer;
-        padding: 8px;
+        border: 1px solid @border-color;
+        background-color: @active-background;
+      }
+
+      &-item {
+        cursor: pointer;
         border-radius: 6px;
-        // border-bottom: 1px solid @border-color-base;
-        border-bottom: 1px solid #e6f1ff;
-        &Selected {
-          // background: @active-background;
-          background-color: #e6f1ff;
+        border-bottom: 1px solid @border-color-base;
+        &:hover {
+          background-color: @active-background;
         }
       }
     }

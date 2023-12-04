@@ -54,7 +54,7 @@ watch(()=>props.selectKey,() => {
 </script>
 
 <template>
-   <ElSpace wrap spacer="|" :size="2">
+  <ElSpace wrap spacer="|" :size="2">
       <!-- 左侧栏插槽 -->
       <slot name="leftBar"/>
       <!-- 面包屑 -->
@@ -75,15 +75,15 @@ watch(()=>props.selectKey,() => {
                   {{tag}}
                 </ElTag>
               </template>          
-              <ElIcon :size="10" v-if="item.children.length>0"><ArrowDown/></ElIcon>
+              <!-- <ElIcon :size="10" v-if="item.children.length>0"><ArrowDown/></ElIcon> -->
             </div>
             <!-- 下拉列表 -->
-            <template #dropdown>
+            <template #dropdown v-if="item?.children?.length > 0">
               <ElDropdownMenu>
                 <ElDropdownItem 
                   v-for="i in loadItemMenus(item as MenuItemType)" 
                   :key="i.key"
-                  @click="onSelect?.apply(this,[i as MenuItemType]);console.log(i)"
+                  @click="onSelect?.apply(this,[i as MenuItemType])"
                 >
                   <component :is="i.icon?.name" v-bind="i.icon?.args"/>
                   <span style="margin-left: 4px;">{{ i.label }}</span>
@@ -93,7 +93,7 @@ watch(()=>props.selectKey,() => {
           </ElDropdown>
         </ElBreadcrumbItem>
       </ElBreadcrumb>
-    </ElSpace>
+  </ElSpace>
 </template>
 
 <style lang="scss" scoped>

@@ -34,9 +34,6 @@ const parentRef = ref<any>()
       <ElIcon :class="segmented === 'icon'?'footer-check-btn checked' : 'footer-check-btn'" @click="setSegmented('icon');onSegmentChanged('icon');">
         <Th/>
       </ElIcon>
-      <ElIcon :class="segmented === 'table'?'footer-check-btn checked' : 'footer-check-btn'" @click="setSegmented('table');onSegmentChanged('table');">
-        <Table/>
-      </ElIcon>
     </div>
   </div>
 </div>

@@ -5,6 +5,7 @@ import ImageView from './image/index.vue'
 import VideoView from './video/index.vue'
 import OfficeView from './office/index.vue'
 import EntityInfo from '@/components/Common/EntityInfo/index.vue'
+import Directory from '@/components/Directory/index.vue'
 
 import {
   IDirectory,
@@ -41,7 +42,7 @@ type EntityType =
   | ITarget
   | IDirectory
   | string
-  | undefined;
+  | undefined
 
 const entity=ref<EntityType>()
 entity.value = props.entity
@@ -68,10 +69,24 @@ onBeforeUnmount(() => {
   <template v-if = "entity && (typeof entity) != 'string'"> 
     <!-- 文件 -->
     <template v-if="entity.hasOwnProperty('filedata')">
-      <ImageView v-if="entity.filedata.contentType?.startsWith('image')" :share="entity.filedata" />
-      <VideoView v-else-if="entity.filedata.contentType?.startsWith('video') || videoExt.includes(entity.filedata.extension ?? '-')" share="entity.filedata" />
-      <OfficeView v-else-if="officeExt.includes(entity.filedata.extension ?? '-')" share="entity.filedata" />
-      <EntityInfo v-else entity="file" column="1" />
+      <ImageView 
+        v-if="(entity as ISysFileInfo).filedata.contentType?.startsWith('image')" 
+        :share="(entity as ISysFileInfo).filedata" 
+      />
+      <VideoView 
+        v-else-if="
+          (entity as ISysFileInfo).filedata.contentType?.startsWith('video') 
+          || videoExt.includes((entity as ISysFileInfo).filedata.extension ?? '-')
+        " 
+        :share="(entity as ISysFileInfo).filedata" 
+      />
+      <OfficeView 
+        v-else-if="officeExt.includes((entity as ISysFileInfo).filedata.extension ?? '-')" 
+        :share="(entity as ISysFileInfo).filedata" 
+      />
+      <EntityInfo 
+        v-else :entity="(entity as ISysFileInfo)" :column="1" 
+      />
     </template>
     <!-- 动态 -->
     <template v-else-if="entity.hasOwnProperty('activity')">
@@ -101,9 +116,13 @@ onBeforeUnmount(() => {
           return <></>;
       } -->
     </template>
-    <!-- TODO: 其它 -->
+    <!-- 全部文件 -->
+    <template v-else-if="entity.hasOwnProperty('standard')">
+      <Directory :current="(entity as IDirectory)" />
+    </template>
+    <!-- 实体信息展示 -->
     <template v-else>
-      <EntityInfo :entity="entity" :column="1" />
+      <EntityInfo :entity="(entity as IEntity<schema.XEntity>)" :column="1" />
     </template>
   </template>
 </template>

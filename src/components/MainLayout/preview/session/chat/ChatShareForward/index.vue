@@ -122,7 +122,6 @@ const handleOk = () => {
                 <ElCol class="chatMemlistCol" :span="24">
                   <ElCheckbox :label="item.key" style="height: 64px;">
                     <div class="listItem">
-                      <ElAvatar>
                         <ElBadge>
                           <TeamIcon
                             :typeName="item.metadata.typeName"
@@ -130,7 +129,6 @@ const handleOk = () => {
                             :size="40"
                           />
                         </ElBadge>
-                      </ElAvatar>
                       <div>
                         <span style="margin-right: 10px;">
                           {{item.chatdata.chatName}}
@@ -151,7 +149,6 @@ const handleOk = () => {
                 <ElCol :span="24">
                   <div class="listItem">
                     <!-- 头像 -->
-                    <ElAvatar>
                       <ElBadge>
                         <TeamIcon
                           :typeName="item.metadata.typeName"
@@ -159,7 +156,6 @@ const handleOk = () => {
                           :size="40"
                         />
                       </ElBadge>
-                    </ElAvatar>
                     <!-- 名称 -->
                     <div class="title">
                         <span style="margin-right: 10px;">
@@ -223,7 +219,7 @@ const handleOk = () => {
     top: 0;
     height: 52px;
     margin-top: 13px;
-    margin-left: 15px;
+    margin-left: 50px;
     background-color: transparent;
     z-index: 9;
     width: 80%;

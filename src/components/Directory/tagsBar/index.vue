@@ -5,23 +5,26 @@ import { IEntity } from '@/ts/core'
 import { Back,Right } from '@element-plus/icons-vue'
 
 const props = defineProps<{
-  select: string;
-  initTags: string[];
-  excludeTags: string[];
-  extraTags: boolean;
+  select: string
+  initTags: string[]
+  excludeTags: string[]
+  extraTags: boolean
+  showBack?: boolean
+  menus: any
   selectFiles: IEntity<schema.XEntity>[];
   badgeCount?: (tag: string) => number;
-  entitys: IEntity<schema.XEntity>[];
-  onChanged: (tag: string) => void;
+  entitys: IEntity<schema.XEntity>[]
+  onChanged: (tag: string) => void
+  onBack: () => void
 }>()
 
 /** 获取分组标签集 */
 const groupTags = () => {
   const tags = props.initTags.map((tag) => {
     return { tag, count: 0 };
-  });
+  })
   if (props.selectFiles.length > 0) {
-    tags.push({ tag: '已选中', count: props.selectFiles.length });
+    tags.push({ tag: '已选中', count: props.selectFiles.length })
   }
   if (props.extraTags) {
     props.entitys.forEach((entity) => {
@@ -54,8 +57,14 @@ const arrowLeft = (num: number) => {
 
 <template>
   <div class="tags_bar">
-    <ElIcon class="tags_bar_btn" @click="arrowLeft(-100)" color="#154ad8" :size="16"><Back/></ElIcon>
-    <div ref="tagsBarRef" class="tags_body">
+    <!-- 返回按钮 -->
+    <ElButton v-if="showBack"
+      link
+      title="返回"
+      :icon="Back"
+      @click="onBack"
+    />
+    <div class="tags_body">
       <ElSpace style="height: 26px;" :size="8" spacer="|">
         <template v-for="item in groupTags()" :key="item.tag">
           <ElBadge 
@@ -66,7 +75,6 @@ const arrowLeft = (num: number) => {
               :class="item.tag === props.select ? 'tags_item_active' : 'tags_item'" 
               @click="onChanged(item.tag)"
             >
-            
               {{item.tag}}
               <span v-if="item.count>0" class="item_count">{{item.count}}</span>
             </div>
@@ -74,7 +82,6 @@ const arrowLeft = (num: number) => {
         </template>
       </ElSpace>
     </div>
-    <ElIcon class="tags_bar_btn" color="#154ad8" :size="16" @click="arrowLeft(100)"><Right/></ElIcon>
   </div>
 </template>
 
@@ -92,9 +99,13 @@ const arrowLeft = (num: number) => {
     cursor: pointer;
   }
   .tags_body {
-    overflow: hidden;
+    overflow: auto;
     padding: 0 8px;
     width: 100%;
+    &::-webkit-scrollbar {
+      height: 4px;
+      background-color: transparent;
+    }
   }
   .tags_item {
     cursor: pointer;
@@ -102,6 +113,8 @@ const arrowLeft = (num: number) => {
     padding: 4px 12px;
     font-size: 12px;
     height: 26px;
+    display: flex;
+    align-items: center;
     .item_count {
       color: #2b00ff;
       font-style: italic;
@@ -120,6 +133,8 @@ const arrowLeft = (num: number) => {
       padding: 4px 16px;
       font-size: 12px;
       height: 26px;
+      display: flex;
+      align-items: center;
       .item_count {
         font-style: italic;
         transform: scale(0.9);

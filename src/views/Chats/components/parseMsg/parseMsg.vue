@@ -5,6 +5,7 @@ import { IMessage,MessageType } from '@/ts/core'
 import { parseAvatar,command } from '@/ts/base'
 import { shareOpenLink, truncateString } from '@/utils/tools'
 import { formatSize } from '@/ts/base/common'
+import typeIcon from '@/components/Common/GlobalComps/typeIcon.vue'
 
 const props = defineProps<{
   item: IMessage
@@ -66,10 +67,8 @@ switch (props.item.msgType) {
     <div 
       v-if="img && img.shareLink"
       class="con_content_txt"
-      @click="command.emitter('executor', 'open', img)"
-      style="width: 330px;"
     >
-      <ElImage :src="shareOpenLink(img.shareLink)"/>
+      <ElImage :src="shareOpenLink(img.shareLink)" :preview-src-list="[shareOpenLink(img.shareLink)]"/>
     </div>
     <!-- 无数据或无共享链接 -->
     <div v-else class="con_content_txt">消息异常</div>
@@ -80,9 +79,10 @@ switch (props.item.msgType) {
     <div 
       v-if="img && img.shareLink"
       class="con_content_txt"
-      @click="command.emitter('executor', 'open', img)"
+      @click="command.emitter('executor', 'open', img,'preview')"
+      
     >
-      <ElImage :src="img.thumbnail" />
+      <img :src="img.thumbnail" :width="300"/>
     </div>
     <!-- 无数据或无共享链接 -->
     <div v-else class="con_content_txt">消息异常</div>
@@ -97,10 +97,15 @@ switch (props.item.msgType) {
     <div
       v-else
       class="con_content_txt"
-      @click="command.emitter('executor', 'open', file)"
+      @click="command.emitter('executor', 'open', file,'preview')"
     >
-      <div>{{file.name}}</div>
-      <div>{{formatSize(file.size)}}</div>
+      <div style="display: flex;">
+        <div style="margin-right: 5px;">
+          <div>{{file.name}}</div>
+          <div style="font-size: 12px;color: rgba(0, 0, 0, 0.45);">{{formatSize(file.size)}}</div>
+        </div>
+        <typeIcon :iconType="file.contentType" :size="28" color="blue"/>
+      </div>
     </div>
   </template>
   <!-- 语音 -->

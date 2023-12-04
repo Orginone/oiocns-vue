@@ -7,7 +7,7 @@ import TypeIcon from '@/components/Common/GlobalComps/typeIcon.vue'
 export interface IMenu {
   label: string
   cmd: string
-  icon: any
+  icon: string
 }
 defineProps<{
   menu: IMenu;
@@ -22,11 +22,11 @@ defineProps<{
     @click="command.emitter('executor', menu.cmd, orgCtrl.user);"
   >
     <TypeIcon :iconType="menu.icon" :size="18" />
-    <span style="margin-left: 10px;">{{menu.label}}</span>
+    <span>{{menu.label}}</span>
   </Button>
 </template>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .linkBtn {
   height: 40px;
   display: -webkit-box;
@@ -39,9 +39,7 @@ defineProps<{
   cursor: pointer;
   border-radius: 6px;
   &:hover {
-    // TODO:
-    // background: @active-background;
-    background-color: #e6f1ff;
+    background: @active-background;
   }
 }
 </style>

@@ -38,6 +38,9 @@ const computedSize = computed(() => {
 const previewSrcList = computed(() => {
   return props.fileList.map((item) => shareOpenLink(item.shareLink))
 })
+
+
+
 </script>
 
 <template>
@@ -57,33 +60,15 @@ const previewSrcList = computed(() => {
         :preview-teleported="true"
       />
     </div>
-    <!-- TODO: 视频 -->
+    <!-- 视频 -->
     <div v-else-if="item.contentType?.startsWith('video')"
       :style="{width: maxWidth,height: maxWidth,cursor: 'pointer'}"
       @click="(e) => {
         e.stopPropagation();
-        command.emitter('executor', 'open', item);
+        command.emitter('executor', 'open', item,'preview');
       }"
     >
-      <div
-        :style="{
-          height: maxWidth,
-          width: maxWidth,
-          zIndex: 101,
-          position: 'absolute',
-        }"
-      ></div>
-      <!-- <JolPlayer
-        option={{
-          width: maxWidth,
-          height: maxWidth,
-          language: 'zh',
-          pausePlacement: 'center',
-          isShowScreenshot: false,
-          videoSrc: shareOpenLink(item.shareLink),
-          videoType: item.contentType === 'video/stream' ? 'hls' : 'h264',
-        }}
-      /> -->
+      <img :src="item.thumbnail" :style="{width: computedSize+'px',height: computedSize+'px',cursor: 'pointer'}">
     </div>
     <!-- pdf -->
     <iframe v-else-if="item.contentType?.includes('pdf') || item.contentType?.startsWith('text')"

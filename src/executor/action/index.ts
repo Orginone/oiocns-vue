@@ -1,5 +1,6 @@
 import {
   IApplication,
+  IDEntity,
   IDirectory,
   IEntity,
   IFile,
@@ -9,74 +10,96 @@ import {
   ISysFileInfo,
   ITarget,
   TargetType,
-} from '@/ts/core';
+} from '@/ts/core'
 
-import orgCtrl from '@/ts/controller';
-import { command, model, schema } from '@/ts/base';
-import { uploadTemplate } from '../tools/uploadTemplate';
-// import TypeIcon from '@/components/Common/GlobalComps/typeIcon';
-// import EntityIcon from '@/components/Common/GlobalComps/entityIcon';
-import { shareOpenLink } from '@/utils/tools';
+import orgCtrl from '@/ts/controller'
+import { command, model, schema } from '@/ts/base'
+import { uploadTemplate } from '../tools/uploadTemplate'
+// import TypeIcon from '@/components/Common/GlobalComps/typeIcon'
+// import EntityIcon from '@/components/Common/GlobalComps/entityIcon'
+import { shareOpenLink } from '@/utils/tools'
 // import { log } from 'console';
-import entityQrCode from './components/entityQrCode.vue'
+import entityQrCodeView from './components/entityQrCode.vue'
+import uploadFileView from './components/uploadFile.vue'
+import { ElMessageBox } from 'element-plus'
+import { h } from 'vue'
 
-import {setContent,resetContent} from '../config'
 
-// TODO:
 /** 执行非页面命令 */ 
 export const executeCmd = (cmd: string, entity: any) => {
   switch (cmd) {
-    case 'qrcode':
-      // return entityQrCode(entity);
-      return setContent(entityQrCode,{entity:entity,isShow:true})
-    case 'refresh':
-      return directoryRefresh(entity);
-    case 'openChat':
+    case 'qrcode': // 二维码
+      return entityQrCode(entity)
+    case 'reload': // 刷新目录
+      return directoryRefresh(entity, true)
+    case 'refresh': 
+      return directoryRefresh(entity, false)
+    case 'openChat': // TODO:
       return openChat(entity);
-    case 'download':
+    case 'download': // 下载
       if ('shareInfo' in entity) {
         const link = (entity as ISysFileInfo).shareInfo().shareLink;
         window.open(shareOpenLink(link, true), '_black');
       }
       return;
     case 'copy':
-    case 'move':
+    case 'move': // TODO:
       return setCopyFiles(cmd, entity);
-    case 'parse':
+    case 'parse': // TODO:
       return copyBoard(entity);
-    case 'delete':
+    case 'delete': // TODO:
       return deleteEntity(entity, false);
-    case 'hardDelete':
+    case 'hardDelete': // TODO:
       return deleteEntity(entity, true);
-    case 'restore':
+    case 'restore': // TODO:
       return restoreEntity(entity);
-    case 'remove':
+    case 'remove': // TODO:
       return removeMember(entity);
-    case 'newFile':
-      return uploadFile(entity, (file) => {
-        if (file) {
-          entity.changCallback();
-        }
-      });
+    case 'newFile': // 上传文件
+      return uploadFile(entity)
     case 'open':
+      // TODO:
       return openDirectory(entity);
     case 'standard':
+      // TODO:
       return uploadTemplate(entity);
     case 'online':
     case 'outline':
+      // TODO:
       return onlineChanged(cmd, entity);
     case 'activate':
+      // TODO:
       return activateStorage(entity);
   }
   return false;
 }
-
+/** 弹出二维码 */
+const entityQrCode = (entity: IEntity<schema.XEntity>)=>{
+  ElMessageBox({
+    message:h(entityQrCodeView,{entity}),
+    // showConfirmButton: false,
+    // showCancelButton: true,
+    confirmButtonText: '关闭',
+    autofocus: true,
+  })
+}
 /** 刷新目录 */
-const directoryRefresh = (dir: IDirectory | IApplication) => {
-  dir.loadContent(true).then(() => {
-    orgCtrl.changCallback();
-  });
-};
+const directoryRefresh = (dir: IDirectory | IApplication,reload:boolean) => {
+  dir.loadContent(reload).then(() => {
+    orgCtrl.changCallback()
+  })
+}
+/** 上传文件 */
+const uploadFile = (dir: IDirectory) => {
+  ElMessageBox({
+    message:h(uploadFileView,{dir}),
+    title: '文件上传',
+    confirmButtonText: '关闭',
+    customStyle: {
+      maxWidth: 'fit-content'
+    }
+  })
+}
 
 /** 激活存储 */
 const activateStorage = (store: IStorage) => {
@@ -99,7 +122,7 @@ const openDirectory = (entity: IEntity<schema.XEntity> | IFile | ITarget) => {
     return;
   }
   return false;
-};
+}
 /** 拷贝/剪切文件 */
 const setCopyFiles = (cmd: string, file: IFile) => {
   const key = cmd + '_' + file.id;
@@ -181,7 +204,7 @@ const copyBoard = (dir: IDirectory) => {
   //   //   />
   //   // ),
   // });
-};
+}
 
 
 /** 打开会话 */
@@ -196,7 +219,7 @@ const openChat = (entity: IDirectory | IMemeber | ISession | ITarget) => {
     orgCtrl.currentKey = entity.chatdata.fullId;
   }
   command.emitter('executor', 'link', '/chat');
-};
+}
 
 /** 恢复实体 */
 const restoreEntity = (entity: IFile) => {
@@ -205,7 +228,7 @@ const restoreEntity = (entity: IFile) => {
       orgCtrl.changCallback();
     }
   });
-};
+}
 /** 删除实体 */
 const deleteEntity = (entity: IFile, hardDelete: boolean) => {
   console.log('here');
@@ -225,58 +248,29 @@ const deleteEntity = (entity: IFile, hardDelete: boolean) => {
   //     }
   //   },
   // });
-};
+}
 
 /** 移除成员 */
 const removeMember = (member: IMemeber) => {
-  console.log('here');
-  
-  // Modal.confirm({
-  //   icon: <></>,
-  //   title: `确认要移除成员[${member.name}]吗?`,
-  //   onOk: () => {
-  //     member.directory.target
-  //       .removeMembers([member.metadata])
-  //       .then((success: boolean) => {
-  //         if (success) {
-  //           orgCtrl.changCallback();
-  //         }
-  //       });
-  //   },
-  // });
-};
-
-// /** TODO:生成实体二维码 */
-// const entityQrCode = (entity: IEntity<schema.XEntity>) => {
-  // Modal.info({
-  //   icon: <></>,
-  //   okText: '关闭',
-  //   maskClosable: true,
-  //   content: (
-  //     <div style={{ textAlign: 'center' }}>
-  //       <QrCode
-  //         level="H"
-  //         size={300}
-  //         fgColor={'#204040'}
-  //         value={`${location.origin}/${entity.id}`}
-  //         imageSettings={{
-  //           src: entity.share.avatar?.thumbnail ?? '',
-  //           width: 80,
-  //           height: 80,
-  //           excavate: true,
-  //         }}
-  //       />
-  //       <div
-  //         style={{
-  //           fontSize: 22,
-  //           marginTop: 10,
-  //         }}>
-  //         {entity.name}
-  //       </div>
-  //     </div>
-  //   ),
-  // });
-// }
+  ElMessageBox.alert(
+    `确认要移除成员[${member.name}]吗?`,
+    '',
+    {
+      confirmButtonText: '确认',
+      showCancelButton: true,
+      cancelButtonText: '取消',
+      callback:  () => {
+        member.directory.target
+        .removeMembers([member.metadata])
+        .then((success: boolean) => {
+          if (success) {
+            orgCtrl.changCallback();
+          }
+        });
+      }
+    }
+  )
+}
 
 /** 上下线提醒 */
 const onlineChanged = (cmd: string, info: model.OnlineInfo) => {
@@ -307,34 +301,4 @@ const onlineChanged = (cmd: string, info: model.OnlineInfo) => {
   //     }
   //   });
   // }
-}
-
-/** 文件上传 */
-const uploadFile = (dir: IDirectory, uploaded?: (file: IFile | undefined) => void) => {
-  // console.log('来这改');
-  // const modal = Modal.info({
-  //   icon: <></>,
-  //   okText: '关闭',
-  //   width: 610,
-  //   title: '文件上传',
-  //   maskClosable: true,
-  //   content: (
-  //     <Upload
-  //       multiple
-  //       type={'drag'}
-  //       maxCount={100}
-  //       showUploadList={false}
-  //       style={{ width: 550, height: 300 }}
-  //       customRequest={async (options) => {
-  //         modal.destroy();
-  //         command.emitter('executor', 'taskList', dir);
-  //         const file = options.file as File;
-  //         if (file) {
-  //           uploaded?.apply(this, [await dir.createFile(file)]);
-  //         }
-  //       }}>
-  //       <div style={{ color: 'limegreen', fontSize: 22 }}>点击或拖拽至此处上传</div>
-  //     </Upload>
-  //   ),
-  // })
 }
