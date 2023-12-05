@@ -49,6 +49,11 @@ import Mic from './im/Mic.vue'
 import VideoCamera  from './im/VideoCamera.vue'
 import Bell from './im/Bell.vue'
 import Rocket from './im/Rocket.vue'
+import ImUpload3 from './im/ImUpload3.vue'
+import ImDownload3 from './im/ImDownload3.vue'
+import ImCheckmark from './im/ImCheckmark.vue'
+import ImBell from './im/ImBell.vue'
+
 
 export {
   Smile,
@@ -101,5 +106,9 @@ export {
   Mic,
   VideoCamera,
   Bell,
-  Rocket
+  Rocket,
+  ImUpload3,
+  ImDownload3,
+  ImCheckmark,
+  ImBell
 }

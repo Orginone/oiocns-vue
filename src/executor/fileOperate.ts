@@ -1,20 +1,21 @@
-import { command } from '@/ts/base';
-import { OperateModel } from '@/ts/base/model';
-import { IFile } from '@/ts/core';
-import { entityOperates } from '@/ts/core/public';
-import { OperateMenuType } from 'typings/globelType';
+import { command } from '@/ts/base'
+import { OperateModel } from '@/ts/base/model'
+import { IFile } from '@/ts/core'
+import { entityOperates,IDEntity } from '@/ts/core/public'
+import { OperateMenuType } from 'typings/globelType'
 import TypeIcon from '@/components/Common/GlobalComps/typeIcon.vue';
 
 /** 加载文件菜单 */
-export const loadFileMenus = (file: IFile, mode: number = 0) => {
-  const operates: OperateModel[] = [];
-  if (file.groupTags.includes('已删除')) {
-    if (file.directory.target.hasRelationAuth()) {
+export const loadFileMenus = (file?: IDEntity | IFile | undefined) => {
+  if (!file) return []
+  const operates: OperateModel[] = []
+  if (file?.groupTags?.includes('已删除')) {
+    if (file?.directory.target.hasRelationAuth()) {
       operates.push(entityOperates.Restore, entityOperates.HardDelete);
     }
-    operates.push(entityOperates.Remark);
+    operates.push(entityOperates.Remark)
   } else {
-    operates.push(...file.operates(mode));
+    operates.push(...file.operates())
   }
   const parseLabel = (label: string) => {
     if ('filedata' in file) {

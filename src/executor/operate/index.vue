@@ -61,7 +61,6 @@ if (Array.isArray(props.args) && props.args.length > 0) {
     case 'settingStation':
       return console.log('来这改');
       // return <SettingStation company={args[0].target} finished={finished} />;
-    
     case 'pubActivity':
       return setContent(ActivityPublisher, {activity: props.args[0], finish: props.finished})
     case 'update':

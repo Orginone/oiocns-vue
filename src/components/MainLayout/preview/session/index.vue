@@ -16,6 +16,10 @@ const props = defineProps<{
   setting?: boolean;
 }>()
 
+// TODO:
+console.log(props.session);
+
+
 const actions = ref<string[]>()
 const bodyType=ref(props.setting ? 'activity' : 'chat')
 
@@ -89,9 +93,7 @@ const getTitle = (flag: string) => {
       </div>
       <!-- 头部-右侧action -->
       <div class="header-action">
-        <a
-          v-for="flag in actions"
-          :key="flag"
+        <a v-for="flag in actions" :key="flag"
           :title="getTitle(flag)"
           @click="bodyType = flag"
         >
@@ -100,7 +102,7 @@ const getTitle = (flag: string) => {
       </div>
     </div>
     <!-- 内容区域 -->
-    <div class="groupDetailContent">
+    <div class="groupDetailContent" :key="session.key">
       <!-- 聊天 -->
       <ChatBody v-if=" bodyType==='chat'"  :chat="session" filter='' />
       <!-- 动态 -->

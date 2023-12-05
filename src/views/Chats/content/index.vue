@@ -5,7 +5,8 @@
   import DirectoryViewer from '@/components/Directory/views/index.vue'
   import { command } from '@/ts/base'
   import { useFlagCmdEmitter } from '@/hooks/useCtrlUpdate'
-  import { loadChatOperation } from './common'
+  import { cleanMenus } from '@/utils/tools'
+  import { loadFileMenus } from '@/executor/fileOperate'
 
   const props = defineProps<{
     filter: string
@@ -44,7 +45,12 @@
 
   /** 生成右键菜单内容 */
   const contextMenu = (session: ISession | undefined) => {
-    return loadChatOperation(session) || []
+    return {
+      items: cleanMenus(loadFileMenus(session)) || [],
+      onClick: ({ key }: { key: string }) => {
+        command.emitter('executor', key, session);
+      },
+    }
   }
 
   /** 打开会话 */
@@ -80,7 +86,7 @@
         return count
       }"
       :fileOpen="(entity) => sessionOpen(entity as ISession)"
-      :contextMenu="(entity) => contextMenu(entity as ISession)"
+      :contextMenu="contextMenu"
     />   
   </div>
 </template>
