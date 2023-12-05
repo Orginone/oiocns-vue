@@ -54,6 +54,9 @@ export class Person extends Belong implements IPerson {
   copyFiles: Map<string, IFile>;
   private _cohortLoaded: boolean = false;
   private _givedIdentityLoaded: boolean = false;
+  get superior(): IFile {
+    return this;
+  }
   async loadGivedIdentitys(reload: boolean = false): Promise<schema.XIdProof[]> {
     if (!this._givedIdentityLoaded || reload) {
       const res = await kernel.queryGivedIdentitys();
@@ -131,9 +134,9 @@ export class Person extends Belong implements IPerson {
     const res = await this.create(data, true);
     if (res && res.id) {
       const company = createCompany(res, this);
-      await company.deepLoad();
       this.companys.push(company);
       await company.pullMembers([this.metadata]);
+      await company.deepLoad();
       return company;
     }
   }
@@ -142,9 +145,9 @@ export class Person extends Belong implements IPerson {
     const metadata = await this.create(data);
     if (metadata) {
       const storage = new Storage(metadata, [], this);
-      await storage.deepLoad();
       this.storages.push(storage);
       await storage.pullMembers([this.user.metadata]);
+      await storage.deepLoad();
       return storage;
     }
   }
@@ -283,19 +286,8 @@ export class Person extends Belong implements IPerson {
     operates.unshift(personJoins, targetOperates.NewCompany, targetOperates.NewStorage);
     return operates;
   }
-  content(_mode?: number | undefined): ITarget[] {
+  content(): IFile[] {
     return [...this.cohorts, ...this.storages];
-  }
-  async findEntityAsync(id: string): Promise<schema.XEntity | undefined> {
-    const metadata = this.findMetadata<schema.XEntity>(id);
-    if (metadata) {
-      return metadata;
-    }
-    const res = await kernel.queryEntityById({ id: id });
-    if (res.success && res.data?.id) {
-      this.updateMetadata(res.data);
-      return res.data;
-    }
   }
   findShareById(id: string): model.ShareIcon {
     const metadata = this.findMetadata<schema.XEntity>(id);

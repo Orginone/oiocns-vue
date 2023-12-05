@@ -2,6 +2,8 @@ import { IApplication, IPerson, ISession, ITarget, UserProvider } from '@/ts/cor
 import { common } from '@/ts/base';
 import { IWorkProvider } from '../core/work/provider';
 import { IPageTemplate } from '../core/thing/standard/page';
+import { IBoxProvider } from '../core/work/box';
+import { AuthProvider } from '../core/auth';
 /** 控制器基类 */
 export class Controller extends common.Emitter {
   public currentKey: string;
@@ -17,6 +19,9 @@ class IndexController extends Controller {
   static _provider: UserProvider;
   constructor() {
     super('');
+    if (IndexController._provider === undefined) {
+      IndexController._provider = new UserProvider(this);
+    }
   }
   /** 是否已登录 */
   get logined(): boolean {
@@ -29,6 +34,10 @@ class IndexController extends Controller {
     }
     return IndexController._provider;
   }
+  /** 授权方法 */
+  get auth(): AuthProvider {
+    return this.provider.auth;
+  }
   /** 当前用户 */
   get user(): IPerson {
     return this.provider.user!;
@@ -37,11 +46,19 @@ class IndexController extends Controller {
   get work(): IWorkProvider {
     return this.provider.work!;
   }
+  /** 暂存提供者 */
+  get box(): IBoxProvider {
+    return this.provider.box!;
+  }
   /** 所有相关的用户 */
   get targets(): ITarget[] {
     return this.provider.targets;
   }
-  /** 加载应用 */
+  /** 退出 */
+  exit(): void {
+    sessionStorage.clear();
+    IndexController._provider = new UserProvider(this);
+  }
   async loadApplications(): Promise<IApplication[]> {
     const apps: IApplication[] = [];
     for (const directory of this.targets
@@ -67,7 +84,7 @@ class IndexController extends Controller {
     const pages: IPageTemplate[] = [];
     for (const directory of this.targets.map((t) => t.directory)) {
       const templates = await directory.loadAllTemplate();
-      pages.push(...templates);
+      pages.push(...templates.filter((item) => item.metadata.public));
     }
     return pages;
   }

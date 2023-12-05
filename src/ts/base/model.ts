@@ -1,5 +1,6 @@
 import {
   XApplication,
+  XAttributeProps,
   XAuthority,
   Xbase,
   XDirectory,
@@ -22,6 +23,8 @@ export type ReqestType = {
 };
 // 请求数据核类型定义
 export type DataProxyType = {
+  // 标签
+  flag: string;
   // 模块
   module: string;
   // 方法
@@ -160,23 +163,72 @@ export type PageResult<T> = {
   result: T[];
 };
 
-// 注册消息类型
-export type RegisterType = {
-  // 昵称
-  nickName: string;
-  // 姓名
-  name: string;
-  // 电话
-  phone: string;
-  // 账户
+export type DynamicCodeModel = {
+  // 动态密码Id
+  dynamicId: string;
+  // 账户(手机号)
+  account: string;
+  // 平台入口
+  platName: string;
+};
+
+export type LoginModel = {
+  // 账户(手机号/账号)
+  account: string;
+  // 密码
+  password?: string;
+  // 动态密码Id
+  dynamicId?: string;
+  // 动态密码
+  dynamicCode?: string;
+};
+
+export type RegisterModel = {
+  // 账户(手机号)
   account: string;
   // 密码
   password: string;
-  // 座右铭
-  motto: string;
-  // 头像
-  avatar: string;
+  // 动态密码Id
+  dynamicId: string;
+  // 动态密码
+  dynamicCode: string;
+  // 名称
+  name: string;
+  // 描述
+  remark: string;
 };
+
+export type ResetPwdModel = {
+  // 账户(手机号/账号)
+  account: string;
+  // 私钥
+  privateKey?: string;
+  // 动态密码Id
+  dynamicId?: string;
+  // 动态密码
+  dynamicCode?: string;
+  // 新密码
+  password: string;
+};
+
+//认证结果返回
+export type TokenResultModel = {
+  // 授权码
+  accessToken: string;
+  // 过期时间
+  expiresIn: number;
+  // 作者
+  author: string;
+  // 协议
+  license: string;
+  // 授权码类型
+  tokenType: string;
+  // 用户信息
+  target: XTarget;
+  // 私钥
+  privateKey: string;
+};
+
 export type IdPair = {
   // 唯一ID
   id: string;
@@ -598,6 +650,15 @@ export type WorkInstanceModel = {
   taskId: string;
   // 发起用户ID
   applyId: string;
+  // 网关节点信息
+  gateways: string;
+};
+
+export type WorkGatewayInfoModel = {
+  // 网关节点ID
+  nodeId: string;
+  // 关联组织ID
+  TargetId: string;
 };
 
 export type InstanceDataModel = {
@@ -637,10 +698,16 @@ export type FieldModel = {
   valueType: string;
   /** 规则(特性规则) */
   rule?: string;
+  /** 组件 */
+  widget?: string;
+  /** 参数 */
+  options?: XAttributeProps;
   /** 备注(特性描述) */
   remark: string;
   /** 字典(字典项/分类项) */
   lookups?: FiledLookup[];
+  /** 计量单位 */
+  unit?: string;
 };
 
 export type FiledLookup = {
@@ -671,6 +738,23 @@ export type FormEditData = {
   createTime: string;
 };
 
+/* 节点网关 */
+export type WorkGatewayModel = {
+  // 网关节点ID
+  nodeId: string;
+  // 关联组织ID
+  targetId: string;
+  // 关联流程ID
+  defineId: string;
+};
+
+/* 节点网关 */
+export type GetWorkGatewaysModel = {
+  // 流程ID
+  defineId: string;
+  // 组织ID
+  targetId: string;
+};
 export type WorkNodeModel = {
   id: string;
   // 节点编号
@@ -814,6 +898,8 @@ export type FileItemShare = {
   size: number;
   /** 名称 */
   name: string;
+  /** 视频封面 */
+  poster?: string;
   /** 文件类型 */
   contentType?: string;
   /** 共享链接 */
@@ -848,6 +934,7 @@ export enum BucketOpreates {
   'Copy' = 'Copy',
   'Delete' = 'Delete',
   'Upload' = 'Upload',
+  'HslSplit' = 'HslSplit',
   'AbortUpload' = 'AbortUpload',
 }
 
@@ -917,6 +1004,8 @@ export type MsgChatData = {
   lastMessage?: ChatMessageType;
   /** 提及我 */
   mentionMe: boolean;
+  /** 常用会话 */
+  recently: boolean;
 };
 
 // 动态
@@ -1225,4 +1314,4 @@ export type DiskInfoType = {
   fsTotalSize: number;
   // 查询时间
   getTime: string;
-}
+};

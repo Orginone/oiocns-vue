@@ -13,6 +13,7 @@ import { Storage } from '../outTeam/storage';
 import { companyJoins } from '../../public/operates';
 import { Cohort } from '../outTeam/cohort';
 import { ISession } from '../../chat/session';
+import { IFile } from '../../thing/fileinfo';
 
 /** 单位类型接口 */
 export interface ICompany extends IBelong {
@@ -54,6 +55,9 @@ export class Company extends Belong implements ICompany {
   stations: IStation[] = [];
   departments: IDepartment[] = [];
   departmentTypes: string[] = [];
+  get superior(): IFile {
+    return this.user;
+  }
   private _groupLoaded: boolean = false;
   private _departmentLoaded: boolean = false;
   async loadGroups(reload: boolean = false): Promise<IGroup[]> {
@@ -113,9 +117,9 @@ export class Company extends Belong implements ICompany {
     const metadata = await this.create(data);
     if (metadata) {
       const group = new Group([this.key], metadata, [this.id], this);
-      await group.deepLoad();
       this.groups.push(group);
       await group.pullMembers([this.metadata]);
+      await group.deepLoad();
       return group;
     }
   }
@@ -256,6 +260,11 @@ export class Company extends Belong implements ICompany {
         await cohort.deepLoad(reload);
       }),
     );
+    await Promise.all(
+      this.storages.map(async (storage) => {
+        await storage.deepLoad(reload);
+      }),
+    );
     this.superAuth?.deepLoad(reload);
   }
 
@@ -263,20 +272,15 @@ export class Company extends Belong implements ICompany {
     const operates = super.operates();
     if (this.hasRelationAuth()) {
       operates.unshift(
-        {
-          sort: 2,
-          cmd: 'setNew',
-          label: '设立更多',
-          iconType: 'setNew',
-          menus: [targetOperates.NewGroup, targetOperates.NewDepartment],
-        },
         companyJoins,
+        targetOperates.NewGroup,
+        targetOperates.NewDepartment,
       );
     }
     return operates;
   }
 
-  content(_mode?: number | undefined): ITarget[] {
+  content(): IFile[] {
     return [...this.groups, ...this.departments, ...this.cohorts, ...this.storages];
   }
 

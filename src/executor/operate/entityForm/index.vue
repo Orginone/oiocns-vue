@@ -11,7 +11,7 @@ import { IDirectory, IEntity, ITarget } from '@/ts/core';
 // import ApplicationForm from './applicationForm';
 // import SpeciesForm from './speciesForm';
 // import PropertyForm from './propertyForm';
-// import TargetForm from './targetForm';
+import TargetForm from './targetForm.vue'
 // import LabelsForm from './labelsForm';
 // import RenameForm from './renameForm';
 // import TransferForm from './transferForm';
@@ -43,12 +43,12 @@ const reloadFinish = () => {
 
 onMounted(()=>{
   switch (props.cmd) {
-    case 'rename':
+    case 'rename': // TODO:
       return console.log('来这改');
       // return <RenameForm file={entity as any} finished={reloadFinish} />;
     case 'newDir':
     case 'updateDir':
-    case 'remarkDir': {
+    case 'remarkDir': { //TODO:
       const directory = props.entity as IDirectory;
       if (!directory.parent && props.cmd !== 'newDir') {
         return (
@@ -67,14 +67,14 @@ onMounted(()=>{
     case 'newModule':
     case 'updateApp':
     case 'updateModule':
-    case 'remarkApp':
+    case 'remarkApp': // TODO:
       return console.log('来这改');
       // return (
       //   <ApplicationForm formType={cmd} current={entity as any} finished={reloadFinish} />
       // );
     case 'newWork':
     case 'updateWork':
-    case 'remarkWork':
+    case 'remarkWork': // TODO:
       return console.log('来这改');
       // return <WorkForm formType={props.cmd} current={entity as any} finished={reloadFinish} />;
     case 'newSpecies':
@@ -82,7 +82,7 @@ onMounted(()=>{
     case 'remarkSpecies':
     case 'newDict':
     case 'updateDict':
-    case 'remarkDict':
+    case 'remarkDict': // TODO:
       return console.log('来这改');
       // return (
       //   <SpeciesForm
@@ -94,7 +94,7 @@ onMounted(()=>{
       // );
     case 'newForm':
     case 'updateForm':
-    case 'remarkForm':
+    case 'remarkForm': // TODO:
       return console.log('来这改');
       // return (
       //   <LabelsForm
@@ -106,24 +106,29 @@ onMounted(()=>{
       // );
     case 'newProperty':
     case 'updateProperty':
-    case 'remarkProperty':
+    case 'remarkProperty': // TODO:
       return console.log('来这改');
       // return (
       //   <PropertyForm formType={props.cmd} current={entity as any} finished={reloadFinish} />
       // );
     case 'newTransferConfig':
-    case 'updateTransferConfig':
+    case 'updateTransferConfig': // TODO:
       return console.log('来这改');
       // return (
       //   <TransferForm formType={props.cmd} current={entity as any} finished={reloadFinish} />
       // );
-    default:
-      var target = props.entity as ITarget;
-      if (props.entity.typeName === '目录') {
-        target = (props.entity as IDirectory).target;
-      }
-      // return <TargetForm formType={props.cmd} target={target} finished={reloadFinish} />;
+    case 'newPageTemplate':
+    case 'updatePageTemplate': // TODO:
       return console.log('来这改');
+      // return (
+      //   <PageTemplateForm
+      //     formType={cmd}
+      //     current={entity as any}
+      //     finished={reloadFinish}
+      //   />
+      // );
+    default:
+      return setContent(TargetForm, {formType: props.cmd, current: props.entity, finished: reloadFinish})
   }
 })
 </script>

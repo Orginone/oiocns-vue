@@ -1,23 +1,21 @@
 import StoreHub from './storehub';
 import * as model from '../model';
 import type * as schema from '../schema';
-import axios from 'axios';
-import { Emitter, logger } from '../common';
-import { command } from '../common/command';
+import { logger } from '../common';
 /**
  * 资产共享云内核api
  */
 export default class KernelApi {
   // 当前用户
-  userId: string = '';
+  user: schema.XTarget | undefined;
   // 存储集线器
   private _storeHub: StoreHub;
-  // axios实例
-  private readonly _axiosInstance = axios.create({});
   // 单例
   private static _instance: KernelApi;
   // 必达消息缓存
   private _cacheData: any = {};
+  // 当前连接ID
+  private _connectionId: string = '';
   // 监听方法
   private _methods: { [name: string]: ((...args: any[]) => void)[] };
   // 订阅方法
@@ -27,10 +25,6 @@ export default class KernelApi {
       operation: (...args: any[]) => void;
     }[];
   };
-  // 上下线提醒
-  onlineNotify = new Emitter();
-  // 在线的连接
-  onlineIds: string[] = [];
   // 获取accessToken
   public get accessToken(): string {
     return sessionStorage.getItem('accessToken') || '';
@@ -49,18 +43,16 @@ export default class KernelApi {
     this._storeHub = new StoreHub(url, 'txt');
     this._storeHub.on('Receive', (res) => this._receive(res));
     this._storeHub.onConnected(() => {
-      if (this.accessToken.length > 0) {
-        this._storeHub
-          .invoke('TokenAuth', this.accessToken)
-          .then((res: model.ResultType<any>) => {
-            if (res.success) {
-              logger.info('连接到内核成功!');
-            }
-          })
-          .catch((err) => {
-            logger.error(err);
-          });
-      }
+      this._storeHub.send<string>('GetConnectionId').then((id) => {
+        if (id && id.length > 0) {
+          this._connectionId = id;
+        }
+      });
+      this.tokenAuth().then((success) => {
+        if (success) {
+          logger.info('连接到内核成功!');
+        }
+      });
     });
     this._storeHub.start();
   }
@@ -86,6 +78,13 @@ export default class KernelApi {
     return this._instance;
   }
   /**
+   * 链接ID
+   * @returns {string} 链接ID
+   */
+  public get connectionId(): string {
+    return this._connectionId;
+  }
+  /**
    * 是否在线
    * @returns {boolean} 在线状态
    */
@@ -94,89 +93,10 @@ export default class KernelApi {
   }
   /** 连接信息 */
   public async onlines(): Promise<model.OnlineSet | undefined> {
-    if (this.onlineIds.length > 0) {
-      const result = await this._storeHub.invoke('Online');
-      if (result.success && result.data) {
-        var data: model.OnlineSet = result.data;
-        var uids = data?.users?.map((i) => i.connectionId) || [];
-        var sids = data?.storages?.map((i) => i.connectionId) || [];
-        var ids = [...uids, ...sids];
-        if (ids.length != this.onlineIds.length) {
-          this.onlineIds = ids;
-          this.onlineNotify.changCallback();
-        }
-        this.onlineIds = ids;
-        return result.data;
-      }
+    const result = await this._storeHub.invoke('Online');
+    if (result.success && result.data) {
+      return result.data;
     }
-  }
-  /**
-   * 登录到后台核心获取accessToken
-   * @param userName 用户名
-   * @param password 密码
-   * @returns {Promise<model.ResultType<any>>} 异步登录结果
-   */
-  public async login(userName: string, password: string): Promise<model.ResultType<any>> {
-    var res: model.ResultType<any>;
-    var req = {
-      account: userName,
-      pwd: password,
-    };
-    if (this._storeHub.isConnected) {
-      res = await this._storeHub.invoke('Login', req);
-    } else {
-      res = await this._restRequest('login', req);
-    }
-    if (res.success) {
-      this.accessToken = res.data.accessToken;
-    }
-    return res;
-  }
-  /**
-   * 重置密码
-   * @param userName 用户名
-   * @param password 密码
-   * @returns {Promise<model.ResultType<any>>}
-   */
-  public async resetPassword(
-    userName: string,
-    password: string,
-    privatekey: string,
-  ): Promise<model.ResultType<any>> {
-    var res: model.ResultType<any>;
-    var req = {
-      account: userName,
-      password: password,
-      privateKey: privatekey,
-    };
-    if (this._storeHub.isConnected) {
-      res = await this._storeHub.invoke('ResetPassword', req);
-    } else {
-      res = await this._restRequest('resetpassword', req);
-    }
-    return res;
-  }
-  /**
-   * 注册到后台核心获取accessToken
-   * @param name 姓名
-   * @param motto 座右铭
-   * @param phone 电话
-   * @param account 账户
-   * @param password 密码
-   * @param nickName 昵称
-   * @returns {Promise<model.ResultType<any>>} 异步注册结果
-   */
-  public async register(params: model.RegisterType): Promise<model.ResultType<any>> {
-    var res: model.ResultType<any>;
-    if (this._storeHub.isConnected) {
-      res = await this._storeHub.invoke('Register', params);
-    } else {
-      res = await this._restRequest('Register', params);
-    }
-    if (res.success) {
-      this.accessToken = res.data.accessToken;
-    }
-    return res;
   }
   /** 激活存储 */
   public async activateStorage(
@@ -574,6 +494,20 @@ export default class KernelApi {
     });
   }
   /**
+   * 创建节点网关信息
+   * @param {model.WorkGatewayModel} params 请求参数
+   * @returns {model.ResultType<schema.XWorkGateway>} 请求结果
+   */
+  public async createWorkGeteway(
+    params: model.WorkGatewayModel,
+  ): Promise<model.ResultType<schema.XWorkGateway>> {
+    return await this.request({
+      module: 'work',
+      action: 'CreateWorkGeteway',
+      params: params,
+    });
+  }
+  /**
    * 删除办事定义
    * @param {model.IdModel} params 请求参数
    * @returns {model.ResultType<boolean>} 请求结果
@@ -584,6 +518,20 @@ export default class KernelApi {
     return await this.request({
       module: 'work',
       action: 'DeleteWorkDefine',
+      params: params,
+    });
+  }
+  /**
+   * 删除节点网关
+   * @param {model.IdModel} params 请求参数
+   * @returns {model.ResultType<boolean>} 请求结果
+   */
+  public async deleteWorkGateway(
+    params: model.IdModel,
+  ): Promise<model.ResultType<boolean>> {
+    return await this.request({
+      module: 'work',
+      action: 'DeleteWorkGateway',
       params: params,
     });
   }
@@ -612,6 +560,20 @@ export default class KernelApi {
     return await this.request({
       module: 'work',
       action: 'QueryWorkDefine',
+      params: params,
+    });
+  }
+  /**
+   * 查询办事网关节点信息
+   * @param {model.GetWorkGatewaysModel} params 请求参数
+   * @returns {model.ResultType<model.PageResult<schema.XWorkGateway>>} 请求结果
+   */
+  public async queryWorkGateways(
+    params: model.GetWorkGatewaysModel,
+  ): Promise<model.ResultType<model.PageResult<schema.XWorkGateway>>> {
+    return await this.request({
+      module: 'work',
+      action: 'QueryWorkGateways',
       params: params,
     });
   }
@@ -658,6 +620,43 @@ export default class KernelApi {
     });
   }
   /**
+   * 根据ID查询流程实例
+   * @param  过滤参数
+   * @returns {schema.XWorkInstance | undefined} 流程实例对象
+   */
+  public async findInstance(
+    belongId: string,
+    instanceId: string,
+  ): Promise<schema.XWorkInstance | undefined> {
+    const res = await this.dataProxy({
+      module: 'Collection',
+      action: 'Load',
+      belongId,
+      params: {
+        options: {
+          match: {
+            id: instanceId,
+          },
+          limit: 1,
+          lookup: {
+            from: 'work-task',
+            localField: 'id',
+            foreignField: 'instanceId',
+            as: 'tasks',
+          },
+        },
+        collName: 'work-instance',
+      },
+      relations: [],
+      flag: '-work-instance-',
+    });
+    if (res.success && res.data && res.data.data) {
+      if (Array.isArray(res.data.data) && res.data.data.length > 0) {
+        return res.data.data[0];
+      }
+    }
+  }
+  /**
    * 获取对象数据
    * @param {string} belongId 对象所在的归属用户ID
    * @param {string} key 对象名称（eg: rootName.person.name）
@@ -673,6 +672,7 @@ export default class KernelApi {
       belongId,
       relations,
       params: {},
+      flag: 'diskInfo',
     });
   }
   /**
@@ -689,6 +689,7 @@ export default class KernelApi {
     return await this.dataProxy({
       module: 'Object',
       action: 'Get',
+      flag: key,
       belongId,
       relations,
       params: key,
@@ -710,6 +711,7 @@ export default class KernelApi {
     return await this.dataProxy({
       module: 'Object',
       action: 'Set',
+      flag: key,
       belongId,
       relations,
       params: {
@@ -732,6 +734,7 @@ export default class KernelApi {
     return await this.dataProxy({
       module: 'Object',
       action: 'Delete',
+      flag: key,
       belongId,
       relations,
       params: key,
@@ -757,6 +760,7 @@ export default class KernelApi {
       belongId,
       copyId,
       relations,
+      flag: collName,
       params: { collName, data },
     });
   }
@@ -780,6 +784,7 @@ export default class KernelApi {
       belongId,
       copyId,
       relations,
+      flag: collName,
       params: { collName, collSet },
     });
   }
@@ -803,6 +808,7 @@ export default class KernelApi {
       belongId,
       copyId,
       relations,
+      flag: collName,
       params: { collName, replace },
     });
   }
@@ -826,6 +832,7 @@ export default class KernelApi {
       belongId,
       copyId,
       relations,
+      flag: collName,
       params: { collName, update },
     });
   }
@@ -849,6 +856,7 @@ export default class KernelApi {
       belongId,
       copyId,
       relations,
+      flag: collName,
       params: { collName, match },
     });
   }
@@ -860,6 +868,7 @@ export default class KernelApi {
   public async collectionLoad<T>(
     belongId: string,
     relations: string[],
+    collName: string,
     options: any,
   ): Promise<model.LoadResult<T>> {
     options.belongId = belongId;
@@ -867,8 +876,12 @@ export default class KernelApi {
       module: 'Collection',
       action: 'Load',
       belongId,
-      params: options,
+      params: {
+        ...options,
+        collName: collName,
+      },
       relations,
+      flag: `-${collName}`,
     });
     return { ...res, ...res.data };
   }
@@ -888,41 +901,11 @@ export default class KernelApi {
     return await this.dataProxy({
       module: 'Collection',
       action: 'Aggregate',
+      flag: collName,
       belongId,
       relations,
       params: { collName, options },
     });
-  }
-  /**
-   * 从数据集查询数据
-   * @param {string} collName 数据集名称（eg: history-message）
-   * @param {any} options 聚合管道(eg: {match:{a:1},skip:10,limit:10})
-   * @param {string} belongId 对象所在的归属用户ID
-   * @returns {model.ResultType<T>} 对象异步结果
-   */
-  public async collectionPageRequest<T>(
-    belongId: string,
-    relations: string[],
-    collName: string,
-    options: any,
-    page: model.PageModel,
-  ): Promise<model.ResultType<model.PageResult<T>>> {
-    const total = await this.collectionAggregate(belongId, relations, collName, options);
-    if (total.data && Array.isArray(total.data) && total.data.length > 0) {
-      options.skip = page.offset;
-      options.limit = page.limit;
-      const res = await this.collectionAggregate(belongId, relations, collName, options);
-      return {
-        ...res,
-        data: {
-          offset: page.offset,
-          limit: page.limit,
-          total: total.data[0].count,
-          result: res.data,
-        },
-      };
-    }
-    return total;
   }
   /**
    * 桶操作
@@ -939,6 +922,7 @@ export default class KernelApi {
       action: 'Operate',
       belongId,
       relations,
+      flag: 'bucketOpreate',
       params: data,
     });
   }
@@ -958,6 +942,7 @@ export default class KernelApi {
       action: 'Load',
       belongId,
       relations,
+      flag: 'loadThing',
       params: options,
     });
     return { ...res, ...res.data };
@@ -975,10 +960,46 @@ export default class KernelApi {
     return await this.dataProxy({
       module: 'Thing',
       action: 'Create',
+      flag: 'createThing',
       belongId,
       relations,
       params: name,
     });
+  }
+  /**
+   * 请求一个内核授权方法
+   * @param {ReqestType} reqs 请求体
+   * @returns 异步结果
+   */
+  public async auth<T>(action: string, params: any): Promise<model.ResultType<T>> {
+    const res = await this._storeHub.invoke('Auth', {
+      module: 'auth',
+      action: action,
+      params: params,
+    });
+    if (
+      res.success &&
+      res.data &&
+      typeof res.data === 'object' &&
+      'accessToken' in res.data
+    ) {
+      this.accessToken = res.data.accessToken;
+      await this.tokenAuth();
+    }
+    return res;
+  }
+  /**
+   * 根据token获取用户信息
+   */
+  public async tokenAuth(): Promise<boolean> {
+    if (this.accessToken?.length > 0) {
+      const res = await this._storeHub.invoke('TokenAuth', this.accessToken);
+      if (res.success) {
+        this.user = res.data;
+        return true;
+      }
+    }
+    return false;
   }
   /**
    * 由内核代理一个http请求
@@ -988,11 +1009,7 @@ export default class KernelApi {
   public async httpForward(
     req: model.HttpRequestType,
   ): Promise<model.ResultType<model.HttpResponseType>> {
-    if (this._storeHub.isConnected) {
-      return await this._storeHub.invoke('HttpForward', req);
-    } else {
-      return await this._restRequest('httpForward', req, 20);
-    }
+    return await this._storeHub.invoke('HttpForward', req);
   }
   /**
    * 请求一个数据核方法
@@ -1000,11 +1017,7 @@ export default class KernelApi {
    * @returns 异步结果
    */
   public async dataProxy(req: model.DataProxyType): Promise<model.ResultType<any>> {
-    if (this._storeHub.isConnected) {
-      return await this._storeHub.invoke('DataProxy', req);
-    } else {
-      return await this._restRequest('dataProxy', req);
-    }
+    return await this._storeHub.invoke('DataProxy', req);
   }
   /**
    * 数据变更通知
@@ -1012,14 +1025,10 @@ export default class KernelApi {
    * @returns 异步结果
    */
   public async dataNotify(req: model.DataNotityType): Promise<model.ResultType<boolean>> {
-    if (req.ignoreSelf) {
-      req.ignoreConnectionId = this._storeHub.connectionId;
+    if (req.ignoreSelf && this._storeHub.isConnected && this._connectionId.length > 0) {
+      req.ignoreConnectionId = this._connectionId;
     }
-    if (this._storeHub.isConnected) {
-      return await this._storeHub.invoke('DataNotify', req);
-    } else {
-      return await this._restRequest('dataNotify', req);
-    }
+    return await this._storeHub.invoke('DataNotify', req);
   }
   /**
    * 请求一个内核方法
@@ -1027,11 +1036,7 @@ export default class KernelApi {
    * @returns 异步结果
    */
   public async request(req: model.ReqestType): Promise<model.ResultType<any>> {
-    if (this._storeHub.isConnected) {
-      return await this._storeHub.invoke('Request', req);
-    } else {
-      return await this._restRequest('request', req);
-    }
+    return await this._storeHub.invoke('Request', req);
   }
   /**
    * 请求多个内核方法,使用同一个事务
@@ -1039,11 +1044,7 @@ export default class KernelApi {
    * @returns 异步结果
    */
   public async requests(reqs: model.ReqestType[]): Promise<model.ResultType<any>> {
-    if (this._storeHub.isConnected) {
-      return await this._storeHub.invoke('Requests', reqs);
-    } else {
-      return await this._restRequest('requests', reqs);
-    }
+    return await this._storeHub.invoke('Requests', reqs);
   }
   /**
    * 订阅变更
@@ -1110,7 +1111,7 @@ export default class KernelApi {
       case 'DataNotify':
         {
           const data: model.DataNotityType = res.data;
-          if (data.ignoreConnectionId === this._storeHub.connectionId) {
+          if (data.ignoreConnectionId === this._connectionId) {
             return;
           }
           const flag = `${data.belongId}-${data.targetId}-${data.flag}`.toLowerCase();
@@ -1122,32 +1123,14 @@ export default class KernelApi {
               logger.error(e as Error);
             }
           } else if (!data.onlineOnly) {
-            const data = this._cacheData[flag] || [];
-            this._cacheData[flag] = [...data, data.data];
+            const _cache = this._cacheData[flag] || [];
+            this._cacheData[flag] = [..._cache, data.data];
           }
         }
         break;
-      case 'Online':
-      case 'Outline':
-        {
-          const connectionId = res.data.connectionId;
-          if (connectionId && connectionId.length > 0) {
-            if (this.onlineIds.length < 1) {
-              this.onlineIds.push('');
-              this.onlines();
-            } else {
-              if (res.target === 'Online') {
-                if (this.onlineIds.every((i) => i != connectionId)) {
-                  this.onlineIds.push(connectionId);
-                }
-              } else {
-                this.onlineIds = this.onlineIds.filter((i) => i != connectionId);
-              }
-              this.onlineNotify.changCallback();
-            }
-            command.emitter('executor', res.target.toLowerCase(), res.data);
-          }
-        }
+      case 'QrAuth':
+        this.accessToken = res.data;
+        logger.qrauthed();
         break;
       default: {
         const methods = this._methods[res.target.toLowerCase()];
@@ -1160,38 +1143,5 @@ export default class KernelApi {
         }
       }
     }
-  }
-  /**
-   * 使用rest请求后端
-   * @param methodName 方法
-   * @param data 参数
-   * @returns 返回结果
-   */
-  private async _restRequest(
-    methodName: string,
-    args: any,
-    timeout: number = 2,
-  ): Promise<model.ResultType<any>> {
-    const res = await this._axiosInstance({
-      method: 'post',
-      timeout: timeout * 1000,
-      url: '/orginone/kernel/rest/' + methodName,
-      headers: {
-        Authorization: this.accessToken,
-      },
-      data: args,
-    });
-    if (res.data && (res.data as model.ResultType<any>)) {
-      const result = res.data as model.ResultType<any>;
-      if (!result.success) {
-        if (result.code === 401) {
-          logger.unauth();
-        } else {
-          logger.warn('操作失败,' + result.msg);
-        }
-      }
-      return result;
-    }
-    return model.badRequest();
   }
 }

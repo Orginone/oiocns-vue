@@ -1,80 +1,77 @@
 <!-- 门户顶部导航条组件 -->
 <script setup lang="ts">
-import { ElMessage } from 'element-plus';
-import { NavigationItem } from '@/views/Home/index.vue';
-import BaseTitle from '../BaseTitle/index.vue';
-import { MoreFilled,RemoveFilled,CirclePlusFilled } from '@element-plus/icons-vue';
-// 接收常用页面列表
-defineProps<{
-  list: NavigationItem[]
+import { ElMessage } from 'element-plus'
+import { NavigationItem,allPages } from './config'
+import BaseTitle from '../BaseTitle/index.vue'
+import { MoreFilled,RemoveFilled,CirclePlusFilled } from '@element-plus/icons-vue'
+import { IPageTemplate } from '@/ts/core/thing/standard/page'
+import { command } from '@/ts/base'
+import orgCtrl from '@/ts/controller'
+import { generateUuid } from '@/utils/excel'
+import ViewerHost from '@/executor/open/page/view/ViewerHost.vue'
+import ViewerManager from '@/executor/open/page/view/ViewerManger'
+import { h } from 'vue'
+
+const props = defineProps<{
+  /** 固定页面列表 */
+  list: NavigationItem[] 
 }>()
-// 切换激活页面事件
 const emits = defineEmits<{
   (e: 'change', item: NavigationItem): void
 }>()
-// 全部页面列表
-const allPages: NavigationItem[] = [
-  {
-    key: 'app',
-    label: '工作台',
-    backgroundImageUrl: '/img/banner/digital-asset-bg.png',
-    component: defineAsyncComponent(() => import('@/views/Home/components/Content/WorkBench/index.vue')),
-  },
-  {
-    key: 'cohort',
-    label: '群动态',
-    backgroundImageUrl: '/img/banner/activity-bg.png',
-    component: defineAsyncComponent(() => import('@/views/Home/components/Content/Activity/Cohort.vue')),
-  },
-  {
-    key: 'friends',
-    label: '好友圈',
-    backgroundImageUrl: '/img/banner/circle-bg.jpeg',
-    component: defineAsyncComponent(() => import('@/views/Home/components/Content/Activity/Friends.vue')),
-  },
-  {
-    key: 'warehouse',
-    label: '公物仓',
-    backgroundImageUrl: '/img/banner/activity-bg.png',
-    component: defineAsyncComponent(() => import('@/views/Home/components/Content/Warehouse.vue')),
-  },
-  {
-    key: 'digital-asset',
-    label: '数据资产',
-    backgroundImageUrl: '/img/banner/digital-asset-bg.png',
-    component: defineAsyncComponent(() => import('@/views/Home/components/Content/DigitalAsset.vue')),
-  },
-]
 // 当前激活
-const current = ref(0);
-// 展示更多
-const more = ref(false);
-// 移除页面
-const removeRegularNavigationItem = (item:NavigationItem) => {
-  ElMessage.success('移除页面');
-};
-
-const addRegularNavigationItem = (item:NavigationItem) => {
-  ElMessage.success('添加页面');
-};
-
+const current = ref(0)
+// 是否展示更多
+const more = ref(false)
+// 被设为常用的页面
+const pages = ref<IPageTemplate[]>()
+// 首页显示的页面
+const homePages = ref<NavigationItem[]>()
+// 订阅页面变化，获取并处理被设为常用的页面
+const id = command.subscribeByFlag('pages', async () => {
+  pages.value = await orgCtrl.loadPages()
+  homePages.value = [
+    ...props.list,
+    ...pages.value
+    .filter((item) => item.cache.tags?.includes('常用'))
+    .map((item:IPageTemplate)=>{
+      const navigation: NavigationItem = {
+        key: generateUuid(),
+        label: item.name,
+        backgroundImageUrl: '',
+        type: 'page',
+        component: h(ViewerHost,{ctx:{view:new ViewerManager(item)}}),
+        // component: h(ViewerHost),
+      } 
+      return navigation
+    })   
+  ]
+})
+// 取消订阅
+onBeforeUnmount(() => command.unsubscribeByFlag(id))
+/** 移除页面 */
+const removeRegularNavigationItem = (item: IPageTemplate) => {
+  item.cache.tags = item.cache.tags?.filter((i) => i != '常用');
+  item.cacheUserData(true)
+  ElMessage.success('移除页面')
+}
+/** 添加页面 */
+const addRegularNavigationItem = (item: IPageTemplate) => {
+  item.cache.tags = item.cache.tags || []
+  item.cache.tags.push('常用')
+  item.cacheUserData(true)
+  ElMessage.success('添加页面')
+}
+/** 保存 */
 const onSave = () => {
-  ElMessage.success({duration:500,message:'保存成功'});
-  more.value = false;
-};
-
-const setCurrent = (index:number) => {
-  current.value = index;
-};
-
-const setMore = (value:boolean) => {
-  more.value = value;
-};
+  ElMessage.success({duration:500,message:'保存成功'})
+  more.value = false
+}
 </script>
 
 <template>
   <div class="navigationBar" :class="{ 'navigationBarOpen': more }">
-    <!-- 更多展开 -->
+    <!-- 编辑状态 -->
     <div v-if="more" class="navigationBarConfig">
       <div class="navigationBarConfigHeader">
         <BaseTitle title="页面管理" />
@@ -82,54 +79,58 @@ const setMore = (value:boolean) => {
       </div>
       <!-- 常用页面 -->
       <div class="navigationBarConfigSection">
-        <h5>常用页面</h5>
+        <h5 class="title">常用页面</h5>
         <ElSpace :size="16">
-        <div 
-          v-for="(item, index) in list" :key="index"
-          class="badge"
-        >
-          {{ item.label }}
-          <el-icon 
-            @click="removeRegularNavigationItem(item)" 
-            class="badge-icon" 
-            color="red"
+          <div 
+            v-for="(item, index) in pages.filter((item) => item.cache.tags?.includes('常用'))" :key="index"
+            class="badge"
           >
-            <RemoveFilled/>
-          </el-icon>  
-        </div>
+            <div class="name">{{ item.name }}</div>
+            <div class="icon">
+              <el-icon
+                @click="removeRegularNavigationItem(item)" 
+                class="badge-icon" 
+                color="red"
+              >
+                <RemoveFilled/>
+              </el-icon>                
+            </div>
+          </div>
         </ElSpace>
       </div>
       <!-- 全部页面 -->
       <div class="navigationBarConfigSection">
-        <h5>常用页面</h5>
+        <h5 class="title">全部页面</h5>
         <ElSpace :size="16">
         <div 
-          v-for="(item, index) in allPages" :key="index"
+          v-for="(item, index) in pages" :key="index"
           class="badge"
         >
-          {{ item.label }}
-          <el-icon 
-            @click="addRegularNavigationItem(item)" 
-            class="badge-icon" 
-            color="blue"
-          >
-            <CirclePlusFilled/>
-          </el-icon>  
+          <div class="name">{{ item.name }}</div>
+          <div class="icon" v-if="!item.cache.tags?.includes('常用')">
+            <el-icon 
+              @click="addRegularNavigationItem(item)" 
+              class="badge-icon" 
+              color="blue"
+            >
+              <CirclePlusFilled/>
+            </el-icon>  
+          </div>
         </div>
         </ElSpace>
       </div>
     </div>
-    <!-- 未展开 -->
+    <!-- 未展开状态 -->
     <template v-else>
       <div class="navigationBarContent">
         <div 
-          v-for="(item, index) in list" :key="item.key"
+          v-for="(item, index) in homePages" :key="item.key"
           :class="
             current === index
               ? 'navigationBarContent__itemActive'
               : 'navigationBarContent__item'
           "
-          @click="setCurrent(index); emits('change',item)"
+          @click="current = index; emits('change',item)"
         >
           {{ item.label }}
         </div>
@@ -137,7 +138,7 @@ const setMore = (value:boolean) => {
       <!-- 更多按钮 -->
       <el-icon 
         :size="24"
-        @click="setMore(true)" 
+        @click="more = true" 
         class="navigationBarMore"
       >
         <MoreFilled/>
@@ -147,18 +148,18 @@ const setMore = (value:boolean) => {
 </template>
 
 <style lang="scss" scoped>
+// TODO:
 .navigationBar {
+  z-index: 10;
   border-radius: 30px;
   position: fixed;
   top: 16px;
-  right: calc(50vw - 160px);
-  margin-left: 60px;
-  // TODO:
+  left: 50%;
+  transform: translateX(-50%);
   // background-color: rgba(@component-background, 0.7);
-  background-color: rgba(white,0.7);
+  background-color: rgba(250,250,250,.6);
   display: flex;
   font-size: 14px;
-  // TODO:
   // color: @text-color;
   color: #000;
   align-items: center;
@@ -167,15 +168,14 @@ const setMore = (value:boolean) => {
   &Content {
     display: flex;
     justify-content: center;
-    gap: 16px;
+    gap: 8px;
     flex: 1;
     &__item {
       transition: .2s;
       cursor: pointer;
-      padding: 4px 16px;
+      padding: 5px 16px;
       &:hover {
         border-radius: 30px;
-        // TODO:
         // background-color:@active-background;
         background-color: #e6f1ff;
       }
@@ -183,7 +183,6 @@ const setMore = (value:boolean) => {
         cursor: not-allowed;
         padding: 4px 16px;
         border-radius: 30px;
-        // TODO:
         // color: @text-color-inverse;
         color:white;
         // background-color:@focus-background;
@@ -193,9 +192,8 @@ const setMore = (value:boolean) => {
   }
 
   &More {
-    // TODO:
     // color: @text-color-inverse;
-    color:white;
+    color:black;
     font-size: 30px;
     cursor: pointer;
     margin-left: 20px;
@@ -204,16 +202,17 @@ const setMore = (value:boolean) => {
   &Open {
     height: auto;
     padding: 30px 20px 40px;
-    // TODO:
     // background-color: @component-background;
-    background-color: var(--el-bg-color-page);
-    z-index: 1;
+    background-color: #fafafa;
+    z-index: 1000;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
   }
 
 
   &Config {
-    width: 100%;
+    // width: 100%;
+    min-width: 400px;
+    max-width: 800px;
     &Header {
       display: flex;
       justify-content: space-between;
@@ -223,6 +222,25 @@ const setMore = (value:boolean) => {
 
     &Section {
       margin-bottom: 20px;
+      .title {
+        margin-bottom: 0.5em;
+        color: rgba(0,0,0,.85);
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .badge {
+        cursor: pointer;
+        position: relative;
+        .name {
+          padding: 8px 15px;
+        }
+        .icon {
+          position: absolute;
+          top: 0;
+          right: 0;
+        }
+      }
     }
 
     &PageCard {
@@ -237,6 +255,4 @@ const setMore = (value:boolean) => {
     }
   }
 }
-
-
 </style>

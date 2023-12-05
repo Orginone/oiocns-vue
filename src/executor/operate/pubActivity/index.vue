@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import FullScreenModal from '@/components/Common/fullScreenModal.vue';
-// import SelectMultFiles from '@/components/Activity/SelectMultFiles';
+import FullScreenModal from '@/components/Common/fullScreenModal.vue'
+import SelectMultFiles from '@/components/Activity/SelectMultFiles/index.vue'
 import { IActivity, MessageType } from '@/ts/core'
 import { model } from '@/ts/base';
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
@@ -18,13 +18,14 @@ const setEditor = (editor: IDomEditor) => {
   editorRef.value = editor
 }
 const valueHtml = ref('')
+/** 附带文件 */
 const resource = ref<model.FileItemShare[]>([])
 
-/** 发布动态 */
+/** 发布动态功能封装 */
 const publishActivity = () => {
   if (editorRef) {
-    const text = editorRef.getText();
-    const html = editorRef.getHtml();
+    const text = editorRef.value.getText();
+    const html = editorRef.value.getHtml();
     if (text.length > 0) {
       if (`<p>${text}</p>` === html) {
         props.activity.send(text, MessageType.Text, resource.value, []);
@@ -44,7 +45,7 @@ const publishActivity = () => {
     title="发布动态"
     width='60vw'
     bodyHeight='60vh'
-    destoryOnClose
+    destroyOnClose
     :onCancel="finish"
   >
     <!-- 主体内容 -->
@@ -75,17 +76,19 @@ const publishActivity = () => {
           mode="simple"
           @onCreated="setEditor"
           :defaultConfig="{ placeholder: '在此输入内容' }"
-          style="height: 200px;"
+          style="height: 200px;width:100%;"
         />
       </ElFormItem>
-      <ElFormItem>
-        TODO:选择multFiles
-        <!-- <SelectMultFiles
-          maxCount={9}
+      <!-- 选择图片视频 -->
+      <ElFormItem style="background-color: #fafafa;">
+        <SelectMultFiles
+          :maxCount="9"
           :types="['图片', '视频']"
-          onChange={(fileList) => {
-            setResource(fileList.map((item) => item.shareInfo()));
-          }}></SelectMultFiles> -->
+          :currentKey="activity.session.target.directory.key"
+          :onChange="(fileList) => {
+            resource = fileList.map((item) => item.shareInfo())
+          }"
+        />
       </ElFormItem>
     </ElForm>
     <!-- footer -->

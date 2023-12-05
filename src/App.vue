@@ -1,64 +1,76 @@
 <template>
-  <Suspense>
-    <template #default>
-      <el-config-provider>
-        <div class="pages" @contextmenu.prevent>
-          <router-view />
-        </div>
-      </el-config-provider>
-    </template>
-    <template #fallback> Loading ... </template>
-  </Suspense>
+  <el-config-provider :locale="EPlocale">
+    <Suspense>
+      <template #default>
+          <div class="pages" >
+            <router-view />
+          </div>
+      </template>
+      <template #fallback>
+        <div class="pages" v-loading></div>
+      </template>
+    </Suspense>
+  </el-config-provider>
+  <!-- 语音播放器 -->
+  <audio ref="audio" />
 </template>
 
-<script lang="ts">
-// import 'element-plus/theme-chalk/el-loading.css'
-// import 'element-plus/theme-chalk/el-message.css'
+<script lang="ts" setup>
 
-import { defineComponent } from 'vue'
-import { ElConfigProvider,ElMessage } from 'element-plus'
-// import zhCn from 'element-plus/lib/locale/lang/zh-cn'
-// import { logger,LoggerLevel } from '@/ts/coreIndex';
+import { ElConfigProvider } from 'element-plus'
+import message from '@/utils/message'
+import 'devextreme/dist/css/dx.common.css'
+import 'devextreme/dist/css/dx.light.css'
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+
 import moment from 'moment'
+import 'moment/locale/zh-cn'
+import orgCtrl from '@/ts/controller'
+import config from 'devextreme/core/config'
+import { loadMessages, locale } from 'devextreme/localization'
+import zhMessage from 'devextreme/localization/messages/zh.json'
+import { LoggerLevel, logger } from '@/ts/base/common'
+import { useMediaControls } from '@vueuse/core'
 
-// logger.onLogger = (level:LoggerLevel, msg:any) => {
-//   switch (level) {
-//     case LoggerLevel.info:
-//       ElMessage({
-//         message: msg,
-//         type: 'info'
-//       })
-//       break;
-//     case LoggerLevel.warn:
-//       ElMessage({
-//         message: msg,
-//         type: 'warning'
-//       })
-//       break;
-//     case LoggerLevel.error:
-//       ElMessage({
-//         message: msg,
-//         type: 'error'
-//       })
-//       break;
-//     case LoggerLevel.unauth:
-//         ElMessage({
-//         message: msg,
-//         type: 'error'
-//       })
-//       // return r.push('/login');
-//   }
-// }
-export default defineComponent({
-  components: {
-    ElConfigProvider
-  },
-  setup() {
-    return {
-      // locale: zhCn
-    }
-  }
+moment.locale('zh-cn')
+config({ defaultCurrency: 'zh' })
+loadMessages(zhMessage)
+locale('zh')
+
+const EPlocale = ref(zhCn)
+const audio = ref(null)
+const { playing } = useMediaControls(audio,{
+  src: '/media/bone.mp3',
 })
+
+logger.onLogger = (level, msg) => {
+  switch (level) {
+    case LoggerLevel.msg:
+      playing.value = true
+      message.info(msg);
+      break;
+    case LoggerLevel.info:
+      message.info(msg);
+      break;
+    case LoggerLevel.warn:
+      message.warning(msg);
+      break;
+    case LoggerLevel.error:
+      message.error(msg);
+      break;
+    case LoggerLevel.unauth:
+      message.error(msg);
+      orgCtrl.exit();
+      window.location.reload();
+      break;
+    case LoggerLevel.qrauthed:
+      message.info(msg);
+      window.location.href = '/#/home';
+      window.location.reload();
+      break;
+  }
+}
+
 </script>
 
 <style lang="scss">

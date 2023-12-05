@@ -2,15 +2,16 @@
 import { useRouter } from 'vue-router';
 import { IEntity, TargetType } from '@/ts/core';
 
-// import EntityForm from './entityForm';
+import EntityForm from './entityForm/index.vue';
 import ActivityPublisher from './pubActivity/index.vue';
 // import SettingAuth from './settingModal/settingAuth';
 // import SettingStation from './settingModal/settingStation';
 // import SettingIdentity from './settingModal/settingIdentity';
 // import { schema } from '@/ts/base';
-// import PullMember from './pullMember';
-// import JoinTarget from './joinTarget';
-// import FileTaskList from './fileTaskList';
+import PullMember from './pullMember/index.vue'
+import JoinTarget from './joinTarget/index.vue'
+import FileTaskList from './fileTaskList/index.vue'
+import { useDyncamicComponent } from '../dynamicComponentHooks'
 
 // 实体类型字典
 const entityMap: any = {
@@ -36,81 +37,65 @@ const props = defineProps<{
   finished: () => void;
 }>()
 
-// TODO:感觉可以抽离成hooks
-// 动态组件
-const contentComponent = ref(null);
-// 动态props
-const dynamicProps = ref({})
-// 设置组件与参数
-const setContent = (component: any,props: object) => {
-  contentComponent.value = component;
-  dynamicProps.value = props
-}
-// 重置动态组件
-const resetContent = () => {
-  contentComponent.value = null;
-  dynamicProps.value={}
-}
+// 设置动态组件
+const { 
+  component:contentComponent,
+  propsObj:dynamicProps,
+  setComponent:setContent,
+  resetComponent:resetContent 
+} = useDyncamicComponent()
 
 onMounted(()=>{
-  if (Array.isArray(props.args) && props.args.length > 0) {
-    switch (props.cmd) {
-      case 'pull':
-        return console.log('来这改');
-        // return <PullMember finished={finished} current={args[0]} />;
-      case 'taskList':
-        return console.log('来这改');
-        // return <FileTaskList directory={args[0]} finished={finished} />;
-      case 'settingAuth':
-        return console.log('来这改');
-        // return <SettingAuth space={args[0].target} finished={finished} />;
-      case 'settingIdentity':
-        return console.log('来这改');
-        // return <SettingIdentity target={args[0].target} finished={finished} />;
-      case 'settingStation':
-        return console.log('来这改');
-        // return <SettingStation company={args[0].target} finished={finished} />;
-      
-      case 'pubActivity':
-        // TODO:
-        // return <ActivityPublisher activity={args[0]} finish={finished} />;
-        return setContent(ActivityPublisher, {activity: props.args[0], finished: props.finished})
-      case 'update':
-        return console.log('来这改');
-        // {
-        //   const entity: IEntity<schema.XEntity> = args[0];
-        //   if (entity.groupTags && entity.groupTags.includes('表单')) {
-        //     return <EntityForm cmd={cmd + 'Form'} entity={args[0]} finished={finished} />;
-        //   }
-        //   if (Object.keys(entityMap).includes(args[0].typeName)) {
-        //     return (
-        //       <EntityForm
-        //         cmd={cmd + entityMap[args[0].typeName]}
-        //         entity={args[0]}
-        //         finished={finished}
-        //       />
-        //     );
-        //   }
-        //   if (Object.values(TargetType).includes(args[0].typeName as TargetType)) {
-        //     return <EntityForm cmd={cmd} entity={args[0]} finished={finished} />;
-        //   }
-        // }
-        break;
-      default:
-        return console.log('来这改');
-        // if (cmd.startsWith('join')) {
-        //   return <JoinTarget cmd={cmd} current={args[0]} finished={finished} />;
-        // }
-        // return <EntityForm cmd={cmd} entity={args[0]} finished={finished} />;
-    }
+if (Array.isArray(props.args) && props.args.length > 0) {
+  switch (props.cmd) {
+    case 'pull':
+      return setContent(PullMember,{finished: props.finished, current:props.args[0]})
+    case 'taskList': // 上传进度列表
+      return setContent(FileTaskList, {directory: props.args[0], finished: props.finished})
+    case 'settingAuth':
+      return console.log('来这改');
+      // return <SettingAuth space={args[0].target} finished={finished} />;
+    case 'settingIdentity':
+      return console.log('角色设置来这改');
+      // return <SettingIdentity target={args[0].target} finished={finished} />;
+    case 'settingStation':
+      return console.log('来这改');
+      // return <SettingStation company={args[0].target} finished={finished} />;
+    case 'pubActivity':
+      return setContent(ActivityPublisher, {activity: props.args[0], finish: props.finished})
+    case 'update':
+      return console.log('来这改');
+      // {
+      //   const entity: IEntity<schema.XEntity> = args[0];
+      //   if (entity.groupTags && entity.groupTags.includes('表单')) {
+      //     return <EntityForm cmd={cmd + 'Form'} entity={args[0]} finished={finished} />;
+      //   }
+      //   if (Object.keys(entityMap).includes(args[0].typeName)) {
+      //     return (
+      //       <EntityForm
+      //         cmd={cmd + entityMap[args[0].typeName]}
+      //         entity={args[0]}
+      //         finished={finished}
+      //       />
+      //     );
+      //   }
+      //   if (Object.values(TargetType).includes(args[0].typeName as TargetType)) {
+      //     return <EntityForm cmd={cmd} entity={args[0]} finished={finished} />;
+      //   }
+      // }
+    default:
+      if (props.cmd.startsWith('join')) {   
+        return setContent(JoinTarget, {cmd:props.cmd,current: props.args[0], finished: props.finished})
+      }
+      return setContent(EntityForm, {cmd: props.cmd, entity: props.args[0], finished: props.finished})
   }
+}
 })
-
-
 
 </script>
 
 <template>
+  <!-- operate -->
   <component :is="contentComponent" v-bind="dynamicProps"/>
 </template>
 

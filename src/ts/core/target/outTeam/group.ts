@@ -6,6 +6,7 @@ import { ICompany } from '../team/company';
 import { ITeam } from '../base/team';
 import { targetOperates } from '../../public';
 import { ISession } from '../../chat/session';
+import { IFile } from '../../thing/fileinfo';
 
 /** 组织集群接口 */
 export interface IGroup extends ITarget {
@@ -47,6 +48,23 @@ export class Group extends Target implements IGroup {
   keys: string[];
   relations: string[];
   private _childrenLoaded: boolean = false;
+  findChat(id: string): ISession | undefined {
+    return this.user.companys.find((i) => i.id === id)?.session;
+  }
+  get superior(): IFile {
+    return this.parent ?? this.space;
+  }
+  get groupTags(): string[] {
+    const tags = [...super.groupTags];
+    if (this.id != this.belongId) {
+      if (this.belongId != this.spaceId) {
+        tags.push('加入的集群');
+      } else {
+        tags.push('创建的集群');
+      }
+    }
+    return tags;
+  }
   async loadChildren(reload?: boolean | undefined): Promise<IGroup[]> {
     if (!this._childrenLoaded || reload) {
       const res = await kernel.querySubTargetById({
@@ -114,8 +132,8 @@ export class Group extends Target implements IGroup {
     }
     return targets;
   }
-  content(_mode?: number | undefined): ITarget[] {
-    return [...this.children];
+  content(): IFile[] {
+    return this.children;
   }
   async deepLoad(reload: boolean = false): Promise<void> {
     await Promise.all([

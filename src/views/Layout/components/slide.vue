@@ -1,66 +1,99 @@
+<script lang="ts" setup>
+import orgIcons from "@/components/Common/GlobalComps/orgIcons.vue"
+import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
+import orgCtrl from '@/ts/controller'
+import { useFlagCmdEmitter } from '@/hooks/useCtrlUpdate'
+import { kernel, model, schema } from '@/ts/base'
+import navItem from './navItem.vue'
+
+const workCount = ref(0)
+const msgCount = ref(0)
+const onlineVisible = ref(false)
+useFlagCmdEmitter('session', () => {
+  let noReadCount = 0;
+  for (const item of orgCtrl.chats) {
+    if (item.isMyChat) {
+      noReadCount += item.badgeCount;
+    }
+  }
+  msgCount.value = noReadCount
+})
+onMounted(() => {
+  const workId = orgCtrl.work.notity.subscribe(async () => {
+    workCount.value = orgCtrl.work.todos.length
+  })
+  return () => {
+    orgCtrl.work.notity.unsubscribe(workId)
+  }
+})
+const actions = ref([
+  {
+    text: '门户',
+    icon: 'home',
+    path: '/home',
+    count: 0,
+  },
+  {
+    text: '沟通',
+    icon: 'chat',
+    path: '/chat',
+    count: msgCount,
+  },
+  {
+    text: '办事',
+    icon: 'work',
+    path: '/work',
+    count: workCount,
+  },
+  {
+    text: '数据',
+    icon: 'store',
+    path: '/store',
+    count: 0,
+  },
+  {
+    text: '关系',
+    icon: 'relation',
+    path: '/relation',
+    count: 0,
+  },
+])
+
+</script>
+
 <template>
   <div class="nav">
-    
     <div class="slide">
       <div class="user">
-        <!-- TODO:改用entityicon -->
-        <img src="/svg/home.svg" alt="" />
+        <ElBadge :value="online" :hidden="!(online>0)">
+          <EntityIcon :entityId="orgCtrl.user.id" :size="45" />
+        </ElBadge>
       </div>
-      <RouterLink 
-        :to="item.path"
-        class="item" 
-        v-for="(item, index) in actions" :key="index"
-        @click=""
+      <ElSpace 
+        direction="vertical" 
+        wrap 
+        alignment="center" 
+        :size="25"
+        class="nav-bar"
       >
-        <orgIcons :url="item.icon"></orgIcons>
-        <div class="item-text">{{ item.text }}</div>
-      </RouterLink>
+        <navItem v-for="item in actions" :key="item.path"
+          :item = "item"
+        />
+        <!-- TODO:在线信息 -->
+        <OnlineInfo v-if="onlineVisible" :onClose="() => onlineVisible = false" />
+      </ElSpace>
     </div>
     <div class="exit" url="exit">
-      <orgIcons :url="'exit'"></orgIcons>
+      <RouterLink to="/login">
+        <orgIcons :size="22" exit selected />
+        <div>退出</div>
+      </RouterLink>
+      
     </div>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { getCurrentInstance, onMounted } from "vue";
-import orgIcons from "@/components/Common/GlobalComps/orgIcons.vue";
-const { proxy } = getCurrentInstance();
-const msgCount: Number = 0;
-const workCount: Number = 0;
-const actions = [
-  {
-    text: "门户",
-    icon: "home",
-    path: "/home",
-    count: 0,
-  },
-  {
-    text: "沟通",
-    icon: "chat",
-    path: "/chat",
-    count: msgCount,
-  },
-  {
-    text: "办事",
-    icon: "work",
-    path: "/work",
-    count: workCount,
-  },
-  {
-    text: "存储",
-    icon: "store",
-    path: "/store",
-    count: 0,
-  },
-  {
-    text: "设置",
-    icon: "setting",
-    path: "/setting",
-    count: 0,
-  },
-];
-</script>
+
 
 <style lang="scss" scoped>  
 .nav{
@@ -76,17 +109,23 @@ const actions = [
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-  .user{
-    margin: 10px 0;
-    img{
-      width: 45px;
-      height: 45px;
+    .user{
+      margin: 10px 0;
+      img{
+        width: 45px;
+        height: 45px;
+      }
     }
+    .nav-bar {
+      padding-top: 25px;
+    }
+    .exit{
+      margin-bottom: 10px;
+      text-align: center;
+      color:#366ef4;
+    }    
   }
-  .exit{
-    margin-bottom: 10px;
-  }
+
 }
 .item {
   padding: 10px 0;

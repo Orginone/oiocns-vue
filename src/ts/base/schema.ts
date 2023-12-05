@@ -95,17 +95,39 @@ export type XAttribute = {
   formId: string;
   // 归属用户ID
   belongId: string;
-  // 属性关系
-  links: XAttrLinkProp[] | undefined;
+  // 特性显示组件
+  widget?: string;
   // 关联属性
   property: XProperty | undefined;
-  // 单
-  form: XForm | undefined;
-  // 工作职权
-  authority: XAuthority | undefined;
-  // 创建度量标准的用户
-  belong: XTarget | undefined;
+  // 配置参数
+  options: XAttributeProps | undefined;
 } & Xbase;
+
+// 度量特性配置参数
+export type XAttributeProps = {
+  /** 表单参数 */
+  // 是否只读
+  readOnly?: boolean;
+  // 是否必填
+  isRequired?: boolean;
+  // 隐藏特性
+  hideField?: boolean;
+  // 默认值
+  defaultValue?: any;
+  // 成员的上级组织
+  teamId?: string;
+  // 是否限定为操作主体
+  isOperator?: boolean;
+  /** 表格参数 */
+  // 是否可见
+  visible?: boolean;
+  // 是否显示在左侧分类列
+  species?: boolean;
+  // 是否固定列
+  fixed?: boolean;
+  // 是否展示至摘要
+  showToRemark?: boolean;
+};
 
 //权限定义
 export type XAuthority = {
@@ -147,36 +169,24 @@ export type XDirectory = {
 export type XForm = {
   // 表单布局
   rule: string;
+  // 表单查看数据规则
+  searchRule: string;
+  // 配置参数
+  options: XFormProps | undefined;
   // 表单的特性
   attributes: XAttribute[];
   // 使用表单的流程节点
   bindNodes: XWorkNode[] | undefined;
   // 表单的目录
   directory: XDirectory | undefined;
-  // 展示配置
-  setting: XFormSetting;
-  // 子项
-  items: XFormItem[];
 } & XStandard;
 
-export type XFormItem = {
-  // 名称
-  name: string;
-  // 类型
-  typeName: string;
-  // 子项
-  children: XFormItem[];
-  // 特性
-  attribute: XAttribute | undefined;
-} & Xbase;
-
-export type XFormSetting = {
-  // 列数
-  colCount: number;
-  // 标签位置
-  labelLocation: 'top' | 'left';
-  // 标签显示模式
-  labelMode: 'static' | 'outside';
+// 度量特性配置参数
+export type XFormProps = {
+  // 常规项宽度
+  itemWidth: number;
+  // 表单根标签集
+  labels: string[];
 };
 
 /* 表单规则类型 */
@@ -485,6 +495,8 @@ export type XWorkDefine = {
   shareId: string;
   // 允许新增
   allowAdd: boolean;
+  // 允许补充办事
+  hasGateway: boolean;
   // 允许变更
   allowEdit: boolean;
   // 允许选择
@@ -498,6 +510,18 @@ export type XWorkDefine = {
   // 归属用户
   target: XTarget | undefined;
 } & XEntity;
+
+//节点网关
+export type XWorkGateway = {
+  // 网关节点Id
+  nodeId: string;
+  // 关联办事Id
+  defineId: string;
+  // 组织Id
+  targetId: string;
+  // 关联的办事
+  define: XWorkDefine | undefined;
+} & Xbase;
 
 //办事实例
 export type XWorkInstance = {
@@ -625,4 +649,20 @@ export type XWorkTask = {
   instance: XWorkInstance | undefined;
 } & Xbase;
 
-export interface XPageTemplate extends XStandard {}
+//暂存
+export type XStaging = {
+  // 类型
+  typeName: string;
+  // 数据
+  data: XThing;
+  // 归属+关系举证
+  relations: string;
+} & Xbase;
+
+// 页面模板
+export interface XPageTemplate extends XStandard {
+  // 是否发布至首页
+  public: boolean;
+  // 模板类型
+  kind?: string;
+}

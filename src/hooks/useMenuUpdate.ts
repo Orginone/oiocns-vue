@@ -12,24 +12,22 @@ import { Ref } from 'vue';
 const useMenuUpdate = (
   loadMenu: () => MenuItemType,
   controller?: Controller,
-): [
-  Ref<string>,
-  Ref<MenuItemType | undefined>,
-  Ref<MenuItemType | undefined>,
-  (item: MenuItemType) => void,
-] => {
-  const key = ref<string>('');
+)=> {
+  const key = ref<string>(generateUuid())
   const rootMenu = ref<MenuItemType>();
   const selectMenu = ref<MenuItemType>();
   const ctrl = controller || orgCtrl;
-
+  
   /** 刷新菜单 */
   const refreshMenu = () => {
-    key.value = generateUuid();
-    const newMenus = loadMenu();
-    var item = findMenuItemByKey(newMenus, ctrl.currentKey);
-    item === undefined ? item = newMenus: ''
-    ctrl.currentKey = item.key as string;
+    const newMenus = loadMenu()
+    let item = findMenuItemByKey(newMenus, ctrl.currentKey);
+    
+    if (item === undefined) {
+      item = newMenus;
+    }
+    
+    ctrl.currentKey = item.key
     selectMenu.value = item
     rootMenu.value = newMenus
   };
@@ -39,23 +37,24 @@ const useMenuUpdate = (
     if (typeof item === 'string') {
       ctrl.currentKey = item;
     } else {
-      ctrl.currentKey = item.key as string;
+      ctrl.currentKey = item.key;
     }
     refreshMenu();
   };
 
+  let id = ''
+
   onMounted(() => {
-    const id = ctrl.subscribe((k) => {
-      key.value = k;
-      refreshMenu();
-    });
-    return () => {
-      ctrl.unsubscribe(id);
-    };
+    
+    id = ctrl.subscribe((k) => {
+      key.value = k
+      refreshMenu()
+    })
   })
-
-
-  return [key, rootMenu, selectMenu, onSelectMenu];
+  onBeforeUnmount(() => {
+    ctrl.unsubscribe(id);
+  })
+  return {key, rootMenu, selectMenu, onSelectMenu}
 }
 
 export default useMenuUpdate;
