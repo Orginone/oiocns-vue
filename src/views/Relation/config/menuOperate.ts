@@ -1,5 +1,7 @@
 import orgCtrl from '@/ts/controller';
 import { IDepartment, IDirectory, IGroup, ITarget } from '@/ts/core';
+import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
+import OrgIcons from '@/components/Common/GlobalComps/orgIcons.vue'
 import { MenuItemType } from 'typings/globelType';
 import { loadFileMenus } from '@/executor/fileOperate';
 
@@ -8,9 +10,9 @@ const createMenu = (
   target: ITarget | IDirectory,
   children: MenuItemType[],
 ): MenuItemType => {
-  if ('memberDirectory' in target) {
-    children.unshift(createMenu(target.memberDirectory, []));
-  }
+  // if ('memberDirectory' in target) {
+  //   children.unshift(createMenu(target.memberDirectory, []));
+  // }
   return {
     key: target.key,
     item: target,
@@ -18,7 +20,7 @@ const createMenu = (
     itemType: target.typeName,
     menus: loadFileMenus(target),
     tag: [target.typeName],
-    icon:  '',
+    icon: {},
     children: children,
   };
 };
@@ -56,12 +58,13 @@ const getTeamMenu = () => {
 
 /** 加载设置模块菜单 */
 export const loadBrowserMenu = () => {
+  console.log('a',getUserMenu(),'b',getTeamMenu())
   return {
-    key: '设置',
-    label: '设置',
+    key: 'disk',
+    label: '关系',
     itemType: 'Tab',
     item: 'disk',
-    icon: '',
+    icon: {name:OrgIcons,args:{setting:true,selected:true}},
     children: [getUserMenu(), ...getTeamMenu()],
   };
 };

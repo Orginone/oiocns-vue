@@ -30,11 +30,12 @@ import {ArrowRight} from '@element-plus/icons-vue'
   const [leftSider, setLeftSider] = useStorage<boolean>('leftSider', false);
   const [rightSider, setRightSider] = useStorage<boolean>('rightSider', false);
   const [mainWidth, setMainWidth] = useStorage<string | number>('mainWidth', '40%');
-  const parentMenu = props.selectMenu.parentMenu ?? props.siderMenuData;
+  console.log('props.selectMenu',props.selectMenu);
+  const parentMenu = props.selectMenu?.parentMenu ?? props.siderMenuData;
   
-  const outside = props.selectMenu.menus?.filter((item) => item.model === 'outside') ?? [];
+  const outside = props.selectMenu?.menus?.filter((item) => item.model === 'outside') ?? [];
  
-  const inside = props.selectMenu.menus?.filter((item) => item.model != 'outside') ?? [];
+  const inside = props.selectMenu?.menus?.filter((item) => item.model != 'outside') ?? [];
   const findMenus = (
     key: string,
     menus?: OperateMenuType[],
@@ -52,6 +53,7 @@ import {ArrowRight} from '@element-plus/icons-vue'
   };
   /** 点击操作菜单 */
   const onOperateMenuClick = async (item: MenuItemType, key: string) => {
+   
     const menu = findMenus(key, item.menus);
     if (menu?.beforeLoad) {
       await menu.beforeLoad()

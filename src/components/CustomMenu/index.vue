@@ -132,9 +132,9 @@ const loadOpenKeys = (items: MenuItemType[], key: string) => {
 
   
   
-  // TODO:watch(()=>props,()=>{
-  //   reloadData(loadOpenKeys(props.item.children, props.selectMenu.key))
-  // })
+  watch(()=>props.item,()=>{
+    reloadData(loadOpenKeys(props.item.children, props.selectMenu.key))
+  })
   onMounted(()=>{
     reloadData(loadOpenKeys(props.item.children, props.selectMenu.key))
   })
@@ -152,6 +152,10 @@ const loadOpenKeys = (items: MenuItemType[], key: string) => {
     data.value = loadMenus(loopFilterTree(props.item.children), keys)
     openKeys.value = keys
     selectedKeys.value = [props.selectMenu.key]
+  }
+  const subClick = (i:any,item:any)=>{
+    console.log('sub',i,item)
+    props.onSelect?.apply(i, [item]);
   }
 </script>
 
@@ -183,12 +187,11 @@ const loadOpenKeys = (items: MenuItemType[], key: string) => {
           <!-- TODO: <component :is="item.icon" /> -->
           <MenuLabel :selectMenu="selectMenu" :item="item" :collapsed="collapsed" :on-select="onSelect" :on-menu-click="onMenuClick" />
         </template>
-        <!-- <ElMenuItem 
+        <ElMenuItem 
           v-for="i in item.children" :key="i.key"
         >
-          TODO: <component :is="i.icon" />
-          <span>{{ i.title }}</span>
-        </ElMenuItem> -->
+          <span @click="subClick(this,i)" >{{ i.title }}</span>
+        </ElMenuItem>
       </ElSubMenu>
     </ElMenu>
   </template>

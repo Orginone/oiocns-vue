@@ -49,13 +49,13 @@ const mainRouter: RouteRecordRaw[] = [
     }
   },
   {
-    component: () => import('@/views/Setting/index.vue'),
-    name: 'setting',
-    path: '/setting',
+    component: () => import('@/views/Relation/index.vue'),
+    name: 'relation',
+    path: '/relation',
     meta: {
       keepAlive: false,
-      title: '设置',
-      id: "setting"
+      title: '关系',
+      id: "relation"
     }
   },
   {
@@ -340,16 +340,6 @@ const mainRouter: RouteRecordRaw[] = [
         }
       },
     ]
-  },
-  {
-    component: () => import('@/views/Thing/index.vue'),
-    name: 'thing',
-    path: '/thing',
-    meta: {
-      keepAlive: false,
-      title: '物',
-      id: "thing"
-    }
   },
 ]
 

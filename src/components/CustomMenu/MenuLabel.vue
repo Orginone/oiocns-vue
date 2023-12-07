@@ -11,7 +11,6 @@ const props = defineProps<{
   collapsed: boolean
   onMenuClick: (item: MenuItemType, menuKey: string) => void
 }>()
-
 </script>
 
 <template>
