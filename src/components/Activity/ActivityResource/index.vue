@@ -13,10 +13,6 @@ const props = defineProps(
       type: Array as () => FileItemShare[],
       required: true
     },
-    maxWidth: {
-      type: Number,
-      required: true
-    },
     columns: {
       type: Number,
       default: 3
@@ -46,9 +42,7 @@ const previewSrcList = computed(() => {
 <template>
   <template v-for="item in fileList" :key="item.shareLink">
     <!-- 图片 -->
-    <div v-if="item.contentType?.startsWith('image')"
-      :style="{width: `${computedSize}px`,height: `${computedSize}px`,cursor: 'pointer'}"
-    >
+    <div class="pic" v-if="item.contentType?.startsWith('image')">
       <ElImage
         style="width:100%;height: 100%;"
         fit='cover'
@@ -61,19 +55,13 @@ const previewSrcList = computed(() => {
       />
     </div>
     <!-- 视频 -->
-    <div v-else-if="item.contentType?.startsWith('video')"
-      :style="{width: maxWidth,height: maxWidth,cursor: 'pointer'}"
-      @click="(e) => {
-        e.stopPropagation();
-        command.emitter('executor', 'open', item,'preview');
-      }"
+    <div class="video" v-else-if="item.contentType?.startsWith('video')"
+      @click="command.emitter('executor', 'open', item,'preview')"
     >
-      <img :src="item.thumbnail" :style="{width: computedSize+'px',height: computedSize+'px',cursor: 'pointer'}">
+      <img :src="item.thumbnail">
     </div>
     <!-- pdf -->
-    <iframe v-else-if="item.contentType?.includes('pdf') || item.contentType?.startsWith('text')"
-      :width="maxWidth"
-      :height="maxWidth"
+    <iframe class="pdf" v-else-if="item.contentType?.includes('pdf') || item.contentType?.startsWith('text')"
       loading="eager"
       :name="item.name"
       :src="shareOpenLink(item.shareLink)"
@@ -83,4 +71,12 @@ const previewSrcList = computed(() => {
   </template>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.pic {
+  border-radius: 11px;
+  overflow: hidden;
+  // TODO:
+  width: 190px;
+  height: 190px;
+}
+</style>

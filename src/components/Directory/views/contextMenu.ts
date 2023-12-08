@@ -6,8 +6,6 @@ import { IDEntity } from '@/ts/core'
 export const onContextMenu = (e : MouseEvent,item: IDEntity, getMenu: Function)=> {
   e.preventDefault()
   const cxtMenu = getMenu(item)
-  // TODO:
-  console.log(cxtMenu);
   // 处理cxtMenu的数据
   const getLegalMenu = (origin:any)=>{
     if(!origin) return []

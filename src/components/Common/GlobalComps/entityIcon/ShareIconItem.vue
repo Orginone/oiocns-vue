@@ -7,12 +7,16 @@ import TypeIcon from '../typeIcon.vue'
 
 interface shareIconInfo extends teamTypeInfo {
   share?: ShareIcon;
+  color?: string;
+  gap?: number;
 }
 
 const props = defineProps<shareIconInfo>()
 
-const size = props.size ?? 22;
-const fontSize = size > 14 ? 14 : size;
+const size = props.size ?? 22
+const fontSize = size > 14 ? 14 : size
+const gap = (props.gap || 6)+'px'
+
 
 </script>
 
@@ -25,7 +29,7 @@ const fontSize = size > 14 ? 14 : size;
         <InfoMore :entity="props?.entity" :size="size"/>
         <ElAvatar shape="square" :size="size" :src="share.avatar.thumbnail" />
         <strong class="pickupName" v-if="showName" 
-          :style="{ marginLeft: '6px', fontSize: fontSize }"
+          :style="{ marginLeft: gap, fontSize: fontSize, color: color || 'none'}"
         >
           {{share.name}}
         </strong>
@@ -86,9 +90,13 @@ const fontSize = size > 14 ? 14 : size;
   }
 }
 .pickupName {
-  color: #003CAB;
-  margin-left: 6px;
-  font-size: 12px;
-  vertical-align: middle;
+  //styleName: 14/CN-Regular;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0em;
+  text-align: left;
+  //  TODO: 
+  color: #15181D;
 }
 </style>

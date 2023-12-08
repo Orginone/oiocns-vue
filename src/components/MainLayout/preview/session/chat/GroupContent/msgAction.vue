@@ -19,69 +19,39 @@ const props = defineProps<{
 
 <template>
 <div class="msgAction">
-  <ElTooltip content="复制" placement="top">
-    <ElButton link 
-      @click="copy(item.msgBody) && ElMessage.success('复制成功')"
-      :icon="CopyDocument"
-    />
-  </ElTooltip>
-  <ElTooltip content="引用" placement="top">
-    <ElButton link @click="citeText(item)" :icon="ChatDotRound"/>
+  <ElTooltip content="多选" placement="top">
+    <div class="msgAction-btn"   @click="multiSelectFn(true)">
+      <ElButton :icon="Check" link/>
+    </div>
   </ElTooltip>
   <ElTooltip content="转发" placement="top" >
-    <ElButton link @click="forward(item)" :icon="Promotion"/>
+    <div class="msgAction-btn" @click="forward(item)">
+      <ElButton :icon="Promotion" link/>
+    </div>
+  </ElTooltip>  
+  <ElTooltip content="引用" placement="top">
+    <div class="msgAction-btn" @click="citeText(item)">
+      <ElButton :icon="ChatDotRound" link/>
+    </div>
   </ElTooltip>
-  <ElTooltip v-if="item.isMySend && item.allowRecall" content="撤回" placement="top">
-    <ElButton link @click="async () => await props.chat.recallMessage(item.id)" :icon="Back"/>
+  <ElTooltip content="复制" placement="top">
+    <div class="msgAction-btn"  @click="copy(item.msgBody) && ElMessage.success('复制成功')">
+      <ElButton :icon="CopyDocument" link/>
+    </div>
   </ElTooltip>
-  <ElTooltip content="更多" placement="top">
-    <div>
-      <ElPopover
-        placement="bottom-end"
-        trigger="click"
-        :show-arrow="false"
-        popper-class="moreAction"
-      >                           
-        <template #reference>
-          <ElButton :icon="MoreFilled" link/>                
-        </template>
-        <!-- 更多气泡展示的内容 -->
-        <template #default>
-          <div class="moreActionWrap">
-            <!-- 删除 -->
-            <ElButton
-              v-if="chat.canDeleteMessage"
-              type="text"
-              class="multiBtn"
-              @click="async () => {
-                if (await props.chat.deleteMessage(item.id)) {
-                  ElMessage.success('删除成功')
-                }
-              }"
-            >
-              <ElIcon :size="16" class="actionIconStyl"><Delete/></ElIcon>
-              <span class="moreActionTxt">删除</span>
-            </ElButton>
-            <!-- 多选 -->
-            <ElButton class="multiBtn" type="text" @click="multiSelectFn(true)">
-              <ElIcon :size="16" class="actionIconStyl"><Check/></ElIcon>
-              <span class="moreActionTxt">多选</span>
-            </ElButton>
-            <!-- 下载 -->
-            <ElButton
-              v-if="['文件', '视频', '图片'].includes(item.msgType) && item.forward?.length < 1"
-              type="text"
-              class="multiBtn"
-              @click="() => {
-                const url = parseAvatar(item.msgBody).shareLink
-                downloadByUrl(shareOpenLink(url, true))
-              }">
-              <ElIcon :size="16" class="actionIconStyl"><Download/></ElIcon>
-              <span class="moreActionTxt">下载</span>
-            </ElButton>
-          </div>
-        </template>
-      </ElPopover>
+  <ElTooltip content="撤回" v-if="item.isMySend && item.allowRecall"  placement="top">
+    <div class="msgAction-btn" @click="async () => await props.chat.recallMessage(item.id)">
+      <ElButton :icon="Back" link/>
+    </div>
+  </ElTooltip>
+  <ElTooltip content="删除" v-if="chat.canDeleteMessage"  placement="top">
+    <div class="msgAction-btn" @click="async () => await props.chat.deleteMessage(item.id)">
+      <ElButton :icon="Delete" link/>
+    </div>
+  </ElTooltip>  
+  <ElTooltip content="下载" v-if="['文件', '视频', '图片'].includes(item.msgType) && item.forward?.length < 1"  placement="top">
+    <div class="msgAction-btn" @click="() => downloadByUrl(shareOpenLink(parseAvatar(item.msgBody).shareLink, true))">
+      <ElButton :icon="Download" link/>
     </div>
   </ElTooltip>
 </div>
@@ -89,31 +59,20 @@ const props = defineProps<{
 
 <style lang="scss" scoped>
 .msgAction {
-  display: flex;
   width: 100%;
-  justify-content: space-around;
-}
-
-.actionIconStyl {
-  margin: 0 4px;
-}
-
-.moreActionWrap {
   display: flex;
-  flex-direction: column;
-  .multiBtn {
-    display: flex;
-    align-items: center;
-    padding: 6px;
-    margin-left: 0 !important;
-    color: rgba(0, 0, 0, 0.85);
-  }
-  .moreActionTxt {
-    font-size: 12px;
-    margin-left: 0;
+  .msgAction-btn {
+    // TODO: color/surface/分割线
+    border-right: 1px solid #E7E8EB;
+    padding: 4px;
+    &:last-child {
+      border-right: 0;
+    }
   }
 }
+
 </style>
+
 <style>
 .el-popover.el-popper.moreAction {
   border: 0 !important;

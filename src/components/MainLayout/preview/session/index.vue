@@ -16,10 +16,6 @@ const props = defineProps<{
   setting?: boolean;
 }>()
 
-// TODO:
-console.log(props.session);
-
-
 const actions = ref<string[]>()
 const bodyType=ref(props.setting ? 'activity' : 'chat')
 
@@ -67,55 +63,44 @@ const getTitle = (flag: string) => {
 </script>
 
 <template>
-  <div class="groupDetail">
-    <!-- 头部 -->
-    <div class="header">
-      <!-- 头部-左侧群信息 -->
-      <div class="left">
-        <div class="avatar"><TeamIcon :entity="session.metadata" :size="50" /></div>
-        <div class="txt">
-          <div class="title">
+  <div class="group-detail">
+    <div class="group-datail-header">
+      <div class="group-datail-header-left">
+        <div class="avatar"><TeamIcon :entityId="session.metadata.id" :size="48" /></div>
+        <div class="info">
+          <div class="info-name">
             <span style="margin-right: 10px;">{{session.chatdata.chatName}}</span>
             <span class="number" v-if="session.members.length > 0">({{session.members.length}})</span>
           </div>
-          <!-- 标签 -->
-          <div class="description">
-            <ElTag
-              v-for="label in session.groupTags.filter(i=>i.length>0)" 
-              :key="label" 
-              :type="label === '置顶' ? 'danger' : 'success'"
-            >
-              {{ label }}
-            </ElTag>
-          </div>
+          <div class="info-remark">{{session.metadata.remark}}</div>
         </div>
-        
       </div>
-      <!-- 头部-右侧action -->
-      <div class="header-action">
-        <a v-for="flag in actions" :key="flag"
+      <div class="group-datail-header-right">
+        <a class="action-btn" v-for="flag in actions" :key="flag"
           :title="getTitle(flag)"
           @click="bodyType = flag"
         >
-          <OrgIcons :key="bodyType" :type="flag" :selected="bodyType === flag" :size="26" />
+          <OrgIcons :key="bodyType" :type="flag" :selected="bodyType === flag" :size="20" />
         </a>        
       </div>
     </div>
-    <!-- 内容区域 -->
-    <div class="groupDetailContent" :key="session.key">
+    <div class="group-detail-main" :key="session.key">
       <!-- 聊天 -->
       <ChatBody v-if=" bodyType==='chat'"  :chat="session" filter='' />
       <!-- 动态 -->
-      <TargetActivity v-else-if="bodyType==='activity'" height="700" :activity="session.activity" />      
+      <TargetActivity v-else-if="bodyType==='activity'" height="100%" :activity="session.activity" />      
       <!-- 数据 -->
       <Directory v-else-if="bodyType==='store'" :root="session.target.directory"/>
       <!-- 关系 -->
-      <DirectoryViewer v-else-if="bodyType==='relation'" 
-        extraTags
+      <DirectoryViewer v-else-if="bodyType==='relation'"
+        title="群成员"
         :initTags="['成员']"
+        :show-tags="false"
+        :extra-tags="false"
         :selectFiles="[]"
         :content="session.target.memberDirectory.content()"
         :fileOpen="()=>{}"
+        show-footer
         :contextMenu="(entity: IDEntity | undefined) => {
           const file = (entity as IFile) || session.target.memberDirectory;
           return {
@@ -131,302 +116,70 @@ const getTitle = (flag: string) => {
 </template>
 
 <style lang="scss" scoped>
-.img_list_add {
-  cursor: pointer;
-  width: 50px;
-  height: 50px;
-  background: #fff;
-  border-radius: 2px;
-  color: rgba(0, 0, 0, 0.45);
-  border: 1px dashed #dcdfe6;
-  font-size: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px !important;
-}
-
-.img_list_del {
-  cursor: pointer;
-  width: 50px;
-  height: 50px;
-  border-radius: 2px;
-  border: 1px dashed var(--el-color-danger);
-  font-size: 25px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--el-color-danger);
-  margin-bottom: 20px !important;
-}
-
-.groupDetail {
+.group-detail {
   height: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
-  .header {
-    border-bottom: 1px solid #ebeef5;
-    // 
-    display: -webkit-box;
-    display: -ms-flexbox;
+  .group-datail-header {
+    height: 72px;
+    // TODO: color/surface/分割线
+    border-bottom: 1px solid #E7E8EB;
     display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
     align-items: center;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
     justify-content: space-between;
-    padding: 12px 0;
-    color: rgba(0,0,0,.85);
-    svg {
-      cursor: pointer;
-      color: #9498df;
-      :hover {
-        color: #4f55ca;
-      }
-    }
-    // 
-    .left {
+    padding: 0 24PX;
+    .group-datail-header-left {
+      height: 100%;
       display: flex;
-      .txt {
-        margin-left: 10px;
-        .description {
-          color: rgba(0,0,0,.45);
+      align-items: center;
+      gap: 10px;
+      .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+      }
+      .info {
+        .info-name {
+          //styleName: 16/CN-Medium;
+          font-family: PingFang SC;
+          font-size: 16px;
+          font-weight: 500;
+          line-height: 24px;
+          letter-spacing: 0em;
+          text-align: left;
+          //  TODO: color/text & icon/text - color-1
+          color: #15181D;
+        }
+        .info-remark {
+          max-width: 400px;
+          //styleName: 14/EN-Regular;
+          font-family: Nunito Sans;
           font-size: 14px;
-          line-height: 1.5715;
+          font-weight: 400;
+          line-height: 22px;
+          letter-spacing: 0em;
+          text-align: left;
+          //  TODO: color/text & icon/text - color-2
+          color: #424A57;
+          text-wrap: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
         }
       }
     }
-    .header-action {
+    .group-datail-header-right {
       display: flex;
-      gap: 10px;
-      margin-left: 48px;
-      >a {
+      gap: 16px;
+      .action-btn {
         cursor: pointer;
       }
     }
   }
-  .title {
-    margin-bottom: 4px;
-    color: rgba(0,0,0,.85);
-    font-size: 14px;
-    line-height: 1.5715;
-    .number {
-      margin-left: 4px;
-    }
-  }
-  &Content {
+  .group-detail-main {
     height: 0;
     flex:1 0;
-  }
-  &ActionArea {
-    width: 100%;
-    padding: 34px 70px;
-    display: flex;
-    justify-content: space-between;
-    &Item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      &__icon {
-        width: 50px;
-        height: 50px;
-        // TODO:
-        // border: 2px solid @primary-color;
-        border: 2px solid blue;
-        border-radius: 50%;
-        padding: 10px;
-        &Active {
-          // border: 2px solid @primary-color;
-          background-color: red;
-        }
-      }
-    }
-  }
-  .base_info_desc {
-    font-size: 12px;
-    color: #666;
-  }
-  // 群基本信息
-  .base {
-    align-items: center;
-    padding-bottom: 15px;
-
-    &-img {
-      width: 60px;
-      height: 60px;
-      margin-right: 15px;
-      border-radius: 50%;
-    }
-
-    &-info {
-      display: flex;
-      justify-content: space-around;
-      flex-direction: column;
-      height: 100%;
-
-      &-top {
-        align-items: center;
-
-        &-name {
-          font-size: 14px;
-          font-weight: 600;
-          margin-right: 10px;
-        }
-      }
-
-      &-desc {
-        font-size: 13px;
-        color: var(--el-color-info-dark-2);
-      }
-    }
-  }
-
-  .con {
-    padding: 6px 0 0 0;
-  }
-
-  // 群成员
-  .user_list {
-    .li_search {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      &-con {
-        font-size: 15px;
-        font-weight: 500;
-        &-num {
-          margin-left: 10px;
-        }
-      }
-      &-inp {
-        width: 120px;
-      }
-    }
-    min-height: 188px;
-
-    .find_history {
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
-      .find_history_button {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-      }
-    }
-  }
-
-  .img_list {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    max-height: 50vh;
-    overflow-y: auto;
-    margin-bottom: 16px;
-    &.con {
-      display: flex;
-      align-self: center;
-      margin-right: 10px;
-      cursor: pointer;
-      border-radius: 2px;
-      max-height: 230px;
-      .show_persons {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 8px;
-        .img_list_con_name {
-          font-size: 12px;
-          width: 40px;
-          text-align: center;
-        }
-      }
-      .img_list_con {
-        border: 1px solid rgba(0, 0, 0, 0.45);
-        width: 40px;
-        min-width: 40px;
-        height: 40px;
-        margin-right: 10px;
-      }
-
-      &.img {
-        width: 50px;
-        height: 50px;
-      }
-
-      &.name {
-        font-size: 10px;
-        line-height: 20px;
-        text-align: center;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 50px;
-      }
-    }
-
-    &.more_btn {
-      width: 100%;
-      color: #3e5ed8;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      .more_btn_icon {
-        margin-left: 6px;
-      }
-    }
-  }
-
-  .setting_con {
-    display: flex;
-    flex-direction: column;
-
-    .con_label {
-      // TODO:
-      // text-shadow: @btn-text-shadow;
-      width: 100px;
-      min-width: 100px;
-    }
-    .con_value {
-      font-size: 13px;
-      color: #909399;
-    }
-    & + .setting_con {
-      margin-top: 4px;
-    }
-  }
-
-  .check_con {
-    margin-top: 4px;
-    display: flex;
-    justify-content: space-between;
-    .el_checkbox {
-      height: 26px;
-    }
-  }
-
-  // 底部按钮
-  .footer {
-    // position: absolute;
-    // bottom: 20px;
-    // left: 0;
-    // right: 0;
-    padding-bottom: 30px;
-    margin: 0 auto;
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    justify-content: center;
-    // :global {
-    //   .ogo-btn-primary {
-    //     margin-bottom: 16px;
-    //   }
-    // }
+    padding: 16px 24px;
   }
 }
 

@@ -63,36 +63,31 @@
       command.emitter('preview', 'chat', session);
     }
   }
-
+  /** 未读消息计算 */
+  const getBadgeCount = (tag: string) => {
+    return contents.value
+      .filter((i) => tag === '最近' || i.groupTags.includes(tag))
+      .reduce((count,item)=>count+item.badgeCount,0)
+  }
 </script>
 
 <template>
-  <div class="book" v-loading="!loaded" element-loading-text="加载中...">
+  <!-- <div v-loading="!loaded" element-loading-text="加载中..."> -->
     <DirectoryViewer
       v-if="contents"
       :key="msgKey"
-      extraTags
-      :initTags="['最近', '@我', '未读', '置顶', '好友', '同事', '群聊']"
+      :initTags="['最近','常用', '好友', '同事', '群聊','单位']"
       :selectFiles="[]"
       :focusFile="focusFile"
       :content="contents"
-      :badgeCount="(tag) => {
-        let count = 0;
-        contents
-          .filter((i) => tag === '最近' || i.groupTags.includes(tag))
-          .forEach((i) => {
-            count += i.badgeCount
-          })
-        return count
-      }"
+      :badgeCount="getBadgeCount"
       :fileOpen="(entity) => sessionOpen(entity as ISession)"
       :contextMenu="contextMenu"
+      :showFooter="false"
+      listType="list"
     />   
-  </div>
+  <!-- </div> -->
 </template>
 
 <style lang="scss" scoped>
-.book {
-  height: 100%;
-}
 </style>

@@ -63,29 +63,21 @@ const actions = ref([
 
 <template>
   <div class="nav">
-    <div class="slide">
-      <div class="user">
-        <ElBadge :value="online" :hidden="!(online>0)">
-          <EntityIcon :entityId="orgCtrl.user.id" :size="45" />
-        </ElBadge>
+    <div class="nav-top">
+      <div class="avatar">
+        <!-- <ElBadge :value="online" :hidden="!(online>0)"> -->
+          <EntityIcon :entityId="orgCtrl.user.id" :size="35" />
+        <!-- </ElBadge> -->
       </div>
-      <ElSpace 
-        direction="vertical" 
-        wrap 
-        alignment="center" 
-        :size="25"
-        class="nav-bar"
-      >
-        <navItem v-for="item in actions" :key="item.path"
-          :item = "item"
-        />
-        <!-- TODO:在线信息 -->
-        <OnlineInfo v-if="onlineVisible" :onClose="() => onlineVisible = false" />
-      </ElSpace>
+      <div class="navList">
+        <navItem v-for="item in actions" :key="item.path" :item = "item" />
+      </div>
+      <!-- TODO: 待删除：在线信息 -->
+      <!-- <OnlineInfo v-if="onlineVisible" :onClose="() => onlineVisible = false" /> -->
     </div>
-    <div class="exit" url="exit">
-      <RouterLink to="/login">
-        <orgIcons :size="22" exit selected />
+    <div class="nav-bottom">
+      <RouterLink to="/login" class="exit">
+        <orgIcons :size="20" exit selected />
         <div>退出</div>
       </RouterLink>
       
@@ -98,45 +90,37 @@ const actions = ref([
 <style lang="scss" scoped>  
 .nav{
   width: 60px;
-  height: 100%;
-  background-color: #fafafa;
-  border-right: rgba(227,226,226,.8) solid 1px;
+  height: 100%; 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  .slide{
+  align-items: center;
+  padding: 13px 5px;
+  // TODO: color/brand/Light
+  background-color: #F2F3FF;
+  .nav-top{
     display: flex;
     flex-direction: column;
-    align-items: center;
-    .user{
-      margin: 10px 0;
-      img{
-        width: 45px;
-        height: 45px;
-      }
+    gap: 32px;
+    .avatar {
+      margin: auto;
     }
-    .nav-bar {
-      padding-top: 25px;
+    .navList {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
-    .exit{
-      margin-bottom: 10px;
-      text-align: center;
-      color:#366ef4;
-    }    
+  
   }
-
-}
-.item {
-  padding: 10px 0;
-  img {
-    width: 26px;
-    height: 26px;
-  }
-  .item-text {
-    font-size: 12px;
-    line-height: 18px;
-    color: #888;
+  .nav-bottom {
+    border-radius: 8px;
+    opacity: 60%;
+    .exit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
   }
 }
 </style>

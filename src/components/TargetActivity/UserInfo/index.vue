@@ -14,10 +14,7 @@ onMounted(async()=>{
 </script>
 
 <template>
-  <span 
-    v-if="user"
-    class="name"
-  >
+  <span v-if="user" class="name" >
     {{user.name}}
   </span>
 </template>

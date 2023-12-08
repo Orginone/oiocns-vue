@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { IDEntity } from '@/ts/core'
+import { IDEntity,ISession } from '@/ts/core'
 import { showChatTime } from '@/utils/tools'
 import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
 import { onContextMenu } from './contextMenu'
 
-defineProps<{
+const props = defineProps<{
   content: IDEntity[];
   selectFiles: IDEntity[];
   focusFile: IDEntity | undefined;
@@ -19,46 +19,32 @@ defineProps<{
 
 <template>
   <div class="list-mode" @contextmenu="onContextMenu($event,undefined,contextMenu)">
-    <div class="list_item" v-for="item in content" :key="item.key"
-      :style="selectFiles.includes(item) || focusFile?.key === item.key ? {backgroundColor: '#e6f1ff'} : {}"
+    <div class="list-item" v-for="item in content" :key="item.key"
+      :class="{ 
+        'list-item-selected': selectFiles.includes(item) || focusFile?.key === item.key,
+        'list-item-pinned': (item as ISession)?.chatdata?.isToping
+      }"
       @click="fileOpen(item, false)"
       @dblclick="fileOpen(item, true)"
       @contextmenu.stop="onContextMenu($event,item,contextMenu)"
     >
-      <div class="list_item_meta">
-        <div class="list_item_meta_avatar">
-          <!-- 头像 -->
-          <ElBadge 
-            :value="item.badgeCount" 
-            size="small"
-            :hidden="item.badgeCount===0"
-          >
-            <EntityIcon :entity="item.metadata" :size="40" />
-          </ElBadge>
-        </div>
-        <div class="list_item_meta_content">
-          <!-- 名称&标签 -->
-          <div style="margin-bottom: 4px;">
-            <span style="margin-right: 10px;margin-bottom: 4px;color: rgba(0,0,0,.85);font-size: 14px;line-height: 1.5715;">
-              {{item.name}}
-            </span>
-            <ElTag 
-              v-for="label in item.groupTags.filter((i) => i.length > 0)" 
-              :key="label" 
-              :type="label === '置顶' ? 'danger' : 'success'"
-            >
-              {{label}}
-            </ElTag>
-          </div>
-          <!-- 描述 | 消息 -->
-          <div class="description">
-            {{ item.remark || item.code }}
-          </div>
-        </div>
-
+      <div class="list-item-avatar">
+        <ElBadge 
+          :value="item.badgeCount" 
+          size="small"
+          :hidden="item.badgeCount===0"
+        >
+          <EntityIcon :entityId="item.metadata.id" :size="48" />
+        </ElBadge>
       </div>
-      <div class="list_item_time" :key="item.id" :title="item.updateTime">
-        {{showChatTime(item.updateTime)}}
+      <div class="list-item-content">
+        <div class="list-item-content-left">
+            <div class="name">{{item.name}}</div>
+            <div class="info">{{ item.remark || item.code }}</div>
+        </div>
+        <div class="list-item-content-right">
+          <div class="time">{{showChatTime(item.updateTime)}}</div>
+        </div>
       </div>
     </div>
   </div>
@@ -66,46 +52,77 @@ defineProps<{
 
 <style lang="scss" scoped>
 .list-mode {
+  width: 100%;
   height: 100%;
 }
-.list_item {
+.list-item {
+  margin-bottom: 2px;
+  width: 100%;
   cursor: pointer;
-  padding: 12px 10px;
-  border-radius: 10px;
-  border-bottom: 1px solid #ebeef5;
+  padding: 8px 6px;
+  border-radius: 4px;
   display: flex;
-  justify-content: space-between;  
-  .list_item_meta {
+  gap: 10px;
+  .list-item-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 4.5px;
+  }
+  .list-item-content {
+    width: 0;
+    flex: 1;
     display: flex;
-    .list_item_meta_content {
-      margin-left: 16px;
-      .description {
-        color: rgba(0,0,0,.45);
-      font-size: 14px;
-      line-height: 1.5715;
+    justify-content: space-between;
+    .list-item-content-left {
+      width: 0;
+      flex:1;
+      // TODO:
+      .name {
+        margin: 4px 0;
+        height: 22px;
+        //styleName: 14/CN-Medium;
+        font-family: PingFang SC;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 22px;
+        letter-spacing: 0em;
+        text-align: left;
+        // TODO: color/text & icon/text - color-1
+        color: #15181D;
+      }
+      .info {
+        height: 20px;
+        //styleName: 12/CN-Regular;
+        font-family: PingFang SC;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 20px;
+        letter-spacing: 0em;
+        text-align: left;
+        // TODO: color/text & icon/text - color-3
+        color: #6F7686;
+        text-wrap: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+    .list-item-content-right {
+      .time {
+        font-family: Nunito Sans;
+        font-size: 10px;
+        font-weight: 400;
+        line-height: 18px;
+        letter-spacing: 0em;
+        text-align: left;
+        // TODO: color/text & icon/text - color-2
+        color: #424A57;
       }
     }
   }
-  .list_item_time {
-    margin-left: 48px;
-    color: rgba(0,0,0,.45);
-    font-size: 14px;
-    line-height: 1.5715;
-    text-align: center;
-    text-wrap: nowrap;
-    display: flex;
-    align-items: center;
-  }
 }
 
-.list_item:hover {
-  background-color: #f1f1f1;
-}
-
-:deep(.el-tag){
-  margin-right: 8px;
-}
-:deep(.el-badge__content.is-fixed){
-  
+.list-item:hover,.list-item-selected,.list-item-pinned {
+  // TODO: color/surface/次要容器背景
+  background-color: #F7F8FA;
 }
 </style>

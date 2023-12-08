@@ -11,7 +11,7 @@ const showMessage = (response: any) => {
   } else {
     ElMessage.error('操作失败！发生错误：  ' + response.msg);
   }
-};
+}
 
 const debounce = (fun: any, delay?: number) => {
   let timer: any = '';
@@ -22,7 +22,7 @@ const debounce = (fun: any, delay?: number) => {
       fun.call(that, ...args);
     }, delay ?? 300);
   };
-};
+}
 
 /**
  * @desc: 处理 翻页参数问题
@@ -63,7 +63,7 @@ export function toPageData<T extends DataType>(res: model.ResultType<T>): PageDa
 // m--n 之间的数字
 const renderNum = (m: number, n: number) => {
   return Math.floor(Math.random() * (n + 1 - m) + m);
-};
+}
 
 const validIsSocialCreditCode = (code: string) => {
   var numUpChar = '0123456789ABCDEFGHJKLMNPQRTUWXY';
@@ -81,7 +81,7 @@ const validIsSocialCreditCode = (code: string) => {
     ret = 31 - (sum % 31);
   }
   return numUpChar.indexOf(code[17]) == ret;
-};
+}
 
 /**
  * @description: 聊天间隔时间
@@ -94,18 +94,18 @@ const showChatTime = (chatDate: moment.MomentInput) => {
   const days = moment().diff(date, 'day');
   switch (days) {
     case 0:
-      return cdate.format('H:mm:ss');
+      return cdate.format('H:mm');
     case 1:
-      return '昨天 ' + cdate.format('H:mm:ss');
+      return '昨天 ' + cdate.format('H:mm');
     case 2:
-      return '前天 ' + cdate.format('H:mm:ss');
+      return '前天 ' + cdate.format('H:mm');
   }
   const year = moment().diff(cdate, 'year');
   if (year == 0) {
     return cdate.format('M月D日 H:mm');
   }
   return cdate.format('yy年 M月D日 H:mm');
-};
+}
 
 /**
  * @description: 时间处理

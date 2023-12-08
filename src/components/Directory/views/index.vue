@@ -1,21 +1,25 @@
 <!-- 存储-文件系统 -->
 <script setup lang="ts">
-
 import IconMode from './iconMode.vue'
 import ListMode from './listMode.vue'
-import useStorage from '@/hooks/useStorage'
 import SegmentContent from '@/components/Common/SegmentContent/index.vue'
 import { IDEntity } from '@/ts/core'
 import TagsBar from '../tagsBar/index.vue'
+import useStorage from '@/hooks/useStorage'
 
-const props = defineProps<{
+type segmentedTypes = 'icon' | 'list' | 'table'
+
+type Props = {
   content: IDEntity[]
-  /** 展示的文件类型 */
-  accepts?: string[]
+  title: string
   /** 选中的文件列表 */
   selectFiles: IDEntity[]
   excludeIds?: string[]
-  /** 分类标签数组 */
+  /** 是否展示标签 */
+  showTags?: boolean
+  /** 展示的文件类型 */
+  accepts?: string[]  
+  /** 初始化标签数组 */
   initTags: string[]
   /** 是否展示额外标签 */
   extraTags: boolean
@@ -31,16 +35,29 @@ const props = defineProps<{
     items: any
     onClick: (item: any) => void
   }
-}>()
+  /** 列表类型 */
+  listType?: segmentedTypes
+  /** 是否展示底部栏 */
+  showFooter?: boolean
+}
+const props = withDefaults(defineProps<Props>(),{
+  showTags: true,
+  extraTags: false,
+})
 
 
 /** 当前tag,默认为第一个 */
 const currentTag=ref(props.initTags.length > 0 ? props.initTags[0] : '')
-const [segmented, setSegmented] = useStorage('segmented', 'list')
+
+// list类别
+const [segmented,setSegmented] = useStorage('segmented', 'list')
+
+const listType = computed(()=>props.listType || segmented.value)
 
 /** 经过筛选的内容 */
 const filteredContent = computed(() => {
-  if (props.extraTags) {
+  // TODO:
+  // if (props.extraTags) {
     if (currentTag.value == '已选中') {
       return props.selectFiles
     }
@@ -63,52 +80,57 @@ const filteredContent = computed(() => {
       return success
     }
     return props.content.filter(tagFilter)
-  }
+  // }
   return props.content
 })
 </script>
 
 <template>
-  <!-- 标签栏 -->
-  <TagsBar
-    :select="currentTag"
-    :showBack="preDirectory != undefined"
-    :onBack="()=>fileOpen(preDirectory,true)"
-    :extraTags="extraTags"
-    :excludeTags="excludeTags || []"
-    :initTags="initTags"
-    :selectFiles="selectFiles"
-    :entitys="content"
-    :badgeCount="badgeCount"
-    :menus="contextMenu()"
-    :onChanged="(t) => currentTag = t"
-  />
-  <!-- 文件列表 -->
-  <SegmentContent
-    :onSegmentChanged="setSegmented"
-    :descriptions="`${filteredContent.length}个项目`"
-  >
-    <IconMode
-      v-if="segmented === 'icon'"
+  <div class="directory-viewer">
+    <TagsBar
+      :title="title"
+      :select="currentTag"
+      :showBack="preDirectory != undefined"
+      :onBack="()=>fileOpen(preDirectory,true)"
+      :extraTags="extraTags"
+      :excludeTags="excludeTags || []"
+      :show-tags="showTags"
+      :initTags="initTags"
       :selectFiles="selectFiles"
-      :focusFile="focusFile"
-      :content="filteredContent"
-      :fileOpen="fileOpen"
-      :contextMenu="contextMenu"
+      :entitys="content"
+      :badgeCount="badgeCount"
+      :menus="contextMenu()"
+      :onChanged="(t) => currentTag = t"
     />
-    <ListMode
-      v-else
-      :selectFiles="selectFiles"
-      :focusFile="focusFile"
-      :content="filteredContent"
-      :fileOpen="fileOpen"
-      :contextMenu="contextMenu"
-    />
-    <!-- 为空 -->
-    <ElEmpty v-if="content.length === 0" description="暂无数据"></ElEmpty>
-  </SegmentContent>
+    <SegmentContent
+      :descriptions="`${filteredContent.length}个项目`"
+      :showFooter="showFooter"
+      :segmented="segmented"
+      :on-segmented-change="t=>{setSegmented(t);segmented=t}"
+    >  
+      <IconMode v-if="listType === 'icon'"
+        :selectFiles="selectFiles"
+        :focusFile="focusFile"
+        :content="filteredContent"
+        :fileOpen="fileOpen"
+        :contextMenu="contextMenu"
+      />
+      <ListMode v-else-if="listType === 'list'"
+        :selectFiles="selectFiles"
+        :focusFile="focusFile"
+        :content="filteredContent"
+        :fileOpen="fileOpen"
+        :contextMenu="contextMenu"
+      />
+      <ElEmpty v-else="content.length === 0" description="暂无数据"></ElEmpty>
+    </SegmentContent>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-
+.directory-viewer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 </style>

@@ -35,24 +35,7 @@ const loadMoreActivity = async(e:ReachBottomEvent) => {
 </script>
 
 <template>
-  <ElCard v-if="actionList"
-    shadow="never"
-  >
-    <!-- 动态卡片——header -->
-    <template #header>
-      <div class="card-header" style="display: flex;justify-content: space-between;">
-        <span>{{title || '动态'}}</span>
-        <el-button 
-          v-if="activity.allPublish"
-          class="button" 
-          link
-          @click="command.emitter('executor','pubActivity', activity)"
-        >
-          发布动态
-        </el-button>
-      </div>
-    </template>
-    <!-- 动态卡片——滚动区域 -->
+  <div class="activity-page">
     <DxScrollView
       :key="activity.key"
       bounceEnabled
@@ -76,24 +59,33 @@ const loadMoreActivity = async(e:ReachBottomEvent) => {
         </div>
       </div>
     </DxScrollView>
-  </ElCard>
+  </div>
+
 </template>
 
 <style lang="scss" scoped>
-.el-card {
+.activity-page {
   height: 100%;
-}
-.emptyList {
-  width: 100%;
-  height: 300px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 24px 24px 0 24px;
+  .actionList {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;   
+    
+    margin-bottom: 24px;
+  }
+  .emptyList {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
 }
 
-.actionList {
-  width: 100%;
-  display: inline-block;
-}
+
 
 </style>

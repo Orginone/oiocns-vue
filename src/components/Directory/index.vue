@@ -68,9 +68,10 @@ const getContextMenu = (entity:any) => {
 <template>
   <div class="directory-viewer" v-loading="!loaded" element-loading-text="加载中...">
     <DirectoryViewer
+      title="群数据"
       :content="(content as IDEntity[])"
-      extraTags
-      :initTags="['全部']"
+      list-type="table"
+      :initTags="['标准','表单','应用','文件']"
       :selectFiles="[]"
       :fileOpen="handleFileOpen"
       :preDirectory="(preDirectory as IFile)"

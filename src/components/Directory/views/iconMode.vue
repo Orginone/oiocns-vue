@@ -14,86 +14,59 @@ defineProps<{
 </script>
 <template>
   <div class="icon-mode" @contextmenu="onContextMenu($event,undefined,contextMenu)">
-    <div v-for="el in content" :key ="el.key" @contextmenu.stop="onContextMenu($event,el,contextMenu)">
-      <ElCard
-        size="small"
-        bodyClass="fileCard"
-        :bodyStyle="selectFiles.includes(el) || focusFile?.key === el.key ? {backgroundColor: '#e6f1ff'} : {}" 
-        shadow="never"
-      >
-        <div class="card-main"
-          @click="fileOpen(el, false)"
-          @dblclick="fileOpen(el, true)"
-        >
-          <div class="fileImage">
-            <ElBadge :value="el.badgeCount" size="small" :hidden="el.badgeCount===0">
-              <EntityIcon :entity="el.metadata" :size="50" />
-            </ElBadge>
-          </div>
-          <div class="fileName" title="el.name">
-            <ElText :title="el.name" truncated style="line-height: 1.5715;color: rgba(0,0,0,.85);">
-              {{el.name}}
-            </ElText>
-          </div>
-          <div class="fileName" :title="el.typeName">
-            <ElText
-              :style=" {fontSize: 12, color: '#888' }"
-              :title="el.typeName"
-              truncated
-            >
-              {{el.typeName}}
-            </ElText>
-          </div>                
-        </div>
-      </ElCard>
+    <div class="icon-item" v-for="el in content" :key ="el.key" 
+      @contextmenu.stop="onContextMenu($event,el,contextMenu)"
+      @click="fileOpen(el, false)"
+      @dblclick="fileOpen(el, true)"
+    >
+      <div class="fileImage">
+        <ElBadge :value="el.badgeCount" size="small" :hidden="el.badgeCount===0">
+          <EntityIcon :entityId="el.metadata.id" :size="48" />
+        </ElBadge>
+      </div>
+      <div class="fileName" :title="el.name">
+        {{el.name}}
+      </div>               
     </div>
   </div>
 </template>
 
 <style lang='scss' scoped>
 .icon-mode {
-  padding: 16px;
   width: 100%;
   height: 100%;
-  overflow-y: auto;
+  padding: 16px 0;
+  overflow-y: scroll;
   display: flex;
-  flex-direction: row;
+  align-content: start;
   flex-wrap: wrap;
-  align-content: flex-start;
-  gap: 16px;
+  column-gap: 2px;
+  row-gap: 24px;
   &::-webkit-scrollbar {
     background-color: transparent;
   }
-}
-
-
-.el-card {
-  border: 0;
-  background-color: transparent;
-  :deep(.fileCard){
-    width: 160px !important;
-    padding: 12px;
+  .icon-item {
+    width: 116.5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     cursor: pointer;
-    border-radius: 6px;
-    width: 100%;
-    flex: 1;
-    overflow: auto;
-    overflow-x: hidden;  
     &:hover {
-      background-color: #efefef;
+      // TODO:
+      background-color: antiquewhite;
+    }
+    .fileName {
+      //styleName: 14/CN-Regular;
+      font-family: PingFang SC;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 20px;
+      letter-spacing: 0em;
+      text-align: left;
+      //  TODO: color/text & icon/text - color-1
+      color: #15181D;
     }
   }
 }
 
-.fileImage {
-  width: 100%;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-}
-.fileName {
-  width: 100%;
-  text-align: center;
-}
 </style>

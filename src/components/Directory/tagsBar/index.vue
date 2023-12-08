@@ -5,7 +5,9 @@ import { IEntity } from '@/ts/core'
 import { Back,Right } from '@element-plus/icons-vue'
 
 const props = defineProps<{
+  title?: string
   select: string
+  showTags?: boolean
   initTags: string[]
   excludeTags: string[]
   extraTags: boolean
@@ -24,13 +26,18 @@ const inside = items.filter((item: any) => item.model != 'outside')
 
 /** 分组标签集 */
 const groupTags = computed(() => {
-  const tags = props.initTags.map((tag) => {
-    return { tag, count: 0 };
+  const tags = props.initTags.map((tag) => { // 初始化标签
+    return { tag, count: 0 }
   })
-  if (props.selectFiles.length > 0) {
+  if(props.badgeCount) { // 计算角标
+    tags.forEach((tag) => {
+      tag.count = props.badgeCount(tag.tag)
+    })
+  }
+  if (props.selectFiles.length > 0) { // 已选中
     tags.push({ tag: '已选中', count: props.selectFiles.length })
   }
-  if (props.extraTags) {
+  if (props.extraTags) { // 额外标签
     props.entitys.forEach((entity) => {
       entity.groupTags.forEach((tag) => {
         if (!props.excludeTags.includes(tag)) {
@@ -48,55 +55,43 @@ const groupTags = computed(() => {
     const aqz = a.tag === '已删除' ? 10 : 0;
     const bqz = b.tag === '已删除' ? 10 : 0;
     return aqz - bqz;
-  });
+  })
 })
 
 </script>
 
 <template>
   <div class="tags">
-    <div class="tags-bar">
-      <!-- 返回按钮 -->
+    <div class="tags-left">
+      <div class="title">{{ title }}</div>
       <ElButton v-if="showBack"
         link
         title="返回"
         :icon="Back"
         @click="onBack"
       />
-      <div class="tags_body">
-        <ElSpace style="height: 26px;" :size="8" spacer="|">
-          <template v-for="item in groupTags" :key="item.tag">
-            <ElBadge 
-              :hidden="badgeCount && badgeCount(item.tag)===0"  
-              :value="badgeCount && badgeCount(item.tag)" 
-            >
-              <div 
-                :class="item.tag === props.select ? 'tags_item_active' : 'tags_item'" 
-                @click="onChanged(item.tag)"
-              >
-                {{item.tag}}
-                <span v-if="item.count>0" class="item_count">{{item.count}}</span>
-              </div>
-            </ElBadge>
-          </template>
-        </ElSpace>
+      <div class="tags_body" v-if="showTags">
+        <div class="tags-item" v-for="item in groupTags" :key="item.tag"
+          :class="item.tag === props.select ? 'tags-item-active' : ''" 
+          @click="onChanged(item.tag)"
+        >
+          {{item.tag}}
+          <span v-if="item.count>0" class="tags-item-count">·{{item.count}}</span>
+        </div>
       </div>
     </div>
     <div class="tags-actions">
       <!-- 刷新、上传、上传列表 -->
       <template v-if="outside.length > 0">
-        <div
-          v-for="item in outside" :key="item.key"
-          :title="item.label"
-          style="font-size: 18px;cursor: pointer;"
+        <div class="tags-actions-btn" v-for="item in outside" :key="item.key"
           @click="menus.onClick?.apply(this, [item])"
         >
-          <component :is="item.icon.name" v-bind="item.icon.args"/>
+          <component :is="item.icon.name" v-bind="item.icon.args" color="inherit"/>
+          <span>{{ item.label }}</span>
         </div>
       </template>
       <!-- 更多操作 -->
-      <ElDropdown
-        v-if="inside.length > 0"
+      <ElDropdown v-if="inside.length > 0"
         placement="bottom"
         :trigger="['click', 'contextmenu']"
       >
@@ -143,7 +138,6 @@ const groupTags = computed(() => {
         </template>
       </ElDropdown>      
     </div>
-
   </div>
 </template>
 
@@ -153,75 +147,87 @@ const groupTags = computed(() => {
   display: flex;
   justify-content: end;
   align-items: center;
+  margin-bottom: 8px;
 }
-.tags-bar {
+.tags-left {
   width: 0;
   flex: 1;
-  height: 35px;
   gap: 8px;
   display: flex;
-  padding: 0 16px;
   align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #efefef;
-  &_btn {
-    cursor: pointer;
+  .title {
+    //styleName: 20/CN-Medium;
+    font-family: PingFang SC;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 28px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #000000;
   }
   .tags_body {
-    overflow: auto;
-    padding: 0 8px;
-    width: 100%;
-    &::-webkit-scrollbar {
-      height: 4px;
-      background-color: transparent;
-    }
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    overflow: hidden;
   }
-  .tags_item {
+  .tags-item {
     cursor: pointer;
-    white-space: nowrap;
-    padding: 4px 12px;
-    font-size: 12px;
-    height: 26px;
+    height: 24px;
+    border-radius: 4px;
+    // TODO: color/surface/默认边框
+    border: 0.5px solid #DCDDE1;
+    // TODO: color/surface/次要容器背景
+    background-color: #F7F8FA ;
+    padding: 1px 10px;
     display: flex;
     align-items: center;
-    .item_count {
-      color: #2b00ff;
-      font-style: italic;
-      transform: scale(0.9);
-    }
+    gap: 2px;
+    font-family: PingFang SC;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    // TODO: color/text & icon/text - color-3
+    color: #6F7686;
     &:hover {
-      border-radius: 30px;
       // TODO:
       // background-color:@active-background;
       background-color: #e6f1ff;
     }
-    &_active {
-      cursor: not-allowed;
-      white-space: nowrap;
-      border-radius: 30px;
-      padding: 4px 16px;
-      font-size: 12px;
-      height: 26px;
-      display: flex;
-      align-items: center;
-      .item_count {
-        font-style: italic;
-        transform: scale(0.9);
-      }
-      // TODO:
-      color: white;
-      background-color:#3838b9;
+    &-active {
+      font-weight: 500;
+      // TODO: color/text & icon/text - color-white
+      color: #FFFFFF;
+      border-color: transparent;
+      //  TODO: color/brand/Normal
+      background-color: #366EF4 !important;
     }
   }
 }
 .tags-actions {
   display: flex;
-  gap: 17px;
+  gap: 12px;
+  .tags-actions-btn {
+    display: flex;
+    align-items: center;
+    border-radius: 3px;
+    padding: 5px 12px;
+    cursor: pointer;
+    //  TODO: color/surface/默认页面背景
+    background-color: #EEEEF0;
+    //styleName: Body/Medium;
+    font-family: PingFang SC;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0em;
+    text-align: center;
+    color: #15181D;
+    &:hover {
+      //  TODO: color/brand/Normal
+      background-color: #366EF4;
+      color: #FFFFFF;
+    }
+  }
 }
 
-:deep(.el-badge__content.is-fixed){
-  top: 8px;
-  width: 16px;
-  height: 16px;
-}
 </style>

@@ -13,7 +13,7 @@ import msgAction from './msgAction.vue'
 
 const props = defineProps<{
   chat: ISession;
-  filter: string;
+  // filter: string;
   handleReWrites: Function;
   /** 返回值，引用 */
   citeText: any;
@@ -26,6 +26,7 @@ const props = defineProps<{
   multiSelectMsg: (item: IMessage, checked: boolean) => void;
   multiSelectFn: (multi: boolean) => void;
 }>()
+
 
 const loading=ref(false)
 const infoMsg=ref<IMessage>(undefined)
@@ -98,87 +99,66 @@ const viewForward = (item: IMessage[]) => {
 
 <template>
   <div class="chart_content" ref="body" :onScroll="onScroll" element-loading-text="加载中..." v-loading="loading">
-    <div>
-      <!-- 聊天内容区 -->
-      <div class="group_content_wrap">
-        <template
-          v-for="(item,index) in messages.filter((i) => i.msgBody.includes(props.filter))"
-          :key="item.id">
-          <!-- 聊天间隔时间3分钟则 显示时间 -->
-          <div class="chats_space_Time"
-            v-if="isShowTime(item.createTime,index > 0 ? messages[index - 1].createTime : '')"
+    <div class="group_content_wrap">
+      <template v-for="(item,index) in messages" :key="item.id">
+        <!-- 时间 -->
+        <div class="chats_space_Time" v-if="isShowTime(item.createTime,index > 0 ? messages[index - 1].createTime : '')">
+          <span>{{showChatTime(item.createTime)}}</span>
+        </div>
+        <!-- 撤回 -->
+        <div v-if="item.msgType===MessageType.Recall" class="con recall">
+          {{item.msgBody}}
+            <span
+              v-if="item.allowEdit"
+              class="reWrite"
+              @click="handleReWrites(item.msgSource)"
+            >
+              重新编辑
+            </span>
+        </div>
+        <!-- 通知 -->
+        <div v-else-if="item.msgType===MessageType.Notify" class="con recall">
+          {{item.msgBody}}
+        </div>
+        <!-- 普通消息 -->
+        <div v-else class="con" :class="item.isMySend ?'group_content_right' : 'group_content_left'">
+          <div class="con_body"
+            @contextmenu="(e) => {e.preventDefault();e.stopPropagation()}"
           >
-            <span>{{showChatTime(item.createTime)}}</span>
-          </div>
-          <!-- 渲染消息 -->
-          <div class="renderMessage">
-            <!-- 撤回消息 -->
-            <div v-if="item.msgType===MessageType.Recall" class="group_content_left con recall">
-              {{item.msgBody}}
-                <span
-                  v-if="item.allowEdit"
-                  class="reWrite"
-                  @click="handleReWrites(item.msgSource)"
-                >
-                  重新编辑
-                </span>
-            </div>
-            <!-- Notify消息 -->
-            <div v-else-if="item.msgType===MessageType.Notify" class="group_content_left con recall">
-              {{item.msgBody}}
-            </div>
-            <!-- 普通消息 -->
-            <div v-else :class="item.isMySend ?'group_content_right con' : 'group_content_left con'">
-              <div
-                class="con_body"
-                @contextmenu="(e) => {e.preventDefault();e.stopPropagation()}"
-              >
-                <!-- 多选的选择框 -->
-                <ElCheckbox
-                  v-if = "props.multiSelectShow"
-                  class="multiSelectStyl"
-                  @change="(val)=>multiSelectMsg(item,val as boolean)"
-                />
-                <!-- 消息体 -->
-                <div class="viewMsg">
-                  <!-- 我的消息 -->
+            <!-- 多选的选择框 -->
+            <ElCheckbox class="multiSelectStyl" v-if="props.multiSelectShow"
+              @change="(val)=>multiSelectMsg(item,val as boolean)"
+            />
+            <!-- 消息体 -->
+            <div class="viewMsg">
+              <!-- 我的消息 -->
+              <div v-if="item.isMySend" style="display: flex;gap: 10px;justify-content: end;"> 
+                <div class="con_content">             
                   <ElPopover
-                    v-if="item.isMySend"
                     trigger="hover"
                     :key="item.id"
-                    placement="top-start"
+                    placement="left-start"
                     :popper-style="{ padding: '3px' }"
                     :show-arrow="false"
+                    popper-class="message-popover"
                   >
                     <template #reference>
-                      <div style="display: flex;justify-content: end;">
-                        <div class="con_content">
-                          <!-- 消息发送者可见 -->
-                          <template v-if="chat.isBelongPerson">
-                            <showMsg :item="item" :view-forward="viewForward"/> 
-                          </template>
-                          <!-- 非消息发送者可见 -->
-                          <template v-else>
-                            <ElBadge
-                              :key="item.id"
-                              :value="item.comments"
-                            >
-                              <showMsg :item="item" :view-forward="viewForward"/> 
-                              <!-- 引用消息 -->
-                              <parseCiteMsg v-if="item.cite" :item="item.cite" />
-                            </ElBadge>
-                          </template>
-                          <!-- TODO:已读、未读 -->
-                          <!-- <div
-                            :class="item.readedinfo.includes('已读') ? 'information readed' : 'information'"
-                            @click="setInfoMsg(item)"
+                      <div>
+                        <!-- 消息发送者可见 -->
+                        <template v-if="chat.isBelongPerson">
+                          <showMsg :item="item" :view-forward="viewForward"/> 
+                        </template>
+                        <!-- 非消息发送者可见 -->
+                        <template v-else>
+                          <ElBadge
+                            :key="item.id"
+                            :value="item.comments"
                           >
-                            {{item.readedinfo}}
-                          </div> -->
-                        </div>
-                        <div class="con_avatar">
-                          <TeamIcon :entityId="item.metadata.fromId" :size="36" />
-                        </div>
+                            <showMsg :item="item" :view-forward="viewForward"/> 
+                            <!-- 引用消息 -->
+                            <parseCiteMsg v-if="item.cite" :item="item.cite" />
+                          </ElBadge>
+                        </template>
                       </div>
                     </template>                  
                     <!-- 气泡展示内容 -->
@@ -186,74 +166,91 @@ const viewForward = (item: IMessage[]) => {
                       <msgAction :item="item" :citeText="citeText" :chat="chat" :forward="forward" :multiSelectFn="multiSelectFn"/>
                     </template>
                   </ElPopover>
-                  <!-- 别人的消息 -->
-                  <div v-else style="display: flex;gap:10px;">
-                    <div>
-                      <TeamIcon :entityId="item.metadata.fromId" :size="36" />
-                    </div>
-                    <div class="con_content">
-                      <div class="name">{{item.from.name}}</div>
-                      <ElPopover
-                        :show-arrow="false"
-                        trigger="hover"
-                        :key="item.id"
-                        placement="top-start"
-                        :popper-style="{ padding: '3px' }"
+                  <!-- TODO:已读、未读 -->
+                  <!-- <div
+                        :class="item.readedinfo.includes('已读') ? 'information readed' : 'information'"
+                        @click="setInfoMsg(item)"
                       >
-                        <template #reference>
-                          <div>
-                            <showMsg :item="item" :viewForward="viewForward"/>
-                          </div>
-                        </template>
-                        <template #default>
-                          <msgAction :item="item" :citeText="citeText" :chat="chat" :forward="forward" :multiSelectFn="multiSelectFn"/>
-                        </template>
-                      </ElPopover>
-                      <parseCiteMsg v-if="item.cite" :item="item.cite"/>
-                    </div>
-                  </div>
+                        {{item.readedinfo}}
+                      </div> -->                  
+                  <parseCiteMsg v-if="item.cite" :item="item.cite"/>
+                </div>   
+                <div class="con_avatar">
+                  <TeamIcon :entityId="item.metadata.fromId" :size="32" />
                 </div>
               </div>
-            </div>            
+              <!-- 他人的消息 -->
+              <div v-else style="display: flex;gap:10px;">
+                <div class="con_avatar">
+                  <TeamIcon :entityId="item.metadata.fromId" :size="32" />
+                </div>
+                <div class="con_content">
+                  <div class="name">{{item.from.name}}</div>
+                  <ElPopover
+                    :show-arrow="false"
+                    trigger="hover"
+                    :key="item.id"
+                    placement="right-start"
+                    :popper-style="{ padding: '3px' }"
+                    popper-class="message-popover"
+                  >
+                    <template #reference>
+                      <div>
+                        <showMsg :item="item" :viewForward="viewForward"/>
+                      </div>
+                    </template>
+                    <template #default>
+                      <msgAction :item="item" :citeText="citeText" :chat="chat" :forward="forward" :multiSelectFn="multiSelectFn"/>
+                    </template>
+                  </ElPopover>
+                  <parseCiteMsg v-if="item.cite" :item="item.cite"/>
+                </div>
+              </div>
+            </div>
           </div>
-        </template>
-      </div>
-      <!-- 已读未读列表 -->
-      <Information v-if="infoMsg" :msg="infoMsg"  @close="setInfoMsg(null)"/>
+        </div>            
+      </template>
     </div>
-    <!-- 查看详细转发消息的对话框 -->
-    <ForwardContentModal
-      v-if="forwardMessages.length>1"
-      :handleClose="handleForwadModalClose"
-      :open="forwardModalOpen"
-      :messages="forwardMessages"
-      :isBelongPerson="true"
-      title=''
-      :viewForward="viewForward"
-    />
   </div>
+  <!-- 已读未读列表 -->
+  <Information v-if="infoMsg" :msg="infoMsg"  @close="setInfoMsg(null)"/>  
+  <!-- 查看详细转发消息的对话框 -->
+  <ForwardContentModal
+    v-if="forwardMessages.length>1"
+    :handleClose="handleForwadModalClose"
+    :open="forwardModalOpen"
+    :messages="forwardMessages"
+    :isBelongPerson="true"
+    title=''
+    :viewForward="viewForward"
+  />  
 </template>
 
 
 <style lang="scss" scoped>
-// TODO:
 .chart_content {
   flex-grow: 1;
   overflow-y: auto;
-  background-color: #f2f2f2;
+  overflow-x: hidden ;
   position: relative;
   &::-webkit-scrollbar {
     background-color: transparent;
   }
 }
 .group_content_wrap {
-  overflow: auto;
-  overflow-x: hidden;
-  padding: 20px;
   transition: all 0.7s;
   .chats_space_Time {
-    margin: 0 auto;
-    text-align: center;
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    //styleName: 12/CN-Regular;
+    font-family: PingFang SC;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0em;
+    text-align: left;
 
     span {
       border-radius: 4px;
@@ -265,13 +262,6 @@ const viewForward = (item: IMessage[]) => {
       color: #a8abb2;
     }
   }
-  .user_head_img_wrap {
-    margin-right: 0;
-  }
-  .history_more {
-    text-align: center;
-    color: var(--el-color-primary);
-  }
   .recall {
     font-size: 12px;
     justify-content: center;
@@ -282,221 +272,57 @@ const viewForward = (item: IMessage[]) => {
       color: #3e5ed8;
     }
   }  
-  .con_body {
-    max-width: 100%;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: row;
-    flex-direction: row;
-    .viewMsg {
-      width: 100%;
-    }
-  }
-
   .con {
     display: flex;
-    flex-direction: row;
-    margin: 20px 0;
-    .con_img {
-      height: 35px;
-      width: 35px;
-    }
-    img {
-      max-width: 100%;
-      max-height: 400px;
-    }
-    .con_content {
-      max-width: 90%;
-      .name {
-        font-size: 12px;
-        padding-left: 4px;
-        color: #888;
-      }
-      .con_content_txt, .con_content_forward_txt {
-        cursor: pointer;
-        text-align: left;
-        min-height: 30px;
-        padding: 10px 16px;
-        margin: 0px 0px;
-        color: black;
-        border-radius: 6px;
-        z-index: 1;
-        font-size: small;
-        word-wrap: break-word;
-        word-break: normal;
-        line-height: 15px;
-      }
-
-      .con_content_cite_txt {
-        cursor: pointer;
-        text-align: left;
-        min-height: 30px;
-        padding: 7px 10px;
-        margin-top: 4px;
-        color: black;
-        border-radius: 6px;
-        z-index: 1;
-        max-width: 300px;
-        word-break: normal;
-        font-size: 12px;
-        color: #8a8a8a;
-        box-shadow: inset 0 0 2px #e9e9e9;
-        background-color: #ebebeb;
-        .emoji {
-          width: 20px;
-          height: 20px;
-          margin: 5px;
+    padding: 8px 0;
+    .con_body {
+      width: 100%;
+      display: flex;
+      .multiSelectStyl {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        margin-right: 10px;
+      }      
+      .viewMsg {
+        width: 100%;
+        .con_content {
+          max-width: 90%;
+          cursor: pointer;
+          .name {
+            font-size: 12px;
+            margin: 0 0 4px 4px;
+            color: #888;
+          }
         }
       }
-      .con_content_forward_txt {
-        color: rgb(70, 70, 70);
-      }
-      .con_content_forward_session {
-        font-size: 14px;
-        font-weight: 500;
-        color: rgb(10, 10, 10);
-        // border-left: 2px solid orange;
-        padding-right: 2px;
-        margin-bottom: 6px;
-      }
-      .con_content_forward_msg {
-        padding: 3px;
-      }
-    }
-  }
-  .group_content_left {
-    .con_content {
-      .con_content_txt, .con_content_forward_txt {
-        background-color: white;
-        box-shadow: inset 0 0 2px #cacaca;
-      }
-    }
-  }
+    }    
+  }  
 
+  // 他人消息
+  .group_content_left {
+  }
+  // 我的消息
   .group_content_right {
     justify-content: flex-end;
-    .con_content {
-      .con_content_txt, .con_content_forward_txt {
-        background-color: #b4ccf9;
-        margin-right: 10px;
-        box-shadow: inset 0 0 2px #9292ff;
-      }
-      .information {
-        padding-right: 10px;
-        cursor: pointer;
-        color: #3e5ed8;
-        transform: scale(0.8);
-        font-weight: 700;
-      }
-      .readed {
-        color: #888;
-      }
-    }
-    .multiSelectStyl {
-      position: absolute;
-      left: 0;
-    }
-  }
-
-  .context_text_wrap {
-    position: absolute;
-    // background-color: var(--el-bg-color-overlay);
-    width: 80px;
-    height: max-content;
-    border: 1px solid var(--el-box-shadow-lighter);
-    z-index: 999;
-
-    .context_menu_item {
-      padding: 4px 6px;
-      cursor: pointer;
-      text-align: center;
-
-      &:hover {
-        // background-color: var(--el-bg-color-page);
-      }
-    }
-  }
-}
-.moreInfo {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  flex-wrap: nowrap;
-  align-items: flex-start;
-
-  li {
-    padding: 10px 2px;
+    // TODO: color/brand/Disabled
+    --con-bac: #B5C7FF;
+    //  TODO: color/text & icon/text - color-1
+    --con-txt: #15181D;
   }
 }
 
-.operate {
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: row;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-items: flex-start;
-  align-content: flex-start;
+</style>
+<style>
+.message-popover {
+  border-radius: 4px !important;
+  /* TODO: color/surface/分割线 */
+  border: 0.5px solid #E7E8EB !important;
+  padding: 0 !important;
+  width: fit-content !important;
+  min-width: 0 !important;
+  box-shadow: none !important;
+
+  /* background-color: black !important; */
 }
-
-.voiceStyle {
-  audio {
-    width: 200px;
-    height: 40px;
-    overflow-x: hidden;
-  }
-
-  audio::-webkit-media-controls-start-playback-button,
-  audio::-webkit-media-controls-end-playback-button,
-  audio::-webkit-media-controls-mute-button,
-  audio::-webkit-media-controls-timeline,
-  audio::-webkit-media-controls-volume-slider,
-  audio::-webkit-media-controls-overflow-button {
-    display: none !important;
-  }
-  /* 自定义时间显示样式 */
-  audio.time-display {
-    color: #666;
-    font-size: 10px;
-  }
-}
-
-// .msgAction {
-//   display: flex;
-//   width: 100%;
-//   justify-content: space-around;
-// }
-
-// .actionIconStyl {
-//   color: #666;
-//   cursor: pointer;
-//   margin: 0 4px;
-// }
-
-// .actionIconStyl:hover {
-//   color: @primary-color;
-// }
-
-// .moreActionWrap {
-//   display: flex;
-//   flex-direction: column;
-//   .multiBtn {
-//     display: flex;
-//     align-items: center;
-//     padding: 6px;
-//   }
-//   .moreActionTxt {
-//     font-size: 12px;
-//   }
-// }
-.multiSelectStyl {
-  display: flex;
-  align-items: center;
-  margin-right: 16px;
-}
-
 </style>

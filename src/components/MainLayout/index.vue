@@ -64,9 +64,8 @@ import {ArrowRight} from '@element-plus/icons-vue'
 </script>
 
 <template>
-  <ElContainer class="main_layout">
-    <!-- MainLayout-header -->
-    <ElHeader class="header">
+  <div class="main-layout">
+    <div class="main-layout-header">
       <!-- 面包屑+左侧栏 -->
       <CustomBreadcrumb
         :selectKey="selectMenu.key"
@@ -97,16 +96,14 @@ import {ArrowRight} from '@element-plus/icons-vue'
             <BarIcon type="right" :size="18" :width="8" :selected="rightSider" />
             </a>
           </div>
-          <!-- 右侧栏插槽 -->
+          <!-- TODO:待删除：右侧栏插槽 -->
           <slot name="rightBar" />
         </ElSpace>
       </div>
-    </ElHeader>
-    <!-- MainLayout-body -->
-    <ElContainer class="body">
-
-      <!-- body-左侧菜单目录 -->
-      <ElAside v-if="leftShow || leftSider" class="sider" width="250px">
+    </div>
+    <div class="main-layout-body">
+      <!-- TODO:原左侧菜单目录 -->
+      <!-- <ElAside v-if="leftShow || leftSider" class="sider" width="250px">
         <div class="title">
           <span v-if="parentMenu.key != props.siderMenuData.key" class="backup" @click="onSelectClick(parentMenu)">
             <ElIcon :size="20"><Back/></ElIcon>
@@ -118,7 +115,6 @@ import {ArrowRight} from '@element-plus/icons-vue'
             <ElText truncated>{{parentMenu.label}}</ElText>
           </div>
         </div>
-        <!-- 菜单 -->
         <div class="container" id="templateMenu">
           <CustomMenu
             :item="parentMenu"
@@ -130,109 +126,56 @@ import {ArrowRight} from '@element-plus/icons-vue'
             :onMenuClick="onOperateMenuClick"
           />
         </div>
-      </ElAside>
-      <!-- body-右侧 -->
-      <ElMain  class="main">
-        <!-- 文件目录 -->
-        <DxResizable
-          handles='right'
-          :width="(rightShow || rightSider) ? mainWidth : '100%'"
-          :onResize="(e:any) => setMainWidth(e.width)"
-        >
-          <!-- 内容-默认插槽 -->
-          <div class="content" style="width: 100%;" >
-            <slot />
-          </div>
-        </DxResizable>
-        <!-- 预览-->
-        <div class="content" v-show="rightShow || rightSider">
+      </ElAside> -->
+      <!-- TODO:todo-end -->
+        <!-- 文件目录列表 -->
+        <div class="main-layout-body-list">
+          <slot />
+        </div>
+        <!-- 详情页-->
+        <div class="main-layout-body-detail" v-show="rightShow || rightSider">
           <EntityPreview v-if="previewFlag?.length>0" :entity="selectMenu.item" :flag="previewFlag" />
         </div>
-      </ElMain>
-    </ElContainer>
-  </ElContainer>
+    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
 // @import '~antd/es/style/themes/variable';
-.main_layout {
+.main-layout {
   height: 100%;
-  .header {
-    // TODO:-color: @component-background;
-    // border-radius: @border-radius-base;
-    // border-bottom: 2px solid @border-color;
-    background-color: #fafafa;
-    padding: 12px;
-    border-radius: 4px;
-    border-bottom: 2px solid #efefef;
-    -webkit-box-shadow: inset -20px 0px 10px 10px #f8f9ff;
-    box-shadow: inset -20px 0 10px 10px #f8f9ff;
+  display: flex;
+  flex-direction: column;
+  // TODO: color/surface/品牌背景色
+  background-color: #F2F3FF;
+  .main-layout-header {
+    padding: 10px 16px;
     display: flex;
     justify-content: space-between;
-    height: 53px;
+    height: 60px;
   }
-  .sider {
-    width: 250px;
-    height: 100%;
-    // background-color: @component-background;
-    background-color: #fafafa;
-    // border-right: 1px solid @border-color;
-    border-right: 1px solid #efefef;
-    .menuBar {
-      display: flex;
-      padding: 0 30px;
-      margin-top: 10px;
-      justify-content: space-between;
-    }
-    .container {
-      height: calc(100% - 60px);
-      // padding: 0 @padding-xs;
-      padding: 0 10px;
-      overflow-y: scroll;
-    }
-    .title {
-      // border-radius: @border-radius-base;
-      border-radius: 10px;
-      clear: both;
-      padding: 8px;
-      text-align: center;
-      cursor: pointer;
-      .backup {
-        color: #154ad8;
-        float: left;
-        padding: 6px;
-      }
-      .label {
-        font-size: 16px;
-        white-space: nowrap;
-        width: 160px;
-        padding: 6px;
-      }
-    }
-  }
-  .body {
-    height: calc(100% - 60px);
+
+  .main-layout-body {
+    height: 0;
+    flex: 1;
     display: flex;
-    flex-direction: row;
-    .main {
-      display: flex;
-      padding: 0;
+    border-radius: 12px 0 0 0;
+    overflow: hidden;
+    .main-layout-body-list {
+      width: 400px;
+      padding: 16px;
+      // TODO: color/surface/主要容器背景&弹窗背景
+      background-color: #FFFFFF;
     }
-    .content {
-      flex: 1;
-      display: flex;
-      height: 100%;
-      padding: 12px;
-      border-right: 1px solid #efefef;
-      // background-color: @component-background;
-      // border-radius: @border-radius-base;
-      background-color:#fafafa;
-      border-radius: 10px;
-      overflow-y: hidden;
-      flex-direction: column;
+    .main-layout-body-detail {
+      width: 0;
+      flex:1;
+      background-color: #FCFCFC;
     }
   }
+ 
 }
+// TODO: 待删除
 :deep(.el-dropdown-menu__item){
   margin: 0 6px !important;
   padding: 0 !important;
@@ -251,4 +194,5 @@ import {ArrowRight} from '@element-plus/icons-vue'
     margin-right: 6px;
   }
 }
+// TODO: END
 </style>

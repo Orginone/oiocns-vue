@@ -6,6 +6,9 @@ import ShareIconItem from './ShareIconItem.vue';
 import { Ref } from 'vue';
 
 export interface teamTypeInfo {
+  gap?: number;
+  color?: string;
+
   size?: number;
   entityId?: string;
   entity?: schema.XEntity;
@@ -13,7 +16,10 @@ export interface teamTypeInfo {
   notAvatar?: boolean;
   title?: string;
   showName?: boolean;
+
 }
+
+
 
 const props = defineProps<teamTypeInfo>()
 
@@ -26,37 +32,20 @@ if(props.entityId) {
   )
 }
 
+const getShare = (ent: schema.XEntity)=>{
+  return {
+    name: ent.name,
+    typeName: ent.typeName,
+    avatar: parseAvatar(ent.icon),
+  }
+}
+
 </script>
 
 <template>
-  <!-- entity -->
-  <template v-if="entity">
-    <ShareIconItem
-      v-bind="props"
-      :share="{
-        name: entity.name,
-        typeName: entity.typeName,
-        avatar: parseAvatar(entity.icon),
-      }"
-    />
-  </template>
-  <!-- entityId -->
-  <template v-else-if="entityId">
-    <ShareIconItem
-      v-if="loadedEntity"
-      v-bind="props"
-      :share="{
-        name: loadedEntity.name,
-        typeName: loadedEntity.typeName,
-        avatar: parseAvatar(loadedEntity.icon),
-      }"
-    />
-  </template>
-  <!-- typeName -->
-  <template v-else-if="typeName">
-    <ShareIconItem v-bind="props" />
-  </template>
-
+  <ShareIconItem v-if="entity" v-bind="props" :share="getShare(entity)"/>
+  <ShareIconItem v-else-if="typeName" v-bind="props" />
+  <ShareIconItem v-else-if="entityId && loadedEntity" v-bind="props" :share="getShare(loadedEntity)"/>  
 </template>
 
 <style lang="scss" scoped>

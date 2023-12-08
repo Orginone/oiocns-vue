@@ -55,8 +55,6 @@ const multiDelete = async() => {
 </script>
 
 <template>
-<div class="cohort_wrap">
-  <!-- 主体 -->
   <div class="chart_page">
     <!-- 聊天记录区域 -->
     <GroupContent
@@ -94,40 +92,31 @@ const multiDelete = async() => {
     </div>
     <!-- 多选操作 -->
     <div class="chart_mulit_select" v-else>
-      <div class="chart_mulit_select_wrap">
+      <div class="chart_mulit_select_actions_wrap">
         <!-- 逐条转发 -->
-        <div
-          class="chart_mulit_select_action"
-          @click="multiSingleSend"
-        >
+        <div class="chart_mulit_select_action" @click="multiSingleSend">
           <span class="chart_mulit_select_icon">
             <ElIcon :size="22" ><Promotion/></ElIcon>
           </span>
-          <span>逐条转发</span>
+          <span class="chart_mulit_select_txt">逐条转发</span>
         </div>
         <!-- 合并转发 -->
-        <div
-          class="chart_mulit_select_action"
-          @click="multiBatchSend">
+        <div class="chart_mulit_select_action" @click="multiBatchSend">
           <span class="chart_mulit_select_icon">
             <ElIcon :size="22" ><Promotion/></ElIcon>
           </span>
-          <span>合并转发</span>
+          <span class="chart_mulit_select_txt">合并转发</span>
         </div>
         <!-- 批量删除 -->
-        <div 
-          class="chart_mulit_select_action"
-          @click="multiDelete"
-        >
+        <div class="chart_mulit_select_action" @click="multiDelete" >
           <span class="chart_mulit_select_icon">
             <ElIcon :size="22" ><Delete/></ElIcon>
           </span>
-          <span>批量删除</span>
+          <span class="chart_mulit_select_txt">批量删除</span>
         </div>
-        <!-- 取消 -->
-        <div>
-          <ElIcon :size="22" @click="multiSelectShow=false"><Close style="cursor: pointer;"/></ElIcon>
-        </div>
+      </div>
+      <div class="close-btn">
+        <ElIcon :size="24" @click="multiSelectShow=false"><Close style="cursor: pointer;"/></ElIcon>
       </div>
     </div>
   </div>
@@ -143,77 +132,57 @@ const multiDelete = async() => {
       forwardMessage=[]
     }"
   />
-</div>
 </template>
 
 <style lang="less" scoped>
-.cohort_wrap {
-  width: 100%;
+.chart_page {
   height: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
+  flex: 1;
   overflow: hidden;
-  position: relative;
-  .chart_page {
-    height: 100%;
+  background-color: #FCFCFC;
+  .chart_mulit_select {
+    padding: 0 24px;
+    //  TODO: color/surface/次要容器背景
+    background-color: #F7F8FA;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex: 1;
-    overflow: hidden;
-    background-color: #f2f2f25c;
-
-    .chart_input {
-      height: max-content;
-      border-top: 1px solid #dde4f3;
-      .el-textarea__inner {
-        // color: #fff;
-      }
-    }
-    .chart_mulit_select {
-      height: max-content;
-      min-height: 227px;
-      .chart_mulit_select_wrap {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        background-color: #fff;
-        padding: 10px;
-        justify-content: space-around;
-        height: max-content;
-        min-height: 227px;
-        position: absolute;
-        // bottom: 0;
-        width: 100%;
-      }
+    justify-content: end;
+    align-items: center;
+    .chart_mulit_select_actions_wrap {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 0;
       .chart_mulit_select_action {
+        width: 200px;
         display: flex;
+        gap: 10px;
         flex-direction: column;
         align-items: center;
         cursor: pointer;
-      }
-      .chart_mulit_select_icon {
-        display: inline-block;
-        vertical-align: middle;
-        padding: 12px;
-        border-radius: 100%;
-        background-color: rgb(199, 197, 197);
-        margin-bottom: 6px;
-        svg {
-          vertical-align: middle;
-        }
-      }
+        .chart_mulit_select_icon {
+          border-radius: 4px;
+          padding: 10px;
+          background-color: #FFFFFF;
+        } 
+        .chart_mulit_select_txt {
+          //styleName: 14/CN-Regular;
+          font-family: PingFang SC;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 20px;
+          letter-spacing: 0em;
+          text-align: left;
+          // TODO: color/text & icon/text - color-3
+          color: #6F7686;
+        }       
+      }      
     }
 
-    .chart_empty {
-      height: 100%;
-      font-size: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #dcdfe6;
-    }
+
   }
 }
-
 </style>
