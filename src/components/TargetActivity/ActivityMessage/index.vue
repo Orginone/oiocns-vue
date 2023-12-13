@@ -156,15 +156,18 @@ const handleReply = async (userId: string = '') => {
 
 <style lang="scss" scoped>
   .activity-item {
-    border-radius: 6px;
     padding: 24px;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     gap: 16px;
-    background-color: #FFFFFF;
-    box-shadow: 0px 1px 2px 0px #1018280F,
-      0px 1px 3px 0px #1018281A;
+    border-radius: 6px;
+    background: #FFF;
+    margin: 0 2px;
+    /* Shadow/sm */
+    box-shadow: 
+      0px 1px 2px 0px rgba(16, 24, 40, 0.06), 
+      0px 1px 3px 0px rgba(16, 24, 40, 0.10);
     .activity-item-right {
       width: 0;
       flex: 1;

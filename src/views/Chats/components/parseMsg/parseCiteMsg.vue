@@ -1,3 +1,4 @@
+<!-- 引用消息 -->
 <script setup lang="ts">
 
 import { MessageType, IMessage } from '@/ts/core';
@@ -56,75 +57,73 @@ switch (props.item.msgType) {
 </script>
 
 <template>
-  <!-- 图片 -->
-  <template v-if="item.msgType === MessageType.Image">
-    <!-- 有缩略图,可预览 -->
-    <div v-if="img && img.thumbnail" class="con_content_cite_txt">
-      <span>{{item.from.name}}:</span>
-      <ElImage
-        :src="img.thumbnail"
-        :preview-src-list="[shareOpenLink(img.shareLink)]"
-      />
-    </div>
-    <!-- 无图片数据或无缩略图，显示异常 -->
-    <div v-else class="con_content_cite_txt">消息异常</div>
-  </template>
-  <!-- 文件 -->
-  <template v-else-if="item.msgType === MessageType.File">
-    <div class="con_content_cite_txt">
-      <span>{{item.from.name}}:</span>
-      <a :href="shareOpenLink(file.shareLink, true)" title="点击下载">
-        <div>
-          <b>{{file.name}}</b>
-        </div>
-        <div>{{formatSize(file.size)}}</div>
-      </a>
-    </div>
-  </template>
-  <!-- 语音 -->
-  <template v-else-if="item.msgType === MessageType.Voice">
-    <div class="con_content_cite_txt">
-      <span>{{item.from.name}}:</span>
-      <div class="voiceStyle">
-        <audio :src="url" controls />
-      </div>
-    </div>
-  </template>
-  <!-- 默认 -->
-  <template v-else>
-    <!-- 有截图,垂直展示截图信息。把文字消息统一放在底部 -->
-    <template v-if="item.msgBody.includes('$IMG')">
-      <div class="con_content_cite_txt">
+  <div class="cite-msg">
+    <template v-if="item.msgType === MessageType.Image">
+      <!-- 有缩略图,可预览 -->
+      <div v-if="img && img.thumbnail" class="con_content_cite_txt">
         <span>{{item.from.name}}:</span>
         <ElImage
-          v-for="(url, idx) in imgUrls" :key="idx"
-          class="cut_img"
-          :src="url"
-          :preview-src-list="[url]"
+          :src="img.thumbnail"
+          :preview-src-list="[shareOpenLink(img.shareLink)]"
         />
-        <p v-if="str.trim()" style="white-space: pre-wrap; margin: 0">{{str}}</p>
       </div>
+      <!-- 无图片数据或无缩略图，显示异常 -->
+      <div v-else class="con_content_cite_txt">消息异常</div>
     </template>
-    <!-- 无截图，展示默认文字 -->
-    <template v-else>
+    <template v-else-if="item.msgType === MessageType.File">
       <div class="con_content_cite_txt">
         <span>{{item.from.name}}:</span>
-        <span v-html="truncateString(linkText(item.msgBody), 80)"></span>
+        <a :href="shareOpenLink(file.shareLink, true)" title="点击下载">
+          <div>
+            <b>{{file.name}}</b>
+          </div>
+          <div>{{formatSize(file.size)}}</div>
+        </a>
       </div>
     </template>
-  </template>
+    <template v-else-if="item.msgType === MessageType.Voice">
+      <div class="con_content_cite_txt">
+        <span>{{item.from.name}}:</span>
+        <div class="voiceStyle">
+          <audio :src="url" controls />
+        </div>
+      </div>
+    </template>
+    <template v-else>
+      <!-- 有截图,垂直展示截图信息。把文字消息统一放在底部 -->
+      <template v-if="item.msgBody.includes('$IMG')">
+        <div class="con_content_cite_txt">
+          <span>{{item.from.name}}:</span>
+          <ElImage
+            v-for="(url, idx) in imgUrls" :key="idx"
+            class="cut_img"
+            :src="url"
+            :preview-src-list="[url]"
+          />
+          <p v-if="str.trim()" style="white-space: pre-wrap; margin: 0">{{str}}</p>
+        </div>
+      </template>
+      <!-- 无截图，展示默认文字 -->
+      <template v-else>
+        <div class="con_content_cite_txt">
+          <span>{{item.from.name}}:</span>
+          <span v-html="truncateString(linkText(item.msgBody), 80)"></span>
+        </div>
+      </template>
+    </template>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-  .con_content_cite_txt {
-    //styleName: 14/CN-Regular;
-    font-family: PingFang SC;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 20px;
-    letter-spacing: 0em;
-    text-align: left;
-    // TODO: color/text & icon/text - color-3
-    color: #6F7686;
-  }
+.cite-msg {
+  display: flex;
+  padding: 0px 4px;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  align-self: stretch;
+  // border-left: 1px solid var(--color-text-icon-text-color-4, #C4C6CD);
+  border-left: 1px solid #C4C6CD;
+  color: #6F7686;
+}
 </style>

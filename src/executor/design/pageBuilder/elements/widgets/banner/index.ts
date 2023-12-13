@@ -2,7 +2,7 @@ import { ExistTypeMeta } from '../../../core/ElementMeta'
 import { File, SEntity } from '../../../design/config/FileProp'
 import { Context } from '../../../render/PageContext'
 import { defineElement } from '../../defineElement'
-import {StyleValue, h} from 'vue'
+import {StyleValue, VNode, h} from 'vue'
 // import View from './View.vue'
 import Design from './Design.vue'
 interface IProps {
@@ -12,7 +12,6 @@ interface IProps {
   ctx: Context;
 }
 
-// TODO:
 export const style = (height: number, url?: string) => {
   return {
     position: 'relative',
@@ -25,9 +24,12 @@ export const style = (height: number, url?: string) => {
   } as StyleValue
 }
 
-const View: React.FC<IProps> = (props) => {
+const View: VNode = (props: any) => {
+  // TODO: 自定义banner图无法显示的问题
+  console.log(props);
+  
   return h('div',{style:style(props.height, props.url?.id)})
-};
+}
 
 
 

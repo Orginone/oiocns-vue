@@ -6,11 +6,14 @@ import { parseAvatar,command } from '@/ts/base'
 import { shareOpenLink, truncateString } from '@/utils/tools'
 import { formatSize } from '@/ts/base/common'
 import typeIcon from '@/components/Common/GlobalComps/typeIcon.vue'
-import VoiceBar from './components/VoiceBar.vue'
+import VoiceBar from './components/voiceBar.vue'
+import parseCiteMsg from './parseCiteMsg.vue'
 
 const props = defineProps<{
   item: IMessage
 }>()
+
+let isShowBubble = true
 
 /** 文本处理,将链接处理成超链接*/
 const linkText = (val: string) => {
@@ -27,14 +30,17 @@ let imgUrls: string[] = null
 switch (props.item.msgType) {
   case MessageType.Image: {
     img = parseAvatar(props.item.msgBody)
+    isShowBubble = false
     break
   }
   case MessageType.Video: {
     img = parseAvatar(props.item.msgBody)
+    isShowBubble = false
     break
   }
   case MessageType.File: {
     file = parseAvatar(props.item.msgBody)
+    isShowBubble = false
     break
   }
   case MessageType.Voice: {
@@ -43,7 +49,6 @@ switch (props.item.msgType) {
     url = URL.createObjectURL(blob)
 
   }
-
   default: {
     // 优化截图展示问题
     if (props.item.msgBody.includes('$IMG')) {
@@ -62,69 +67,55 @@ switch (props.item.msgType) {
 </script>
 
 <template>
-  <!-- 图片 -->
-  <template v-if="item.msgType === MessageType.Image">
-    <div v-if="img && img.shareLink" class="con_content_img">
-      <ElImage 
-        loading="lazy"
-        :src="shareOpenLink(img.shareLink)" 
-        :preview-src-list="[shareOpenLink(img.shareLink)]"
-      />
-    </div>
-    <div v-else class="con-content-wrap">消息异常</div>
-  </template>
-  <!-- 视频 -->
-  <template v-else-if="item.msgType === MessageType.Video">
-    <div v-if="img?.shareLink" class="con_content_img"
-      @click="command.emitter('executor', 'open', img,'preview')" 
-    >
-      <img :src="img.thumbnail" :width="300"/>
-    </div>
-    <div v-else class="con-content-wrap">消息异常</div>
-  </template>
-  <!-- 文件 -->
-  <template v-else-if="item.msgType === MessageType.File">
-    <div v-if="!file" class="con-content-wrap" style="color: #af1212">
-      文件消息异常
-    </div>
-    <div v-else class="con_content_file" 
-      @click="command.emitter('executor', 'open', file,'preview')"
-    >
-      <div class="con_content_file_left">
-        <typeIcon :iconType="file.contentType" :size="40" color="blue"/>
-        <div class="file-info">
-          <div class="file-name">{{file.name}}</div>
-          <div class="file-size">{{formatSize(file.size)}}</div>          
-        </div>
-
+  <div class="con-content-wrap" :class="{'showBubble': isShowBubble}">
+    <parseCiteMsg v-if="item.cite" :item="item.cite" />
+    <div class="con-content-main">
+      <template v-if="item.msgType === MessageType.Image">
+        <ElImage 
+          loading="lazy"
+          :src="shareOpenLink(img.shareLink)" 
+          :preview-src-list="[shareOpenLink(img.shareLink)]"
+        />
+      </template>
+      <template v-else-if="item.msgType === MessageType.Video">
+        <img :src="img.thumbnail" :width="300" @click="command.emitter('executor', 'open', img,'preview')" />
+      </template>
+      <template v-else-if="item.msgType === MessageType.File">
+        <div class="con_content_file" 
+          @click="command.emitter('executor', 'open', file,'preview')"
+        >
+          <div class="con_content_file_left">
+            <typeIcon :iconType="file.contentType" :size="40" color="blue"/>
+            <div class="file-info">
+              <div class="file-name">{{file.name}}</div>
+              <div class="file-size">{{formatSize(file.size)}}</div>          
+            </div>
+          </div>
+          <div class="folder-icon">icon16</div>
       </div>
-      <div class="folder-icon">icon16</div>
+      </template>
+      <template v-else-if="item.msgType === MessageType.Voice">
+        <VoiceBar :src="url"/>
+      </template>
+      <template v-else>
+        <!-- 包含图片 -->
+        <div v-if="item.msgBody.includes('$IMG')">
+          <ElImage
+            v-for="(url,idx) in imgUrls" :key="idx"
+            :src="url"
+            :preview="[url]"
+            :preview-src-list="[url]"
+          />
+            <p v-if="str.trim()" style="white-space: pre-wrap; margin: 0">{{str}}</p>
+        </div>
+        <!-- 纯文本 -->
+        <div v-else 
+          v-html="linkText(item.msgBody)"
+        >
+        </div>
+      </template>
+    </div>
   </div>
-  </template>
-  <!-- 语音 -->
-  <template v-else-if="item.msgType === MessageType.Voice">
-    <div class="con-content-wrap">
-      <VoiceBar :src="url"/>
-    </div>
-  </template>
-  <!-- 文本 | 纯图片 | 文本+图片 -->
-  <template v-else>
-    <!-- 包含图片 -->
-    <div v-if="item.msgBody.includes('$IMG')" class="con-content-wrap">
-      <ElImage
-        v-for="(url,idx) in imgUrls" :key="idx"
-        :src="url"
-        :preview="[url]"
-        :preview-src-list="[url]"
-      />
-        <p v-if="str.trim()" style="white-space: pre-wrap; margin: 0">{{str}}</p>
-    </div>
-    <!-- 纯文本 -->
-    <div v-else class="con-content-wrap" 
-      v-html="linkText(item.msgBody)"
-    >
-    </div>
-  </template>
 </template>
 
 <style lang="scss" scoped>
@@ -133,15 +124,14 @@ img,:deep(img) {
   max-width: 100%;
   max-height: 400px;
 }  
-
-.con-content-wrap {
+.showBubble {
   overflow-wrap: break-word;
   white-space: pre-wrap;
   padding: 8px 16px;
   border-radius: 8px;
   background-color:var(--con-bac,#F2F4F7);
   color: var(--con-txt,#1D2939);
-  styleName: 14/CN-Regular;
+  // styleName: 14/CN-Regular;
   font-family: PingFang SC;
   font-size: 14px;
   font-weight: 400;

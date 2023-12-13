@@ -4,22 +4,22 @@ import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
 import { onContextMenu } from './contextMenu'
 
 defineProps<{
-  focusFile: IDEntity | undefined
+  focusFile?: IDEntity | undefined
   content: IDEntity[]
-  selectFiles: IDEntity[]
-  fileOpen: (file: IDEntity | undefined, dblclick: boolean) => void;
+  selectFiles?: IDEntity[]
+  fileOpen: (file: IDEntity | undefined, dblclick: boolean, e?: MouseEvent) => void;
   contextMenu: (file?: IDEntity) => any
 }>()
 
 </script>
 <template>
   <div class="icon-mode" @contextmenu="onContextMenu($event,undefined,contextMenu)">
-    <div class="icon-item" v-for="el in content" :key ="el.key" 
+    <div class="icon-item" v-for="el in content" :key="el.id"
       @contextmenu.stop="onContextMenu($event,el,contextMenu)"
-      @click="fileOpen(el, false)"
+      @click="(e)=>fileOpen(el, false,e)"
       @dblclick="fileOpen(el, true)"
     >
-      <div class="fileImage">
+      <div class="fileImage" >
         <ElBadge :value="el.badgeCount" size="small" :hidden="el.badgeCount===0">
           <EntityIcon :entityId="el.metadata.id" :size="48" />
         </ElBadge>

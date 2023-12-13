@@ -5,9 +5,6 @@ import Information from './information.vue'
 import ForwardContentModal from './forwardContentModal.vue'
 import { showChatTime} from '@/utils/tools'
 import { IMessage, ISession, MessageType } from '@/ts/core'
-import {parseCiteMsg} from '@/views/Chats/components/parseMsg'
-
-
 import showMsg from './showMsg.vue'
 import msgAction from './msgAction.vue'
 
@@ -98,7 +95,7 @@ const viewForward = (item: IMessage[]) => {
 </script>
 
 <template>
-  <div class="chart_content" ref="body" :onScroll="onScroll" element-loading-text="加载中..." v-loading="loading">
+  <div class="chart_content" ref="body" @scroll="onScroll" element-loading-text="加载中..." v-loading="loading">
     <div class="group_content_wrap">
       <template v-for="(item,index) in messages" :key="item.id">
         <!-- 时间 -->
@@ -129,10 +126,9 @@ const viewForward = (item: IMessage[]) => {
             <ElCheckbox class="multiSelectStyl" v-if="props.multiSelectShow"
               @change="(val)=>multiSelectMsg(item,val as boolean)"
             />
-            <!-- 消息体 -->
             <div class="viewMsg">
               <!-- 我的消息 -->
-              <div v-if="item.isMySend" style="display: flex;gap: 10px;justify-content: end;"> 
+              <div v-if="item.isMySend" style="display: flex;gap: 16px;justify-content: end;"> 
                 <div class="con_content">             
                   <ElPopover
                     trigger="hover"
@@ -173,14 +169,13 @@ const viewForward = (item: IMessage[]) => {
                       >
                         {{item.readedinfo}}
                       </div> -->                  
-                  <parseCiteMsg v-if="item.cite" :item="item.cite"/>
                 </div>   
                 <div class="con_avatar">
                   <TeamIcon :entityId="item.metadata.fromId" :size="32" />
                 </div>
               </div>
               <!-- 他人的消息 -->
-              <div v-else style="display: flex;gap:10px;">
+              <div v-else style="display: flex;gap:16px;">
                 <div class="con_avatar">
                   <TeamIcon :entityId="item.metadata.fromId" :size="32" />
                 </div>
@@ -203,7 +198,6 @@ const viewForward = (item: IMessage[]) => {
                       <msgAction :item="item" :citeText="citeText" :chat="chat" :forward="forward" :multiSelectFn="multiSelectFn"/>
                     </template>
                   </ElPopover>
-                  <parseCiteMsg v-if="item.cite" :item="item.cite"/>
                 </div>
               </div>
             </div>

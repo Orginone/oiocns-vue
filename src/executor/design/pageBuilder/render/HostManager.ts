@@ -23,8 +23,6 @@ export default class HostManagerBase<T extends HostMode>
     this.pageInfo = pageFile;
 
     const componentFactory = new VueComponentFactory()
-    console.log('staticContext.components',staticContext.components);/////////////////////////////////////////////
-    
     componentFactory.registerComponents(staticContext.components)
     this.components = componentFactory
 

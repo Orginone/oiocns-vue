@@ -4,7 +4,7 @@ import DesignEntities from './DesignEntities.vue'
 import ViewEntities from './ViewEntities.vue'
 import { Context } from '../../../render/PageContext'
 import { SEntity } from '../../../design/config/FileProp'
-import { VNode } from 'vue';
+import { VNode } from 'vue'
 const props = defineProps<{
   id: string
   className: string
@@ -27,24 +27,22 @@ const props = defineProps<{
   <component class="banner" :is="banner?.({})" />
   <div class="body">
     <div class="species">
-      <!-- TODO: -->
-      <!-- <component :is="leftTree?.({})" /> -->
+      <component :is="leftTree?.({})" />
     </div>
-    <!-- TODO: -->
-    <!-- <div class="content">
-      <div>{{topDicts?.({})}}</div>
-      <div>{{topForm?.({ forms })}}</div>
+    
+    <div class="content">
+      <div><component :is="topDicts?.({})" /></div>
+      <div><component :is="topForm?.({ forms })" /></div>
       <div class="entities">
         <DesignEntities v-if="ctx.view.mode == 'design'" :ctx="ctx" v-bind="props" />
         <ViewEntities v-else :ctx="ctx" v-bind="props" />
       </div>
-    </div> -->
+    </div>
   </div>
-  TODO: transaction-shoppingBtn
-  <!-- <div class="shoppingBtn">
-    {{badge?.({})}}
-    {{car?.({})}}
-  </div> -->
+  <div class="shoppingBtn">
+    <component :is="badge?.({})" />
+    <component :is="car?.({})" />
+  </div>
 </div>
 </template>
 

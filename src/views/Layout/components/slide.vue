@@ -9,6 +9,7 @@ import navItem from './navItem.vue'
 const workCount = ref(0)
 const msgCount = ref(0)
 const onlineVisible = ref(false)
+
 useFlagCmdEmitter('session', () => {
   let noReadCount = 0;
   for (const item of orgCtrl.chats) {
@@ -18,13 +19,12 @@ useFlagCmdEmitter('session', () => {
   }
   msgCount.value = noReadCount
 })
-onMounted(() => {
-  const workId = orgCtrl.work.notity.subscribe(async () => {
-    workCount.value = orgCtrl.work.todos.length
-  })
-  return () => {
-    orgCtrl.work.notity.unsubscribe(workId)
-  }
+
+const workId = orgCtrl.work.notity.subscribe(async () => {
+  workCount.value = orgCtrl.work.todos.length
+})
+onBeforeUnmount(() => {
+  orgCtrl.work.notity.unsubscribe(workId)
 })
 const actions = ref([
   {

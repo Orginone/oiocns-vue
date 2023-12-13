@@ -55,7 +55,7 @@ const props = defineProps<{
   .mainContent {
     height: 0;
     flex: 1;
-    overflow-y: overlay;
+    overflow-y: auto;
     // TODO:
     &::-webkit-scrollbar{
       background-color: transparent;

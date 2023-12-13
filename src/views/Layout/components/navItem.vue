@@ -8,6 +8,7 @@ const route = useRoute()
 const props = defineProps<{item:any}>()
 
 const selected = ref(false)
+
 watch(route,()=>{
   selected.value = (route.path===props.item.path)
 },{immediate:true})

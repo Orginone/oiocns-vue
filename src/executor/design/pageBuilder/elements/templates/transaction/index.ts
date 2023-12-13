@@ -1,9 +1,5 @@
 import { kernel, schema } from '@/ts/base'
 
-// import { PlusCircleFilled } from '@ant-design/icons'
-import { CirclePlusFilled } from '@element-plus/icons-vue'
-// import { Button, Col, Empty, Pagination, Row, Space, Spin } from 'antd';
-// import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { h } from 'vue'
 import { ExistTypeMeta } from '../../../core/ElementMeta'
 import { useStagings } from '../../../core/hooks/useChange'

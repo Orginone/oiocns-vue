@@ -35,36 +35,28 @@ const [key] = useCtrlUpdate(props.activity)
     v-loading="isLoading" 
     element-loading-text="加载中,请稍后..."
   >
-    <div class="groupCtx">
-      <!-- 左侧 -->
-      <DxResizable 
-        v-if="size.width.value>1000 && !isLoading"
-        handles = 'right'
-        style="width:800px"
+    <!-- 左侧 -->
+    <div class="group-list">
+      <div class="group-list-item" :class="{'group-list-item-selected':item.id === current.id}"
+        v-for="item in activitys.filter((i) => i.activityList.length>0)" :key="item.key"
+        @click="current = item"
       >
-        <div class="groupList">
-          <div :class="`groupList-${item.id === current.id ? 'selected' : 'item'}`"
-            v-for="item in activitys.filter((i) => i.activityList.length>0)" :key="item.key"
-            @click="current = item"
-          >
-            <ActivityItem
-              :item = "(item.activityList[0] as IActivityMessage)"
-              :activity="(item as IActivity)"
-              :hideResource="true"
-            />
-          </div>
-        </div>
-      </DxResizable>
-      <!-- 右侧 -->
-      <div class="loadContext">
-        <Activity v-if="!isLoading && current"
-          height="calc(100vh - 110px)"
-          :title="current.name + '动态'"
-          :activity="(current as IActivity)"
-          :key="current.key"
-        >
-        </Activity>
+        <ActivityItem
+          :item = "(item.activityList[0] as IActivityMessage)"
+          :activity="(item as IActivity)"
+          :hideResource="true"
+        />
       </div>
+    </div>
+    <!-- 右侧 -->
+    <div class="loadContext">
+      <Activity v-if="!isLoading && current"
+        height="calc(100vh - 110px)"
+        :title="current.name + '动态'"
+        :activity="(current as IActivity)"
+        :key="current.key"
+      >
+      </Activity>
     </div>
   </div>
 </template>
@@ -75,48 +67,21 @@ const [key] = useCtrlUpdate(props.activity)
 */
 
 .activityContent {
-  .loadContext {
-    height: 100%;
-    width: 100%;
-    // .ogo-card-body {
-    //   background-color: rgba(0,0,0,0)
-    // }
-    // .ogo-list-item {
-    //   border-bottom: 1px solid @border-color-base;
-    //   margin: 8px 0;
-    // }
-  }
-  .groupCtx {
-    width: 100%;
-    // height: calc(100vh - 300px);
-    box-sizing: border-box;
-    padding: 12px;
+  display: flex;
+  padding-bottom: 413px;
+  gap: 16px;
+  .group-list {
+    width: 336px;
     display: flex;
-    gap: 6px;
-    .groupList {
-      display: flex;
-      flex-direction: column;
-      overflow-y: scroll;
-      height: calc(100vh - 30px);
-      border-radius: 4px;
-      padding: 8px;
-      min-width: 500px;
-      background: @component-background;
-      &-selected {
-        cursor: pointer;
-        border: 1px solid @border-color;
-        background-color: @active-background;
-      }
-
-      &-item {
-        cursor: pointer;
-        border-radius: 6px;
-        border-bottom: 1px solid @border-color-base;
-        &:hover {
-          background-color: @active-background;
-        }
-      }
-    }
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .loadContext {
+    width: 0;
+    flex: 1;
+    border-radius: 6px;
+    overflow: hidden;
   }
 }
 </style>

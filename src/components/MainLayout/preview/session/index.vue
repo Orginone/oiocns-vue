@@ -2,12 +2,12 @@
 import TeamIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
 import { IDEntity, ISession, ITarget, TargetType,IFile } from '@/ts/core'
 import ChatBody from './chat/index.vue'
+import MemberBody from './member/index.vue'
 import { command } from '@/ts/base'
 import TargetActivity from '@/components/TargetActivity/index.vue'
 import { loadFileMenus } from '@/executor/fileOperate'
 import OrgIcons from '@/components/Common/GlobalComps/orgIcons.vue'
 import Directory from '@/components/Directory/index.vue'
-import DirectoryViewer from '@/components/Directory/views/index.vue'
 import { cleanMenus } from '@/utils/tools'
 
 const props = defineProps<{
@@ -92,25 +92,7 @@ const getTitle = (flag: string) => {
       <!-- 数据 -->
       <Directory v-else-if="bodyType==='store'" :root="session.target.directory"/>
       <!-- 关系 -->
-      <DirectoryViewer v-else-if="bodyType==='relation'"
-        title="群成员"
-        :initTags="['成员']"
-        :show-tags="false"
-        :extra-tags="false"
-        :selectFiles="[]"
-        :content="session.target.memberDirectory.content()"
-        :fileOpen="()=>{}"
-        show-footer
-        :contextMenu="(entity: IDEntity | undefined) => {
-          const file = (entity as IFile) || session.target.memberDirectory;
-          return {
-            items: cleanMenus(loadFileMenus(file)) || [],
-            onClick: ({ key }) => {
-              command.emitter('executor', key, file);
-            },
-          }
-        }"
-      />
+      <MemberBody v-else-if="bodyType==='relation'" :memberDirectory="session.target.memberDirectory"/>
     </div>
   </div>
 </template>

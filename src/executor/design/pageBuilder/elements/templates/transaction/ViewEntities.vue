@@ -1,8 +1,12 @@
 <script setup lang='ts'>
+import { kernel } from '@/ts/base'
 import orgCtrl from '@/ts/controller'
+import { useStagings } from '../../../core/hooks/useChange'
+import { SEntity } from '../../../design/config/FileProp'
   const props = defineProps<{
     ctx: any
     size: number
+    forms: SEntity[]
   }>()
   const current = props.ctx.view.pageInfo;
   const loading = ref(false)
@@ -18,26 +22,26 @@ import orgCtrl from '@/ts/controller'
   onMounted(() => {
     loadData(size.value, page.value)
   })
-  props.ctx.view.subscribe((type, cmd, args) => {
+  props.ctx.view.subscribe((type: string, cmd: string, args: any) => {
     if (type == 'species' && cmd == 'checked') {
-      userData.current = args;
+      userData.value = args;
     } else if (type == 'dicts') {
       if (cmd == 'changed') {
-        dictFilter.current[args.id] = args.data;
+        dictFilter.value[args.id] = args.data;
       } else if (cmd == 'delete') {
-        delete dictFilter.current[args];
+        delete dictFilter.value[args];
       }
     } else if (type == 'ranges') {
       if (cmd == 'changed') {
-        rangeFilter.current[args.id] = args.data;
+        rangeFilter.value[args.id] = args.data;
       } else if (cmd == 'delete') {
-        delete rangeFilter.current[args];
+        delete rangeFilter.value[args];
       }
     }
-    loadData(size, 1);
-  });
+    loadData(size.value, 1);
+  })
   const loadData = async (take: number, p: number) => {
-    setLoading(true);
+    loading.value = true
     const options: any = {
       take: take,
       skip: (p - 1) * take,
@@ -45,13 +49,13 @@ import orgCtrl from '@/ts/controller'
       filter: [],
     };
     options.userData = props.forms.map((form) => 'F' + form.id);
-    if (userData.current.length > 0) {
-      options.userData.push(...userData.current);
+    if (userData.value.length > 0) {
+      options.userData.push(...userData.value);
     }
-    for (const item of Object.entries(dictFilter.current)) {
+    for (const item of Object.entries(dictFilter.value)) {
       options.filter.push(item[1], 'and');
     }
-    for (const items of Object.entries(rangeFilter.current)) {
+    for (const items of Object.entries(rangeFilter.value)) {
       for (const item of items[1]) {
         options.filter.push(item, 'and');
       }
@@ -60,7 +64,7 @@ import orgCtrl from '@/ts/controller'
       current.belongId,
       [current.directory.target.spaceId, current.directory.target.id],
       options,
-    );
+    )
     data.value = res.data ?? []
     size.value = take
     page.value = p

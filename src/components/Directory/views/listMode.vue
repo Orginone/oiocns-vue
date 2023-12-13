@@ -6,9 +6,9 @@ import { onContextMenu } from './contextMenu'
 
 const props = defineProps<{
   content: IDEntity[];
-  selectFiles: IDEntity[];
-  focusFile: IDEntity | undefined;
-  fileOpen: (file: IDEntity | undefined, dblclick: boolean) => void;
+  selectFiles?: IDEntity[];
+  focusFile?: IDEntity | undefined;
+  fileOpen: (file: IDEntity | undefined, dblclick: boolean, e?: MouseEvent) => void;
   contextMenu: (file?: IDEntity) => {
     items: any[]
     onClick: (item: any) => void
@@ -19,12 +19,12 @@ const props = defineProps<{
 
 <template>
   <div class="list-mode" @contextmenu="onContextMenu($event,undefined,contextMenu)">
-    <div class="list-item" v-for="item in content" :key="item.key"
+    <div class="list-item" v-for="item in content" :key="item.id"
       :class="{ 
         'list-item-selected': selectFiles.includes(item) || focusFile?.key === item.key,
         'list-item-pinned': (item as ISession)?.chatdata?.isToping
       }"
-      @click="fileOpen(item, false)"
+      @click="fileOpen(item, false,$event)"
       @dblclick="fileOpen(item, true)"
       @contextmenu.stop="onContextMenu($event,item,contextMenu)"
     >

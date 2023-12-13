@@ -17,10 +17,18 @@
   // 监听变更
   const {loaded, key:msgKey} = useFlagCmdEmitter('session')
 
+  // 执行打开会话命令
+  const id = command.subscribe((type, cmd, ...args: any[]) => {
+    if (type != 'session' || args.length < 1) return;
+    switch (cmd) {
+      case 'open':
+        sessionOpen(args[0]);
+        break;
+    }
+  })
+  onBeforeUnmount(() => command.unsubscribe(id))
   // 会话列表
-  const contents = ref<ISession[]>()
-  // 当关键词或排序改变时，重新计算会话列表
-  watch([msgKey,()=>props.filter],()=>{
+  const contents = computed(()=>{
     const temps = [...orgCtrl.chats.filter((i) => i.isMyChat)]
       // 关键词筛选
       .filter(item=>
@@ -28,6 +36,8 @@
         item.chatdata.chatRemark.includes(props.filter) ||
         item.groupTags.filter((l) => l.includes(props.filter)).length > 0
       )
+      // 是否为最近消息
+      .filter((i) => i.chatdata.lastMessage || i.chatdata.recently)
       // 排序（是否置顶）
       .sort((a, b) => {
         var num = (b.chatdata.isToping ? 10 : 0) - (a.chatdata.isToping ? 10 : 0)
@@ -40,7 +50,7 @@
         }
         return num;
       }) 
-    contents.value = temps  
+    return temps 
   })
 
   /** 生成右键菜单内容 */
@@ -72,7 +82,7 @@
 </script>
 
 <template>
-  <!-- <div v-loading="!loaded" element-loading-text="加载中..."> -->
+  <div class="chat-directory" v-loading="!loaded" element-loading-text="加载中...">
     <DirectoryViewer
       v-if="contents"
       :key="msgKey"
@@ -86,8 +96,11 @@
       :showFooter="false"
       listType="list"
     />   
-  <!-- </div> -->
+  </div>
 </template>
 
 <style lang="scss" scoped>
+.chat-directory {
+  height: 100%;
+}
 </style>

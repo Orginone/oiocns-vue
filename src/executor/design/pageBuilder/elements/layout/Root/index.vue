@@ -5,7 +5,6 @@ const props = defineProps<{
   layoutType: any
   children: any
 }>()
-console.log(props.layoutType);
 
 </script>
 <template>

@@ -66,7 +66,6 @@ const loadMoreActivity = async(e:ReachBottomEvent) => {
 <style lang="scss" scoped>
 .activity-page {
   height: 100%;
-  padding: 24px 24px 0 24px;
   .actionList {
     height: 100%;
     width: 100%;

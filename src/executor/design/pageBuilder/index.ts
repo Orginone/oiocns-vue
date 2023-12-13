@@ -10,9 +10,10 @@ function scanComponents(): PageBuilderStaticContext<ElementFC> {
     './elements/**/**/*.ts',
     { eager: true },
   )
-
-  const elements: Dictionary<ElementFC> = {};
-  const metas: Dictionary<ElementMeta> = {};
+  // TODO:
+  console.log(moduleExports)
+  const elements: Dictionary<ElementFC> = {}
+  const metas: Dictionary<ElementMeta> = {}
   let root: FC | null = null
   for (const [path, _exports] of Object.entries(moduleExports)) {
     if (!_exports.default) {
@@ -24,10 +25,10 @@ function scanComponents(): PageBuilderStaticContext<ElementFC> {
       let match = /\/([A-Za-z0-9_])\.tsx$/.exec(path);
       if (!match) {
         console.info(`模块 ${path} 已被跳过`);
-        continue;
+        continue
       }
-      console.warn(`组件 ${path} 未定义名称，已默认赋值文件名`);
-      name = match[1];
+      console.warn(`组件 ${path} 未定义名称，已默认赋值文件名`)
+      name = match[1]
     }
     elements[name] = _exports.default
     metas[name] = _exports.default.meta
@@ -37,13 +38,13 @@ function scanComponents(): PageBuilderStaticContext<ElementFC> {
   }
 
   if (!root) {
-    throw new Error('Fatal Error: 丢失根元素渲染组件');
+    throw new Error('Fatal Error: 丢失根元素渲染组件')
   }
 
   return {
     components: elements,
     metas,
-  };
+  }
 }
 
 export default scanComponents();

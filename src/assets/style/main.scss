@@ -125,3 +125,27 @@
     background-color: transparent !important;
   }
 }
+
+.el-badge {
+  .el-badge__content.is-fixed {
+    width: 14px;
+    height: 14px;
+    right: 6px;
+    top: 3px;
+    display: flex;
+    padding: 0px 4px;
+    border: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 7px;
+    background: var(--color-status-error-normal, #F43F3F);
+    color: var(--color-surface, #FFF);
+    font-family: Nunito Sans;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+}

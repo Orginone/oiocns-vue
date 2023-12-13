@@ -13,7 +13,7 @@ type Props = {
   content: IDEntity[]
   title: string
   /** 选中的文件列表 */
-  selectFiles: IDEntity[]
+  selectFiles?: IDEntity[]
   excludeIds?: string[]
   /** 是否展示标签 */
   showTags?: boolean
@@ -30,7 +30,7 @@ type Props = {
   focusFile?: IDEntity | undefined
   badgeCount?: (tag: string) => number
   tagChanged?: (tag: string) => void
-  fileOpen: (file: IDEntity | undefined, dblclick: boolean) => void;
+  fileOpen: (file: IDEntity | undefined, dblclick: boolean, event?: MouseEvent) => void
   contextMenu: (file?: IDEntity) => {
     items: any
     onClick: (item: any) => void
@@ -64,9 +64,8 @@ const filteredContent = computed(() => {
     const tagFilter = (file: IDEntity) => {
       let success = true;
       if (props.excludeIds && props.excludeIds.length > 0) {
-        success = !props.excludeIds.includes(file.id);
+        success = !props.excludeIds.includes(file.id)
       }
-      // 根据选中标签、未删除进行筛选
       if (success) {
         if (currentTag.value !== '全部' && currentTag.value != '最近') {
           success = file.groupTags.includes(currentTag.value);
@@ -83,6 +82,7 @@ const filteredContent = computed(() => {
   // }
   return props.content
 })
+
 </script>
 
 <template>

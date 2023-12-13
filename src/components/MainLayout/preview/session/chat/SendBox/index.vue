@@ -28,7 +28,7 @@ const openEmoji = ref(false) // 是否打开表情选择器
 watch(()=>props.writeContent,(val)=>message.value=val)
 // @下拉列表是否展示
 const citeShow=ref<boolean>(false); 
-/** 艾特人员列表 */
+/** 艾特人员列表数据 */
 const peopleList = computed(()=>{
   return props.chat.members
     .filter((i) => i.id != props.chat.userId)
@@ -51,8 +51,8 @@ const onSelect = (item: any) => {
 }
 /** 点击空白处取消 @ 弹窗 */
 window.addEventListener('click', () => citeShow.value = false)
-/** @description: 提交聊天内容 */
-const submit = async () => {
+/** 发送消息 */
+const sendMessage = async () => {
   if (message.value.length > 0) {
     const vaildMentions: string[] = [];
     for (const mention of mentions.value) {
@@ -114,14 +114,23 @@ const handleOk = async (files: IFile[]) => {
           stylingMode="underlined"
           valueChangeEvent="input"
           style="font-size: 16px"
-          :placeholder="`发送给 ${props.chat.name}`"
+          placeholder="Enter键发送, Alt+Enter键换行。"
           :onValueChanged="(e:any) => {
-            const value: string = e.value ?? '';
-            if (value.endsWith('@')) {
-              message = value
-              citeShow = true
-            } else {
-              message = value
+            const value: string = e.value ?? ''
+            if( !value.endsWith('\n')) {
+              if (value.endsWith('@')) {
+                message = value
+                citeShow = true
+              } else {
+                message = value
+              }              
+            }
+          }"
+          :onEnterKey="(e: any) => {
+            if (e.event.altKey === true) {
+              message = message + '\n'
+            } else if (message?.length) {
+              sendMessage()
             }
           }"
         />
@@ -177,7 +186,7 @@ const handleOk = async (files: IFile[]) => {
         <!-- 分割线 -->
         <div class="line"></div>
         <!-- 发送按钮 -->
-        <ElButton title="发送" link @click="submit">
+        <ElButton title="发送" link @click="sendMessage">
           <ElIcon 
             :size="24"
             :color="message?.length > 0 ? '#3838b9' : '#909090'"
@@ -229,6 +238,7 @@ const handleOk = async (files: IFile[]) => {
     justify-content:space-between;
     align-items: start;    
     .group-input-box__toolbar {
+      align-self: end;
       margin-left: 8px;
       display: flex;
       gap: 12px;

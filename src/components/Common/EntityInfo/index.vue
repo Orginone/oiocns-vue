@@ -42,6 +42,9 @@ const ellipsis = ref(true)
         <!-- TODO: -->
         {{other}}
         <ElDescriptionsItem label="类型">{{entity.typeName}}</ElDescriptionsItem>
+          <ElDescriptionsItem label="当前数据核" v-if="'storeId' in entity.metadata">
+            <EntityIcon :entityId="(entity.metadata.storeId as string)" showName />
+          </ElDescriptionsItem>
         <ElDescriptionsItem label="归属" v-if="entity.metadata.belongId != entity.id">
           <EntityIcon :entityId="entity.metadata.belongId" showName />
         </ElDescriptionsItem>

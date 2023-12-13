@@ -41,7 +41,7 @@ const {key, rootMenu, selectMenu,onSelectMenu:setSelectMenu} = useMenuUpdate(con
             </div>
           </div>
           <div class="content-main">
-            <Content :filter="filter" />
+            <Content :filter="filter" :key="key"/>
           </div>
         </div>
 

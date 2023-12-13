@@ -33,7 +33,7 @@ export const executeCmd = (cmd: string, entity: any) => {
       return directoryRefresh(entity, true)
     case 'refresh': 
       return directoryRefresh(entity, false)
-    case 'openChat': // TODO:
+    case 'openChat': // 打开会话
       return openChat(entity);
     case 'download': // 下载
       if ('shareInfo' in entity) {

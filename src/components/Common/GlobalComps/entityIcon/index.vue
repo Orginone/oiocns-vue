@@ -31,7 +31,6 @@ if(props.entityId) {
     orgCtrl.user.findEntityAsync(props.entityId!),
   )
 }
-
 const getShare = (ent: schema.XEntity)=>{
   return {
     name: ent.name,
@@ -43,9 +42,12 @@ const getShare = (ent: schema.XEntity)=>{
 </script>
 
 <template>
-  <ShareIconItem v-if="entity" v-bind="props" :share="getShare(entity)"/>
-  <ShareIconItem v-else-if="typeName" v-bind="props" />
-  <ShareIconItem v-else-if="entityId && loadedEntity" v-bind="props" :share="getShare(loadedEntity)"/>  
+  <div class="entityIcon" v-loading="!loaded">
+    <ShareIconItem v-if="entity" v-bind="props" :share="getShare(entity)"/>
+    <ShareIconItem v-else-if="typeName" v-bind="props" />
+    <ShareIconItem v-else-if="entityId && loadedEntity" v-bind="props" :share="getShare(loadedEntity)"/>  
+    <!-- <div v-else>{{ loadedEntity?.name }}</div> -->
+  </div>
 </template>
 
 <style lang="scss" scoped>
