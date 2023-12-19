@@ -1,4 +1,4 @@
-  <script lang="ts" setup>
+<script lang="ts" setup>
 import orgIcons from "@/components/Common/GlobalComps/orgIcons.vue"
 import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
 import orgCtrl from '@/ts/controller'
@@ -26,7 +26,7 @@ onMounted(() => {
     orgCtrl.work.notity.unsubscribe(workId)
   }
 })
-const actions = [
+const actions = ref([
   {
     text: '门户',
     icon: 'home',
@@ -57,7 +57,7 @@ const actions = [
     path: '/relation',
     count: 0,
   },
-]
+])
 
 </script>
 

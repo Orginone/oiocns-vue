@@ -117,6 +117,14 @@ const loadIcon = () => {
       return im.Upload
     case 'taskList':
       return im.List
+    case 'setToping':
+      return im.ImUpload3
+    case 'removeToping':
+      return im.ImDownload3
+    case 'setReaded':
+      return im.ImCheckmark
+    case 'setNoReaded':
+      return im.ImBell
     default:
       return loadFileIcon();
   }

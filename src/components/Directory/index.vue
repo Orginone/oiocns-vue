@@ -15,18 +15,17 @@ const props = defineProps<{
 }>()
 
 const preDirectory= ref<IFile>()
-const directory=ref<IFile>(props.root)
+const directory=ref<IFile>(props.root as IFile)
 const content = ref<IDEntity[]>(directory.value.content(false))
 const loaded=ref(false)
 /** 加载目录内容 */
-const loadContent = (file: IFile, directory: IFile) => {
+const loadContent = async(file: IFile, directory: IFile) => {
   loaded.value = false
-  file.loadContent().then(() => {
-    if (file.key === directory.key) {
-      content.value = directory.content(false)
-    }
-    loaded.value = true
-  })
+  await file.loadContent()
+  if (file.key === directory.key) {
+    content.value = directory.content(false)
+  }
+  loaded.value = true
 }
 
 watch(directory, () => {
@@ -38,46 +37,44 @@ watch(directory, () => {
   } else {
     preDirectory.value = undefined
   }
-  return () => {
-    directory.value.unsubscribe(id)
-  }
+  onBeforeUnmount(() => directory.value.unsubscribe(id))
 },{immediate:true})
 
-
+/** 打开文件 */
+const handleFileOpen = (file:any) => {
+  if (file?.isContainer) {
+    directory.value = file
+  } else {
+    command.emitter('executor', 'open',file,'preview')
+  }
+}
+/** 获取右键菜单 */
+const getContextMenu = (entity:any) => {
+  const file = (entity || directory.value) as IFile
+  return {
+    items: cleanMenus(loadFileMenus(file)) ?? [],
+    onClick: ({ key }:{key:string}) => {
+      const dirRefresh = ['refresh', 'reload'].includes(key)
+      if (dirRefresh) {
+        loadContent(file, directory.value as IFile)
+      } else {
+        command.emitter('executor', key, file);
+      }
+    },
+  }
+}
 </script>
 
 <template>
-  <div class="directory-viewer" :v-loading="!loaded" element-loading-text="'加载中...'">
+  <div class="directory-viewer" v-loading="!loaded" element-loading-text="加载中...">
     <DirectoryViewer
+      :content="(content as IDEntity[])"
       extraTags
       :initTags="['全部']"
       :selectFiles="[]"
-      :content="(content as IDEntity[])"
-      :fileOpen="(file:any) => {
-          if (file && 'isContainer' in file && file.isContainer) {
-            directory = file as IFile
-          } else {
-            command.emitter('executor', 'open',file,'preview');
-          }
-        }"
+      :fileOpen="handleFileOpen"
       :preDirectory="(preDirectory as IFile)"
-      :contextMenu="(entity:any) => {
-          // TODO:
-          console.log('here');
-          
-          // const file = (entity as IFile) || directory;
-          // return {
-          //   items: cleanMenus(loadFileMenus(file)) ?? [],
-          //   onClick: ({ key }: { key: string }) => {
-          //     const dirRefresh = ['refresh', 'reload'].includes(key);
-          //     if (dirRefresh) {
-          //       loadContent(file, directory);
-          //     } else {
-          //       command.emitter('executor', key, file);
-          //     }
-          //   },
-          // };
-        }"
+      :contextMenu="getContextMenu"
     />
   </div>
 </template>

@@ -1,6 +1,5 @@
 import {
   IApplication,
-  IDEntity,
   IDirectory,
   IEntity,
   IFile,
@@ -9,14 +8,14 @@ import {
   IStorage,
   ISysFileInfo,
   ITarget,
-  TargetType,
+  IWork,
 } from '@/ts/core'
 
 import orgCtrl from '@/ts/controller'
 import { command, model, schema } from '@/ts/base'
-import { uploadTemplate } from '../tools/uploadTemplate'
-// import TypeIcon from '@/components/Common/GlobalComps/typeIcon'
-// import EntityIcon from '@/components/Common/GlobalComps/entityIcon'
+import { uploadBusiness, uploadStandard } from '../tools/uploadTemplate'
+import TypeIcon from '@/components/Common/GlobalComps/typeIcon.vue'
+import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
 import { shareOpenLink } from '@/utils/tools'
 // import { log } from 'console';
 import entityQrCodeView from './components/entityQrCode.vue'
@@ -60,16 +59,30 @@ export const executeCmd = (cmd: string, entity: any) => {
     case 'open':
       // TODO:
       return openDirectory(entity);
+    case 'workForm': // 进入办事
+      return openWork(entity)
     case 'standard':
       // TODO:
-      return uploadTemplate(entity);
+      return uploadStandard(entity)
+    case 'business': // 上传业务导入模板
+      return uploadBusiness(entity)
     case 'online':
     case 'outline':
       // TODO:
       return onlineChanged(cmd, entity);
     case 'activate':
       // TODO:
-      return activateStorage(entity);
+      return activateStorage(entity)
+    case 'hslSplit': // TODO:视频切片
+      return videoHslSplit(entity)
+    case 'removeSession': // 移除会话
+      return removeSession(entity)
+    case 'topingToggle': // 置顶/取消置顶会话
+      return sessionTopingToggle(entity)
+    case 'readedToggle': // 已读/未读会话
+      return sessionReadedToggle(entity)
+    case 'applyFriend': // 申请好友
+      return applyFriend(entity)
   }
   return false;
 }
@@ -106,22 +119,75 @@ const activateStorage = (store: IStorage) => {
   if ('activateStorage' in store) {
     store.activateStorage();
   }
-};
-
+}
+/** TODO:视频切片 */
+const videoHslSplit = (file: ISysFileInfo) => {
+  console.log('来这改');
+  // const modal = ElMessageBox.confirm({
+  //   title: '切片前确认',
+  //   content: `视频截屏需要较长的时间,默认等待时间为2s,
+  //             如果提示超时并非失败,请等待片刻后尝试刷新。`,
+  //   okText: '确认切片',
+  //   cancelText: '取消',
+  //   onOk: async () => {
+  //     await file.hslSplit();
+  //     modal.destroy();
+  //   },
+  //   onCancel: () => {
+  //     modal.destroy();
+  //   },
+  // })
+}
 /** 进入目录 */
-const openDirectory = (entity: IEntity<schema.XEntity> | IFile | ITarget) => {
-  if ('identitys' in entity && entity.typeName != TargetType.Station) {
-    if (entity.typeName === TargetType.Storage) {
-      return false;
-    }
-    entity = entity.directory;
-  }
-  if ('isContainer' in entity && entity.isContainer) {
+const openDirectory = (entity: IFile | schema.XEntity | string) => {
+  if (typeof entity === 'string') {
+    orgCtrl.currentKey = 'disk';
+    orgCtrl.changCallback();
+    return;
+  } else if (entity && 'isContainer' in entity && entity.isContainer) {
     orgCtrl.currentKey = entity.key;
     orgCtrl.changCallback();
     return;
   }
   return false;
+}
+/** 移除会话 */
+const removeSession = (entity: ISession) => {
+  entity.chatdata.recently = false;
+  entity.chatdata.lastMessage = undefined;
+  entity.cacheChatData();
+  orgCtrl.changCallback();
+  command.emitter('preview', 'chat', undefined);
+};
+
+/** 会话置顶变更 */
+const sessionTopingToggle = (entity: ISession) => {
+  entity.chatdata.isToping = !entity.chatdata.isToping;
+  entity.cacheChatData();
+  orgCtrl.changCallback();
+};
+
+/** 会话已读/未读变更 */
+const sessionReadedToggle = (entity: ISession) => {
+  if (entity.chatdata.noReadCount > 0) {
+    entity.chatdata.noReadCount = 0;
+  } else {
+    entity.chatdata.noReadCount = 1;
+  }
+  entity.cacheChatData();
+  orgCtrl.changCallback();
+};
+
+/** 申请加为好友 */
+const applyFriend = (entity: ISession) => {
+  orgCtrl.user.applyJoin([entity.metadata as schema.XTarget]).then(() => {
+    orgCtrl.changCallback();
+  });
+};
+/** 进入办事 */
+const openWork = (entity: IWork) => {
+  orgCtrl.currentKey = entity.key;
+  orgCtrl.changCallback();
 }
 /** 拷贝/剪切文件 */
 const setCopyFiles = (cmd: string, file: IFile) => {
@@ -135,7 +201,7 @@ const setCopyFiles = (cmd: string, file: IFile) => {
   ElMessage.info(`${file.name}已放入剪切板`);
 }
 
-/** 剪贴板操作 */
+/** TODO:剪贴板操作 */
 const copyBoard = (dir: IDirectory) => {
   const datasource: any[] = [];
 
@@ -153,7 +219,7 @@ const copyBoard = (dir: IDirectory) => {
   }
   console.log('here');
   
-  // const modal = Modal.confirm({
+  // TODO:const modal = Modal.confirm({
   //   icon: <></>,
   //   width: 500,
   //   cancelText: '取消',
@@ -208,19 +274,17 @@ const copyBoard = (dir: IDirectory) => {
 
 
 /** 打开会话 */
-const openChat = (entity: IDirectory | IMemeber | ISession | ITarget) => {
-  if ('taskList' in entity) {
-    orgCtrl.currentKey = entity.target.session.chatdata.fullId;
-  } else if ('fullId' in entity) {
-    orgCtrl.currentKey = entity.fullId;
-  } else if ('session' in entity) {
-    orgCtrl.currentKey = entity.session.chatdata.fullId;
-  } else {
-    orgCtrl.currentKey = entity.chatdata.fullId;
+const openChat = (entity: IMemeber | ITarget) => {
+  if (entity.session) {
+    entity.session.chatdata.recently = true;
+    entity.session.chatdata.lastMsgTime = new Date().getTime();
+    entity.session.cacheChatData()
   }
-  command.emitter('executor', 'link', '/chat');
+  command.emitter('executor', 'link', '/chat')
+  setTimeout(() => {
+    command.emitter('session', 'open', entity.session)
+  }, 200)
 }
-
 /** 恢复实体 */
 const restoreEntity = (entity: IFile) => {
   entity.restore().then((success: boolean) => {

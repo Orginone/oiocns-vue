@@ -38,7 +38,7 @@ onMounted(()=>{
     if (type != 'executor')  return
     if (cmd === 'link') return router.push(args[0])
     // 执行页面命令(executeCmd返回false则为页面命令)
-    if (executeCmd(cmd, args[0]) === false) {
+    if (executeCmd(cmd, args[0])===false) {
       switch (cmd) {
         case 'open':
         case 'remark':
@@ -47,7 +47,6 @@ onMounted(()=>{
           }else{
             return setContent(OperateExecutor, {cmd: cmd, args: args, finished: resetContent})
           }
-          
         case 'design':
           // TODO: 设计器
           return console.log('设计器来这改');

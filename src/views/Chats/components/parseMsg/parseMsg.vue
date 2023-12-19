@@ -68,7 +68,12 @@ switch (props.item.msgType) {
       v-if="img && img.shareLink"
       class="con_content_txt"
     >
-      <ElImage :src="shareOpenLink(img.shareLink)" :preview-src-list="[shareOpenLink(img.shareLink)]"/>
+      <ElImage 
+        loading="lazy"
+        :src="shareOpenLink(img.shareLink)" 
+        :preview-src-list="[shareOpenLink(img.shareLink)]"
+        style="width: 300px;"
+      />
     </div>
     <!-- 无数据或无共享链接 -->
     <div v-else class="con_content_txt">消息异常</div>

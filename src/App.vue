@@ -17,7 +17,8 @@
 
 <script lang="ts" setup>
 
-import { ElConfigProvider,ElMessage } from 'element-plus'
+import { ElConfigProvider } from 'element-plus'
+import message from '@/utils/message'
 import 'devextreme/dist/css/dx.common.css'
 import 'devextreme/dist/css/dx.light.css'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
@@ -46,24 +47,24 @@ logger.onLogger = (level, msg) => {
   switch (level) {
     case LoggerLevel.msg:
       playing.value = true
-      ElMessage.info(msg);
+      message.info(msg);
       break;
     case LoggerLevel.info:
-      ElMessage.info(msg);
+      message.info(msg);
       break;
     case LoggerLevel.warn:
-      ElMessage.warning(msg);
+      message.warning(msg);
       break;
     case LoggerLevel.error:
-      ElMessage.error(msg);
+      message.error(msg);
       break;
     case LoggerLevel.unauth:
-      ElMessage.error(msg);
+      message.error(msg);
       orgCtrl.exit();
       window.location.reload();
       break;
     case LoggerLevel.qrauthed:
-      ElMessage.info(msg);
+      message.info(msg);
       window.location.href = '/#/home';
       window.location.reload();
       break;

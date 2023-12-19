@@ -1,7 +1,4 @@
 <script setup lang="ts">
-// import { RiMore2Fill } from '@/icons/ri';
-// import { Dropdown, Menu, MenuProps, Typography, Input, Badge } from 'antd';
-// import React, { useEffect, useState } from 'react';
 import { Search } from '@element-plus/icons-vue'
 import { MenuItemType } from 'typings/globelType'
 import MenuLabel from './MenuLabel.vue'

@@ -11,6 +11,7 @@ import {
   IDirectory,
   IEntity,
   IForm,
+  IMemeber,
   ISession,
   ISysFileInfo,
   ITarget,
@@ -47,9 +48,6 @@ type EntityType =
 const entity=ref<EntityType>()
 entity.value = props.entity
 let id = ''
-watch(()=>props.flag,(v)=>{
-  console.log(v);
-})
 onMounted(() => {
   id = command.subscribe((type, flag, ...args: any[]) => {
     if (type !== 'preview' || flag !== props.flag) return;
@@ -92,21 +90,16 @@ onBeforeUnmount(() => {
     <template v-else-if="entity.hasOwnProperty('activity')">
       <SessionBody :target="(entity as ISession).target" :session="(entity as ISession)" />
     </template>
-    <!-- TODO:会话 -->
-    <template v-else-if="entity.hasOwnProperty('session')">
-      <template v-if="(entity as ITarget).typeName === TargetType.Storage">
-        <!-- <StorageBody :storage="entity" /> -->
-      </template>
-      <template v-else>
+    <!-- 会话 -->
+    <template v-else-if="(entity as ITarget | IMemeber)?.session">
         <SessionBody :target="(entity as ITarget)" :session="(entity as ITarget).session" setting />
-      </template>
     </template>
     <!--  TODO: 表单 -->
     <template v-else-if="entity.hasOwnProperty('fields')">
       <!-- <WorkForm :form="entity" /> -->
     </template>
     <!-- TODO: taskdata -->
-    <template v-else-if="entity.hasOwnProperty('taskdata')">
+    <template v-else-if="entity?.session">
       <!-- switch (entity.taskdata.taskType) {
         case '事项':
           return <TaskBody task={entity} />;
@@ -117,8 +110,8 @@ onBeforeUnmount(() => {
       } -->
     </template>
     <!-- 全部文件 -->
-    <template v-else-if="entity.hasOwnProperty('standard')">
-      <Directory :current="(entity as IDirectory)" />
+    <template v-else-if="entity?.isContainer">
+      <Directory :key="(entity as IDirectory).key" :root="(entity as IDirectory)" />
     </template>
     <!-- 实体信息展示 -->
     <template v-else>
