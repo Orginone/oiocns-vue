@@ -53,7 +53,6 @@ const props = defineProps<{
 <style lang="scss" scoped>
 .list-mode {
   width: 100%;
-  height: 100%;
 }
 .list-item {
   margin-bottom: 2px;

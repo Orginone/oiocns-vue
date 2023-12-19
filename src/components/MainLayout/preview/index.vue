@@ -29,7 +29,7 @@ import SessionBody from './session/index.vue'
 
 const props = defineProps<{
   flag?: string;
-  entity: EntityType;
+  // entity: EntityType;
 }>()
 const officeExt = ['.md', '.pdf', '.xls', '.xlsx', '.doc', '.docx', '.ppt', '.pptx'];
 const videoExt = ['.mp4', '.avi', '.mov', '.mpg', '.swf', '.flv', '.mpeg'];
@@ -46,7 +46,7 @@ type EntityType =
   | undefined
 
 const entity=ref<EntityType>()
-entity.value = props.entity
+// entity.value = props.entity
 let id = ''
 onMounted(() => {
   id = command.subscribe((type, flag, ...args: any[]) => {

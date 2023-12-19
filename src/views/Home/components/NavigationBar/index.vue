@@ -156,7 +156,6 @@ const onSave = () => {
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  // background-color: rgba(@component-background, 0.7);
   background-color: rgba(250,250,250,.6);
   display: flex;
   font-size: 14px;
@@ -170,6 +169,7 @@ const onSave = () => {
     justify-content: center;
     gap: 8px;
     flex: 1;
+    text-wrap: nowrap;
     &__item {
       transition: .2s;
       cursor: pointer;

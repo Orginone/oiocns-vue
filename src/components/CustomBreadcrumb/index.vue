@@ -1,6 +1,6 @@
 <!-- 内容布局面包屑 -->
 <script setup lang="ts">
-import { MenuItemType } from '@/typings/globelType'
+import { MenuItemType } from 'typings/globelType'
 import { CaretRight,ArrowDown } from '@element-plus/icons-vue';
 
 

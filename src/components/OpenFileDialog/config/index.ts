@@ -1,7 +1,7 @@
 import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
 import orgCtrl from '@/ts/controller';
 import { loadFileMenus } from '@/executor/fileOperate';
-import { MenuItemType } from '@/typings/globelType';
+import { MenuItemType } from 'typings/globelType'
 import { IDepartment, IGroup, ITarget, IDirectory, IApplication, IWork } from '@/ts/core';
 import { findMenuItemByKey } from '@/utils/tools';
 

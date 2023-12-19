@@ -34,7 +34,6 @@ defineProps<{
 <style lang='scss' scoped>
 .icon-mode {
   width: 100%;
-  height: 100%;
   padding: 16px 0;
   overflow-y: scroll;
   display: flex;

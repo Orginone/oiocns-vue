@@ -51,7 +51,6 @@ const [key] = useCtrlUpdate(props.activity)
     <!-- 右侧 -->
     <div class="loadContext">
       <Activity v-if="!isLoading && current"
-        height="calc(100vh - 110px)"
         :title="current.name + '动态'"
         :activity="(current as IActivity)"
         :key="current.key"
@@ -67,14 +66,19 @@ const [key] = useCtrlUpdate(props.activity)
 */
 
 .activityContent {
+  height: 100%;
+  margin:0 24px;
+  padding: 12px 0;
   display: flex;
-  padding-bottom: 413px;
   gap: 16px;
   .group-list {
+    height: 100%;
+    overflow: auto;
     width: 336px;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    border-radius: 6px;
   }
   
   .loadContext {

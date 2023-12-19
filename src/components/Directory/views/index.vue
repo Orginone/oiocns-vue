@@ -4,6 +4,7 @@ import IconMode from './iconMode.vue'
 import ListMode from './listMode.vue'
 import SegmentContent from '@/components/Common/SegmentContent/index.vue'
 import { IDEntity } from '@/ts/core'
+import SearchBar from '../searchBar/index.vue'
 import TagsBar from '../tagsBar/index.vue'
 import useStorage from '@/hooks/useStorage'
 
@@ -11,7 +12,6 @@ type segmentedTypes = 'icon' | 'list' | 'table'
 
 type Props = {
   content: IDEntity[]
-  title: string
   /** 选中的文件列表 */
   selectFiles?: IDEntity[]
   excludeIds?: string[]
@@ -31,10 +31,7 @@ type Props = {
   badgeCount?: (tag: string) => number
   tagChanged?: (tag: string) => void
   fileOpen: (file: IDEntity | undefined, dblclick: boolean, event?: MouseEvent) => void
-  contextMenu: (file?: IDEntity) => {
-    items: any
-    onClick: (item: any) => void
-  }
+  contextMenu: any
   /** 列表类型 */
   listType?: segmentedTypes
   /** 是否展示底部栏 */
@@ -45,22 +42,39 @@ const props = withDefaults(defineProps<Props>(),{
   extraTags: false,
 })
 
+// 搜索框关键字
+const filterText = ref('')
+
+
 
 /** 当前tag,默认为第一个 */
 const currentTag=ref(props.initTags.length > 0 ? props.initTags[0] : '')
 
 // list类别
 const [segmented,setSegmented] = useStorage('segmented', 'list')
-
 const listType = computed(()=>props.listType || segmented.value)
 
-/** 经过筛选的内容 */
-const filteredContent = computed(() => {
+/** 关键词搜索 */
+const filterExp = (file: IDEntity) => {
+  return (
+    file.code?.includes(filterText.value) ||
+    file.name.includes(filterText.value) ||
+    file.remark.includes(filterText.value) ||
+    file.typeName.includes(filterText.value) ||
+    file.groupTags.filter((i) => i.includes(filterText.value)).length > 0
+  )
+}
+/** 仅关键词筛选的content */
+const keyFilteredContent = computed(() => {
+  return props.content.filter(filterExp)
+})
+/** 关键词筛选、标签筛选后的content */
+const displayContent = computed(() => {
   // TODO:
   // if (props.extraTags) {
-    if (currentTag.value == '已选中') {
-      return props.selectFiles
-    }
+    // 已选中
+    if (currentTag.value == '已选中') return props.selectFiles.filter(filterExp)
+    /** 标签筛选 */
     const tagFilter = (file: IDEntity) => {
       let success = true;
       if (props.excludeIds && props.excludeIds.length > 0) {
@@ -78,17 +92,23 @@ const filteredContent = computed(() => {
       }
       return success
     }
-    return props.content.filter(tagFilter)
+    return keyFilteredContent.value.filter(tagFilter).filter(filterExp)
   // }
-  return props.content
+  return props.content.filter(filterExp)
 })
 
 </script>
 
 <template>
   <div class="directory-viewer">
+    <!-- 搜索框+功能按钮 -->
+    <SearchBar v-model="filterText" :menus="props.contextMenu()">
+      <template #rightBar>
+        <slot name="rightBar"></slot>
+      </template>
+    </SearchBar>
+    <!-- 标签组 -->
     <TagsBar
-      :title="title"
       :select="currentTag"
       :showBack="preDirectory != undefined"
       :onBack="()=>fileOpen(preDirectory,true)"
@@ -97,13 +117,14 @@ const filteredContent = computed(() => {
       :show-tags="showTags"
       :initTags="initTags"
       :selectFiles="selectFiles"
-      :entitys="content"
+      :entitys="keyFilteredContent"
       :badgeCount="badgeCount"
       :menus="contextMenu()"
       :onChanged="(t) => currentTag = t"
     />
+    <!-- 文件列表 -->
     <SegmentContent
-      :descriptions="`${filteredContent.length}个项目`"
+      :descriptions="`${displayContent.length}个项目`"
       :showFooter="showFooter"
       :segmented="segmented"
       :on-segmented-change="t=>{setSegmented(t);segmented=t}"
@@ -111,18 +132,18 @@ const filteredContent = computed(() => {
       <IconMode v-if="listType === 'icon'"
         :selectFiles="selectFiles"
         :focusFile="focusFile"
-        :content="filteredContent"
+        :content="displayContent"
         :fileOpen="fileOpen"
         :contextMenu="contextMenu"
       />
       <ListMode v-else-if="listType === 'list'"
         :selectFiles="selectFiles"
         :focusFile="focusFile"
-        :content="filteredContent"
+        :content="displayContent"
         :fileOpen="fileOpen"
         :contextMenu="contextMenu"
       />
-      <ElEmpty v-else="content.length === 0" description="暂无数据"></ElEmpty>
+      <ElEmpty v-else-if="content.length === 0" description="暂无数据"></ElEmpty>
     </SegmentContent>
   </div>
 </template>
@@ -133,4 +154,5 @@ const filteredContent = computed(() => {
   display: flex;
   flex-direction: column;
 }
+
 </style>

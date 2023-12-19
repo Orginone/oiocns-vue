@@ -12,7 +12,6 @@ const props = defineProps<{
   excludeTags: string[]
   extraTags: boolean
   showBack?: boolean
-  menus: any
   selectFiles: IEntity<schema.XEntity>[];
   badgeCount?: (tag: string) => number;
   entitys: IEntity<schema.XEntity>[]
@@ -20,9 +19,7 @@ const props = defineProps<{
   onBack: () => void
 }>()
 
-const items = props.menus.items || []
-const outside = items.filter((item: any) => item.model === 'outside')
-const inside = items.filter((item: any) => item.model != 'outside')
+
 
 /** 分组标签集 */
 const groupTags = computed(() => {
@@ -62,6 +59,7 @@ const groupTags = computed(() => {
 
 <template>
   <div class="tags">
+    <!-- 分类标签组 -->
     <div class="tags-left">
       <div class="title">{{ title }}</div>
       <ElButton v-if="showBack"
@@ -80,64 +78,6 @@ const groupTags = computed(() => {
         </div>
       </div>
     </div>
-    <div class="tags-actions">
-      <!-- 刷新、上传、上传列表 -->
-      <template v-if="outside.length > 0">
-        <div class="tags-actions-btn" v-for="item in outside" :key="item.key"
-          @click="menus.onClick?.apply(this, [item])"
-        >
-          <component :is="item.icon.name" v-bind="item.icon.args" color="inherit"/>
-          <span>{{ item.label }}</span>
-        </div>
-      </template>
-      <!-- 更多操作 -->
-      <ElDropdown v-if="inside.length > 0"
-        placement="bottom"
-        :trigger="['click', 'contextmenu']"
-      >
-        <ElIcon :size="22" style="cursor: pointer;"><MoreFilled /></ElIcon>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item 
-              v-for="item in inside" 
-              :key="item.key"
-            >
-              <!-- 含子项 -->
-              <template v-if="item?.children?.length>0">
-                <ElPopover trigger="hover" placement="left-start" :show-arrow="false">
-                  <template #reference>
-                    <div class="menu-item-btn" @click="menus.onClick">
-                      <div style="width: 85px;display: flex;align-items: center;justify-content: space-between;">
-                        <component v-if="item.icon" :is="item.icon.name" v-bind="item.icon.args"/>
-                        <span>{{ item.label }}</span>
-                        <el-icon style="margin-right: 0;"><ArrowRight /></el-icon>
-                      </div>
-                    </div>
-                  </template>
-                  <template #default>
-                    <div
-                      class="menu-item-btn"  
-                      v-for="i in item.children" :key="i.key" 
-                      @click="onOperateMenuClick(selectMenu, i.key);"
-                    >
-                      <component :is="i.icon?.name" v-bind="i.icon?.args"/>
-                      {{ i.label }}
-                    </div>
-                  </template>
-                </ElPopover>
-              </template>
-              <!-- 不含子项 -->
-              <template v-else>
-                <div class="menu-item-btn"  @click="onOperateMenuClick(selectMenu, item.key)">
-                  <component v-if="item.icon" :is="item.icon.name" v-bind="item.icon.args"/>
-                  <span>{{ item.label }}</span>
-                </div>
-              </template>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </ElDropdown>      
-    </div>
   </div>
 </template>
 
@@ -145,7 +85,7 @@ const groupTags = computed(() => {
 .tags {
   width: 100%;
   display: flex;
-  justify-content: end;
+  // justify-content: end;
   align-items: center;
   margin-bottom: 8px;
 }
@@ -201,31 +141,6 @@ const groupTags = computed(() => {
       border-color: transparent;
       //  TODO: color/brand/Normal
       background-color: #366EF4 !important;
-    }
-  }
-}
-.tags-actions {
-  display: flex;
-  gap: 12px;
-  .tags-actions-btn {
-    display: flex;
-    align-items: center;
-    border-radius: 3px;
-    padding: 5px 12px;
-    cursor: pointer;
-    //  TODO: color/surface/默认页面背景
-    background-color: #EEEEF0;
-    //styleName: Body/Medium;
-    font-family: PingFang SC;
-    font-size: 14px;
-    font-weight: 400;
-    letter-spacing: 0em;
-    text-align: center;
-    color: #15181D;
-    &:hover {
-      //  TODO: color/brand/Normal
-      background-color: #366EF4;
-      color: #FFFFFF;
     }
   }
 }

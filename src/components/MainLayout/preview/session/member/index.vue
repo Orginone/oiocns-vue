@@ -20,7 +20,7 @@ const y = ref(0)
     <DirectoryViewer
       title="群成员"
       :initTags="['成员']"
-      :show-tags="false"
+      :show-tags="true"
       :extra-tags="false"
       :content="memberDirectory.content()"
       :select-files="[]"

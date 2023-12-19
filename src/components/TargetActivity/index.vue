@@ -7,7 +7,7 @@ import type {ReachBottomEvent} from 'devextreme/ui/scroll_view'
 import ActivityItem from './ActivityMessage/index.vue'
 
 const props = defineProps<{
-  height: string,
+  height?: string,
   activity: IActivity,
   title?: string
 }>()

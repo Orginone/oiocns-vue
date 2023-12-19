@@ -56,6 +56,7 @@ const current = ref(allPages[0])
   }
   .content {
     width: 100%;
+    height: 100%;
     position: absolute;
     top: 315px;
   }

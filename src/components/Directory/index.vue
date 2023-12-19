@@ -70,8 +70,9 @@ const getContextMenu = (entity:any) => {
     <DirectoryViewer
       title="群数据"
       :content="(content as IDEntity[])"
-      list-type="table"
-      :initTags="['标准','表单','应用','文件']"
+      list-type="list"
+      extraTags
+      :initTags="['全部']"
       :selectFiles="[]"
       :fileOpen="handleFileOpen"
       :preDirectory="(preDirectory as IFile)"

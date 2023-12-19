@@ -72,12 +72,12 @@ const onSelected = (files:IFile[]) => {
   >
     <MainLayout
       leftShow
+      previewFlag="dialog"
       :selectMenu="selectMenu"
-      :onSelect="(data) => {
+      :onSelect="(data: any) => {
         setSelectMenu(data)
       }"
       :siderMenuData="rootMenu"
-      preview-flag="dialog"
     >
       <Content
         :key="key"

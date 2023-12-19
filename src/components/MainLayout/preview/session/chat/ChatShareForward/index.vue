@@ -119,11 +119,7 @@ const handleOk = () => {
             <ElCheckboxGroup v-model="selectedKeys">
               <div class="session-list-item" v-for="item in chats" :key="item.key">
                 <ElCheckbox class="checkbox" :label="item.key" style="height: 64px;">
-                  <TeamIcon
-                    :typeName="item.metadata.typeName"
-                    :entityId="item.sessionId"
-                    :size="32"
-                  />
+                  <TeamIcon :entityId="item.sessionId" :size="32" />
                   <div class="name">{{item.chatdata.chatName}}</div>                
                 </ElCheckbox>
               </div>
@@ -132,11 +128,7 @@ const handleOk = () => {
         <div class="selected-session-list session-list">
           <div class="session-list-item" v-for="item in selectedList" :key="item.key">
             <div class="info">
-              <TeamIcon
-                :typeName="item.metadata.typeName"
-                :entityId="item.sessionId"
-                :size="32"
-              />
+              <TeamIcon :entityId="item.sessionId" :size="32" />
               <div class="name">
                   <span style="margin-right: 10px;">
                     {{item.chatdata.chatName}}
