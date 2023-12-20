@@ -29,8 +29,17 @@ import {ArrowRight} from '@element-plus/icons-vue'
   const [leftSider, setLeftSider] = useStorage<boolean>('leftSider', false)
   const [rightSider, setRightSider] = useStorage<boolean>('rightSider', false)
   const [mainWidth, setMainWidth] = useStorage<string | number>('mainWidth', '40%')
-  const parentMenu = props.selectMenu.parentMenu ?? props.siderMenuData;
-
+  const parentMenu =ref(props.selectMenu.parentMenu ?? props.siderMenuData); 
+  watch(
+    ()=>props.siderMenuData,
+    (val,preVal)=>{
+      parentMenu.value = props.selectMenu.parentMenu ?? props.siderMenuData
+    },
+    {
+        immediate:true,
+        deep:true,
+    }
+  )
   const findMenus = (
     key: string,
     menus?: OperateMenuType[],

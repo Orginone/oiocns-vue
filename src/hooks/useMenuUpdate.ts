@@ -20,13 +20,13 @@ const useMenuUpdate = (
   
   /** 刷新菜单 */
   const refreshMenu = () => {
+    key.value = generateUuid();
     const newMenus = loadMenu()
     let item = findMenuItemByKey(newMenus, ctrl.currentKey);
-    
     if (item === undefined) {
       item = newMenus;
     }
-    
+    console.log('执行',item)
     ctrl.currentKey = item.key
     selectMenu.value = item
     rootMenu.value = newMenus
@@ -42,17 +42,16 @@ const useMenuUpdate = (
     refreshMenu();
   };
 
-  let id = ''
+  let id = ref<any>();
 
   onMounted(() => {
-    
-    id = ctrl.subscribe((k) => {
+    id.value = ctrl.subscribe((k) => {
       key.value = k
       refreshMenu()
     })
   })
   onBeforeUnmount(() => {
-    ctrl.unsubscribe(id);
+    ctrl.unsubscribe(id.value);
   })
   return {key, rootMenu, selectMenu, onSelectMenu}
 }
