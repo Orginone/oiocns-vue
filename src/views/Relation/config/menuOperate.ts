@@ -58,7 +58,6 @@ const getTeamMenu = () => {
 
 /** 加载设置模块菜单 */
 export const loadBrowserMenu = () => {
-  console.log('a',getUserMenu(),'b',getTeamMenu())
   return {
     key: 'disk',
     label: '关系',

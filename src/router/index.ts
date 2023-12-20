@@ -59,23 +59,23 @@ const mainRouter: RouteRecordRaw[] = [
     }
   },
   {
-    component: () => import('@/views/Portal/home.vue'),
-    name: 'workHome',
-    path: '/workHome',
-    meta: {
-      keepAlive: false,
-      title: '工作组',
-      id: "workHome"
-    }
-  }, 
-  {
-    component: () => import('@/views/Portal/index.vue'),
+    component: () => import('@/views/Work/index.vue'),
     name: 'work',
     path: '/work',
     meta: {
       keepAlive: false,
-      title: '自定义首页',
-      id: "workindex"
+      title: '存储',
+      id: "work"
+    }
+  },
+  {
+    component: () => import('@/views/store/index.vue'),
+    name: 'store',
+    path: '/store',
+    meta: {
+      keepAlive: false,
+      title: '数据',
+      id: "store"
     }
   },
   {
@@ -86,260 +86,6 @@ const mainRouter: RouteRecordRaw[] = [
       title: '办事',
       id: "todo"
     },
-  },
-  {
-    path: '/setCenter',
-    component: () => import('@/views/SetCenter/index.vue'),
-    meta: {
-      keepAlive: false,
-      title: '设置',
-      id: "setCenter"
-    },
-    children: [
-      {
-        path: '/setCenter',
-        name: 'unit',
-        component: () => import('@/views/SetCenter/unit/index.vue'),
-        meta: {
-          title: '单位设置',
-          icon: 'OfficeBuilding',
-          searchType: '1',
-          id: "setCenter.unit"
-        }
-      },
-      {
-        path: '/setCenter/department',
-        name: 'department',
-        component: () => import('@/views/SetCenter/department/index.vue'),
-        meta: {
-          title: '部门设置',
-          icon: 'Postcard',
-          searchType: '2',
-          id: "setCenter.department"
-        }
-      },
-      {
-        path: '/setCenter/group',
-        name: 'group',
-        component: () => import('@/views/SetCenter/group/index.vue'),
-        meta: {
-          title: '集团设置',
-          icon: 'Postcard',
-          searchType: '1',
-          id: "setCenter.group"
-        }
-      },
-      {
-        path: '/setCenter/post',
-        name: 'post',
-        component: () => import('@/views/SetCenter/post/index.vue'),
-        meta: {
-          title: '岗位设置',
-          icon: 'Postcard',
-          searchType: '2',
-          id: "setCenter.post"
-        }
-      },
-      {
-        path: '/setCenter/help',
-        name: 'help',
-        component: () => import('@/views/SetCenter/help/index.vue'),
-        meta: {
-          title: '帮助中心',
-          icon: 'Postcard',
-          searchType: '2',
-          id: "setCenter.help"
-        }
-      },
-      {
-        path: '/setCenter/unitMain',
-        name: 'unitMain',
-        component: () => import('@/views/SetCenter/unitMain/index.vue'),
-        meta: {
-          title: '单位首页',
-          icon: 'Postcard',
-          searchType: '2',
-          id: "setCenter.unitMain"
-        }
-      },
-      {
-        path: '/setCenter/resource',
-        name: 'resource',
-        component: () => import('@/views/SetCenter/resource/index.vue'),
-        meta: {
-          title: '资源设置',
-          icon: 'Postcard',
-          searchType: '2',
-          id: "setCenter.resource"
-        }
-      },
-      {
-        path: '/setCenter/use',
-        name: 'use',
-        component: () => import('@/views/SetCenter/use/index.vue'),
-        meta: {
-          title: '应用设置',
-          icon: 'Postcard',
-          searchType: '2',
-          id: "setCenter.use"
-        }
-      },
-      {
-        path: '/setCenter/flow',
-        name: 'flow',
-        component: () => import('@/views/SetCenter/flow/index.vue'),
-        meta: {
-          title: '流程设置',
-          icon: 'Postcard',
-          searchType: '2',
-          id: "setCenter.flow"
-        }
-      },
-      {
-        path: '/setCenter/standard',
-        name: 'standard',
-        component: () => import('@/views/SetCenter/standard/index.vue'),
-        meta: {
-          title: '标准设置',
-          icon: 'Postcard',
-          searchType: '2',
-          id: "setCenter.standard"
-        }
-      },
-      {
-        path: '/setCenter/authority',
-        name: 'authority',
-        component: () => import('@/views/SetCenter/authority/index.vue'),
-        meta: {
-          title: '权限设置',
-          icon: 'Postcard',
-          searchType: '2',
-          id: "setCenter.authority"
-        }
-      },
-    ]
-  },
-  {
-    component: () => import('@/views/Portal/process.vue'),
-    name: '/work/process',
-    path: '/work/process',
-    meta: {
-      keepAlive: false,
-      title: '待办详情',
-      id: "work-process"
-    }
-  },
-  {
-    component: () => import('@/views/ForeignApp/index.vue'),
-    name: 'ForeignApp',
-    path: '/online',
-    meta: {
-      keepAlive: false,
-      title: '外部应用',
-      id: "foreignApp"
-    }
-  },
-  {
-    component: () => import('@/views/Cloud/index.vue'),
-    name: 'cloud',
-    path: '/cloud',
-    meta: {
-      keepAlive: false,
-      title: '云盘',
-      id: "cloud"
-    }
-  },
-  {
-    name: 'store',
-    path: '/store',
-    meta: {
-      keepAlive: false,
-      title: '仓库',
-      id: "store"
-    },
-    children: [
-      {
-        path: '/store',
-        name: 'store',
-        component: () => import('@/views/Store/index.vue'),
-        meta: {
-          title: '仓库',
-          id: "store.index"
-        }
-      },
-      {
-        path: '/store/appDetails',
-        name: 'storeAppDetails',
-        component: () => import('@/views/Store/appDetails/index.vue'),
-        meta: {
-          title: '应用详情',
-          id: "store.appDetails"
-        }
-      },
-      {
-        path: '/store/appManagement',
-        name: 'storeAppManagement',
-        component: () => import('@/views/Store/appManagement/index.vue'),
-        meta: {
-          title: '应用详情',
-          id: "store.storeAppManagement"
-        }
-      },
-      {
-        path: '/store/shop',
-        name: 'storeShop',
-        component: () => import('@/views/Store/shop/index.vue'),
-        meta: {
-          title: '应用商店',
-          id: "store.shop"
-        }
-      },
-      {
-        path: '/store/putShelves',
-        name: 'storePutShelves',
-        component: () => import('@/views/Store/putShelves/index.vue'),
-        meta: {
-          title: '应用上架',
-          id: "store.put-shelves"
-        }
-      },
-      {
-        path: '/store/payOrder',
-        name: 'storePayOrder',
-        component: () => import('@/views/Store/payOrder/index.vue'),
-        meta: {
-          title: '采购订单',
-          id: "store.order-pay"
-        }
-      },
-      {
-        path: '/store/sellOrder',
-        name: 'storeSellOrder',
-        component: () => import('@/views/Store/sellOrder/index.vue'),
-        meta: {
-          title: '售卖订单',
-          id: "store.order-cell"
-        }
-      },
-      {
-        path: '/store/appList',
-        name: 'storeAppList',
-        component: () => import('@/views/Store/appList/index.vue'),
-        meta: {
-          title: '应用列表',
-          id: "store.appList"
-        }
-      },
-      {
-        path: '/store/public',
-        name: 'storeAppPublic',
-        component: () => import('@/views/Store/public/index.vue'),
-        meta: {
-          title: '应用详情',
-          id: "store.appPublic"
-        }
-      },
-    ]
   },
 ]
 

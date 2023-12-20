@@ -334,7 +334,7 @@ export class Person extends Belong implements IPerson {
           if (this.companys.every((i) => i.id != target.id)) {
             const company = createCompany(target, this);
             await company.deepLoad();
-            this.companys.push(company);
+            // this.companys.push(company);
             return `您已成功加入到${target.name}.`;
           }
         }

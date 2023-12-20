@@ -7,7 +7,7 @@ import * as config from "./config/menuOperate";
 import useMenuUpdate from '@/hooks/useMenuUpdate'
 const {key, rootMenu, selectMenu,onSelectMenu} = useMenuUpdate(config.loadBrowserMenu)
 
-const setting = reactive({
+const store = reactive({
   showMenu: false,
   key:key,
   rootMenu:rootMenu,
@@ -15,9 +15,9 @@ const setting = reactive({
   setSelectMenu:onSelectMenu
 });
 const mainShow = () => {
-  if(setting.selectMenu){
+  if(store.selectMenu){
     nextTick(() => { 
-      setting.showMenu = true;
+      store.showMenu = true;
     });
   }else{
     setTimeout(()=>{
@@ -30,13 +30,13 @@ mainShow();
 
 <template>
   <MainLayout
-    v-if="setting.showMenu"
+    v-if="store.showMenu"
     rightShow
-    :previewFlag="'setting'"
-    :selectMenu="setting.selectMenu"
-    :onSelect="async (data) => setting.setSelectMenu(data)"
-    :siderMenuData="setting.rootMenu"
+    :previewFlag="'store'"
+    :selectMenu="store.selectMenu"
+    :onSelect="async (data) => store.setSelectMenu(data)"
+    :siderMenuData="store.rootMenu"
   >
-    <Content :key="setting.key" :current="setting.selectMenu.item" />
+    <Content :key="key" :current="store.selectMenu.item" />
   </MainLayout>
 </template>
