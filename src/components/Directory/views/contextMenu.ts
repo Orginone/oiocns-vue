@@ -7,7 +7,7 @@ export const onContextMenu = (e : MouseEvent,item: IDEntity, getMenu: Function)=
   e.preventDefault()
   const cxtMenu = getMenu(item)
   // TODO:
-  console.log(cxtMenu);
+  console.log(cxtMenu,item);
   // 处理cxtMenu的数据
   const getLegalMenu = (origin:any)=>{
     if(!origin) return []

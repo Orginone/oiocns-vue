@@ -20,7 +20,6 @@ const useMenuUpdate = (
   
   /** 刷新菜单 */
   const refreshMenu = () => {
-    key.value = generateUuid();
     const newMenus = loadMenu()
     let item = findMenuItemByKey(newMenus, ctrl.currentKey);
     if (item === undefined) {

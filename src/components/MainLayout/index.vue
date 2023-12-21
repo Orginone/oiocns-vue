@@ -22,6 +22,7 @@ import {ArrowRight} from '@element-plus/icons-vue'
     siderMenuData: MenuItemType;
     selectMenu: MenuItemType;
     notExitIcon?: boolean;
+    hiddenHead?:boolean;
     onSelect?: (item: MenuItemType) => void;
     onMenuClick?: (item: MenuItemType, menuKey: string) => void;
   }>()
@@ -33,7 +34,7 @@ import {ArrowRight} from '@element-plus/icons-vue'
   watch(
     ()=>props.siderMenuData,
     (val,preVal)=>{
-      parentMenu.value = props.selectMenu.parentMenu ?? props.siderMenuData
+      parentMenu.value = props.selectMenu.parentMenu ?? props.siderMenuData;
     },
     {
         immediate:true,
@@ -68,6 +69,7 @@ import {ArrowRight} from '@element-plus/icons-vue'
     if (item.beforeLoad) {
       await item.beforeLoad()
     }
+    console.log('点击返回的item',item);
     props.onSelect?.apply(this, [item])
   }
 </script>
@@ -75,12 +77,13 @@ import {ArrowRight} from '@element-plus/icons-vue'
 <template>
   <ElContainer class="main_layout">
     <!-- MainLayout-header -->
-    <ElHeader class="header">
+    <ElHeader class="header" v-if="!hiddenHead">
       <!-- 面包屑+左侧栏 -->
       <CustomBreadcrumb
         :selectKey="selectMenu.key"
         :item="siderMenuData"
         :onSelect="(item:MenuItemType) => {
+          console.log('item',item);
           onSelectClick(item);
         }"
       />
@@ -117,14 +120,14 @@ import {ArrowRight} from '@element-plus/icons-vue'
       <!-- body-左侧菜单目录 -->
       <ElAside v-if="leftShow || leftSider" class="sider" width="250px">
         <div class="title">
-          <span v-if="parentMenu.key != props.siderMenuData.key" class="backup" @click="onSelectClick(parentMenu)">
+          <span v-if="parentMenu?.key != props?.siderMenuData?.key" class="backup" @click="onSelectClick(parentMenu)">
             <ElIcon :size="20"><Back/></ElIcon>
           </span>
           <div class="label" @click="onSelectClick(parentMenu)">
             <span style="margin-right: 6px;">
-              <component :is="parentMenu.icon.name" v-bind="parentMenu.icon.args"/>
+              <component :is="parentMenu?.icon?.name" v-bind="parentMenu?.icon?.args"/>
             </span>
-            <ElText truncated>{{parentMenu.label}}</ElText>
+            <ElText truncated>{{parentMenu?.label}}</ElText>
           </div>
         </div>
         <!-- 菜单 -->

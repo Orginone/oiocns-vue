@@ -45,7 +45,7 @@ export interface MenuItemType {
   itemType: string;
   count?: number;
   tag?: string[];
-  icon?: {name:string|Component,args:Object};
+  icon?: {name?:Component | string,args?:Object,props?:Object};
   expIcon?: React.ReactNode;
   menus?: OperateMenuType[];
   children: MenuItemType[];

@@ -34,7 +34,7 @@ export type XEntity = {
   // 备注
   remark: string;
   // 图标
-  icon: string;
+  icon?: string;
   // 类型
   typeName: string;
   // 创建类别标准的用户
