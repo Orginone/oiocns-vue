@@ -5,6 +5,7 @@ import { formatZhDate } from '@/utils/tools'
 import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
 import { TargetType } from '@/ts/core'
 import { IFile } from '@/ts/core'
+import QrCode from 'qrcode.vue'
 
 const props = defineProps<{
   entity: schema.XEntity | IFile;
@@ -12,6 +13,7 @@ const props = defineProps<{
 }>()
 
 const isOpen = ref(true)
+const locationOrigin = ref(location.origin)
 
 console.log('@props.entity',props.entity);
 
@@ -27,7 +29,15 @@ console.log('@props.entity',props.entity);
   top="100px"
 >
   <ElRow class="row" :gutter="24">
-    <ElCol :span="24" title="图标">
+    <ElCol :span="12" title="图标" style="margin-bottom:10px">
+      <QrCode
+        level="H"
+        :size=150
+        foreground='#3838b9'
+        :value="`${locationOrigin}/${entity.id}`"
+      />
+    </ElCol>
+    <ElCol :span="12" title="图标">
       <div class="col-title">图标</div>
       <div class="col-content">
         <UploadItem
@@ -50,15 +60,9 @@ console.log('@props.entity',props.entity);
       <div class="col-title">代码</div>
       <div class="col-content">{{entity.code}}</div>
     </ElCol>
-    <!-- TODO: -->
-    <ElCol :span="12" title="简称">
-      <div class="col-title">简称</div>
-      <div class="col-content">-</div>
-    </ElCol>
-    <!-- TODO: -->
-    <ElCol :span="12" title="标识">
-      <div class="col-title">标识</div>
-      <div class="col-content">-</div>
+    <ElCol :span="12" title="当前数据核">
+      <div class="col-title">当前数据核</div>
+      <EntityIcon :entityId=entity.storeId showName />
     </ElCol>
     <ElCol :span="12" title="归属" v-if="entity.belongId !== entity.id && entity.typeName!==TargetType.Person">
       <div class="col-title">归属</div>
@@ -79,7 +83,7 @@ console.log('@props.entity',props.entity);
     <ElCol :span="12" title="更新人" v-if="entity.updateUser != entity.createUser">
       <div class="col-title">更新人</div>
       <div class="col-content">
-        <EntityIcon ：entityId="entity.updateUser" showName />  
+        <EntityIcon :entityId="entity.updateUser" showName />  
       </div>
     </ElCol>
     <ElCol :span="12" title="更新时间" v-if="entity.createTime != entity.updateTime">

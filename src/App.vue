@@ -53,7 +53,7 @@ logger.onLogger = (level, msg) => {
       message.info(msg);
       break;
     case LoggerLevel.warn:
-      message.warning(msg);
+      message.warn(msg);
       break;
     case LoggerLevel.error:
       message.error(msg);
