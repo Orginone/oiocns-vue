@@ -7,8 +7,8 @@ import { schema } from '@/ts/base';
 import orgCtrl from '@/ts/controller';
 import { IDirectory, IEntity, ITarget } from '@/ts/core';
 // import WorkForm from './workForm';
-// import DirectoryForm from './directoryForm';
-// import ApplicationForm from './applicationForm';
+import DirectoryForm from './directoryForm.vue';
+import ApplicationForm from './applicationForm.vue';
 // import SpeciesForm from './speciesForm';
 // import PropertyForm from './propertyForm';
 import TargetForm from './targetForm.vue'
@@ -50,29 +50,14 @@ onMounted(()=>{
     case 'newDir':
     case 'updateDir':
     case 'remarkDir': { //TODO:
-      const directory = props.entity as IDirectory;
-      if (!directory.parent && props.cmd !== 'newDir') {
-        return (
-          console.log('来这改')
-          // <TargetForm
-          //   formType={props.cmd.replace('Dir', '')}
-          //   target={directory.target}
-          //   finished={reloadFinish}
-          // />
-        );
-      }
-      return console.log('来这改');
-      // return <DirectoryForm formType={props.cmd} current={directory} finished={reloadFinish} />;
+      return setContent(DirectoryForm, {formType: props.cmd, current: props.entity, finished: reloadFinish})
     }
     case 'newApp':
     case 'newModule':
     case 'updateApp':
     case 'updateModule':
-    case 'remarkApp': // TODO:
-      return console.log('来这改');
-      // return (
-      //   <ApplicationForm formType={cmd} current={entity as any} finished={reloadFinish} />
-      // );
+    case 'remarkApp': 
+      return setContent(ApplicationForm, {formType: props.cmd, current: props.entity, finished: reloadFinish})
     case 'newWork':
     case 'updateWork':
     case 'remarkWork': // TODO:

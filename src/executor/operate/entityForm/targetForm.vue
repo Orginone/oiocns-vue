@@ -111,6 +111,7 @@ if (readonly) {
 for (const key in ruleForm) {
   ruleForm[key] = initialValue[key];
 };
+console.log('ruleForm[key]',flexForm);
 const rules = reactive<FormRules>({
   name: [{ required: true, message: '分类名称为必填项' }],
   typeName: [{ required: true, message: '类型为必填项' }],

@@ -69,7 +69,6 @@ import {ArrowRight} from '@element-plus/icons-vue'
     if (item.beforeLoad) {
       await item.beforeLoad()
     }
-    console.log('点击返回的item',item);
     props.onSelect?.apply(this, [item])
   }
 </script>
@@ -83,7 +82,6 @@ import {ArrowRight} from '@element-plus/icons-vue'
         :selectKey="selectMenu.key"
         :item="siderMenuData"
         :onSelect="(item:MenuItemType) => {
-          console.log('item',item);
           onSelectClick(item);
         }"
       />

@@ -4,7 +4,7 @@ import { IEntity, TargetType } from '@/ts/core';
 
 import EntityForm from './entityForm/index.vue';
 import ActivityPublisher from './pubActivity/index.vue';
-// import SettingAuth from './settingModal/settingAuth.vue';
+import SettingAuth from './settingModal/settingAuth.vue';
 // import SettingStation from './settingModal/settingStation';
 // import SettingIdentity from './settingModal/settingIdentity';
 // import { schema } from '@/ts/base';
@@ -53,7 +53,7 @@ if (Array.isArray(props.args) && props.args.length > 0) {
     case 'taskList': // 上传进度列表
       return setContent(FileTaskList, {directory: props.args[0], finished: props.finished})
     case 'settingAuth':
-      // return setContent(SettingAuth, {space: props.args[0].target, finished: props.finished})
+      return setContent(SettingAuth, {space: props.args[0].target, finished: props.finished})
     case 'settingIdentity':
       return console.log('角色设置来这改');
       // return <SettingIdentity target={args[0].target} finished={finished} />;
