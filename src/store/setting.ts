@@ -16,7 +16,8 @@ export const setCenterStore = defineStore({
   getters: {},
   actions: {
     setCurrItem(obj:any){
-      this.currItem = obj
+      console.log(obj);
+      // this.currItem = obj
     }
   },
   persist: {

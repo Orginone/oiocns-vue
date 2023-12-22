@@ -8,7 +8,6 @@ import { Ref } from 'vue';
 export interface teamTypeInfo {
   gap?: number;
   color?: string;
-
   size?: number;
   entityId?: string;
   entity?: schema.XEntity;
@@ -19,9 +18,8 @@ export interface teamTypeInfo {
 
 }
 
-
-
 const props = defineProps<teamTypeInfo>()
+
 
 let loaded: Ref<boolean>
 let loadedEntity: Ref<any> | undefined
@@ -42,11 +40,10 @@ const getShare = (ent: schema.XEntity)=>{
 </script>
 
 <template>
-  <div class="entityIcon" v-loading="!loaded">
+  <div class="entityIcon">
     <ShareIconItem v-if="entity" v-bind="props" :share="getShare(entity)"/>
     <ShareIconItem v-else-if="typeName" v-bind="props" />
     <ShareIconItem v-else-if="entityId && loadedEntity" v-bind="props" :share="getShare(loadedEntity)"/>  
-    <!-- <div v-else>{{ loadedEntity?.name }}</div> -->
   </div>
 </template>
 

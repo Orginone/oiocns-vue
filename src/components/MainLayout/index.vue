@@ -56,6 +56,7 @@ const [leftSider, setLeftSider] = useStorage<boolean>('leftSider', false)
     if (item.beforeLoad) {
       await item.beforeLoad()
     }
+    console.log('点击返回的item',item);
     props.onSelect?.apply(this, [item])
   }
 </script>
@@ -67,6 +68,7 @@ const [leftSider, setLeftSider] = useStorage<boolean>('leftSider', false)
         :selectKey="selectMenu.key"
         :item="siderMenuData"
         :onSelect="(item:MenuItemType) => {
+          console.log('item',item);
           onSelectClick(item);
         }"
       />
@@ -99,14 +101,14 @@ const [leftSider, setLeftSider] = useStorage<boolean>('leftSider', false)
       <!-- 菜单目录 -->
       <div v-if="leftShow || leftSider" class="sider" width="250px">
         <div class="title">
-          <span v-if="parentMenu.key != props.siderMenuData.key" class="backup" @click="onSelectClick(parentMenu)">
+          <span v-if="parentMenu?.key != props?.siderMenuData?.key" class="backup" @click="onSelectClick(parentMenu)">
             <ElIcon :size="20"><Back/></ElIcon>
           </span>
           <div class="label" @click="onSelectClick(parentMenu)">
             <span style="margin-right: 6px;">
-              <component :is="parentMenu.icon.name" v-bind="parentMenu.icon.args"/>
+              <component :is="parentMenu?.icon?.name" v-bind="parentMenu?.icon?.args"/>
             </span>
-            <ElText truncated>{{parentMenu.label}}</ElText>
+            <ElText truncated>{{parentMenu?.label}}</ElText>
           </div>
         </div>
         <div class="container" id="templateMenu">

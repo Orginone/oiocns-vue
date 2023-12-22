@@ -41,20 +41,21 @@ onMounted(()=>{
     if (executeCmd(cmd, args[0])===false) {
       switch (cmd) {
         case 'open':
-        case 'remark':
+        case 'remark': 
           if(args.length > 1 && args[1] === 'preview'){
             return setPreview(OpenExecutor,{cmd:cmd,entity:args[0],finished:()=>resetCtx(false)})
           }else{
             return setContent(OperateExecutor, {cmd: cmd, args: args, finished: resetContent})
-          }
+          };
         case 'design':
         case 'fillWork': // TODO: 设计器
           return console.log('设计器来这改');
           // return setContent(
           //   <DesignExecutor cmd={cmd} entity={args[0]} finished={resetContent} />,
-          // );
+          // )
+          ;
         default:
-          return setContent(OperateExecutor, {key: cmd,cmd: cmd, args: args, finished: resetContent})
+          return setContent(OperateExecutor, {key: cmd,cmd: cmd, args: args, finished: resetContent});
       }
 
     }
@@ -65,6 +66,7 @@ onMounted(()=>{
 onBeforeUnmount(()=>{
   command.unsubscribe(id);
 })
+
 
 </script>
 <template>

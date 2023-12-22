@@ -7,10 +7,10 @@ import AppCard from './AppCard.vue'
 import EntrysCard from './EntrysCard.vue'
 import fullScreenModal from '@/components/Common/fullScreenModal.vue'
 import { Dropbox,Stack,Bubbles2,List,Plus } from '@/icons/im'
-import { IApplication, TargetType } from '@/ts/core'
 import DataItem from './DataItem.vue'
+import { IFile, TargetType } from '@/ts/core'
 
-const router = useRouter();
+const router = useRouter()
 
 /** 快捷操作配置 */ 
 const entrys = [
@@ -51,27 +51,30 @@ const workId = orgCtrl.subscribe(() => {
 })
 onBeforeUnmount(()=>orgCtrl.unsubscribe(workId))
 
-// 应用data
-const allAppShow = ref(false)
-const application = ref<IApplication[]>([])
-const commonUse = computed<IApplication[]>(() => {
-  return application.value.filter(item => {
-    return item.cache.tags?.includes('常用')
-  }) as IApplication[]
+// 常用data
+const editMode = ref<boolean>(false)
+const commonFiles = ref<IFile[]>([])
+const {loaded: commonLoaded} = useFlagCmdEmitter('commons',async()=>{
+  commonFiles.value = await orgCtrl.loadCommons()
 })
-const mine = computed<IApplication[]>(() => {
-  return application.value.filter(item => {
-    return item.metadata.createUser === item.userId
-  }) as IApplication[]
+const loadGroups = computed(()=>{
+  const letGroups: any = { 其它: [] }
+  for (const item of orgCtrl.user.commons) {
+    const file = commonFiles.value.find(
+      (i) => i.id === item.id && i.spaceId === item.spaceId,
+    )
+    if (file) {
+      const groupName = item.groupName ?? '其它'
+      letGroups[groupName] = letGroups[groupName] || []
+      letGroups[groupName].push({
+        file,
+        common: item,
+      })
+    }
+  }
+  return letGroups
 })
-const share = computed<IApplication[]>(() => {
-  return application.value.filter(item => {
-    return item.metadata.createUser!== item.userId
-  }) as IApplication[]
-})
-const {loaded: appLoaded} = useFlagCmdEmitter('applications',async()=>{
-  application.value = await orgCtrl.loadApplications()
-})
+
 // 数据data
 const noStore=ref(false)
 const diskInfo = ref<model.DiskInfoType>()
@@ -201,40 +204,47 @@ orgCtrl.user.getDiskInfo().then((value) => {
     <!-- 组-常用应用 -->
     <div class="cardGroup">
       <!-- 常用应用卡片 -->
-      <div class="cardItem" v-loading="!appLoaded">
+      <div class="cardItem">
         <div class="cardItem-header">
-          <span class="title">常用应用</span>
-          <span class="extraBtn" @click="allAppShow = true">
-            <div><ElIcon :size="14"><Dropbox/></ElIcon> <span>全部应用</span></div>
+          <span class="title">常用</span>
+          <span class="extraBtn" @click="editMode = true">
+            <div><ElIcon :size="14"><Dropbox/></ElIcon> <span>常用分组</span></div>
           </span>
         </div>
-        <div class="cardItem-viewer">
-          <ElSpace wrap :size="2" spacer="|">
-            <AppCard v-for="item in commonUse" :key="item.id" :app="item"/>
-          </ElSpace>
+        <div class="cardItem-viewer" v-loading="!commonLoaded" element-loading-text="加载中...">
+          <div class="cardGroup">
+            <div v-for="groupName in Object.keys(loadGroups)">
+              <div class="cardItem" v-if="loadGroups[groupName].length">
+                <div class="cardItem-header">
+                  <span class="title">{{ groupName }}</span>
+                </div>
+                <div class="cardItem-viewer">
+                  <ElSpace wrap :size="2">
+                    <AppCard v-for="app in loadGroups[groupName]" :key="app.id" :item="app.file"/>
+                  </ElSpace>
+                </div>
+              </div>
+            </div>
+            <!-- <AppCard v-for="item in commonUse" :key="item.id" :app="item"/> -->
+          </div>
         </div>
         <!-- 常用应用-弹框 -->
         <fullScreenModal 
           width="60vw"
           bodyHeight="60vh"
-          :open="allAppShow"
-          :onCancel="()=>allAppShow = false"
+          :open="editMode"
+          :onCancel="()=>editMode = false"
         >
-           <!-- 常用应用 -->
-            <div class="appGroupTitle" v-if="commonUse.length">常用应用</div>
-            <ElSpace wrap :size="2" spacer="|">
-              <AppCard v-for="item in commonUse" :key="item.id" :app="item"/>
-            </ElSpace>
-            <!-- 我的应用 -->
-            <div class="appGroupTitle" v-if="mine.length">我的应用</div>
-            <ElSpace wrap :size="2" spacer="|">
-              <AppCard v-for="item in mine" :key="item.id" :app="item"/>
-            </ElSpace>
-            <!-- 共享应用 -->
-            <div class="appGroupTitle" v-if="share.length">共享应用</div>
-            <ElSpace wrap :size="2" spacer="|">
-              <AppCard v-for="item in share" :key="item.id" :app="item"/>
-            </ElSpace>
+          <div style="padding: 8px;">
+            <div v-for="groupName in Object.keys(loadGroups)">
+              <div class="appGroupTitle" style="font-weight: bolder; font-size: 18px; padding: 16px 2px;">{{ groupName }}</div>
+              <ElSpace wrap :size="2" >
+                <AppCard v-for="app in loadGroups[groupName]" :key="app.id" :item="app.file"/>
+              </ElSpace>
+
+            </div>            
+          </div>
+
         </fullScreenModal>
       </div>
     </div>
@@ -252,126 +262,6 @@ orgCtrl.user.getDiskInfo().then((value) => {
     </div>
   </div>
 </template>
-
-<!-- <style lang="scss" scoped>
-.content {
-  width: 100%;
-  color: #4c4c4c;
-  height: calc(100vh - 200px);
-  box-sizing: border-box;
-  padding: 12px;
-  gap: 16px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-items: flex-start;
-  background-color: #f1f1f1;
-  background: linear-gradient(#f5f5f5f5, #f1f1f1);
-  .cardGroup {
-    display: flex;
-    gap: 16px;
-    width: 100%;
-    -webkit-box-align: start;
-    -ms-flex-align: start;
-    align-items: flex-start;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    .cardItem {
-      flex: 1;
-      min-width: 400px;
-      // height: 180px;
-      border-radius: 6px;
-      padding: 16px;
-      cursor: pointer;
-      background-color: #ffffff;
-      border: 1px solid #ffffff;
-      box-shadow: 0 0 2px 2px #ededed;
-    }
-  }
-
-  .calendar {
-    width: 100%;
-    border-radius: 6px;
-    background-color: #ffffff;
-    border: 1px solid #ffffff;
-    .cardItem {
-      padding: 16px;
-    }
-  }
-}
-
-.cardItemHeader {
-  .title {
-    font-weight: bolder;
-    font-size: 18px;
-  }
-  .remind {
-    font-size: 12px;
-    color: #ff0404;
-    background-color: #fde8e0;
-    padding: 2px 6px;
-    margin-left: 7px;
-    border-radius: 20px;
-  }
-  .extraBtn {
-    float: right;
-    font-size: 14px !important;
-    color: #686868;
-    cursor: pointer;
-    padding-top: 4px;
-    span {
-      margin-left: 2px;
-      margin-bottom: 2px;
-    }
-    :hover {
-      color:#3838b9;
-    }
-  }
-}
-
-.cardItemViewer {
-  padding-top: 12px;
-  // height: 100px;
-  // .linkBtn {
-  //   margin: 10px;
-  //   height: 35px;
-  //   width: 90px;
-  //   background-color: #f5f5f5;
-  //   &:hover {
-  //     // background: @active-background;
-  //     background-color: red;
-  //   }
-  // }
-  .appGroupTitle {
-    font-weight: bolder;
-    font-size: 18px;
-    padding: 16px 2px;
-  }
-  // .dataItem {
-  //   min-width: 120px;
-  //   padding: 16px;
-  //   text-align: center;
-  //   &Title{
-  //     color: #686868;
-  //     font-size: 14px;
-  //     margin-bottom: 10px;
-  //   }
-  //   &Number{
-  //     font-weight: bold;
-  //     color: #313131;
-  //     font-size: 28px;
-  //   }
-  //   &:hover {
-  //     border-radius: 10px;
-  //     // TODO:改为变量
-  //     background-color: #e6f1ff;
-  //   }
-  // }
-}
-
-</style> -->
 
 <style lang="less" scoped>
 .workbench-content {
@@ -403,7 +293,7 @@ orgCtrl.user.getDiskInfo().then((value) => {
       cursor: pointer;
       background-color: #ffffff;
       border: 1px solid #ffffff;
-      // box-shadow: 0 0 2px 2px #ededed;
+      border: 1px solid #eeeeee;
     }
   }
 

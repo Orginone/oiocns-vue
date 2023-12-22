@@ -148,4 +148,9 @@
     font-weight: 400;
     line-height: normal;
   }
+  .el-badge__content.is-fixed.is-dot {
+    width: 6px;
+    height: 6px;
+    padding: 0;
+  }
 }

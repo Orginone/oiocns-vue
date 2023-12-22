@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { IDEntity } from '@/ts/core'
 import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
-import { onContextMenu } from './contextMenu'
+import { onContextMenu } from '@/utils/contextMenu'
 
 defineProps<{
   focusFile?: IDEntity | undefined

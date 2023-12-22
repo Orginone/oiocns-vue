@@ -30,6 +30,7 @@ const contentComponent = ref(null);
 const dynamicProps = ref({})
 // 设置组件与参数
 const setContent = (component: any,props: object) => {
+  console.log('setContent',component,props)
   contentComponent.value = component;
   dynamicProps.value = props
 }
@@ -43,8 +44,8 @@ const reloadFinish = () => {
 
 onMounted(()=>{
   switch (props.cmd) {
-    case 'rename': // TODO:
-      return console.log('来这改');
+    case 'rename': // TODO:重命名
+      console.log('重命名来这改');
       // return <RenameForm file={entity as any} finished={reloadFinish} />;
     case 'newDir':
     case 'updateDir':

@@ -627,8 +627,8 @@ export type WorkDefineModel = {
   shareId: string;
   // 应用ID
   applicationId: string;
-  // 是否创建实体
-  rule: string;
+  // 发起权限
+  applyAuth: string;
   // 流程节点
   resource: WorkNodeModel | undefined;
 };
@@ -664,12 +664,6 @@ export type WorkGatewayInfoModel = {
 export type InstanceDataModel = {
   /** 流程节点 */
   node: WorkNodeModel;
-  // 允许新增
-  allowAdd: boolean;
-  // 允许变更
-  allowEdit: boolean;
-  // 允许选择
-  allowSelect: boolean;
   /** 表单字段 */
   fields: {
     /** 表单id */
@@ -736,6 +730,8 @@ export type FormEditData = {
   creator: string;
   /** 操作时间 */
   createTime: string;
+  /** 规则 */
+  rule: { [id: string]: { [type: string]: any } };
 };
 
 /* 节点网关 */
@@ -746,6 +742,8 @@ export type WorkGatewayModel = {
   targetId: string;
   // 关联流程ID
   defineId: string;
+  // 通知的角色ID
+  identityId: string;
 };
 
 /* 节点网关 */
@@ -779,8 +777,14 @@ export type WorkNodeModel = {
   belongId: string;
   // 节点归属定义Id
   defineId: string;
+  // 资源
+  resource: string;
   // 关联表单信息
   forms: FormInfo[];
+  // 关联表单信息
+  formRules: FormRules[];
+  // 执行器
+  executors: Executor[];
   // 主表
   primaryForms: XForm[];
   // 子表
@@ -792,6 +796,18 @@ type FormInfo = {
   id: string;
   // 类型
   typeName: string;
+};
+
+type FormRules = {};
+
+// 执行器
+export type Executor = {
+  // ID
+  id: string;
+  // 执行器触发时机
+  trigger: string;
+  // 执行器方法名称
+  funcName: string;
 };
 
 export type Branche = {
@@ -1296,14 +1312,14 @@ export type SchemaType = {
 export type DiskInfoType = {
   // 状态
   ok: number;
-  // 文件数量
-  files: number;
   // 对象数量
   objects: number;
   // 集合数量
   collections: number;
+  // 文件数量
+  filesCount: number;
   // 文件的总大小
-  fileSize: number;
+  filesSize: number;
   // 数据的总大小
   dataSize: number;
   // 数据占用磁盘的总大小

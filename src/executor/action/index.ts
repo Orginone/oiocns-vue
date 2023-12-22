@@ -23,16 +23,15 @@ import uploadFileView from './components/uploadFile.vue'
 import { ElMessageBox } from 'element-plus'
 import { h } from 'vue'
 
-
 /** 执行非页面命令 */ 
 export const executeCmd = (cmd: string, entity: any) => {
   switch (cmd) {
     case 'qrcode': // 二维码
-      return entityQrCode(entity)
+      return entityQrCode(entity);
     case 'reload': // 刷新目录
-      return directoryRefresh(entity, true)
+      return directoryRefresh(entity, true);
     case 'refresh': 
-      return directoryRefresh(entity, false)
+      return directoryRefresh(entity, false);
     case 'openChat': // 打开会话
       return openChat(entity);
     case 'download': // 下载
@@ -55,34 +54,30 @@ export const executeCmd = (cmd: string, entity: any) => {
     case 'remove': // TODO:
       return removeMember(entity);
     case 'newFile': // 上传文件
-      return uploadFile(entity)
-    case 'open':
-      // TODO:
-      return openDirectory(entity);
+      return uploadFile(entity);
     case 'workForm': // 进入办事
-      return openWork(entity)
-    case 'standard':
-      // TODO:
-      return uploadStandard(entity)
+      return openWork(entity);
+    case 'standard': // TODO:
+      return uploadStandard(entity);
     case 'business': // 上传业务导入模板
-      return uploadBusiness(entity)
+      return uploadBusiness(entity);
     case 'online':
-    case 'outline':
-      // TODO:
+    case 'outline': // TODO:
       return onlineChanged(cmd, entity);
-    case 'activate':
-      // TODO:
-      return activateStorage(entity)
+    case 'activate': // TODO:
+      return activateStorage(entity);
     case 'hslSplit': // TODO:视频切片
-      return videoHslSplit(entity)
+      return videoHslSplit(entity);
     case 'removeSession': // 移除会话
-      return removeSession(entity)
+      return removeSession(entity);
     case 'topingToggle': // 置顶/取消置顶会话
-      return sessionTopingToggle(entity)
+      return sessionTopingToggle(entity);
     case 'readedToggle': // 已读/未读会话
-      return sessionReadedToggle(entity)
+      return sessionReadedToggle(entity);
+    case 'commonToggle': // 移除常用
+      return fileCommonToggle(entity);    
     case 'applyFriend': // 申请好友
-      return applyFriend(entity)
+      return applyFriend(entity);
   }
   return false;
 }
@@ -137,19 +132,6 @@ const videoHslSplit = (file: ISysFileInfo) => {
   //     modal.destroy();
   //   },
   // })
-}
-/** 进入目录 */
-const openDirectory = (entity: IFile | schema.XEntity | string) => {
-  if (typeof entity === 'string') {
-    orgCtrl.currentKey = 'disk';
-    orgCtrl.changCallback();
-    return;
-  } else if (entity && 'isContainer' in entity && entity.isContainer) {
-    orgCtrl.currentKey = entity.key;
-    orgCtrl.changCallback();
-    return;
-  }
-  return false;
 }
 /** 移除会话 */
 const removeSession = (entity: ISession) => {
@@ -294,24 +276,22 @@ const restoreEntity = (entity: IFile) => {
   });
 }
 /** 删除实体 */
-const deleteEntity = (entity: IFile, hardDelete: boolean) => {
-  console.log('here');
-  // Modal.confirm({
-  //   okText: '确认',
-  //   cancelText: '取消',
-  //   title: '删除询问框',
-  //   content: (
-  //     <div style={{ fontSize: 16 }}>
-  //       确认要{hardDelete ? '彻底' : ''}删除{entity.typeName}[{entity.name}]吗?
-  //     </div>
-  //   ),
-  //   onOk: async () => {
-  //     const success = await (hardDelete ? entity.hardDelete() : entity.delete());
-  //     if (success) {
-  //       orgCtrl.changCallback();
-  //     }
-  //   },
-  // });
+const deleteEntity = async(entity: IFile, hardDelete: boolean) => {
+  ElMessageBox.confirm(
+    '删除询问框',
+    '',
+    {
+      type: 'warning',
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      message: h('div',{style:'font-size: 16px'},`确认要${hardDelete ? '彻底' : ''}删除${entity.typeName}[${entity.name}]吗?`)
+    }
+  ).then(async()=>{
+    const success = await (hardDelete ? entity.hardDelete() : entity.delete())
+    if (success) {
+      orgCtrl.changCallback()
+    }
+  })
 }
 
 /** 移除成员 */
@@ -365,4 +345,13 @@ const onlineChanged = (cmd: string, info: model.OnlineInfo) => {
   //     }
   //   });
   // }
+}
+
+/** 常用标签变更 */
+const fileCommonToggle = (entity: any) => {
+  entity.toggleCommon().then((success: boolean) => {
+    if (success) {
+      ElMessage.info('设置成功')
+    }
+  });
 }

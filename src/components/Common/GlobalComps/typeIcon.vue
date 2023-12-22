@@ -10,6 +10,7 @@ const props = defineProps<{
   color?: string;
   iconType: string;
 }>()
+
 const {iconType,size,color} = props
 const config: any = { size: size || 12, color: color || '#3838b9' }
 

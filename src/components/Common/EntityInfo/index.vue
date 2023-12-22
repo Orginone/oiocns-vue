@@ -13,6 +13,7 @@ const props = defineProps<{
   other?: any;
   extra?: any;
   column?: number;
+  onForm?:(item:IEntity<schema.XEntity>)=>void;
 }>()
 
 const [tkey] = useCtrlUpdate(props.entity)
@@ -24,11 +25,17 @@ const ellipsis = ref(true)
     <ElCard class="company-dept-content">
       <ElDescriptions
         :title="`${entity.typeName}[${entity.name}]基本信息`"
-        :extra="extra"
         :border="true"
         :column="column ?? 3"
         :key="tkey"
       >
+        <template #extra>
+          <div class="extra" v-for="(item,index) in extra" :key="index">
+             <el-icon @click='onForm(item)' v-if="item.key=='新增'"><Plus /></el-icon>
+             <el-icon @click='onForm(item)' v-if="item.key=='编辑'"><Setting /></el-icon>
+             <el-icon @click='onForm(item)' v-if="item.key=='删除'"><Delete /></el-icon>
+          </div>
+        </template>
         <ElDescriptionsItem label="名称">
           <div style="display: flex;">
             <EntityIcon :entity="entity.metadata" showName />
@@ -77,5 +84,8 @@ const ellipsis = ref(true)
 </template>
 
 <style lang='scss' scoped>
-
+  .extra{
+    display: inline-block;
+    margin-left: 10px;
+  }
 </style>

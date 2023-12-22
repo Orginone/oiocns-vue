@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 // import SchemaForm from '@/components/SchemaForm';
-import { TargetModel } from '@/ts/base/model';
-import { ITarget, TargetType, companyTypes } from '@/ts/core';
+import { TargetModel } from '@/ts/base/model'
+import { ITarget, TargetType, companyTypes } from '@/ts/core'
 import UploadItem from '../../tools/uploadItem.vue'
-// import { EntityColumns } from './entityColumns';
+// import { EntityColumns } from './entityColumns'
+
 import type { FormInstance, FormRules } from 'element-plus'
-import { CURRENT_CHANGE } from 'element-plus/es/components/tree-v2/src/virtual-tree';
+import { CURRENT_CHANGE } from 'element-plus/es/components/tree-v2/src/virtual-tree'
 
 // 接收参数
 const props = defineProps<{
@@ -17,10 +18,10 @@ const isOpen = ref(true)
 
 let title = ref('')
 let typeName = ref('')
+let tcodeLabel = ref('代码');
 let types: string[] = [props.current.typeName];
 const readonly = props.formType === 'remark';
 let initialValue: any = props.current.metadata;
-
 switch (props.formType) {
   case 'newCohort':
     typeName.value = '群组';
@@ -74,6 +75,13 @@ switch (props.formType) {
     initialValue.teamName = props.current.metadata.team?.name;
     typeName.value = props.current.typeName;
     title.value = '查看' + props.current.name;
+    if (props.current.id === props.current.belongId) {
+      if (typeName.value === '人员') {
+        tcodeLabel.value = '手机号码';
+      } else {
+        tcodeLabel.value = '企业信用代码';
+      }
+    }
     break;
   default:
     break
@@ -81,16 +89,29 @@ switch (props.formType) {
 
 // 表单
 const targetFormRef = ref<FormInstance>()
-const ruleForm = reactive({
+const ruleForm = reactive<TargetModel>({
+  id:'',
   belongId: props.current.belongId,
   icon: '',
   name: '',
+  public: true,
   typeName: types[0],
   code: '',
   teamName: '',
   teamCode: '',
   remark: '',
-})
+});
+
+//动态字段
+const flexForm = reactive([]) 
+if (readonly) {
+  // TODO:
+  // let res = EntityColumns(props.current.metadata)
+  // flexForm.push(...res.value)
+}
+for (const key in ruleForm) {
+  ruleForm[key] = initialValue[key];
+};
 const rules = reactive<FormRules>({
   name: [{ required: true, message: '分类名称为必填项' }],
   typeName: [{ required: true, message: '类型为必填项' }],
@@ -168,27 +189,23 @@ const handleSubmit = async()=>{
           </ElFormItem>
         </div>
       </ElCol>
-      <ElCol :span="12" title="代码">
+      <ElCol :span="12" :title="tcodeLabel">
         <div class="col-content">
-          <ElFormItem prop="code" required label="代码">
+          <ElFormItem prop="code" required :label="tcodeLabel">
             <ElInput v-model="ruleForm.code" placeholder="请输入代码"/>
           </ElFormItem>
         </div>
       </ElCol>
-      <ElCol :span="12" title="简称">
-        <div class="col-content">
-          <ElFormItem prop="teamName" label="简称">
-            <ElInput v-model="ruleForm.teamName" placeholder="请输入简称"/>
-          </ElFormItem>
-        </div>
-      </ElCol>
-      <ElCol :span="12" title="标识">
-        <div class="col-content">
-          <ElFormItem prop="teamCode" label="标识">
-            <ElInput v-model="ruleForm.teamCode" placeholder="请输入标识"/>
-          </ElFormItem>
-        </div>
-      </ElCol>
+      <slot v-if="readonly">
+        <ElCol :span="12" v-for="(item,index) in flexForm" :key="index" :title="item.title">
+          <div class="col-content">
+            <ElFormItem :props="item.dataIndex" required :label="item.title">
+              <ElInput :readonly="item.readonly" v-if="!item.types" v-model="item.value" placeholder="请输入代码"/>
+              <EntityIcon  v-else :entityId="item.value" showName />
+            </ElFormItem>
+          </div>
+        </ElCol>
+      </slot>
       <ElCol :span="24" title="简介">
         <div class="col-content">
           <ElFormItem prop="remark" required label="简介">

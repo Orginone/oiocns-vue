@@ -9,25 +9,15 @@ const current = ref(allPages[0])
 
 <template>
   <div class="homepage">
-    <!-- 固定页面布局 -->
-    <template v-if="allPages.find(item=>item.key===current.key)">
-      <!-- 门户——顶部Banner图 -->
-      <div class="headBanner" 
-        v-if="current.type==='inner'"
-        :style="{backgroundImage: `url(${current.backgroundImageUrl})`}"
-      />
-      <!-- 门户——内容区域 -->
-      <div class="content">
+    <div class="headBanner"  v-if="current.type==='inner'"
+      :style="{backgroundImage: `url(${current.backgroundImageUrl})`}"
+    ></div>
+    <div class="content" v-if="current.type==='inner'">
+      <component :is="current.component" />
+    </div>
+    <template v-if="current.type==='page'">
         <component :is="current.component" />
-      </div>
     </template>
-    <!-- 自定义页面 -->
-    <template v-else>
-      <div style="width: 100%;height: 100%;">
-        <component :is="current.component" />
-      </div>
-    </template>
-    <!-- 门户——顶部导航 -->
     <NavigationBar
       :list="allPages" 
       @change="item=> current = item"

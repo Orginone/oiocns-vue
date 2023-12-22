@@ -6,6 +6,8 @@ import { IBelong } from '../target/base/belong';
 import { UserProvider } from '../user';
 import { IWorkApply } from './apply';
 import { FileInfo, IFile } from '../thing/fileinfo';
+import { IExecutor } from './executor';
+import { Acquire } from './executor/acquire';
 export type TaskTypeName = '待办' | '已办' | '抄送' | '发起的';
 
 export interface IWorkTask extends IFile {
@@ -23,6 +25,10 @@ export interface IWorkTask extends IFile {
   instanceData: model.InstanceDataModel | undefined;
   /** 加用户任务信息 */
   targets: schema.XTarget[];
+  /** 是否为历史对象 */
+  isHistory: boolean;
+  /** 执行器 */
+  executors: IExecutor[];
   /** 是否为指定的任务类型 */
   isTaskType(type: TaskTypeName): boolean;
   /** 是否满足条件 */
@@ -41,26 +47,38 @@ export interface IWorkTask extends IFile {
     comment?: string,
     fromData?: Map<string, model.FormEditData>,
   ): Promise<boolean>;
+  /** 获取办事 */
+  findWorkById(wrokId: string): Promise<IWork | undefined>;
 }
 
 export class WorkTask extends FileInfo<schema.XEntity> implements IWorkTask {
-  constructor(_metadata: schema.XWorkTask, _user: UserProvider) {
+  private history: boolean;
+  constructor(
+    _metadata: schema.XWorkTask,
+    _user: UserProvider,
+    history: boolean = false,
+  ) {
     super(_metadata as any, _user.user!.directory);
     this.taskdata = _metadata;
     this.user = _user;
+    this.history = history;
   }
   user: UserProvider;
   cacheFlag: string = 'worktask';
   taskdata: schema.XWorkTask;
   instance: schema.XWorkInstance | undefined;
   instanceData: model.InstanceDataModel | undefined;
+  get isHistory(): boolean {
+    return this.history;
+  }
+  executors: IExecutor[] = [];
   get groupTags(): string[] {
     return [this.belong.name, this.taskdata.taskType, this.taskdata.approveType];
   }
   get metadata(): schema.XEntity {
     let typeName = this.taskdata.taskType;
     if (
-      this.taskdata.approveType === '子流程' &&
+      ['子流程', '网关'].includes(this.taskdata.approveType) &&
       this.taskdata.identityId &&
       this.taskdata.identityId.length > 5
     ) {
@@ -139,12 +157,26 @@ export class WorkTask extends FileInfo<schema.XEntity> implements IWorkTask {
       try {
         this.instance = data;
         this.instanceData = eval(`(${data.data})`);
+        await this.loadExecutors();
         return this.instanceData !== undefined;
       } catch (ex) {
         logger.error(ex as Error);
       }
     }
     return false;
+  }
+  async loadExecutors() {
+    this.executors = [];
+    let metadata = this.instanceData?.node.executors ?? [];
+    for (const item of metadata) {
+      switch (item.funcName) {
+        case '数据申领':
+          this.executors.push(new Acquire(item, this));
+          break;
+        case '归属权变更':
+          break;
+      }
+    }
   }
   async recallApply(): Promise<boolean> {
     if ((await this.loadInstance()) && this.instance) {
@@ -156,6 +188,28 @@ export class WorkTask extends FileInfo<schema.XEntity> implements IWorkTask {
     }
     return false;
   }
+
+  async createApply(): Promise<IWorkApply | undefined> {
+    if (this.taskdata.approveType == '子流程') {
+      await this.loadInstance();
+      var define = await this.findWorkById(this.taskdata.defineId);
+      if (define) {
+        return await define.createApply(this.id, this.instanceData);
+      }
+    }
+  }
+
+  async findWorkById(wrokId: string): Promise<IWork | undefined> {
+    for (var target of this.user.targets) {
+      for (var app of await target.directory.loadAllApplication()) {
+        const work = await app.findWork(wrokId);
+        if (work) {
+          return work;
+        }
+      }
+    }
+  }
+
   async approvalTask(
     status: number,
     comment: string,
@@ -165,7 +219,9 @@ export class WorkTask extends FileInfo<schema.XEntity> implements IWorkTask {
       if (status === -1) {
         return await this.recallApply();
       }
-      if (this.taskdata.taskType === '加用户' || (await this.loadInstance(true))) {
+      if (this.taskdata.taskType === '加用户') {
+        return this.approvalJoinTask(status, comment);
+      } else if (await this.loadInstance(true)) {
         fromData?.forEach((data, k) => {
           if (this.instanceData) {
             this.instanceData.data[k] = [data];
@@ -177,38 +233,30 @@ export class WorkTask extends FileInfo<schema.XEntity> implements IWorkTask {
           comment: comment,
           data: JSON.stringify(this.instanceData),
         });
-        if (res.data && status < TaskStatus.RefuseStart) {
-          if (this.targets && this.targets.length === 2) {
-            for (const item of this.user.targets) {
-              if (item.id === this.targets[1].id) {
-                item.pullMembers([this.targets[0]]);
-                break;
-              }
-            }
+        return res.data === true;
+      }
+    }
+    return false;
+  }
+
+  // 申请加用户审批
+  private async approvalJoinTask(status: number, comment: string): Promise<boolean> {
+    if (this.targets && this.targets.length === 2) {
+      const res = await kernel.approvalTask({
+        id: this.taskdata.id,
+        status: status,
+        comment: comment,
+        data: JSON.stringify(this.instanceData),
+      });
+      if (res.data && status < TaskStatus.RefuseStart) {
+        for (const item of this.user.targets) {
+          if (item.id === this.targets[1].id) {
+            item.pullMembers([this.targets[0]]);
+            return true;
           }
         }
       }
     }
     return false;
-  }
-  async createApply(): Promise<IWorkApply | undefined> {
-    if (this.taskdata.approveType == '子流程') {
-      await this.loadInstance();
-      var define = await this.findWorkById(this.taskdata.defineId);
-      if (define) {
-        return await define.createApply(this.id, this.instanceData);
-      }
-    }
-  }
-
-  private async findWorkById(wrokId: string): Promise<IWork | undefined> {
-    for (var target of this.user.targets) {
-      for (var app of await target.directory.loadAllApplication()) {
-        const work = await app.findWork(wrokId);
-        if (work) {
-          return work;
-        }
-      }
-    }
   }
 }

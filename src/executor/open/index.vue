@@ -125,6 +125,7 @@ onMounted(() => {
   return setComponent(EntityPreview,{entity:props.entity,finished:props.finished})
 })
 
+
 </script>
 <template>
   <component :is="component" v-bind="propsObj"/>

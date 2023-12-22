@@ -2,7 +2,7 @@
 import { IDEntity,ISession } from '@/ts/core'
 import { showChatTime } from '@/utils/tools'
 import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
-import { onContextMenu } from './contextMenu'
+import { onContextMenu } from '@/utils/contextMenu'
 
 const props = defineProps<{
   content: IDEntity[];
