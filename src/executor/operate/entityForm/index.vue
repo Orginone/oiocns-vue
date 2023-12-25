@@ -30,6 +30,7 @@ const contentComponent = ref(null);
 const dynamicProps = ref({})
 // 设置组件与参数
 const setContent = (component: any,props: object) => {
+  console.log('setContent',component,props)
   contentComponent.value = component;
   dynamicProps.value = props
 }
