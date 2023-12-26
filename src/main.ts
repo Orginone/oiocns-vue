@@ -14,8 +14,18 @@ import VueMarkdownEditor from '@kangc/v-md-editor';
 import '@kangc/v-md-editor/lib/style/base-editor.css';
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
 import '@kangc/v-md-editor/lib/theme/style/vuepress.css';
-import locale from "element-plus/lib/locale/lang/zh-cn";
+// import locale from "element-plus/lib/locale/lang/zh-cn";
 import mitt from 'mitt'
+
+import 'devextreme/dist/css/dx.common.css';
+import 'devextreme/dist/css/dx.light.css';
+import config from 'devextreme/core/config';
+import { loadMessages, locale } from 'devextreme/localization';
+import zhMessage from 'devextreme/localization/messages/zh.json';
+config({ defaultCurrency: 'zh' });
+locale('zh');
+loadMessages(zhMessage);
+
 const Mit = mitt()
 declare module "vue" {
   export interface ComponentCustomProperties {
@@ -26,8 +36,6 @@ declare module "vue" {
 // // 夜间模式 
 // import '@/assets/style/element.dark.scss'
 // import 'element-plus/theme-chalk/dark/css-vars.css'
-
-import 'devextreme/dist/css/dx.light.css';
 
 import '@/assets/style/app.scss'
 import "element-plus/theme-chalk/src/loading.scss";
