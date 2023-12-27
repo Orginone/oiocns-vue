@@ -157,13 +157,15 @@ const loadFileIcon = () => {
   <ElIcon v-if="avatar" v-bind="config">
     <component :is="loadIcon()" />
   </ElIcon>
-  <div v-else style="padding-right: 10px;display: flex;justify-content: center;align-items: center;">
-    <ElIcon v-bind="config">
+  <div v-else class="type-icon-not-avatar">
+    <ElIcon v-bind="config" :size="size" color="rgb(56, 56, 185)">
       <component :is="loadIcon()" />
     </ElIcon>
   </div>  
 </template>
 
 <style lang="scss" scoped>
-
+.type-icon-not-avatar {
+  padding-right: 10px;display: flex;justify-content: center;align-items: center;
+}
 </style>

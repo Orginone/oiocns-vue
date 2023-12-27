@@ -14,10 +14,8 @@ import {
 import orgCtrl from '@/ts/controller'
 import { command, model, schema } from '@/ts/base'
 import { uploadBusiness, uploadStandard } from '../tools/uploadTemplate'
-import TypeIcon from '@/components/Common/GlobalComps/typeIcon.vue'
-import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
 import { shareOpenLink } from '@/utils/tools'
-// import { log } from 'console';
+import message from '@/utils/message'
 import entityQrCodeView from './components/entityQrCode.vue'
 import uploadFileView from './components/uploadFile.vue'
 import { ElMessageBox } from 'element-plus'
@@ -180,7 +178,7 @@ const setCopyFiles = (cmd: string, file: IFile) => {
     }
   }
   orgCtrl.user.copyFiles.set(key, file);
-  ElMessage.info(`${file.name}已放入剪切板`);
+  message.info(`${file.name}已放入剪切板`);
 }
 
 /** TODO:剪贴板操作 */
@@ -351,7 +349,7 @@ const onlineChanged = (cmd: string, info: model.OnlineInfo) => {
 const fileCommonToggle = (entity: any) => {
   entity.toggleCommon().then((success: boolean) => {
     if (success) {
-      ElMessage.info('设置成功')
+      message.info('设置成功')
     }
   });
 }

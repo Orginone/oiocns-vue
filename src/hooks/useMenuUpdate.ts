@@ -2,7 +2,6 @@ import orgCtrl, { Controller } from '@/ts/controller'
 import { MenuItemType } from 'typings/globelType'
 import { findMenuItemByKey } from '@/utils/tools'
 import { generateUuid } from '@/ts/base/common'
-import { Ref } from 'vue'
 /**
  * 监听控制器刷新hook
  * @param ctrl 控制器

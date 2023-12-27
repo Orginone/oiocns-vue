@@ -45,6 +45,7 @@ defineProps<{
     border-radius: 12px 0 0 0;
     overflow: hidden;
     .main-layout-body-list {
+      height: 100%;
       width: 400px;
       padding: 16px;
       // TODO: color/surface/主要容器背景&弹窗背景

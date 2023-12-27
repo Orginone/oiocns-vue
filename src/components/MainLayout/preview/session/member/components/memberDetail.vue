@@ -1,20 +1,20 @@
 <script setup lang='ts'>
+
 import { IDEntity } from '@/ts/core'
+
 const props = defineProps<{
   member: IDEntity
   x: number
   y: number
 }>()
+
 const Ref = ref(null)
+
 watchEffect(()=>{
   if(!Ref.value) return
   Ref.value.style.top = props.y + 'px'
   Ref.value.style.left = props.x + 'px'
 })
-onMounted(()=>{
-  console.log(props.member);
-})
-
 
 </script>
 <template>

@@ -1,13 +1,9 @@
 <script setup lang="ts">
 
 import DirectoryViewer from './views/index.vue'
-import useCtrlUpdate from '@/hooks/useCtrlUpdate'
-import useTimeoutHanlder from '@/hooks/useTimeoutHanlder'
-import { IDirectory, IFile,IDEntity } from '@/ts/core'
+import { IFile,IDEntity } from '@/ts/core'
 import { loadFileMenus } from '@/executor/fileOperate'
 import { command } from '@/ts/base'
-import orgCtrl from '@/ts/controller'
-import useAsyncLoad from '@/hooks/useAsyncLoad'
 import { cleanMenus } from '@/utils/tools'
 
 const props = defineProps<{

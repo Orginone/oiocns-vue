@@ -5,10 +5,9 @@
       title="重命名"
       width="300"
       destroy-on-close
-      show-close="false"
-      :before-close="handleClose"
+      :before-close="finished"
     >
-      <el-input type="text" v-model="value" />
+      <el-input type="text" v-model="newName" />
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="finished()">取消</el-button>
@@ -28,19 +27,19 @@ const props = defineProps<{
   finished: () => void;
 }>()
 
-let value = ref('')
+let newName = ref('')
 const dialogVisible = ref(false)
 
 const onOk = () => {
   if ('rename' in props.file) {
-    props.file.rename(value).then(() => {
+    props.file.rename(newName.value).then(() => {
       props.finished();
     });
   }
 }
 
 onMounted(()=>{
-  value.value = props.file.name
+  newName.value = props.file.name
   dialogVisible.value = true
 })
 </script>

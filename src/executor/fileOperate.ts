@@ -9,7 +9,7 @@ import TypeIcon from '@/components/Common/GlobalComps/typeIcon.vue';
 export const loadFileMenus = (file?: IDEntity | IFile | undefined) => {
   if (!file) return []
   const operates: OperateModel[] = []
-  if (file?.groupTags?.includes('已删除')) {
+  if (file?.groupTags?.includes('已删除') && 'directory' in file) {
     if (file?.directory.target.hasRelationAuth()) {
       operates.push(entityOperates.Restore, entityOperates.HardDelete);
     }

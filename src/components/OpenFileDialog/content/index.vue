@@ -139,6 +139,7 @@ const props = defineProps<{
       :focusFile="focusFile"
       :fileOpen="(entity, dblclick) => clickHanlder(entity as IFile, dblclick)"
       :contextMenu="(entity) => contextMenu(entity as IFile)"
+      :show-footer="true"
     />
   </div>
 </template>

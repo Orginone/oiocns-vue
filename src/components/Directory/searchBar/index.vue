@@ -1,5 +1,8 @@
 <script setup lang='ts'>
 
+import { MoreFilled } from '@element-plus/icons-vue'
+import { onContextMenu } from '@/utils/contextMenu'
+
 const props = defineProps<{
   modelValue: string
   menus: any
@@ -32,17 +35,25 @@ const inside = items.filter((item: any) => item.model != 'outside')
     <slot  name="rightBar"/>  
     <!--功能按钮  -->
     <div class="tags-actions">
-      <!-- 刷新、上传、上传列表 -->
       <template v-if="outside.length > 0">
-        <div class="tags-actions-btn" v-for="item in outside" :key="item.key"
+        <!-- 长按钮型 -->
+        <!-- <div class="tags-actions-btn" v-for="item in outside" :key="item.key"
           @click="menus.onClick?.apply(this, [item])"
         >
           <component :is="item.icon.name" v-bind="item.icon.args" color="inherit"/>
           <span>{{ item.label }}</span>
+        </div> -->
+        <!-- 图标按钮型 -->
+        <div  v-for="item in outside" :key="item.key" 
+          style="cursor: pointer;"
+          :title="item.label"
+          @click="menus.onClick?.apply(this, [item])"
+        >
+          <component :is="item.icon.name" v-bind="item.icon.args" color="inherit" :size="18"/>
         </div>
       </template>
-      <!-- 更多操作 -->
-      <ElDropdown v-if="inside.length > 0"
+      <!-- TODO:更多操作 -->
+      <!-- <ElDropdown v-if="inside.length > 0"
         placement="bottom"
         :trigger="['click', 'contextmenu']"
       >
@@ -53,7 +64,6 @@ const inside = items.filter((item: any) => item.model != 'outside')
               v-for="item in inside" 
               :key="item.key"
             >
-              <!-- 含子项 -->
               <template v-if="item?.children?.length>0">
                 <ElPopover trigger="hover" placement="left-start" :show-arrow="false">
                   <template #reference>
@@ -77,7 +87,6 @@ const inside = items.filter((item: any) => item.model != 'outside')
                   </template>
                 </ElPopover>
               </template>
-              <!-- 不含子项 -->
               <template v-else>
                 <div class="menu-item-btn"  @click="onOperateMenuClick(selectMenu, item.key)">
                   <component v-if="item.icon" :is="item.icon.name" v-bind="item.icon.args"/>
@@ -87,7 +96,10 @@ const inside = items.filter((item: any) => item.model != 'outside')
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
-      </ElDropdown>      
+      </ElDropdown>       -->
+      <div class="more-actions" v-if="inside.length > 0" @click="onContextMenu($event,{items:inside,onClick: menus.onClick})">
+        <ElIcon :size="18" style="transform: rotate(90deg);"><MoreFilled/></ElIcon>
+      </div>
     </div>
   </div>
 </template>
@@ -152,6 +164,9 @@ const inside = items.filter((item: any) => item.model != 'outside')
         color: #FFFFFF;
       }
     }
+  }
+  .more-actions {
+    cursor: pointer;
   }
 }
 </style>

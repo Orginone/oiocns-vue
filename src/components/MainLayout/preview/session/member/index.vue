@@ -14,6 +14,16 @@ const currentMember = ref<IDEntity>()
 const x = ref(0)
 const y = ref(0)
 
+const getContextMenuData = (entity: IDEntity | undefined) => {
+  const file = (entity as IFile) || props.memberDirectory;
+  return {
+    items: cleanMenus(loadFileMenus(file)) || [],
+    onClick: ({ key }:{key:string}) => {
+      command.emitter('executor', key, file);
+    },
+  }
+}
+
 </script>
 <template>
   <div class="member-body">
@@ -26,15 +36,7 @@ const y = ref(0)
       :select-files="[]"
       :fileOpen="(member,_,e)=>{currentMember=member;x=e.clientX;y=e.clientY}"
       show-footer
-      :contextMenu="(entity: IDEntity | undefined) => {
-        const file = (entity as IFile) || memberDirectory;
-        return {
-          items: cleanMenus(loadFileMenus(file)) || [],
-          onClick: ({ key }) => {
-            command.emitter('executor', key, file);
-          },
-        }
-      }"
+      :contextMenu="getContextMenuData"
     />
     <MemberDetail :member="currentMember"  :x="x" :y="y"/>
   </div>

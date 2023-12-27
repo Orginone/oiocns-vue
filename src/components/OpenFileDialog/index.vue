@@ -7,7 +7,6 @@ import FullScreenModal from '../Common/fullScreenModal.vue'
 import { IFile } from '@/ts/core'
 import orgCtrl, { Controller } from '@/ts/controller'
 import { MenuItemType } from '@/typings/globelType'
-import {command} from '@/ts/base'
 
 const props = defineProps<{
   title?: string;
@@ -27,13 +26,13 @@ const props = defineProps<{
 }>()
 const selectedFiles = ref<IFile[]>()
 
+// 更新并获取菜单数据
 const {key, rootMenu, selectMenu, onSelectMenu:setSelectMenu} = useMenuUpdate(
   () => loadSettingMenu(props.rootKey, props.allowInherited || false),
   new Controller(props.currentKey ?? orgCtrl.currentKey),
 )
-/** 
- * 聚焦文件回调
-*/
+
+/** 聚焦文件回调 */
 const onFocused = (file:IFile) => {
   if (!props.multiple) {
     if (file) {
@@ -43,10 +42,8 @@ const onFocused = (file:IFile) => {
     }
   }
 }
-/**
- * 选择文件回调
- * @param files 
- */
+
+/** 选择文件回调 */
 const onSelected = (files:IFile[]) => {
   if (props.multiple) {
     if (props.maxCount && files.length > props.maxCount) {
@@ -57,11 +54,11 @@ const onSelected = (files:IFile[]) => {
     }
   }
 }
+
 </script>
 
 <template>
-  <FullScreenModal
-    v-if="selectMenu && rootMenu"
+  <FullScreenModal v-if="selectMenu && rootMenu"
     open
     :title="title ?? '选择文件'"
     :onCancel="()=>{onCancel(); selectedFiles=[]}"
@@ -74,9 +71,7 @@ const onSelected = (files:IFile[]) => {
       leftShow
       previewFlag="dialog"
       :selectMenu="selectMenu"
-      :onSelect="(data: any) => {
-        setSelectMenu(data)
-      }"
+      :onSelect="(data: any) =>setSelectMenu(data) "
       :siderMenuData="rootMenu"
     >
       <Content

@@ -6,17 +6,17 @@ import { IDepartment, IGroup, ITarget, IDirectory, IApplication, IWork } from '@
 import { findMenuItemByKey } from '@/utils/tools';
 
 /** 创建团队菜单 */
-const createMenu = (target: ITarget, children: MenuItemType[]) => {
+const createMenu = (target: ITarget, children: MenuItemType[]):MenuItemType => {
   children.unshift(
     ...buildDirectoryTree([target.memberDirectory]),
     ...buildApplicationTree(target.directory.standard.applications),
-  );
+  )
   return {
     key: target.directory.key,
     item: target.directory,
     label: target.name,
     itemType: target.directory.typeName,
-    menus: loadFileMenus(target.directory, 2),
+    menus: loadFileMenus(target.directory),
     tag: [target.typeName],
     icon: {name:EntityIcon,args:{notAvatar:true, entityId:target.id, size:18}},
     children: children,
@@ -30,7 +30,7 @@ const buildDepartmentTree = (departments: IDepartment[]): MenuItemType[] => {
       ...buildDirectoryTree(item.directory.children),
       ...buildDepartmentTree(item.children),
     ]),
-  );
+  )
 };
 
 
@@ -157,5 +157,5 @@ export const loadSettingMenu = (rootKey: string, allowInherited: boolean) => {
     findMenu.parentMenu = undefined;
     return findMenu;
   }
-  return rootMenu;
+  return rootMenu as MenuItemType;
 };

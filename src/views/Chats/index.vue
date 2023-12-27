@@ -30,7 +30,8 @@ const id = command.subscribe((type, cmd, ...args: any[]) => {
 onBeforeUnmount(() => command.unsubscribe(id))
 
 // 会话列表
-const chats = ref<ISession[]>([])
+const chats = ref<ISession[]>()
+chats.value = []
 // 实时刷新会话列表
 useFlagCmdEmitter('session', () => {
   const temps = [...orgCtrl.chats.filter((i) => i.isMyChat)]  

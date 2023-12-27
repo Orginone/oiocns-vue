@@ -1,25 +1,25 @@
 import ContextMenu from '@imengyu/vue3-context-menu'
 import {h} from 'vue'
-import { IDEntity } from '@/ts/core'
+import { OperateMenuType } from 'typings/globelType'
+
 
 /** 右键菜单 */
-export const onContextMenu = (e : MouseEvent,item: IDEntity, getMenu: Function)=> {
+export function onContextMenu (e : MouseEvent, menu: {items: OperateMenuType[], onClick: Function}) {
   e.preventDefault()
-  const cxtMenu = getMenu(item)
-  // 处理cxtMenu的数据
+  // 处理menu的数据
   const getLegalMenu = (origin:any)=>{
     if(!origin) return []
     return origin.map((i:any)=>{
       return {
         label: i.label,
         icon: h(i.icon?.name, i.icon?.args),
-        onClick: ()=>cxtMenu.onClick(i),
+        onClick: ()=>menu.onClick(i),
         children: getLegalMenu(i.children)
       }
     })
   }
   // @imengyu/vue3-context-menu可以接受的menu数据
-  const items = getLegalMenu(cxtMenu.items)
+  const items = getLegalMenu(menu.items)
   // 菜单项为空则不生成菜单
   if(items.length == 0) return
   ContextMenu.showContextMenu({
@@ -29,3 +29,4 @@ export const onContextMenu = (e : MouseEvent,item: IDEntity, getMenu: Function)=
     zIndex: 10000
   })
 }
+

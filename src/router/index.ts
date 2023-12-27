@@ -14,11 +14,11 @@ const constantRoutes: RouteRecordRaw[] = [
       title: '登录'
     }
   },
-  {
-    component: () => import('@/views/Others/404.vue'),
-    name: '404',
-    path: '/404'
-  },
+  // { // 404
+  //   component: () => import('@/views/Others/404.vue'),
+  //   name: '404',
+  //   path: '/404'
+  // },
   // {
   //   component: () => import('@/views/Test/index.vue'),
   //   name: 'test',

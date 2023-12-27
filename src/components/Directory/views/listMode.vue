@@ -15,10 +15,11 @@ const props = defineProps<{
 }
 }>()
 
+
 </script>
 
 <template>
-  <div class="list-mode" @contextmenu="onContextMenu($event,undefined,contextMenu)">
+  <div class="list-mode" @contextmenu="onContextMenu($event,contextMenu())">
     <div class="list-item" v-for="item in content" :key="item.id"
       :class="{ 
         'list-item-selected': selectFiles.includes(item) || focusFile?.key === item.key,
@@ -26,7 +27,7 @@ const props = defineProps<{
       }"
       @click="fileOpen(item, false,$event)"
       @dblclick="fileOpen(item, true)"
-      @contextmenu.stop="onContextMenu($event,item,contextMenu)"
+      @contextmenu.stop="onContextMenu($event,contextMenu(item))"
     >
       <div class="list-item-avatar">
         <ElBadge 

@@ -13,7 +13,7 @@ import { IDirectory, IEntity, ITarget } from '@/ts/core';
 // import PropertyForm from './propertyForm';
 import TargetForm from './targetForm.vue'
 // import LabelsForm from './labelsForm';
-// import RenameForm from './renameForm';
+import RenameForm from './renameForm.vue'
 // import TransferForm from './transferForm';
 
 // 接收参数
@@ -44,9 +44,8 @@ const reloadFinish = () => {
 
 onMounted(()=>{
   switch (props.cmd) {
-    case 'rename': // TODO:重命名
-      console.log('重命名来这改');
-      // return <RenameForm file={entity as any} finished={reloadFinish} />;
+    case 'rename': // 重命名
+    return setContent(RenameForm, {file:props.entity as any, finished: reloadFinish})
     case 'newDir':
     case 'updateDir':
     case 'remarkDir': { //TODO:

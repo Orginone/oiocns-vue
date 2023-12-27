@@ -27,7 +27,7 @@ const getContextMenu =  ()=> {
 <template>
   <div class="appCard" 
     @click="command.emitter('executor', 'open', item ,'preview')"
-    @contextmenu="onContextMenu($event,item,getContextMenu)"
+    @contextmenu="onContextMenu($event, getContextMenu())"
   >
     <ElBadge is-dot :hidden="!item.cache.tags?.includes('常用')">
       <EntityIcon :entity="item.metadata" :size="35" />

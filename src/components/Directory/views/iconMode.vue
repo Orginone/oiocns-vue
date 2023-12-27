@@ -13,9 +13,9 @@ defineProps<{
 
 </script>
 <template>
-  <div class="icon-mode" @contextmenu="onContextMenu($event,undefined,contextMenu)">
+  <div class="icon-mode" @contextmenu="onContextMenu($event,contextMenu())">
     <div class="icon-item" v-for="el in content" :key="el.id"
-      @contextmenu.stop="onContextMenu($event,el,contextMenu)"
+      @contextmenu.stop="onContextMenu($event,contextMenu(el))"
       @click="(e)=>fileOpen(el, false,e)"
       @dblclick="fileOpen(el, true)"
     >
@@ -52,7 +52,7 @@ defineProps<{
     cursor: pointer;
     &:hover {
       // TODO:
-      background-color: antiquewhite;
+      background-color: #efefef;
     }
     .fileName {
       //styleName: 14/CN-Regular;
@@ -64,6 +64,8 @@ defineProps<{
       text-align: left;
       //  TODO: color/text & icon/text - color-1
       color: #15181D;
+      width: 100%;
+      overflow-wrap: break-word;
     }
   }
 }
