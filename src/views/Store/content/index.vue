@@ -1,27 +1,32 @@
 <!-- 通讯录 -->
 <script setup lang="ts">
-import { IDirectory, IFile, IWorkTask } from "@/ts/core";
+import { IDirectory, IFile, IWorkTask,ITarget } from "@/ts/core";
 import { command, } from "@/ts/base";
 import orgCtrl from "@/ts/controller";
 import DirectoryViewer from "@/components/Directory/views/index.vue";
-import { loadFileMenus } from "@/executor/fileOperate";
-import { cleanMenus } from "@/utils/tools";
 import useCtrlUpdate from "@/hooks/useCtrlUpdate";
 import useTimeoutHanlder from "@/hooks/useTimeoutHanlder";
-import { useFlagCmdEmitter } from "@/hooks/useCtrlUpdate";
+/**
+ * 数据-内容导航
+ */
 const props = defineProps<{
-  current: IDirectory | "disk";
+    selectMenu: any;
 }>();
-const dircetory = ref<IDirectory>(
-  props.current === "disk" ? orgCtrl.user.directory : props.current
-);
-
+const current = <ITarget | 'disk'>('disk');
+const key = useCtrlUpdate(current === 'disk' ? orgCtrl.user : current);
+const currentTag = ref<string>('全部');
 const focusFile = ref<IFile>();
+const [submitHanlder, clearHanlder] = useTimeoutHanlder();
+
+const setCurrentTag = (val:string) => {
+  currentTag.value = val;
+}
 const setFocusFile = (file: IFile) => {
   focusFile.value = file;
 };
 onMounted(() => {
   command.emitter("preview", "store", focusFile.value);
+  setCurrentTag('全部');
 });
 watch(focusFile, () => {
   command.emitter("preview", "store", focusFile.value);
@@ -34,7 +39,6 @@ const focusHanlder = (file: IFile | undefined) => {
     setFocusFile(file);
   }
 };
-const [submitHanlder, clearHanlder] = useTimeoutHanlder();
 const clickHanlder = (file: IFile | undefined, dblclick: boolean) => {
   if (dblclick) {
     clearHanlder();
@@ -54,31 +58,18 @@ const clickHanlder = (file: IFile | undefined, dblclick: boolean) => {
     submitHanlder(() => focusHanlder(file), 200);
   }
 };
-// const contents = ref<any>([]);
 const getContent = () => {
-  const contents: IFile[] = [];
-  if (props.current === 'disk') {
-    contents.push(
-      orgCtrl.user.directory,
-      ...orgCtrl.user.companys.map((i) => i.directory),
-    );
-  } else {
-    contents.push(...props.current.content());
-  }
-  console.log('contents',contents);
-
-  return contents;
+    const contents = ref<IFile[]>([]);
+    if (current === 'disk') {
+      contents.value.push(orgCtrl.user, ...orgCtrl.user.companys);
+    } else {
+      contents.value.push(...current.content());
+    }
+    return contents.value;
 };
-const contextMenu = (file?: IFile) => {
-  const entity = file ?? dircetory.value;
-  return {
-    items: cleanMenus(loadFileMenus(entity)) || [],
-    onClick: ({ key }: { key: string }) => {
-      console.log("点击事件", key, entity, dircetory.value.key)
-      command.emitter("executor", key, entity, dircetory.value.key);
-    },
-  };
-};
+watch(props.selectMenu,()=>{
+    getContent();
+})
 </script>
 
 <template>
@@ -87,19 +78,37 @@ const contextMenu = (file?: IFile) => {
     :v-loading="false"
     element-loading-text="'加载中...'"
   >
+    <div class="head">
+      <OrgIcons store selected />
+      <span>数据</span>
+    </div>
     <DirectoryViewer
       extraTags
       :initTags="['全部']"
       :selectFiles="[]"
+      :focusFile="focusFile"
+      :currentTag="currentTag"
+      :height='"calc(100% -100px)"'
       :content="getContent()"
-      :preDirectory="(orgCtrl.currentKey === 'disk' ? undefined : current.superior)"
+      :tagChanged="(t) => setCurrentTag(t)"
       :fileOpen="(entity, dblclick) => clickHanlder(entity as IFile, dblclick)"
-      :contextMenu="(entity) => contextMenu(entity as IWorkTask)"
+      :contextMenu="() => {  return { items: [],  }}"
     />
   </div>
 </template>
 
 <style lang="scss" scoped>
+.head{
+  display:flex;
+  align-items: center;
+  padding-left: 10px;
+  margin: 12px;
+  margin-left: 0;
+  span{
+    font-size: 16px;
+    margin-left: 10px;
+  }
+}
 .directory-viewer {
   height: 100%;
 }

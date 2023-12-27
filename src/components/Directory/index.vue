@@ -14,31 +14,68 @@ const props = defineProps<{
   root: IFile
 }>()
 
+const currentTag = ref<String>('全部')
 const preDirectory= ref<IFile>()
 const directory=ref<IFile>(props.root as IFile)
 const content = ref<IDEntity[]>(directory.value.content(false))
 const loaded=ref(false)
 /** 加载目录内容 */
 const loadContent = async(file: IFile, directory: IFile) => {
-  loaded.value = false
-  await file.loadContent()
-  if (file.key === directory.key) {
-    content.value = directory.content(false)
-  }
-  loaded.value = true
+  setLoaded(false);
+  file.loadContent().then(() => {
+    if (file.key === directory.key) {
+      let res = directory.content();
+      console.log('directory.content()',res);
+      setContent(res);
+    }
+    setLoaded(true);
+  });
+}
+const setCurrentTag = (val:string) => {
+  currentTag.value = val;
 }
 
-watch(directory, () => {
+const setContent = (val:IDEntity[]) => {
+    content.value = val;
+}
+
+const setLoaded = (val:boolean) => {
+  loaded.value = val;
+}
+
+const setPreDirectory = (val:IFile) => {
+  preDirectory.value = val;
+} 
+onMounted(()=>{
+  setCurrentTag('全部');
   const id = directory.value.subscribe(() => {
     loadContent(directory.value as IFile, directory.value as IFile)
   })
   if (directory.value != props.root) {
-    preDirectory.value = directory.value.superior as IFile
+    setPreDirectory(directory.value.superior);
   } else {
-    preDirectory.value = undefined
+    setPreDirectory(undefined);
   }
-  onBeforeUnmount(() => directory.value.unsubscribe(id))
+  return () => {
+    directory.value.unsubscribe(id);
+  };
+})
+watch(directory.value, () => {
+  // setCurrentTag('全部');
+  // const id = directory.value.subscribe(() => {
+  //   loadContent(directory.value as IFile, directory.value as IFile)
+  // })
+  // if (directory.value != props.root) {
+  //   setPreDirectory(directory.value.superior);
+  // } else {
+  //   setPreDirectory(undefined);
+  // }
+  // return () => {
+  //   directory.value.unsubscribe(id);
+  // };
+  // onBeforeUnmount(() => directory.value.unsubscribe(id))
 },{immediate:true})
+
 
 /** 打开文件 */
 const handleFileOpen = (file:any) => {
@@ -72,6 +109,8 @@ const getContextMenu = (entity:any) => {
       extraTags
       :initTags="['全部']"
       :selectFiles="[]"
+      :currentTag="currentTag"
+      :tagChanged="(t) => setCurrentTag(t)"
       :fileOpen="handleFileOpen"
       :preDirectory="(preDirectory as IFile)"
       :contextMenu="getContextMenu"

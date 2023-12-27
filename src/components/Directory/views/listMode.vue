@@ -67,6 +67,8 @@ defineProps<{
 <style lang="scss" scoped>
 .list-mode {
   height: 100%;
+  box-sizing: border-box;
+  padding: 0 10px;
 }
 .list_item {
   cursor: pointer;

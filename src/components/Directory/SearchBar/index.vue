@@ -16,6 +16,7 @@ const props = defineProps<{
   entitys: IEntity<schema.XEntity>[]
   onChanged: (tag: string) => void
   onBack: () => void
+  onValueChanged: (value: string) => void;
 }>()
 
 const items = props.menus.items || []
@@ -50,37 +51,74 @@ const groupTags = computed(() => {
     return aqz - bqz;
   });
 })
-
+const searchText = ref<string>('')
 </script>
 
 <template>
   <div class="tags">
     <div class="tags-bar">
-      <!-- 返回按钮 -->
-      <ElButton v-if="showBack"
-        link
-        title="返回"
-        :icon="Back"
-        @click="onBack"
-      />
-      <div class="tags_body">
-        <ElSpace style="height: 26px;" :size="8" spacer="|">
-          <template v-for="item in groupTags" :key="item.tag">
-            <ElBadge 
-              :hidden="badgeCount && badgeCount(item.tag)===0"  
-              :value="badgeCount && badgeCount(item.tag)" 
+      <ElInput placeholder="请输入" v-model="searchText" @input="props.onValueChanged(searchText);"></ElInput>
+    </div>
+    <div class="tags-actions">
+      <!-- 刷新、上传、上传列表 -->
+      <template v-if="outside.length > 0">
+        <div
+          v-for="item in outside" :key="item.key"
+          :title="item.label"
+          style="font-size: 18px;cursor: pointer;"
+          @click="menus.onClick?.apply(this, [item])"
+        >
+          <component :is="item.icon.name" v-bind="item.icon.args"/>
+        </div>
+      </template>
+      <!-- 更多操作 -->
+      <ElDropdown
+        v-if="inside.length > 0"
+        placement="bottom"
+        :trigger="['click', 'contextmenu']"
+      >
+        <ElIcon :size="22" style="cursor: pointer;"><MoreFilled /></ElIcon>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item 
+              v-for="item in inside" 
+              :key="item.key"
             >
-              <div 
-                :class="item.tag === props.select ? 'tags_item_active' : 'tags_item'" 
-                @click="onChanged(item.tag)"
-              >
-                {{item.tag}}
-                <span v-if="item.count>0" class="item_count">{{item.count}}</span>
-              </div>
-            </ElBadge>
-          </template>
-        </ElSpace>
-      </div>
+              <!-- 含子项 -->
+              <template v-if="item?.children?.length>0">
+                <ElPopover trigger="hover" placement="left-start" :show-arrow="false">
+                  <template #reference>
+                    <div class="menu-item-btn" @click="menus.onClick">
+                      <div style="width: 85px;display: flex;align-items: center;justify-content: space-between;">
+                        <component v-if="item.icon" :is="item.icon.name" v-bind="item.icon.args"/>
+                        <span>{{ item.label }}</span>
+                        <el-icon style="margin-right: 0;"><ArrowRight /></el-icon>
+                      </div>
+                    </div>
+                  </template>
+                  <template #default>
+                    <div
+                      class="menu-item-btn"  
+                      v-for="i in item.children" :key="i.key" 
+                      @click="onOperateMenuClick(selectMenu, i.key);"
+                    >
+                      <component :is="i.icon?.name" v-bind="i.icon?.args"/>
+                      {{ i.label }}
+                    </div>
+                  </template>
+                </ElPopover>
+              </template>
+              <!-- 不含子项 -->
+              <template v-else>
+                <div class="menu-item-btn"  @click="onOperateMenuClick(selectMenu, item.key)">
+                  <component v-if="item.icon" :is="item.icon.name" v-bind="item.icon.args"/>
+                  <span>{{ item.label }}</span>
+                </div>
+              </template>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </ElDropdown>      
     </div>
   </div>
 </template>
@@ -102,6 +140,8 @@ const groupTags = computed(() => {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid #efefef;
+  padding-bottom:10px;
+
   &_btn {
     cursor: pointer;
   }

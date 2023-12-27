@@ -89,7 +89,7 @@ import {ArrowRight} from '@element-plus/icons-vue'
       <div>
         <ElSpace wrap :size="20">
           <!-- 切换主侧栏 -->
-          <div>
+          <!-- <div>
             <a
               v-if="!leftShow"
               title='切换主测栏'
@@ -106,9 +106,9 @@ import {ArrowRight} from '@element-plus/icons-vue'
             >
             <BarIcon type="right" :size="18" :width="8" :selected="rightSider" />
             </a>
-          </div>
+          </div> -->
           <!-- 右侧栏插槽 -->
-          <slot name="rightBar" />
+          <!-- <slot name="rightBar" /> -->
         </ElSpace>
       </div>
     </ElHeader>

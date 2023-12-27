@@ -1,8 +1,7 @@
-
-
 <script lang="ts" setup>
 import Content from './content/index.vue';
 import MainLayout from '@/components/MainLayout/index.vue';
+import AppLayout from '@/components/MainLayout/appLayout.vue';
 import * as config from "./config/menuOperate";
 import useMenuUpdate from '@/hooks/useMenuUpdate'
 const {key, rootMenu, selectMenu,onSelectMenu} = useMenuUpdate(config.loadBrowserMenu)
@@ -29,14 +28,9 @@ mainShow();
 </script>
 
 <template>
-  <MainLayout
-    v-if="store.showMenu"
-    rightShow
-    :previewFlag="'store'"
-    :selectMenu="store.selectMenu"
-    :onSelect="async (data) => store.setSelectMenu(data)"
-    :siderMenuData="store.rootMenu"
-  >
-    <Content :key="key" :current="store.selectMenu.item" />
-  </MainLayout>
+  <AppLayout :previewFlag='"store"'>
+    <template v-slot:content>
+      <Content :selectMenu="selectMenu"/>
+    </template>
+  </AppLayout>
 </template>

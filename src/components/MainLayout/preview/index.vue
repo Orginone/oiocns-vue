@@ -6,6 +6,7 @@ import VideoView from './video/index.vue'
 import OfficeView from './office/index.vue'
 import EntityInfo from '@/components/Common/EntityInfo/index.vue'
 import Directory from '@/components/Directory/index.vue'
+import PreviewLayout from './layout/index.vue';
 
 import {
   IDirectory,
@@ -29,7 +30,6 @@ import SessionBody from './session/index.vue'
 
 const props = defineProps<{
   flag?: string;
-  entity: EntityType;
 }>()
 const officeExt = ['.md', '.pdf', '.xls', '.xlsx', '.doc', '.docx', '.ppt', '.pptx'];
 const videoExt = ['.mp4', '.avi', '.mov', '.mpg', '.swf', '.flv', '.mpeg'];
@@ -46,7 +46,6 @@ type EntityType =
   | undefined
 
 const entity=ref<EntityType>()
-entity.value = props.entity
 let id = ''
 onMounted(() => {
   id = command.subscribe((type, flag, ...args: any[]) => {
@@ -90,24 +89,22 @@ onBeforeUnmount(() => {
     <template v-else-if="entity.hasOwnProperty('activity')">
       <SessionBody :target="(entity as ISession).target" :session="(entity as ISession)" />
     </template>
-    <!-- 会话 -->
-    <template v-else-if="(entity as ITarget | IMemeber)?.session">
-        <SessionBody :target="(entity as ITarget)" :session="(entity as ITarget).session" setting />
-    </template>
     <!--  TODO: 表单 -->
     <template v-else-if="entity.hasOwnProperty('fields')">
       <!-- <WorkForm :form="entity" /> -->
     </template>
-    <!-- TODO: taskdata -->
-    <template v-else-if="entity?.session">
-      <!-- switch (entity.taskdata.taskType) {
-        case '事项':
-          return <TaskBody task={entity} />;
-        case '加用户':
-          return <JoinApply task={entity} />;
-        default:
-          return <></>;
-      } -->
+     <!-- 数据和会话 -->
+    <template v-else-if="entity.hasOwnProperty('session')">
+      <template v-if="props.flag =='store'">
+        <PreviewLayout :entity="(entity as IEntity<schema.XEntity>)">
+          <template v-slot:content>
+            <Directory :key="entity.key" :root="(entity.directory as IDirectory)" />
+          </template>
+        </PreviewLayout>
+      </template>
+      <template v-else-if="props.flag =='relation'">
+        <SessionBody :key="entity.key" :session="(entity as ITarget).session" setting/>,
+      </template>
     </template>
     <!-- 全部文件 -->
     <template v-else-if="entity?.isContainer">
