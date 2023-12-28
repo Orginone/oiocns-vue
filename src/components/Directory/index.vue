@@ -77,14 +77,10 @@ watch(directory.value, () => {
 },{immediate:true})
 
 
-/** 打开文件 */
-const handleFileOpen = (file:any) => {
-  if (file?.isContainer) {
-    directory.value = file
-  } else {
-    command.emitter('executor', 'open',file,'preview')
-  }
-}
+/** 设置文件 */
+const setDirectory = (file:IFile)=>{
+  directory.value = file;
+};
 /** 获取右键菜单 */
 const getContextMenu = (entity:any) => {
   const file = (entity || directory.value) as IFile
@@ -111,7 +107,14 @@ const getContextMenu = (entity:any) => {
       :selectFiles="[]"
       :currentTag="currentTag"
       :tagChanged="(t) => setCurrentTag(t)"
-      :fileOpen="handleFileOpen"
+      :fileOpen="(file) => {
+        console.log('aaaa',file);
+        if (file && 'isContainer' in file && file.isContainer) {
+          setDirectory(file as IFile);
+        } else {
+          command.emitter('executor', 'open', file);
+        }
+      }"
       :preDirectory="(preDirectory as IFile)"
       :contextMenu="getContextMenu"
     />
@@ -120,6 +123,6 @@ const getContextMenu = (entity:any) => {
 
 <style lang="scss" scoped>
 .directory-viewer {
-  height: 100%;
+  height: calc(100% - 20px)
 }
 </style>

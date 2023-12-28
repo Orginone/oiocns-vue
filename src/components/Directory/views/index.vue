@@ -68,14 +68,13 @@ const getContent = (filter: boolean = true) => {
     return props.content.filter(filterExp);
   };
   const setFilter = (val:string) => {
-    console.log('val',val);
     filterText.value = val;
     getContent();
   }
 </script>
 
 <template>
-  <!-- 标签栏 -->
+  <!-- 搜索栏 -->
   <SearchBar
     :select="currentTag"
     :showBack="preDirectory != undefined"
@@ -93,14 +92,13 @@ const getContent = (filter: boolean = true) => {
   <TagsBar
     :select="currentTag"
     :showBack="preDirectory != undefined"
-    :onBack="()=>fileOpen(preDirectory,true)"
     :extraTags="extraTags"
     :excludeTags="excludeTags || []"
     :initTags="initTags"
     :selectFiles="selectFiles"
-    :entitys="content"
+    :entitys="getContent(false)"
     :badgeCount="badgeCount"
-    :menus="contextMenu()"
+    :onBack="()=>fileOpen(preDirectory,true)"
     :onChanged="(t) => props.tagChanged && props.tagChanged(t)"
   />
   <!-- 文件列表 -->
@@ -113,16 +111,16 @@ const getContent = (filter: boolean = true) => {
       :selectFiles="selectFiles"
       :focusFile="focusFile"
       :content="getContent()"
-      :fileOpen="fileOpen"
-      :contextMenu="contextMenu"
+      :fileOpen="props.fileOpen"
+      :contextMenu="props.contextMenu"
     />
     <ListMode
       v-else
       :selectFiles="selectFiles"
       :focusFile="focusFile"
       :content="getContent()"
-      :fileOpen="fileOpen"
-      :contextMenu="contextMenu"
+      :fileOpen="props.fileOpen"
+      :contextMenu="props.contextMenu"
     />
     <!-- 为空 -->
     <ElEmpty v-if="content.length === 0" description="暂无数据"></ElEmpty>

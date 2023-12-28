@@ -90,7 +90,7 @@ orgCtrl.user.getDiskInfo().then((value) => {
         <div class="cardItem-header">
           <span class="title">快捷操作</span>
           <span class="extraBtn">
-            <div @click="router.push('/setting')">
+            <div @click="router.push('/relation')">
               <ElIcon :size="14"><Stack/></ElIcon> <span>更多操作</span>
             </div>
           </span>

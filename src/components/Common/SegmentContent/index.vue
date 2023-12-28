@@ -42,7 +42,7 @@ const parentRef = ref<any>()
 <style lang="scss" scoped>
 // @import '~antd/es/style/themes/variable';
 #segmentContent {
-  height: calc(100% - 35px);
+  height: calc(100% - 95px);
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
@@ -50,7 +50,7 @@ const parentRef = ref<any>()
     padding-bottom: 0;
     overflow: auto;
     overflow-x: hidden;
-    height: calc(100% - 40px);
+    height: calc(100% - 80px);
     &::-webkit-scrollbar{
       background-color: transparent;
       width: 4px;
@@ -58,6 +58,7 @@ const parentRef = ref<any>()
   }
   .footer {
     height: 40px;
+    padding-left: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;

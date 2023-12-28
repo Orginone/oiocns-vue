@@ -149,7 +149,7 @@ const multiDelete = async() => {
 <style lang="less" scoped>
 .cohort_wrap {
   width: 100%;
-  height: 100%;
+  height: 85vh;
   display: flex;
   justify-content: space-between;
   overflow: hidden;

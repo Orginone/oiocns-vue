@@ -35,6 +35,7 @@ const [mainWidth, setMainWidth] = useStorage<string | number>('mainWidth', '40%'
 // @import '~antd/es/style/themes/variable';
 .main_layout {
   height: 100%;
+  box-sizing: border-box;
   .header {
     // TODO:-color: @component-background;
     // border-radius: @border-radius-base;
@@ -89,7 +90,7 @@ const [mainWidth, setMainWidth] = useStorage<string | number>('mainWidth', '40%'
     }
   }
   .body {
-    height: calc(100% - 60px);
+    height: calc(100%);
     display: flex;
     flex-direction: row;
     .main {

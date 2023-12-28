@@ -57,7 +57,7 @@ const searchText = ref<string>('')
 <template>
   <div class="tags">
     <div class="tags-bar">
-      <ElInput placeholder="请输入" v-model="searchText" @input="props.onValueChanged(searchText);"></ElInput>
+      <ElInput placeholder="请输入" style="{outline:none}" v-model="searchText" @input="props.onValueChanged(searchText);"></ElInput>
     </div>
     <div class="tags-actions">
       <!-- 刷新、上传、上传列表 -->
@@ -129,17 +129,16 @@ const searchText = ref<string>('')
   display: flex;
   justify-content: end;
   align-items: center;
+  border-bottom: 1px solid #efefef;
 }
 .tags-bar {
   width: 0;
   flex: 1;
-  height: 35px;
   gap: 8px;
   display: flex;
   padding: 0 16px;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #efefef;
   padding-bottom:10px;
 
   &_btn {

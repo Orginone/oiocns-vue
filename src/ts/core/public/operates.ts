@@ -281,6 +281,20 @@ export const targetOperates = {
     label: '设立部门',
     iconType: '部门',
   },
+  JoinCompany: {
+    sort: 41,
+    cmd: 'joinCompany',
+    label: '加入单位',
+    iconType: 'joinCompany',
+    model: 'outside',
+  },
+  JoinGroup: {
+    sort: 42,
+    cmd: 'joinGroup',
+    label: '加入集群',
+    iconType: '组织群',
+    model: 'outside',
+  },
   Chat: {
     sort: 15,
     cmd: 'openChat',

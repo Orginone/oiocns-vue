@@ -29,7 +29,7 @@ mainShow();
 </script>
 
 <template>
-  <MainLayout
+  <!-- <MainLayout
     v-if="setting.showMenu"
     rightShow
     :previewFlag="'setting'"
@@ -38,5 +38,10 @@ mainShow();
     :siderMenuData="setting.rootMenu"
   >
     <Content :key="setting.key" :current="setting.selectMenu.item" />
-  </MainLayout>
+  </MainLayout> -->
+  <AppLayout :previewFlag='"relation"'>
+    <template v-slot:content>
+      <Content :selectMenu="selectMenu"/>
+    </template>
+  </AppLayout>
 </template>

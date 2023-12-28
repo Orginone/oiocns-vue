@@ -5,51 +5,46 @@ import { IEntity } from '@/ts/core'
 import { Back,Right } from '@element-plus/icons-vue'
 
 const props = defineProps<{
-  select: string
-  initTags: string[]
-  excludeTags: string[]
-  extraTags: boolean
-  showBack?: boolean
-  menus: any
+  select: string;
+  initTags: string[];
+  excludeTags: string[];
+  extraTags: boolean;
+  showBack?: boolean;
   selectFiles: IEntity<schema.XEntity>[];
   badgeCount?: (tag: string) => number;
-  entitys: IEntity<schema.XEntity>[]
-  onChanged: (tag: string) => void
-  onBack: () => void
+  entitys: IEntity<schema.XEntity>[];
+  onChanged: (tag: string) => void;
+  onBack: () => void;
 }>()
+  // 获取分组标签集
 
-const items = props.menus.items || []
-const outside = items.filter((item: any) => item.model === 'outside')
-const inside = items.filter((item: any) => item.model != 'outside')
-
-/** 分组标签集 */
-const groupTags = computed(() => {
-  const tags = props.initTags.map((tag) => {
-    return { tag, count: 0 };
-  })
-  if (props.selectFiles.length > 0) {
-    tags.push({ tag: '已选中', count: props.selectFiles.length })
-  }
-  if (props.extraTags) {
-    props.entitys.forEach((entity) => {
-      entity.groupTags.forEach((tag) => {
-        if (!props.excludeTags.includes(tag)) {
-          const index = tags.findIndex((i) => i.tag === tag);
-          if (index > -1) {
-            tags[index].count += 1;
-          } else {
-            tags.push({ tag, count: 1 });
-          }
-        }
-      });
+const groupTags = () => {
+    const tags = props.initTags.map((tag) => {
+      return { tag, count: 0 };
     });
-  }
-  return tags.sort((a, b) => {
-    const aqz = a.tag === '已删除' ? 10 : 0;
-    const bqz = b.tag === '已删除' ? 10 : 0;
-    return aqz - bqz;
-  });
-})
+    if (props.selectFiles.length > 0) {
+      tags.push({ tag: '已选中', count: props.selectFiles.length });
+    }
+    if (props.extraTags) {
+      props.entitys.forEach((entity) => {
+        entity.groupTags.forEach((tag) => {
+          if (!props.excludeTags.includes(tag)) {
+            const index = tags.findIndex((i) => i.tag === tag);
+            if (index > -1) {
+              tags[index].count += 1;
+            } else {
+              tags.push({ tag, count: 1 });
+            }
+          }
+        });
+      });
+    }
+    return tags.sort((a, b) => {
+      const aqz = a.tag === '已删除' ? 10 : 0;
+      const bqz = b.tag === '已删除' ? 10 : 0;
+      return aqz - bqz;
+    });
+};
 
 </script>
 
@@ -65,7 +60,7 @@ const groupTags = computed(() => {
       />
       <div class="tags_body">
         <ElSpace style="height: 26px;" :size="8" spacer="|">
-          <template v-for="item in groupTags" :key="item.tag">
+          <template v-for="item in groupTags()" :key="item.tag">
             <ElBadge 
               :hidden="badgeCount && badgeCount(item.tag)===0"  
               :value="badgeCount && badgeCount(item.tag)" 

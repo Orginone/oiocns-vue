@@ -42,7 +42,7 @@ export class Command {
    * @param args 参数
    */
   public emitter(type: string, cmd: string, ...args: any[]): void {
-    console.log('发送指令');
+    console.log('发送指令',type,cmd,args);
     Object.keys(this.callbacks).forEach((key) => {
       this.callbacks[key].apply(this, [type, cmd, ...args]);
     });
