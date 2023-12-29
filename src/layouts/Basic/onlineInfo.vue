@@ -1,21 +1,25 @@
 <script setup lang='ts'>
+
 import { kernel, model, schema } from '@/ts/base'
+
 const props = defineProps<{
   onClose: () => void
 }>()
 
-const key = ref('1')
-const onlines=ref<model.OnlineSet>()
+const isOpen = ref(true)
 
-const id = kernel.onlineNotify.subscribe((k) => {
+// TODO:
+// const key = ref('1')
+const onlines = ref<model.OnlineSet>()
+
+watchEffect(() => {
   kernel.onlines().then((value) => {
     onlines.value = value
-    key.value = k
+    console.log(onlines.value);///////////
+    
+    // TODO:
+    // key.value = value.key
   })
-})
-
-onBeforeUnmount(() => {
-  kernel.onlineNotify.unsubscribe(id)
 })
 
 //TODO: const loadOnlineInfo = (onlines: model.OnlineInfo[]) => {
@@ -48,28 +52,35 @@ onBeforeUnmount(() => {
 //     );
 //   };
 
+const tabList = computed(()=>{
+  if(!onlines.value) return []
+  return [
+    {
+      name: 'online_user',
+      label: `在线用户(${onlines.value.users.length})`,
+      // children: loadOnlineInfo(onlines.value.users),
+    },
+    {
+      name: 'online_connection',
+      label: `在线数据核(${onlines.value.storages.length})`,
+      // children: loadOnlineInfo(onlines.value.storages),
+    },
+  ]
+})
+const activeName = ref('online_user')
+
 </script>
 <template>
-  <template v-if="onlines">
-    <ElDrawer open :width="500" placement="right" onClose={() => onClose()}>
-      <ElTabs
-        key={key}
-        centered
-        items={[
-          {
-            key: 'online_user',
-            label: `在线用户(${onlines.users.length})`,
-            children: loadOnlineInfo(onlines.users),
-          },
-          {
-            key: 'online_connection',
-            label: `在线数据核(${onlines.storages.length})`,
-            children: loadOnlineInfo(onlines.storages),
-          },
-        ]}
-      />
+  <ElDrawer v-if="onlines" v-model="isOpen" :width="500" placement="right" @close="props.onClose">
+    <ElTabs v-model="activeName">
+      <ElTabPane v-for="item in tabList" :key="item.name" 
+        :name="item.name" 
+        :label="item.label"
+      >
+        {{ item.label }}
+      </ElTabPane>
+    </ElTabs>
   </ElDrawer>
-  </template>
 </template>
 
 <style lang='scss' scoped>

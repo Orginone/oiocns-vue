@@ -1,6 +1,6 @@
 import { App } from 'vue'
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import Layout from '@/views/Layout/index.vue'
+import BasicLayout from '@/layouts/Basic/index.vue'
 
 let resultRouter: RouteRecordRaw[] = []
 
@@ -79,12 +79,12 @@ const mainRouter: RouteRecordRaw[] = [
     }
   },
   {
-    path: '/todo',
-    component: () => import('@/views/todo/index.vue'),
+    path: '/work',
+    component: () => import('@/views/Work/index.vue'),
     meta: {
       keepAlive: false,
       title: '办事',
-      id: "todo"
+      id: "work"
     },
   },
 ]
@@ -94,7 +94,7 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/',
     redirect: '/workHome',
-    component: Layout,
+    component: BasicLayout,
     children: mainRouter
   },
   ...constantRoutes

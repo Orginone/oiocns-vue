@@ -21,34 +21,35 @@ const props = defineProps<{
   className?: string;
 }>()
 
-  const size = props.size ?? 22;
-  let svgName = 'home';
-  if (props.chat) {
-    svgName = 'chat';
-  } else if (props.work) {
-    svgName = 'work';
-  } else if (props.setting) {
-    svgName = 'setting';
-  } else if (props.exit) {
-    svgName = 'exit';
-  } else if (props.market) {
-    svgName = 'market';
-  } else if (props.store) {
-    svgName = 'store';
-  } else if (props.activity) {
-    svgName = 'activity'
-  } else if (props.workDone) {
-    svgName = 'workDone';
-  } else if (props.myWork) {
-    svgName = 'myWork';
-  } else if (props.workStart) {
-    svgName = 'workStart';
-  } else if (props.type) {
-    svgName = props.type;
-  }
-  if (props.selected) {
-    svgName += '-select';
-  }
+const size = props.size ?? 22;
+let svgName = 'home';
+if (props.chat) {
+  svgName = 'chat';
+} else if (props.work) {
+  svgName = 'work';
+} else if (props.setting) {
+  svgName = 'setting';
+} else if (props.exit) {
+  svgName = 'exit';
+} else if (props.market) {
+  svgName = 'market';
+} else if (props.store) {
+  svgName = 'store';
+} else if (props.activity) {
+  svgName = 'activity'
+} else if (props.workDone) {
+  svgName = 'workDone';
+} else if (props.myWork) {
+  svgName = 'myWork';
+} else if (props.workStart) {
+  svgName = 'workStart';
+} else if (props.type) {
+  svgName = props.type;
+}
+if (props.selected) {
+  svgName += '-select';
+}
+
 </script>
 
 <template>

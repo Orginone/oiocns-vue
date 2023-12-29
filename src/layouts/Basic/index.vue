@@ -1,19 +1,18 @@
 <!-- Layout -->
 <script lang="ts" setup>
-  import slide from './components/slide.vue'
 
+import Navbar from './navbar.vue'
+import Executor from '@/executor/index.vue'
 
-
-  // 命令执行器
-import Executor from '@/executor/index.vue'; 
 </script>
 
 <template>
-  <el-container class=" pages home-wrap">
+  <el-container class="pages">
     <!-- Layout——侧边导航 -->
-    <slide></slide>
+    <Navbar />
     <!-- Layout——命令执行器 -->
     <Executor />
+    <!-- TODO: 连接掉线通知 -->
     <!-- Layout——内容 -->
     <div class="layout-content">
       <Suspense>
@@ -25,7 +24,6 @@ import Executor from '@/executor/index.vue';
             <component v-else :is="Component" />
           </router-view>
         </template>
-
         <template #fallback>
           <LoadingVue />
         </template>
@@ -34,12 +32,7 @@ import Executor from '@/executor/index.vue';
   </el-container>
 </template>
 
-<style>
-div{
-  font-size: 14px;
-}
-</style>
-<style lang="scss" scoped>
+<style lang="less" scoped>
   .pages{
     height: 100%;
     width: 100%;
@@ -50,6 +43,4 @@ div{
     height: 100%;
     width: calc(100% - 60px);
   }
-
-
 </style>

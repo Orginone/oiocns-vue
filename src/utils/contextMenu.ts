@@ -4,7 +4,7 @@ import { OperateMenuType } from 'typings/globelType'
 
 
 /** 右键菜单 */
-export function onContextMenu (e : MouseEvent, menu: {items: OperateMenuType[], onClick: Function}) {
+export function onContextMenu (e : MouseEvent, menu: {items: OperateMenuType[], onClick: ({key}:{key:string})=>void}) {
   e.preventDefault()
   // 处理menu的数据
   const getLegalMenu = (origin:any)=>{

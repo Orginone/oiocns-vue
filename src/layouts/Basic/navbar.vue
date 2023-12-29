@@ -1,10 +1,11 @@
 <script lang="ts" setup>
+
 import orgIcons from "@/components/Common/GlobalComps/orgIcons.vue"
 import EntityIcon from '@/components/Common/GlobalComps/entityIcon/index.vue'
 import orgCtrl from '@/ts/controller'
 import { useFlagCmdEmitter } from '@/hooks/useCtrlUpdate'
-import { kernel, model, schema } from '@/ts/base'
-import navItem from './navItem.vue'
+import navbarItem from './navbarItem.vue'
+import OnlineInfo from './onlineInfo.vue'
 
 const workCount = ref(0)
 const msgCount = ref(0)
@@ -64,16 +65,14 @@ const actions = ref([
 <template>
   <div class="nav">
     <div class="nav-top">
-      <div class="avatar">
-        <!-- <ElBadge :value="online" :hidden="!(online>0)"> -->
-          <EntityIcon :entityId="orgCtrl.user.id" :size="35" />
-        <!-- </ElBadge> -->
+      <div class="avatar" @click="onlineVisible=true">
+        <EntityIcon :entityId="orgCtrl.user.id" :size="35" />
       </div>
       <div class="navList">
-        <navItem v-for="item in actions" :key="item.path" :item = "item" />
+        <navbarItem v-for="item in actions" :key="item.path" :item = "item" />
       </div>
-      <!-- TODO: 待删除：在线信息 -->
-      <!-- <OnlineInfo v-if="onlineVisible" :onClose="() => onlineVisible = false" /> -->
+      <!-- TODO: 在线信息 -->
+      <OnlineInfo v-if="onlineVisible" :onClose="() => onlineVisible = false" />
     </div>
     <div class="nav-bottom">
       <RouterLink to="/login" class="exit">
@@ -85,42 +84,42 @@ const actions = ref([
   </div>
 </template>
 
-
-
-<style lang="scss" scoped>  
+<style lang="less" scoped>  
 .nav{
-  width: 60px;
-  height: 100%; 
+width: 60px;
+height: 100%; 
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: space-between;
+align-items: center;
+padding: 13px 5px;
+background-color: var(--color-brand-Light, #F2F3FF);
+.nav-top{
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  align-items: center;
-  padding: 13px 5px;
-  // TODO: color/brand/Light
-  background-color: #F2F3FF;
-  .nav-top{
+  gap: 32px;
+  .avatar {
+    margin: auto;
+    cursor: pointer;
+  }
+  .navList {
     display: flex;
     flex-direction: column;
-    gap: 32px;
-    .avatar {
-      margin: auto;
-    }
-    .navList {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-  
+    gap: 6px;
   }
-  .nav-bottom {
-    border-radius: 8px;
-    opacity: 60%;
-    .exit {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+}
+.nav-bottom {
+  border-radius: 8px;
+  opacity: 60%;
+  .exit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 12px;
+    font-family: PingFang SC;
+    color: #003CAB;
   }
+}
 }
 </style>

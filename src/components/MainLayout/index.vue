@@ -110,9 +110,14 @@ const onSelectClick = async (item: MenuItemType) => {
             </span>
             <ElText truncated>{{parentMenu?.label}}</ElText>
           </div>
-          <div class="actions" v-if="parentMenu?.menus?.length" @click="onContextMenu($event,{items: parentMenu.menus,onClick: ({ key }) => {
-                      onOperateMenuClick(props.selectMenu, key);
-                    }})">
+          <div class="actions" v-if="parentMenu?.menus?.length" 
+            @click="onContextMenu($event,{
+              items: parentMenu.menus,
+              onClick: ({ key}) => {
+                onOperateMenuClick(props.selectMenu, key);
+              }
+            })"
+          >
             <ElIcon :size="22" style="transform: rotate(90deg);"><MoreFilled/></ElIcon>
           </div>
         </div>

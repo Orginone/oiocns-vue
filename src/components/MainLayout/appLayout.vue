@@ -1,7 +1,6 @@
 <!-- 内容区模板布局 -->
 <script setup lang="ts">
-import { OperateMenuType } from '@/typings/globelType'
-import useStorage from '@/hooks/useStorage'
+
 import EntityPreview from './preview/index.vue'
 
 defineProps<{

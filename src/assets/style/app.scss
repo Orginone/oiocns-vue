@@ -1,8 +1,8 @@
 @use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
-@use './variable';
+// @use './variable'
 @use 'reset';
 @use 'main';
-@use '_transition';
+// @use '_transition';
 
 .emoji {
   width: 20px;
