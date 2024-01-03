@@ -1,3 +1,4 @@
+import { getUuid } from '@/utils/tools';
 import { schema, model } from '../../../base';
 import { entityOperates, fileOperates, orgAuth } from '../../../core/public';
 import { IDirectory } from '../directory';
@@ -11,6 +12,8 @@ export interface IForm extends IStandardFileInfo<schema.XForm> {
   fields: model.FieldModel[];
   /** 加载分类字典项 */
   loadItems(speciesIds: string[]): Promise<schema.XSpeciesItem[]>;
+  /** 加载引用表单 */
+  loadReferenceForm(formIs: string): Promise<schema.XForm>;
   /** 加载字段 */
   loadFields(reload?: boolean): Promise<model.FieldModel[]>;
   /** 保存 */
@@ -110,6 +113,10 @@ export class Form extends StandardFileInfo<schema.XForm> implements IForm {
       },
     });
   }
+  async loadReferenceForm(formId: string): Promise<schema.XForm> {
+    const data = await this.directory.resource.formColl.find([formId]);
+    return data[0];
+  }
   async createAttribute(propertys: schema.XProperty[]): Promise<schema.XAttribute[]> {
     const data = propertys.map((prop) => {
       return {
@@ -160,8 +167,21 @@ export class Form extends StandardFileInfo<schema.XForm> implements IForm {
     return false;
   }
   override async copy(destination: IDirectory): Promise<boolean> {
-    if (this.allowCopy(destination)) {
-      return await super.copyTo(destination.id, destination.resource.formColl);
+    var newMetaData = {
+      ...this.metadata,
+      directoryId: destination.id,
+    };
+    if (!this.allowCopy(destination)) {
+      newMetaData.code = getUuid();
+      newMetaData.id = 'snowId()';
+      newMetaData.name = `${this.metadata.name} - 副本[${newMetaData.code}]`;
+    }
+    const data = await destination.resource.formColl.replace(newMetaData);
+    if (data) {
+      return await destination.resource.formColl.notity({
+        data: data,
+        operate: 'insert',
+      });
     }
     return false;
   }

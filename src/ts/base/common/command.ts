@@ -42,7 +42,6 @@ export class Command {
    * @param args 参数
    */
   public emitter(type: string, cmd: string, ...args: any[]): void {
-    console.log('发送指令',type,cmd,args);
     Object.keys(this.callbacks).forEach((key) => {
       this.callbacks[key].apply(this, [type, cmd, ...args]);
     });
@@ -80,7 +79,9 @@ export class Command {
    */
   public emitterFlag(flag: string = '', ...args: any[]): void {
     Object.keys(this.flagCallbacks).forEach((id) => {
-      if (flag === '' || id.endsWith(`-${flag}`)) {
+      if ((flag || '') === '' && !id.includes('-_')) {
+        this.flagCallbacks[id].apply(this, [...args]);
+      } else if (id.endsWith(`-${flag}`) || id.endsWith(`-_${flag}`)) {
         this.flagCallbacks[id].apply(this, [...args]);
       }
     });

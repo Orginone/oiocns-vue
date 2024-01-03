@@ -32,6 +32,11 @@ export interface ISession extends IEntity<schema.XEntity> {
   activity: IActivity;
   /** 是否可以删除消息 */
   canDeleteMessage: boolean;
+  /** 输入框内容 */
+  inputContent: {
+    message: string;
+    mentions: { text: string; id: string }[];
+  };
   /** 加载更多历史消息 */
   moreMessage(): Promise<number>;
   /** 禁用通知 */
@@ -65,6 +70,10 @@ export class Session extends Entity<schema.XEntity> implements ISession {
   activity: IActivity;
   chatdata: model.MsgChatData;
   messages: IMessage[] = [];
+  inputContent: { message: string; mentions: { text: string; id: string }[] } = {
+    message: '',
+    mentions: [],
+  };
   private messageNotify?: (messages: IMessage[]) => void;
   constructor(id: string, target: ITarget, _metadata: schema.XTarget, tags?: string[]) {
     super(_metadata, tags ?? []);
@@ -138,11 +147,14 @@ export class Session extends Entity<schema.XEntity> implements ISession {
     return undefined;
   }
   get remark(): string {
+    if (this.inputContent.message.length > 0) {
+      return '草稿:' + this.inputContent.message;
+    }
     if (this.chatdata.lastMessage) {
       const msg = new Message(this.chatdata.lastMessage, this);
       return msg.msgTitle;
     }
-    return this.metadata.remark.substring(0, 60);
+    return this.metadata.remark;
   }
   get updateTime(): string {
     if (this.chatdata.lastMessage) {
@@ -157,16 +169,17 @@ export class Session extends Entity<schema.XEntity> implements ISession {
     return this.target.id === this.userId || this.target.hasRelationAuth();
   }
   get groupTags(): string[] {
-    const gtags: string[] = [...super.groupTags];
-    if (this.id === this.userId) {
-      gtags.push('本人');
-    } else if (this.isGroup) {
-      if (this.target.space.id !== this.userId) {
-        gtags.push(this.target.space.name);
-      } else {
+    const gtags: string[] = [];
+    if (this.id === this.target.id) {
+      if (this.id === this.userId) {
+        gtags.push('本人');
+      } else if (this.id != this.belongId) {
         gtags.push(this.target.user.findShareById(this.belongId).name);
+      } else {
+        gtags.push(this.typeName);
       }
-      gtags.push(this.typeName);
+    } else {
+      gtags.push(...super.groupTags);
     }
     if (this.chatdata.noReadCount > 0) {
       gtags.push('未读');
@@ -175,7 +188,7 @@ export class Session extends Entity<schema.XEntity> implements ISession {
       gtags.push('@我');
     }
     if (this.chatdata.isToping) {
-      gtags.push('置顶');
+      gtags.push('常用');
     }
     if (this.isGroup) {
       gtags.push('群聊');
@@ -248,6 +261,10 @@ export class Session extends Entity<schema.XEntity> implements ISession {
     cite?: IMessage | undefined,
     forward?: IMessage[] | undefined,
   ): Promise<boolean> {
+    this.inputContent = {
+      message: '',
+      mentions: [],
+    };
     if (cite) {
       cite.metadata.comments = [];
     }

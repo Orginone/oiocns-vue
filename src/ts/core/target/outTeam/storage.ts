@@ -26,13 +26,14 @@ export class Storage extends Target implements IStorage {
       TargetType.Person,
     ]);
   }
-  get isContainer(): boolean {
-    return false;
+  get isMyTeam(): boolean {
+    return true;
   }
   async exit(): Promise<boolean> {
     if (this.metadata.belongId !== this.space.id) {
       if (await this.removeMembers([this.user.metadata])) {
         this.space.storages = this.space.storages.filter((i) => i.key != this.key);
+        this.space.changCallback();
         return true;
       }
     }
@@ -42,6 +43,7 @@ export class Storage extends Target implements IStorage {
     const success = await super.delete(notity);
     if (success) {
       this.space.storages = this.space.storages.filter((i) => i.key != this.key);
+      this.space.changCallback();
     }
     return success;
   }
@@ -59,7 +61,7 @@ export class Storage extends Target implements IStorage {
     return [];
   }
   get chats(): ISession[] {
-    return [];
+    return this.targets.map((i) => i.session);
   }
   get targets(): ITarget[] {
     return [this];
@@ -83,8 +85,17 @@ export class Storage extends Target implements IStorage {
   }
   async deepLoad(reload: boolean = false): Promise<void> {
     if (this.hasRelationAuth()) {
-      await this.loadMembers(reload);
       await this.loadIdentitys(reload);
     }
+    this.loadMembers(reload);
+  }
+  override async pullMembers(
+    members: schema.XTarget[],
+    notity?: boolean,
+  ): Promise<boolean> {
+    if (notity && !this.hasRelationAuth()) {
+      return true;
+    }
+    return await super.pullMembers(members, notity);
   }
 }

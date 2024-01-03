@@ -10,7 +10,6 @@ import { ITarget } from '../base/target';
 import { ITeam } from '../base/team';
 import { targetOperates } from '../../public';
 import { Storage } from '../outTeam/storage';
-import { companyJoins } from '../../public/operates';
 import { Cohort } from '../outTeam/cohort';
 import { ISession } from '../../chat/session';
 import { IFile } from '../../thing/fileinfo';
@@ -55,9 +54,6 @@ export class Company extends Belong implements ICompany {
   stations: IStation[] = [];
   departments: IDepartment[] = [];
   departmentTypes: string[] = [];
-  get superior(): IFile {
-    return this.user;
-  }
   private _groupLoaded: boolean = false;
   private _departmentLoaded: boolean = false;
   async loadGroups(reload: boolean = false): Promise<IGroup[]> {
@@ -179,6 +175,7 @@ export class Company extends Belong implements ICompany {
   async exit(): Promise<boolean> {
     if (await this.removeMembers([this.user.metadata])) {
       this.user.companys = this.user.companys.filter((i) => i.key != this.key);
+      this.user.changCallback();
       return true;
     }
     return false;
@@ -187,6 +184,7 @@ export class Company extends Belong implements ICompany {
     const success = await super.delete(notity);
     if (success) {
       this.user.companys = this.user.companys.filter((i) => i.key != this.key);
+      this.user.changCallback();
     }
     return success;
   }
@@ -233,46 +231,27 @@ export class Company extends Belong implements ICompany {
   }
   async deepLoad(reload: boolean = false): Promise<void> {
     await Promise.all([
-      await this.loadGroups(reload),
-      await this.loadDepartments(reload),
-      await this.loadMembers(reload),
-      await this.loadSuperAuth(reload),
-      await this.loadIdentitys(reload),
-      await this.directory.loadDirectoryResource(reload),
+      this.loadGroups(reload),
+      this.loadDepartments(reload),
+      this.loadMembers(reload),
+      this.loadSuperAuth(reload),
+      this.loadIdentitys(reload),
     ]);
-    await Promise.all(
-      this.groups.map(async (group) => {
-        await group.deepLoad(reload);
-      }),
-    );
-    await Promise.all(
-      this.departments.map(async (department) => {
-        await department.deepLoad(reload);
-      }),
-    );
-    await Promise.all(
-      this.stations.map(async (station) => {
-        await station.deepLoad(reload);
-      }),
-    );
-    await Promise.all(
-      this.cohorts.map(async (cohort) => {
-        await cohort.deepLoad(reload);
-      }),
-    );
-    await Promise.all(
-      this.storages.map(async (storage) => {
-        await storage.deepLoad(reload);
-      }),
-    );
+    await Promise.all(this.groups.map((group) => group.deepLoad(reload)));
+    await Promise.all(this.departments.map((department) => department.deepLoad(reload)));
+    await Promise.all(this.stations.map((station) => station.deepLoad(reload)));
+    await Promise.all(this.cohorts.map((cohort) => cohort.deepLoad(reload)));
+    await Promise.all(this.storages.map((storage) => storage.deepLoad(reload)));
     this.superAuth?.deepLoad(reload);
+    this.directory.loadDirectoryResource(reload);
   }
 
   override operates(): model.OperateModel[] {
     const operates = super.operates();
     if (this.hasRelationAuth()) {
       operates.unshift(
-        companyJoins,
+        targetOperates.JoinGroup,
+        targetOperates.JoinStorage,
         targetOperates.NewGroup,
         targetOperates.NewDepartment,
       );
@@ -281,7 +260,12 @@ export class Company extends Belong implements ICompany {
   }
 
   content(): IFile[] {
-    return [...this.groups, ...this.departments, ...this.cohorts, ...this.storages];
+    return [
+      ...this.groups,
+      ...this.departments,
+      ...this.cohorts,
+      ...this.storages,
+    ].filter((i) => i.isMyTeam);
   }
 
   override async removeMembers(

@@ -5,9 +5,11 @@ import { FileInfo, IFile, IFileInfo } from '../thing/fileinfo';
 import { IDirectory } from '../thing/directory';
 import { IWorkApply, WorkApply } from './apply';
 import { entityOperates, fileOperates } from '../public';
-import { loadGatewayNodes } from '@/utils/tools';
+import { getUuid, loadGatewayNodes } from '@/utils/tools';
 
 export interface IWork extends IFileInfo<schema.XWorkDefine> {
+  /** 我的办事 */
+  isMyWork: boolean;
   /** 主表 */
   primaryForms: IForm[];
   /** 子表 */
@@ -31,6 +33,7 @@ export interface IWork extends IFileInfo<schema.XWorkDefine> {
   /** 绑定成员节点 */
   bingdingGateway(
     nodeId: string,
+    identity: schema.XIdentity,
     define: schema.XWorkDefine,
   ): Promise<schema.XWorkGateway | undefined>;
   /** 生成办事申请单 */
@@ -42,18 +45,14 @@ export interface IWork extends IFileInfo<schema.XWorkDefine> {
   notify(operate: string, data: any): void;
   /** 接收通知 */
   receive(operate: string, data: schema.XWorkDefine): boolean;
+  /** 常用标签切换 */
+  toggleCommon(): Promise<boolean>;
 }
 
 export const fullDefineRule = (data: schema.XWorkDefine) => {
-  data.allowAdd = true;
-  data.allowEdit = true;
-  data.allowSelect = true;
   data.hasGateway = false;
   if (data.rule && data.rule.includes('{') && data.rule.includes('}')) {
     const rule = JSON.parse(data.rule);
-    data.allowAdd = rule.allowAdd;
-    data.allowEdit = rule.allowEdit;
-    data.allowSelect = rule.allowSelect;
     data.hasGateway = rule.hasGateway;
   }
   data.typeName = '办事';
@@ -81,6 +80,38 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
   get forms(): IForm[] {
     return [...this.primaryForms, ...this.detailForms];
   }
+  get superior(): IFile {
+    return this.application;
+  }
+  get groupTags(): string[] {
+    const tags = [this.target.space.name];
+    if (this.target.id != this.target.spaceId) {
+      tags.push(this.target.name);
+    }
+    return [...tags, ...super.groupTags];
+  }
+  get isMyWork(): boolean {
+    if (this._metadata.applyAuth?.length > 0) {
+      return (
+        this.target.user.givedIdentitys.filter(
+          (i) =>
+            i.identity?.authId === this._metadata.applyAuth &&
+            i.identity?.belongId === this.target.spaceId,
+        ).length > 0
+      );
+    }
+    return true;
+  }
+  allowCopy(destination: IDirectory): boolean {
+    return ['应用', '模块'].includes(destination.typeName);
+  }
+  allowMove(destination: IDirectory): boolean {
+    return (
+      ['应用', '模块'].includes(destination.typeName) &&
+      destination.id !== this.metadata.applicationId &&
+      destination.target.belongId == this.target.belongId
+    );
+  }
   async delete(_notity: boolean = false): Promise<boolean> {
     if (this.application) {
       const res = await kernel.deleteWorkDefine({
@@ -89,6 +120,7 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
       if (res.success) {
         this.application.works = this.application.works.filter((a) => a.id != this.id);
         this.notify('workRemove', this.metadata);
+        this.application.changCallback();
       }
       return res.success;
     }
@@ -106,43 +138,38 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
     });
   }
   async copy(destination: IDirectory): Promise<boolean> {
-    if (destination.id != this.application.id) {
-      if ('works' in destination) {
-        const app = destination as unknown as IApplication;
-        const node = await this.loadNode();
-        const res = await app.createWork({
-          ...this.metadata,
-          applicationId: app.id,
-          resource: node,
-        });
-        return res != undefined;
+    if (this.allowCopy(destination)) {
+      const app = destination as unknown as IApplication;
+      const node = await this.loadNode();
+      if (node) {
+        delete node.children;
+        delete node.branches;
       }
+      const uuid = getUuid();
+      const res = await app.createWork({
+        ...this.metadata,
+        applicationId: app.id,
+        shareId: app.directory.target.id,
+        resource: node && node.code ? node : undefined,
+        code: `${this.metadata.code}-${uuid}`,
+        name: `${this.metadata.name} - 副本${uuid}`,
+        id: '0',
+      });
+      return res != undefined;
     }
     return false;
   }
 
   async move(destination: IDirectory): Promise<boolean> {
-    if (
-      destination.id != this.directory.id &&
-      destination.metadata.belongId === this.application.metadata.belongId
-    ) {
-      if ('works' in destination) {
-        const app = destination as unknown as IApplication;
-        this.setMetadata({ ...this.metadata, applicationId: app.id });
-        const node = await this.loadNode();
-        const success = await this.update({
-          ...this.metadata,
-          resource: node,
-        });
-        if (success) {
-          this.application = app;
-          app.works.push(this);
-          app.changCallback();
-          this.notify('workRemove', this.metadata);
-        } else {
-          this.setMetadata({ ...this.metadata, applicationId: this.application.id });
-        }
-        return success;
+    if (this.allowMove(destination)) {
+      const app = destination as unknown as IApplication;
+      const work = await app.createWork({
+        ...this.metadata,
+        resource: undefined,
+      });
+      if (work) {
+        this.notify('workRemove', this.metadata);
+        return true;
       }
     }
     return false;
@@ -165,6 +192,7 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
   async update(data: model.WorkDefineModel): Promise<boolean> {
     data.id = this.id;
     data.applicationId = this.metadata.applicationId;
+    data.shareId = this.directory.target.id;
     const res = await kernel.createWorkDefine(data);
     if (res.success && res.data.id) {
       this.notify('workReplace', res.data);
@@ -195,16 +223,18 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
   }
   async bingdingGateway(
     nodeId: string,
+    identity: schema.XIdentity,
     define: schema.XWorkDefine,
   ): Promise<schema.XWorkGateway | undefined> {
     const res = await kernel.createWorkGeteway({
       nodeId: nodeId,
       defineId: define.id,
+      identityId: identity.id,
       targetId: this.directory.target.spaceId,
     });
     if (res.success) {
       this.gatewayInfo = this.gatewayInfo.filter((a) => a.nodeId != nodeId);
-      this.gatewayInfo.push({ ...res.data, define });
+      this.gatewayInfo.push({ ...res.data, define, identity });
     }
     return res.data;
   }
@@ -230,9 +260,7 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
         fields: {},
         primary: {},
         node: this.node,
-        allowAdd: this.metadata.allowAdd,
-        allowEdit: this.metadata.allowEdit,
-        allowSelect: this.metadata.allowSelect,
+        rules: [],
       };
       this.forms.forEach((form) => {
         data.fields[form.id] = form.fields;
@@ -256,10 +284,39 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
       );
     }
   }
+  async toggleCommon(): Promise<boolean> {
+    let set: boolean = false;
+    if (this.cache.tags?.includes('常用')) {
+      this.cache.tags = this.cache.tags?.filter((i) => i != '常用');
+    } else {
+      set = true;
+      this.cache.tags = this.cache.tags ?? [];
+      this.cache.tags.push('常用');
+    }
+    const success = await this.cacheUserData();
+    if (success) {
+      return await this.target.user.toggleCommon(
+        {
+          id: this.id,
+          spaceId: this.spaceId,
+          targetId: this.target.id,
+          applicationId: this.application.id,
+          directoryId: this.application.metadata.directoryId,
+        },
+        set,
+      );
+    }
+    return false;
+  }
   override operates(): model.OperateModel[] {
     const operates = super.operates();
     if (this.isInherited) {
       operates.push({ sort: 3, cmd: 'workForm', label: '查看表单', iconType: '表单' });
+    }
+    if (this.cache.tags?.includes('常用')) {
+      operates.unshift(fileOperates.DelCommon);
+    } else {
+      operates.unshift(fileOperates.SetCommon);
     }
     if (this.metadata.hasGateway) {
       operates.push({
@@ -273,12 +330,22 @@ export class Work extends FileInfo<schema.XWorkDefine> implements IWork {
       operates.push(entityOperates.HardDelete);
     }
     return operates
-      .filter((i) => i != fileOperates.Copy)
-      .filter((i) => i != fileOperates.Move)
       .filter((i) => i != fileOperates.Download)
       .filter((i) => i != entityOperates.Delete);
   }
   private async recursionForms(node: model.WorkNodeModel) {
+    if (node.resource) {
+      const resource = JSON.parse(node.resource);
+      if (Array.isArray(resource)) {
+        node.forms = resource;
+        node.formRules = [];
+        node.executors = [];
+      } else {
+        node.forms = resource.forms ?? [];
+        node.formRules = resource.formRules ?? [];
+        node.executors = resource.executors ?? [];
+      }
+    }
     node.detailForms = await this.directory.resource.formColl.find(
       node.forms?.filter((a) => a.typeName == '子表').map((s) => s.id),
     );

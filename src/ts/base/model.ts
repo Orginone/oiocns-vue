@@ -1,3 +1,4 @@
+import { model, schema } from '.';
 import {
   XApplication,
   XAttributeProps,
@@ -627,8 +628,8 @@ export type WorkDefineModel = {
   shareId: string;
   // 应用ID
   applicationId: string;
-  // 是否创建实体
-  rule: string;
+  // 发起权限
+  applyAuth: string;
   // 流程节点
   resource: WorkNodeModel | undefined;
 };
@@ -664,12 +665,6 @@ export type WorkGatewayInfoModel = {
 export type InstanceDataModel = {
   /** 流程节点 */
   node: WorkNodeModel;
-  // 允许新增
-  allowAdd: boolean;
-  // 允许变更
-  allowEdit: boolean;
-  // 允许选择
-  allowSelect: boolean;
   /** 表单字段 */
   fields: {
     /** 表单id */
@@ -685,6 +680,7 @@ export type InstanceDataModel = {
     /** 特性id */
     [id: string]: any;
   };
+  rules: model.RenderRule[];
 };
 
 export type FieldModel = {
@@ -736,6 +732,8 @@ export type FormEditData = {
   creator: string;
   /** 操作时间 */
   createTime: string;
+  /** 规则 */
+  rules: RenderRule[];
 };
 
 /* 节点网关 */
@@ -746,6 +744,8 @@ export type WorkGatewayModel = {
   targetId: string;
   // 关联流程ID
   defineId: string;
+  // 通知的角色ID
+  identityId: string;
 };
 
 /* 节点网关 */
@@ -779,8 +779,14 @@ export type WorkNodeModel = {
   belongId: string;
   // 节点归属定义Id
   defineId: string;
+  // 资源
+  resource: string;
   // 关联表单信息
   forms: FormInfo[];
+  // 关联表单信息
+  formRules: Rule[];
+  // 执行器
+  executors: Executor[];
   // 主表
   primaryForms: XForm[];
   // 子表
@@ -792,6 +798,96 @@ type FormInfo = {
   id: string;
   // 类型
   typeName: string;
+};
+
+export type Rule = {
+  // 规则Id
+  id: string;
+  // 规则名称
+  name: string;
+  // 规则类型
+  type: 'show' | 'calc' | 'executor';
+  // 触发对象
+  trigger: string[];
+  // 备注
+  remark: string;
+};
+
+// 表单展示规则
+export type FormShowRule = {
+  // 渲染类型
+  showType: string;
+  // 值
+  value: boolean;
+  // 目标对象
+  target: string;
+  // 条件
+  condition: string;
+} & Rule;
+
+// 表单计算规则
+export type FormCalcRule = {
+  // 目标对象
+  target: string;
+  // 表达式
+  formula: string;
+} & Rule;
+// 表单展示规则
+export type NodeShowRule = {
+  // 目标
+  target: MappingData;
+  // 渲染类型
+  showType: string;
+  // 值
+  value: boolean;
+  // 条件
+  condition: string;
+} & Rule;
+
+// 表单计算规则
+export type NodeCalcRule = {
+  // 键值对
+  mappingData: MappingData[];
+  // 目标
+  target: MappingData;
+  // 表达式
+  formula: string;
+} & Rule;
+
+// 表单计算规则
+export type NodeExecutorRule = {
+  // 键值对
+  keyMap: Map<string, MappingData>;
+  // 方法
+  function: string;
+} & Rule;
+
+export type MappingData = {
+  id: string;
+  code: string;
+  name: string;
+  formName: string;
+  formId: string;
+  typeName: string;
+  trigger: string;
+};
+
+// 渲染规则，表单、办事渲染规则
+export type RenderRule = {
+  formId: string;
+  destId: string;
+  typeName: string;
+  value: any;
+};
+
+// 执行器
+export type Executor = {
+  // ID
+  id: string;
+  // 执行器触发时机
+  trigger: string;
+  // 执行器方法名称
+  funcName: string;
 };
 
 export type Branche = {
@@ -1296,14 +1392,14 @@ export type SchemaType = {
 export type DiskInfoType = {
   // 状态
   ok: number;
-  // 文件数量
-  files: number;
   // 对象数量
   objects: number;
   // 集合数量
   collections: number;
+  // 文件数量
+  filesCount: number;
   // 文件的总大小
-  fileSize: number;
+  filesSize: number;
   // 数据的总大小
   dataSize: number;
   // 数据占用磁盘的总大小

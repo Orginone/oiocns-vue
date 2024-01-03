@@ -113,6 +113,7 @@ const getTitle = (flag: string) => {
       <DirectoryViewer v-else-if="bodyType==='relation'" 
         extraTags
         :initTags="['成员']"
+        :currentTag='"成员"'
         :selectFiles="[]"
         :content="session.target.memberDirectory.content()"
         :fileOpen="()=>{}"
@@ -120,8 +121,8 @@ const getTitle = (flag: string) => {
           const file = (entity as IFile) || session.target.memberDirectory;
           return {
             items: cleanMenus(loadFileMenus(file)) || [],
-            onClick: ({ key }) => {
-              command.emitter('executor', key, file);
+            onClick: (key: string) => {
+              command.emitter('executor', key, file)
             },
           }
         }"

@@ -1,8 +1,10 @@
-import { command, kernel, model, schema } from '../../../base';
+import { kernel, model, schema } from '../../../base';
 import { PageAll, directoryOperates, fileOperates } from '../../public';
 import { IDirectory } from '../directory';
 import { IFile, IStandardFileInfo, StandardFileInfo } from '../fileinfo';
 import { IWork, Work } from '../../work';
+import { XCollection } from '../../public/collection';
+import { formatDate } from '@/utils';
 
 /** 应用/模块接口类 */
 export interface IApplication extends IStandardFileInfo<schema.XApplication> {
@@ -12,16 +14,18 @@ export interface IApplication extends IStandardFileInfo<schema.XApplication> {
   children: IApplication[];
   /** 流程定义 */
   works: IWork[];
-  /** 结构变更 */
-  structCallback(): void;
   /** 根据id查找办事 */
   findWork(id: string): Promise<IWork | undefined>;
   /** 加载办事 */
   loadWorks(reload?: boolean): Promise<IWork[]>;
+  /** 加载所有办事 */
+  loadAllWorks(reload?: boolean): Promise<IWork[]>;
   /** 新建办事 */
   createWork(data: model.WorkDefineModel): Promise<IWork | undefined>;
   /** 新建模块 */
   createModule(data: schema.XApplication): Promise<schema.XApplication | undefined>;
+  /** 搜索文件 */
+  searchFile(applicationId: string, id: string): Promise<IFile | undefined>;
 }
 
 /** 应用实现类 */
@@ -60,29 +64,140 @@ export class Application
       a.metadata.updateTime < b.metadata.updateTime ? 1 : -1,
     );
   }
-  structCallback(): void {
-    command.emitter('executor', 'refresh', this);
+  override allowCopy(destination: IDirectory): boolean {
+    return ['目录', '应用', '模块'].includes(destination.typeName);
   }
-  async copy(_: IDirectory): Promise<boolean> {
-    return false;
+  override allowMove(destination: IDirectory): boolean {
+    return (
+      ['目录', '应用', '模块'].includes(destination.typeName) &&
+      destination.target.belongId == this.target.belongId
+    );
   }
-  override async move(destination: IDirectory): Promise<boolean> {
-    if (!this.parent && this.allowMove(destination)) {
-      const applications = this.getChildren(this);
-      const data = await destination.resource.applicationColl.replaceMany(
-        applications.map((a) => {
-          return { ...a, directoryId: destination.id };
-        }),
-      );
-      if (data && data.length > 0) {
-        await this.notify('remove', this.metadata);
-        await destination.notify('reload', {
-          ...destination.metadata,
-          directoryId: destination.id,
-        });
+  async copy(destination: IDirectory): Promise<boolean> {
+    if (this.allowCopy(destination)) {
+      const uuid = formatDate(new Date(), 'yyyyMMddHHmmss');
+      const name = this.metadata.name.split('-')[0] + `-副本${uuid}`;
+      const code = this.metadata.code.split('-')[0] + uuid;
+      const appData = {
+        ...this.metadata,
+        code: code,
+        name: name,
+        shareId: destination.target.id,
+        id: 'snowId()',
+      };
+      switch (destination.typeName) {
+        case '目录': {
+          appData.typeName = '应用';
+          appData.parentId = '';
+          appData.directoryId = destination.id;
+          const coll = destination.resource.applicationColl;
+          const application = await coll.insert(appData);
+          if (application) {
+            await coll.notity({
+              operate: 'insert',
+              data: {
+                ...application,
+                children: await this.recursionCopy(this, application, coll),
+              },
+            });
+          }
+          return true;
+        }
+        case '应用': {
+          appData.typeName = '模块';
+          appData.parentId = destination.id;
+          appData.directoryId = destination.directory.id;
+          const directory = destination.directory;
+          const coll = directory.resource.applicationColl;
+          const application = await coll.insert(appData);
+          if (application) {
+            await coll.notity({
+              operate: 'insert',
+              data: {
+                ...application,
+                children: await this.recursionCopy(this, application, coll),
+              },
+            });
+          }
+          return true;
+        }
       }
     }
     return false;
+  }
+  override async move(destination: IDirectory): Promise<boolean> {
+    if (this.allowMove(destination)) {
+      const applications = this.getChildren(this);
+      const app = applications.shift();
+      var directory: IDirectory;
+      if (app) {
+        switch (destination.typeName) {
+          case '目录':
+            app.parentId = '';
+            app.typeName = '应用';
+            app.shareId = destination.target.id;
+            directory = destination;
+            break;
+          case '应用':
+            app.parentId = destination.id;
+            app.typeName = '模块';
+            directory = destination.directory;
+            app.shareId = directory.target.id;
+            break;
+          default:
+            return false;
+        }
+        applications.unshift(app);
+        const data = await directory.resource.applicationColl.replaceMany(
+          applications.map((a) => {
+            return { ...a, directoryId: destination.id };
+          }),
+        );
+        if (data && data.length > 0) {
+          await this.notify('remove', this.metadata);
+          await destination.notify('reload', {
+            ...destination.metadata,
+            directoryId: destination.id,
+          });
+          destination.changCallback();
+        }
+      }
+    }
+    return false;
+  }
+  private async recursionCopy(
+    application: IApplication,
+    destApplication: schema.XApplication,
+    coll: XCollection<schema.XApplication>,
+  ): Promise<schema.XApplication[]> {
+    const modules: schema.XApplication[] = [];
+    for (const child of application.children) {
+      const result = await coll.insert({
+        ...child.metadata,
+        parentId: destApplication.id,
+        shareId: destApplication.shareId,
+        directoryId: destApplication.directoryId,
+        id: 'snowId()',
+      });
+      if (result) {
+        modules.push(result, ...(await this.recursionCopy(child, result, coll)));
+      }
+    }
+    for (const work of await application.loadWorks()) {
+      const node = await work.loadNode();
+      if (node) {
+        delete node.children;
+        delete node.branches;
+      }
+      await kernel.createWorkDefine({
+        ...work.metadata,
+        resource: node && node.code ? node : undefined,
+        shareId: destApplication.shareId,
+        applicationId: destApplication.id,
+        id: '0',
+      });
+    }
+    return modules;
   }
   async hardDelete(): Promise<boolean> {
     if (
@@ -118,13 +233,20 @@ export class Application
     }
     return this.works;
   }
+  async loadAllWorks(reload?: boolean | undefined): Promise<IWork[]> {
+    const data = await this.loadWorks(reload);
+    for (const item of this.children) {
+      data.push(...(await item.loadAllWorks(reload)));
+    }
+    return data;
+  }
   async createWork(data: model.WorkDefineModel): Promise<IWork | undefined> {
     data.applicationId = this.id;
+    data.shareId = this.directory.target.id;
     const res = await kernel.createWorkDefine(data);
     if (res.success && res.data.id) {
       let work = new Work(res.data, this);
       work.notify('workInsert', work.metadata);
-      this.works.push(work);
       return work;
     }
   }
@@ -155,9 +277,7 @@ export class Application
         operates.push(fileOperates.Parse);
       }
     }
-    return operates.filter(
-      (a) => ![fileOperates.Copy, fileOperates.Download].includes(a),
-    );
+    return operates.filter((a) => a !== fileOperates.Download);
   }
   private loadChildren(applications?: schema.XApplication[]) {
     if (applications && applications.length > 0) {
@@ -175,6 +295,19 @@ export class Application
     }
     return applications;
   }
+  async searchFile(applicationId: string, id: string): Promise<IFile | undefined> {
+    if (this.id === applicationId) {
+      await this.loadContent();
+      return this.content().find((i) => i.id === id);
+    } else {
+      for (const item of this.children) {
+        const file = await item.searchFile(applicationId, id);
+        if (file) {
+          return file;
+        }
+      }
+    }
+  }
   override receive(operate: string, data: schema.XApplication): boolean {
     if (data.id === this.id) {
       this.coll.removeCache((i) => i.id != data.id);
@@ -188,19 +321,27 @@ export class Application
       } else {
         switch (operate) {
           case 'insert':
-            this.coll.cache.push(data);
-            this.children.push(new Application(data, this.directory, this));
+            {
+              this.coll.cache.push(data);
+              const children: schema.XApplication[] = [];
+              if ('children' in data) {
+                children.push(...(data.children as schema.XApplication[]));
+              }
+              this.children.push(new Application(data, this.directory, this, children));
+            }
             break;
           case 'remove':
             this.coll.removeCache((i) => i.id != data.id);
             this.children = this.children.filter((a) => a.id != data.id);
+            break;
+          case 'reload':
             break;
           default:
             this.children.find((i) => i.id === data.id)?.receive(operate, data);
             break;
         }
       }
-      this.structCallback();
+      this.changCallback();
       return true;
     } else {
       for (const child of this.children) {
