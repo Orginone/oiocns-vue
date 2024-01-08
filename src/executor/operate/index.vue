@@ -4,7 +4,7 @@ import { IEntity, TargetType } from '@/ts/core';
 
 import EntityForm from './entityForm/index.vue';
 import ActivityPublisher from './pubActivity/index.vue';
-// import SettingAuth from './settingModal/settingAuth.vue';
+import SettingAuth from './settingModal/settingAuth.vue';
 // import SettingStation from './settingModal/settingStation';
 // import SettingIdentity from './settingModal/settingIdentity';
 // import { schema } from '@/ts/base';
@@ -46,9 +46,6 @@ const {
 } = useDyncamicComponent()
 
 onMounted(()=>{
-  // TODO:
-  console.log(props);
-  
   if (Array.isArray(props.args) && props.args.length > 0) {
     switch (props.cmd) {
       case 'pull':

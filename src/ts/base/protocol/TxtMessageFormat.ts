@@ -35,6 +35,7 @@ export class TxtMessageFormat {
   }
 
   public static parse(input: ArrayBuffer): string[] {
+    console.log('input',input);
     const result: string[] = [];
     const uint8Array = new Uint8Array(input);
     const maxLengthPrefixSize = 5;

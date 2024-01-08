@@ -68,7 +68,6 @@ const onSelectClick = async (item: MenuItemType) => {
         :selectKey="selectMenu.key"
         :item="siderMenuData"
         :onSelect="(item:MenuItemType) => {
-          console.log('item',item);
           onSelectClick(item);
         }"
       />

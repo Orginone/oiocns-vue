@@ -150,7 +150,6 @@ const loadOpenKeys = (items: MenuItemType[], key: string) => {
     selectedKeys.value = [props.selectMenu.key]
   }
   const subClick = (i:any,item:any)=>{
-    console.log('sub',i,item)
     props.onSelect?.apply(i, [item]);
   }
 </script>
