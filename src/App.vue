@@ -1,20 +1,3 @@
-<template>
-  <el-config-provider :locale="EPlocale">
-    <Suspense>
-      <template #default>
-          <div class="pages" >
-            <router-view />
-          </div>
-      </template>
-      <template #fallback>
-        <div class="pages" v-loading></div>
-      </template>
-    </Suspense>
-  </el-config-provider>
-  <!-- 语音播放器 -->
-  <audio ref="audio" />
-</template>
-
 <script lang="ts" setup>
 
 import { ElConfigProvider } from 'element-plus'
@@ -22,7 +5,6 @@ import message from '@/utils/message'
 import 'devextreme/dist/css/dx.common.css'
 import 'devextreme/dist/css/dx.light.css'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
-
 import moment from 'moment'
 import 'moment/locale/zh-cn'
 import orgCtrl from '@/ts/controller'
@@ -72,6 +54,23 @@ logger.onLogger = (level, msg) => {
 }
 
 </script>
+
+<template>
+  <el-config-provider :locale="EPlocale">
+    <Suspense>
+      <template #default>
+          <div class="pages" >
+            <router-view />
+          </div>
+      </template>
+      <template #fallback>
+        <div class="pages" v-loading></div>
+      </template>
+    </Suspense>
+  </el-config-provider>
+  <!-- 语音播放器 -->
+  <audio ref="audio" />
+</template>
 
 <style lang="scss">
 
