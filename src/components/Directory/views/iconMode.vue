@@ -23,7 +23,7 @@ defineProps<{
       >
         <div class="card-main"
           @click="fileOpen(el, false)"
-          @dblclick="fileOpen(el, true)"
+          @dblclick="console.log(el),fileOpen(el, true)"
         >
           <div class="fileImage">
             <ElBadge :value="el.badgeCount" size="small" :hidden="el.badgeCount===0">

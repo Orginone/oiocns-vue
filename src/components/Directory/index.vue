@@ -108,7 +108,6 @@ const getContextMenu = (entity:any) => {
       :currentTag="currentTag"
       :tagChanged="(t) => setCurrentTag(t)"
       :fileOpen="(file) => {
-        console.log('aaaa',file);
         if (file && 'isContainer' in file && file.isContainer) {
           setDirectory(file as IFile);
         } else {

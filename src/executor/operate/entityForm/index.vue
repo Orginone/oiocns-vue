@@ -43,6 +43,7 @@ const reloadFinish = () => {
 };
 
 onMounted(()=>{
+  console.log('props.cmd',props.cmd);
   switch (props.cmd) {
     case 'rename': // TODO:
       return console.log('来这改');

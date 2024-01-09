@@ -9,16 +9,13 @@ import OrgIcons from '@/components/Common/GlobalComps/orgIcons.vue'
 import Directory from '@/components/Directory/index.vue'
 import DirectoryViewer from '@/components/Directory/views/index.vue'
 import { cleanMenus } from '@/utils/tools'
+import { exportJsonToExcel } from "@/utils/exportExcel";
 
 const props = defineProps<{
   target: ITarget;
   session: ISession;
   setting?: boolean;
 }>()
-
-// TODO:
-console.log(props.session);
-
 
 const actions = ref<string[]>()
 const bodyType=ref(props.setting ? 'activity' : 'chat')
@@ -63,7 +60,31 @@ const getTitle = (flag: string) => {
       return '设置';
   }
 }
-
+const exportGroup = async (session :any) => {
+  let res = await session.target.memberDirectory.content();
+  let arr:any = [];
+  res.forEach((element:any) => {
+    arr.push({name:element._metadata.name,code:element._metadata.code})
+  });
+  const tableField = [
+      "name",
+      "code",
+    ],
+    tableHeader = {
+      name: "名称",
+      code: "代码",
+    },
+    tableTitle = "导出数据",
+    obj = {
+      header: tableHeader,
+      data: arr,
+      key: tableField,
+      title: "",
+      filename: "成员数据",
+      autoWidth: true,
+    };
+  exportJsonToExcel(obj);
+}
 </script>
 
 <template>
@@ -93,6 +114,7 @@ const getTitle = (flag: string) => {
       </div>
       <!-- 头部-右侧action -->
       <div class="header-action">
+        <ElButton @click="exportGroup(session)">导出成员</ElButton>
         <a v-for="flag in actions" :key="flag"
           :title="getTitle(flag)"
           @click="bodyType = flag"

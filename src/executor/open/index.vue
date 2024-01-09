@@ -2,7 +2,7 @@
 import ImageView from './image/index.vue'
 import VideoView from '@/components/MainLayout/preview/video/index.vue'
 // import React from 'react';
-// import FormView from './form';
+import FormView from './form/index.vue';
 // import WorkStart from './work';
 // import TaskContent from './task';
 // import JoinApply from './task/joinApply';
@@ -80,11 +80,13 @@ onMounted(() => {
   }
   if ('key' in props.entity) { // TODO:
     switch (props.entity.typeName) {
+      case '目录':
+      case '应用':
+      case '模块':
+      return console.log('目录,应用,模块');
       case '表单':
-      case '事项配置':
-      case '实体配置':
-        return console.log('表单、事项配置、实体配置来这改');
-        // return <FormView form={props.entity as any} finished={props.finished} />;
+        console.log('props.entity,',props.entity);
+        return setComponent(FormView,{form:props.entity,finished:props.finished})
       case '迁移配置':
         return console.log('迁移配置来这改');
         // return <TransferView current={props.entity as any} finished={props.finished} />;

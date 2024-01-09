@@ -39,13 +39,15 @@ onMounted(()=>{
     if (cmd === 'link') return router.push(args[0])
     // 执行页面命令(executeCmd返回false则为页面命令)
     if (executeCmd(cmd, args[0])===false) {
+      console.log('cmd',cmd);
       switch (cmd) {
         case 'open':
         case 'remark':
+          console.log(':args[0]',args[0]);
           if(args.length > 1 && args[1] === 'preview'){
             return setPreview(OpenExecutor,{cmd:cmd,entity:args[0],finished:()=>resetCtx(false)})
           }else{
-            return setContent(OperateExecutor, {cmd: cmd, args: args, finished: resetContent})
+            return setContent(OpenExecutor, {cmd:cmd,entity:args[0],finished:()=>resetCtx()})
           }
         case 'design':
           // TODO: 设计器

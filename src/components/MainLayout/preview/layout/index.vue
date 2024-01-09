@@ -49,7 +49,9 @@ const props = defineProps<{
 </template>
 
 <style lang="scss" scoped>
-
+  .groupDetail{
+    height: 100%;
+  }
   .list_item_meta {
     display: flex;
     margin-left:10px;
