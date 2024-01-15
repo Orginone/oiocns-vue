@@ -113,7 +113,6 @@ const handleOk = async (files: IFile[]) => {
           :autoResizeEnabled="true"
           stylingMode="underlined"
           valueChangeEvent="input"
-          style="font-size: 16px"
           placeholder="Enter键发送, Alt+Enter键换行。"
           :onValueChanged="(e:any) => {
             const value: string = e.value ?? ''
@@ -217,7 +216,6 @@ const handleOk = async (files: IFile[]) => {
 
 <style lang="less" scoped>
 .group-input-box {
-  // height: 48px;
   border-radius: 8px;
   // TODO: color/surface/分割线
   border: 1px solid #E7E8EB;

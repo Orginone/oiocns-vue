@@ -80,6 +80,11 @@ const [key] = useCtrlUpdate(props.activity)
     gap: 20px;
     border-radius: 6px;
   }
+  @media screen and (max-width: 1000px) {
+    .group-list {
+      display: none;
+    }
+  }
   
   .loadContext {
     width: 0;

@@ -57,7 +57,7 @@ const props = defineProps<{
 }
 .list-item {
   margin-bottom: 2px;
-  width: 100%;
+  // width: 100%;
   cursor: pointer;
   padding: 8px 6px;
   border-radius: 4px;

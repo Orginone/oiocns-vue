@@ -1,0 +1,106 @@
+body {
+  font-family: 'Han Sans SC', Arial, Helvetica, 'Helvetica Neue', sans-serif;
+  margin: 0;
+}
+
+ul,
+li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+h1 {
+  font-size: 40px;
+}
+
+h2 {
+  font-size: 30px;
+}
+
+h3 {
+  font-size: 20px;
+}
+
+a {
+  color: @primary-color;
+  text-decoration: none;
+  background-color: transparent;
+  outline: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+// 滚动条优化
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+  overflow: visible;
+}
+
+::-webkit-scrollbar-thumb {
+  min-height: 10px;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-track-piece {
+  // margin: 10px 0;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar {
+  background-color: @component-background;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #e1e1e1;
+}
+
+::-webkit-scrollbar-thumb:vertical:hover {
+  background-color: #d1d1d1;
+}
+
+::-webkit-scrollbar-thumb:vertical:active {
+  background-color: #d1d1d1;
+}
+
+// element plus 样式重写
+.el-dialog {
+  border-radius: 0px !important;
+  overflow: hidden;
+  .el-dialog__header {
+    background-color: transparent !important;
+  }
+}
+
+.el-badge {
+  .el-badge__content.is-fixed {
+    width: 14px;
+    height: 14px;
+    right: 6px;
+    top: 3px;
+    display: flex;
+    padding: 0px 4px;
+    border: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 7px;
+    background: var(--color-status-error-normal, #F43F3F);
+    color: var(--color-surface, #FFF);
+    font-family: Nunito Sans;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  .el-badge__content.is-fixed.is-dot {
+    width: 6px;
+    height: 6px;
+    padding: 0;
+  }
+}

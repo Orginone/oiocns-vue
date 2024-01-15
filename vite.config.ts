@@ -1,7 +1,12 @@
 import { defineConfig } from 'vite'
-import { themeVariables } from './config/theme/index'
+
+import path from 'path'
+import type { ConfigEnv, UserConfig } from 'vite'
+
+import { themeVariables } from './config/theme'
+
 import vue from '@vitejs/plugin-vue'
-import * as path from 'path'
+
 // import styleImport from 'vite-plugin-style-import';
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
@@ -14,11 +19,9 @@ import viteCompression from 'vite-plugin-compression'
 // 自动导入element图标
 import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
-// import svgLoader from 'vite-svg-loader';
-// console.log('类型', process.env.NODE_ENV)
 
-export default defineConfig(({ command, mode }) => {
-  console.log('运行环境', command, mode)
+// 函数式配置
+export default ({ command, mode }: ConfigEnv): UserConfig => {
 
   return {
     base: settings.base, // 生产环境路径
@@ -60,6 +63,14 @@ export default defineConfig(({ command, mode }) => {
       }),
       settings.isVisualizer && visualizer({ open: true, filename: 'report.html' })
     ],
+    css: {
+      preprocessorOptions: {
+        less: {
+          javascriptEnabled: true,
+          modifyVars: themeVariables,
+        },
+      },
+    },
     resolve: {
       alias: {
         // 配置别名
@@ -76,14 +87,6 @@ export default defineConfig(({ command, mode }) => {
     },
     optimizeDeps: {
       include: ['@/../lib/vform/designer.umd.js']
-    },
-    css: {
-      preprocessorOptions: {
-        less: {
-          javascriptEnabled: true,
-          modifyVars: themeVariables,
-        },
-      }
     },
     build: {
       target: 'modules',
@@ -152,4 +155,4 @@ export default defineConfig(({ command, mode }) => {
         : {}
     }
   }
-})
+}

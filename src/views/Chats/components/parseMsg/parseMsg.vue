@@ -118,27 +118,32 @@ switch (props.item.msgType) {
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
+.con-content-wrap {
+  &.showBubble {
+    // white-space: pre-wrap;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background-color:var(--con-bac,#F2F4F7);
+    color: var(--con-txt,#1D2939);
+    // styleName: 14/CN-Regular;
+    font-family: PingFang SC;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0em;
+    text-align: left;
+  }
+  .con-content-main {
+    overflow-wrap: break-word;
+    word-break: break-all;
+  }   
+}
 
 img,:deep(img) {
   max-width: 100%;
   max-height: 400px;
-}  
-.showBubble {
-  overflow-wrap: break-word;
-  white-space: pre-wrap;
-  padding: 8px 16px;
-  border-radius: 8px;
-  background-color:var(--con-bac,#F2F4F7);
-  color: var(--con-txt,#1D2939);
-  // styleName: 14/CN-Regular;
-  font-family: PingFang SC;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  letter-spacing: 0em;
-  text-align: left;
-}
+} 
 .con_content_file {
   width: 240px;
   border-radius: 8px;

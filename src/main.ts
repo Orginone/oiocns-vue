@@ -1,9 +1,9 @@
 //必须放在入口第一行，用于引入polyfill
-import "core-js";
+import "core-js"
 
 import { createApp } from 'vue'
 import App from './App.vue'
-import router, { setupRouter } from '@/router'
+import { setupRouter } from '@/router'
 import './router/router.interceptor'
 import { setGlobalProperties } from '@/services'
 import setupGlobalComponent from '@/components/global'
@@ -14,7 +14,6 @@ import VueMarkdownEditor from '@kangc/v-md-editor';
 import '@kangc/v-md-editor/lib/style/base-editor.css';
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
 import '@kangc/v-md-editor/lib/theme/style/vuepress.css';
-// import locale from "element-plus/lib/locale/lang/zh-cn";
 import mitt from 'mitt'
 
 import 'devextreme/dist/css/dx.common.css';
